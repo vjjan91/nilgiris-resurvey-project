@@ -3,7 +3,7 @@
 .Rapp.history
 
 # No .csv files
-.csv
+*.csv
 
 # Session Data files
 .RData
