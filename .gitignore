@@ -4,6 +4,14 @@
 
 # No .csv files
 *.csv
+*.shp
+*.shx
+*.cpg
+*.prj
+*.dbf
+*.xml
+*.sbn
+*.sbx
 
 # Session Data files
 .RData
