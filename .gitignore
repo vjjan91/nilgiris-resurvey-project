@@ -12,6 +12,7 @@
 *.xml
 *.sbn
 *.sbx
+*.gpkg
 
 # Session Data files
 .RData
