@@ -13,10 +13,11 @@ library(stringr)
 library(tidyverse)
 library(scico)
 library(RColorBrewer)
+library(extrafont)
 ```
 
 
-Load the historical occurrence data and explore patterns
+### Load the historical occurrence data and explore patterns
 ```{r}
 hist_occ <- read.csv("data/historical-occurrence-data.csv")
 
@@ -55,7 +56,7 @@ fig_timePeriod <- ggplot(occ_timePeriod, aes(x=timePeriod, y=n, fill=timePeriod)
 ggsave(fig_timePeriod, filename = "figs/fig_specimenCountBytimePeriod.png", width=12, height=7,device = png(), units="in", dpi = 300); dev.off()
 ```
 
-Examining count of specimens by locality and time period
+### Examining count of specimens by locality and time period
 ```{r}
 occ_locality <- hist_occ %>%
   group_by(historical_site_code) %>%
@@ -67,11 +68,7 @@ loc_timePeriod <- hist_occ %>%
   group_by(timePeriod, historical_site_code) %>%
   count()
 
-# Plotting only locations with a minimum of 20 observations
-loc_timePeriod_min20 <- loc_timePeriod %>%
-  filter(n>20)
-
-fig_loc_timePeriod <- ggplot(loc_timePeriod_min20, aes(x=historical_site_code, y=n, fill=historical_site_code)) + 
+fig_loc_timePeriod <- ggplot(loc_timePeriod, aes(x=historical_site_code, y=n, fill=historical_site_code)) + 
   geom_bar(stat="identity", position=position_dodge(), fill="#883107", alpha=0.9) +
   geom_text(aes(label=n, hjust="middle", vjust=-0.5), 
             position = position_dodge(), angle=0, size=5) +
@@ -85,16 +82,15 @@ fig_loc_timePeriod <- ggplot(loc_timePeriod_min20, aes(x=historical_site_code, y
       axis.text.x = element_text(angle=90, vjust=0.5, hjust=1),
         legend.position = "none")
 
-ggsave(fig_loc_timePeriod, filename = "figs/fig_specimenCount_locality_timePeriod_min20.png", width=12, height=7,device = png(), units="in", dpi = 300); dev.off()
+ggsave(fig_loc_timePeriod, filename = "figs/fig_specimenCount_locality_timePeriod.png", width=12, height=7,device = png(), units="in", dpi = 300); dev.off()
 
 ```
 
-Examining species specific counts by timePeriod and locality
+### Examining species specific counts by timePeriod and locality
 ```{r}
 spp_timePeriod <- hist_occ %>%
   group_by(species, timePeriod) %>%
-  count() %>%
-  filter(n>10)
+  count() 
 
 # Plotting locations that had a min of 10 species observations per timePeriod
 
@@ -111,12 +107,12 @@ fig_spp_timePeriod <- ggplot(spp_timePeriod, aes(x=species, y=n, fill=species)) 
       axis.text.x = element_text(angle=90, vjust=0.5, hjust=1),
         legend.position = "none")
 
-ggsave(fig_spp_timePeriod, filename = "figs/fig_species_timePeriod_min10.png", width=12, height=7,device = png(), units="in", dpi = 300); dev.off()
+ggsave(fig_spp_timePeriod, filename = "figs/fig_species_timePeriod.png", width=50, height=20, device = png(), units="in", dpi = 300, limitsize = F); dev.off()
 
 # Examining both species by time period and locality
 spp_loc_timePeriod <- hist_occ %>%
   group_by(species, timePeriod, historical_site_code) %>%
-  count() %>%
+  count()%>%
   filter(n>10)
 
 fig_spp_loc_timePeriod <- ggplot(spp_loc_timePeriod, aes(x=species, y=n, fill=species)) + geom_bar(stat="identity", position=position_dodge(), fill="#883107", alpha=0.9) +
@@ -132,23 +128,5 @@ fig_spp_loc_timePeriod <- ggplot(spp_loc_timePeriod, aes(x=species, y=n, fill=sp
       axis.text.x = element_text(angle=90, vjust=0.5, hjust=1),
         legend.position = "none")
 
-ggsave(fig_spp_loc_timePeriod, filename = "figs/fig_species_loc_timePeriod_min10.png", width=12, height=7,device = png(), units="in", dpi = 300); dev.off()
+ggsave(fig_spp_loc_timePeriod, filename = "figs/fig_species_loc_timePeriod_min10.png", width=15, height=10,device = png(), units="in", dpi = 300); dev.off()
 ```
-
-
-
-
-
-Patterns to explore:
-
-Year by nSamples/data
-Year by collector?
-year by locality!
-nspecies and sampling-how many species do we have enough data for?
-
-
-
-
-
-
-
