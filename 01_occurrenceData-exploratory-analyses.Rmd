@@ -55,8 +55,6 @@ fig_hist_timePeriod <- ggplot(occ_timePeriod, aes(x=timePeriod, y=n, fill=timePe
         legend.position = "none")
 
 ggsave(fig_hist_timePeriod, filename = "figs/fig_histCountBytimePeriod.png", width=12, height=7,device = png(), units="in", dpi = 300); dev.off()
-
-## We observed that the majority of historical specimens/observations are from the time period 1850 - 1900. 
 ```
 
 ### Examining count of specimens by locality and time period
