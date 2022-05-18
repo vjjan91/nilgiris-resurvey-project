@@ -3,11 +3,12 @@ editor_options:
   chunk_output_type: console
 ---
 
-# Analyzing historical occurrence data
+# Exploratory analysis of occurrence data
 
-This script carries out exploratory analysis of historical occurrence data from the Nilgiri hills. 
+This script carries out exploratory analysis of historical and modern occurrence data from the Nilgiri hills. 
+
+### Load necessary libraries
 ```{r}
-# Load necessary libraries
 library(dplyr)
 library(stringr)
 library(tidyverse)
@@ -42,7 +43,7 @@ occ_timePeriod <- hist_occ %>%
   count()
 
 # Majority of the data is from the period 1850-1900. 
-fig_timePeriod <- ggplot(occ_timePeriod, aes(x=timePeriod, y=n, fill=timePeriod))    + geom_bar(stat="identity", position=position_dodge(), fill="#883107", alpha=0.9) +
+fig_hist_timePeriod <- ggplot(occ_timePeriod, aes(x=timePeriod, y=n, fill=timePeriod))    + geom_bar(stat="identity", position=position_dodge(), fill="#883107", alpha=0.9) +
   geom_text(aes(label=n, hjust="middle", vjust=-0.5), 
             position = position_dodge(), angle=0, size=5) +
     theme_bw() +
@@ -53,7 +54,9 @@ fig_timePeriod <- ggplot(occ_timePeriod, aes(x=timePeriod, y=n, fill=timePeriod)
         axis.text = element_text(family="Century Gothic",size = 14),
         legend.position = "none")
 
-ggsave(fig_timePeriod, filename = "figs/fig_specimenCountBytimePeriod.png", width=12, height=7,device = png(), units="in", dpi = 300); dev.off()
+ggsave(fig_hist_timePeriod, filename = "figs/fig_histCountBytimePeriod.png", width=12, height=7,device = png(), units="in", dpi = 300); dev.off()
+
+## We observed that the majority of historical specimens/observations are from the time period 1850 - 1900. 
 ```
 
 ### Examining count of specimens by locality and time period
@@ -63,7 +66,6 @@ occ_locality <- hist_occ %>%
   count()
 
 # Top 5 locations are OTCM, CNRG, LWSL, AVLC and KJPN.
-
 loc_timePeriod <- hist_occ %>%
   group_by(timePeriod, historical_site_code) %>%
   count()
@@ -82,7 +84,7 @@ fig_loc_timePeriod <- ggplot(loc_timePeriod, aes(x=historical_site_code, y=n, fi
       axis.text.x = element_text(angle=90, vjust=0.5, hjust=1),
         legend.position = "none")
 
-ggsave(fig_loc_timePeriod, filename = "figs/fig_specimenCount_locality_timePeriod.png", width=12, height=7,device = png(), units="in", dpi = 300); dev.off()
+ggsave(fig_loc_timePeriod, filename = "figs/fig_histCount_loc_timePeriod.png", width=12, height=7,device = png(), units="in", dpi = 300); dev.off()
 
 ```
 
@@ -107,7 +109,7 @@ fig_spp_timePeriod <- ggplot(spp_timePeriod, aes(x=species, y=n, fill=species)) 
       axis.text.x = element_text(angle=90, vjust=0.5, hjust=1),
         legend.position = "none")
 
-ggsave(fig_spp_timePeriod, filename = "figs/fig_species_timePeriod.png", width=50, height=20, device = png(), units="in", dpi = 300, limitsize = F); dev.off()
+ggsave(fig_spp_timePeriod, filename = "figs/fig_hsitSpp_timePeriod.png", width=50, height=20, device = png(), units="in", dpi = 300, limitsize = F); dev.off()
 
 # Examining both species by time period and locality
 spp_loc_timePeriod <- hist_occ %>%
@@ -128,5 +130,38 @@ fig_spp_loc_timePeriod <- ggplot(spp_loc_timePeriod, aes(x=species, y=n, fill=sp
       axis.text.x = element_text(angle=90, vjust=0.5, hjust=1),
         legend.position = "none")
 
-ggsave(fig_spp_loc_timePeriod, filename = "figs/fig_species_loc_timePeriod_min10.png", width=15, height=10,device = png(), units="in", dpi = 300); dev.off()
+ggsave(fig_spp_loc_timePeriod, filename = "figs/fig_histSpp_loc_timePeriod_min10.png", width=15, height=10,device = png(), units="in", dpi = 300); dev.off()
 ```
+
+### Load modern occurrence data and explore patterns
+```{r}
+mod_occ <- read.csv("data/modern-occurrence-data.csv")
+
+# filter by site and get unique species per site
+modOcc_spp <- mod_occ %>%
+  filter(!is.na(historical_site_code)) %>%
+  group_by(species_code, historical_site_code) %>%
+  count()
+
+# figure of species by locality
+fig_modSpp_loc <- ggplot(modOcc_spp, aes(x=historical_site_code, y=n, fill=historical_site_code)) + geom_bar(stat="identity", position=position_dodge(), fill="#883107", alpha=0.9) +
+  geom_text(aes(label=n, hjust="middle", vjust=-0.5), 
+            position = position_dodge(), angle=0, size=5) +
+  facet_wrap(~species_code) +
+    theme_bw() +
+    labs(x="\nSpecies and Locality", 
+       y="Count\n") +
+    theme(axis.title = element_text(family = "Century Gothic",
+      size = 14, face = "bold"),
+        axis.text = element_text(family="Century Gothic",size = 12),
+      axis.text.x = element_text(angle=90, vjust=0.5, hjust=1),
+        legend.position = "none")
+
+ggsave(fig_modSpp_loc, filename = "figs/fig_modSpp_loc.png", width=40, height=10, device = png(), units="in", dpi = 300); dev.off()
+
+## Some interesting patterns of certain species being more abundant/detected in certain sites over others. 
+```
+
+
+
+
