@@ -1,0 +1,104 @@
+---
+editor_options: 
+  chunk_output_type: console
+---
+
+# Historical-modern occurrence comparisons
+
+Here, we will compare historical and modern occurrence data and test for differences in presences/absences of species across time periods and sites
+
+### Load necessary libraries
+```{r}
+library(dplyr)
+library(stringr)
+library(tidyverse)
+library(scico)
+library(RColorBrewer)
+library(extrafont)
+```
+
+### Load historical and modern occurrence data
+
+For the historical occurrence data, we will choose data from the time period 1850-1900 as majority of specimen collections were carried out in this time period. Further below, we will also choose data from 1900-1950 to explore comparisons with modern occurrence data. 
+```{r}
+## read in historical occurrence data
+hist_occ <- read.csv("data/historical-occurrence-data.csv")
+hist_occ <- hist_occ %>%
+  filter(year <=1900)
+
+## filter by site and get unique species per site (historical)
+histOcc_spp <- hist_occ %>%
+  group_by(scientific_name, historical_site_code) %>%
+  count()
+
+colnames(histOcc_spp)[3] <- "histCount"
+
+## read in modern occurrence data
+mod_occ <- read.csv("data/modern-occurrence-data.csv")
+
+## filter by site and get unique species per site (modern)
+modOcc_spp <- mod_occ %>%
+  filter(!is.na(historical_site_code)) %>%
+  group_by(scientific_name, historical_site_code) %>%
+  count()
+
+colnames(modOcc_spp)[3] <- "modCount"
+```
+
+### Comparing historical-modern counts
+
+```{r}
+## joining historical and modern occurrence datasets
+hist_mod <- full_join(histOcc_spp, modOcc_spp, by=c("scientific_name","historical_site_code")) %>%
+  filter(!is.na(scientific_name))
+
+## species absent in modern surveys
+## naive extinctions
+modExt <- hist_mod %>%
+  filter(is.na(modCount)) %>%
+  group_by(scientific_name,historical_site_code) %>%
+  count()
+
+# A total of 122 unique species were not detected across the modern resurvey. 
+
+# write to file
+write.csv(modExt, "results/naive-undetectedExtinct-spp.csv", row.names = F)
+
+# figure of species by locality
+fig_modExt <- ggplot(modExt, aes(x=historical_site_code, y=n, fill=historical_site_code)) + geom_bar(stat="identity", position=position_dodge(), fill="#883107", alpha=0.9) +
+  geom_text(aes(label=n, hjust="middle", vjust=-0.5), 
+            position = position_dodge(), angle=0, size=5) +
+  facet_wrap(~scientific_name) +
+    theme_bw() +
+    labs(x="\nSite", 
+       y="Count\n") +
+    theme(axis.title = element_text(family = "Century Gothic",
+      size = 14, face = "bold"),
+        axis.text = element_text(family="Century Gothic",size = 13),
+      axis.text.x = element_text(angle=90, vjust=0.5, hjust=1),
+        legend.position = "none")
+
+ggsave(fig_modExt, filename = "figs/fig_modExt.png", width=20, height=10, device = png(), units="in", dpi = 300); dev.off()
+
+# number of naive non-detections by site/locality
+modExt_site <- modExt %>%
+  group_by(historical_site_code) %>%
+  count()
+
+# figure of naive non-detections by site
+fig_modExt_site <- ggplot(modExt_site, aes(x=historical_site_code, y=n, fill=historical_site_code)) + geom_bar(stat="identity", position=position_dodge(), fill="#883107", alpha=0.9) +
+  geom_text(aes(label=n, hjust="middle", vjust=-0.5), 
+            position = position_dodge(), angle=0, size=5) +
+    theme_bw() +
+    labs(x="\nSite", 
+       y="Count\n") +
+    theme(axis.title = element_text(family = "Century Gothic",
+      size = 14, face = "bold"),
+        axis.text = element_text(family="Century Gothic",size = 14),
+      axis.text.x = element_text(angle=90, vjust=0.5, hjust=1),
+        legend.position = "none")
+
+ggsave(fig_modExt_site, filename = "figs/fig_modExt_by_site.png", width=15, height=10, device = png(), units="in", dpi = 300); dev.off()
+```
+
+
