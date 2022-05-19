@@ -23,8 +23,8 @@ library(stars)
 ## Load data
 
 ```{r}
-error_data = read_csv("data/output/data_gam_comparison_mae.csv")
-survey_clim = read_csv("data/output/data_gam_compare_survey_sites.csv")
+error_data <- read_csv("data/output/data_gam_comparison_mae.csv")
+survey_clim <- read_csv("data/output/data_gam_compare_survey_sites.csv")
 
 # load raster
 # load("data/output/model_pred_climate.Rds")
@@ -34,24 +34,24 @@ survey_clim = read_csv("data/output/data_gam_compare_survey_sites.csv")
 
 ```{r}
 # nest data
-error_data = nest(
+error_data <- nest(
   error_data,
   data = !c("climvar")
 )
 
-forms = distinct(survey_clim, form = forms)
+forms <- distinct(survey_clim, form = forms)
 
 # plot data
-plots = map2(
+plots <- map2(
   error_data$data, error_data$climvar,
   function(df, cl) {
-    ggplot(df)+
+    ggplot(df) +
       geom_boxplot(
         aes(
           forms, mae
         ),
         width = 0.5
-      )+
+      ) +
       geom_text(
         data = forms,
         aes(
@@ -64,12 +64,13 @@ plots = map2(
         col = "steelblue",
         alpha = 0.6,
         fontface = "italic"
-      )+
-      scale_y_log10()+
+      ) +
+      scale_y_log10() +
       facet_wrap(
-        ~season, labeller = label_both
-      )+
-      theme_grey(base_size = 10)+
+        ~season,
+        labeller = label_both
+      ) +
+      theme_grey(base_size = 10) +
       theme(
         strip.background = element_blank(),
         axis.text.y = element_text(
@@ -80,20 +81,22 @@ plots = map2(
         panel.border = element_rect(
           fill = NA, colour = "black"
         )
-      )+
+      ) +
       labs(
         x = "GAM formula",
         y = "Mean absolute error",
         title = ifelse(
-          cl == "ppt", 
+          cl == "ppt",
           "Precipation",
           "Mean temperature"
         )
       )
-  })
+  }
+)
 
-plots = wrap_plots(
-  plots, ncol = 1
+plots <- wrap_plots(
+  plots,
+  ncol = 1
 ) +
   plot_annotation(
     tag_levels = "A"
@@ -105,7 +108,8 @@ plots = wrap_plots(
   )
 
 ggsave(
-  plots, filename = "figures/fig_compare_models_general.png",
+  plots,
+  filename = "figures/fig_compare_models_general.png",
   width = 6,
   height = 8
 )
@@ -114,47 +118,48 @@ ggsave(
 ## Compare climate predictions at survey sites
 
 ```{r}
-survey_clim = group_by(survey_clim, climvar, season) |>
+survey_clim <- group_by(survey_clim, climvar, season) |>
   nest()
 
-plots_survey_pts = Map(
+plots_survey_pts <- Map(
   survey_clim$climvar, survey_clim$data, survey_clim$season,
   f = function(cvar, df, season) {
     ggplot(
       df
-    )+
+    ) +
       geom_abline(
         slope = 1
-      )+
+      ) +
       geom_point(
         aes(bioclim_val, pred_val),
         shape = 1,
         alpha = 0.8
-      )+
+      ) +
       scale_y_continuous(
         # trans = "sqrt"
         # trans = ggallin::ssqrt_trans
-      )+
+      ) +
       facet_grid(
-        ~ forms, scales = "free",
+        ~forms,
+        scales = "free",
         labeller = labeller(
           .multi_line = F,
           season = label_both
         )
-      )+
+      ) +
       theme_grey(
         base_size = 8
-      )+
+      ) +
       theme(
         legend.position = "top",
         panel.border = element_rect(
           fill = NA, colour = "black"
         )
-      )+
+      ) +
       labs(
         colur = "Model",
         title = ifelse(
-          cvar == "ppt", 
+          cvar == "ppt",
           glue::glue("Precipation; season: {season}"),
           glue::glue("Mean temperature; season: {season}")
         )
@@ -162,8 +167,9 @@ plots_survey_pts = Map(
   }
 )
 
-plots_survey_pts = wrap_plots(
-  plots_survey_pts, ncol = 1
+plots_survey_pts <- wrap_plots(
+  plots_survey_pts,
+  ncol = 1
 ) +
   plot_annotation(
     tag_levels = "A"
@@ -182,33 +188,33 @@ ggsave(
 
 ```{r}
 # load data
-gam_validation_pred = terra::rast("data/output/gam_pred_valid_avg.tif") |>
+gam_validation_pred <- terra::rast("data/output/gam_pred_valid_avg.tif") |>
   as.list()
-gam_validation_id = read_csv("data/output/gam_model_formulas.csv")
+gam_validation_id <- read_csv("data/output/gam_model_formulas.csv")
 
 # select and save
-gam_validation_pred = gam_validation_pred[gam_validation_id$climvar %in% 
-                                            c("ppt", "t_mean")]
-gam_validation_id = filter(gam_validation_id, climvar %in% c("ppt", "t_mean"))
+gam_validation_pred <- gam_validation_pred[gam_validation_id$climvar %in%
+  c("ppt", "t_mean")]
+gam_validation_id <- filter(gam_validation_id, climvar %in% c("ppt", "t_mean"))
 
 # link -- could have filtered here too -- oh well
-gam_validation_data = mutate(gam_validation_id, prediction = gam_validation_pred)
+gam_validation_data <- mutate(gam_validation_id, prediction = gam_validation_pred)
 ```
 
 ### Load BIOCLIM data
 
 ```{r}
-chelsa_temp = terra::rast("data/output/chelsa_temp_stack.tif") |>
+chelsa_temp <- terra::rast("data/output/chelsa_temp_stack.tif") |>
   as.list()
-chelsa_ppt = terra::rast("data/output/chelsa_ppt_stack.tif") |>
+chelsa_ppt <- terra::rast("data/output/chelsa_ppt_stack.tif") |>
   as.list()
 
 # make data
-chelsa_data =
+chelsa_data <-
   crossing(
-  season = c("rainy", "dry"),
-  climvar = c("t_mean", "ppt")
-) |>
+    season = c("rainy", "dry"),
+    climvar = c("t_mean", "ppt")
+  ) |>
   arrange(desc(climvar), desc(season)) |>
   mutate(
     chelsa_rast = append(chelsa_temp, chelsa_ppt)
@@ -219,13 +225,13 @@ chelsa_data =
 
 ```{r}
 # link prediction and residual
-gam_validation_data = gam_validation_data |>
+gam_validation_data <- gam_validation_data |>
   left_join(chelsa_data)
 
-gam_validation_data = mutate(
+gam_validation_data <- mutate(
   gam_validation_data,
   residual = map2(chelsa_rast, prediction, function(ch, pr) {
-    pr = terra::resample(pr, ch) # resampling required
+    pr <- terra::resample(pr, ch) # resampling required
     pr / ch
   })
 )
@@ -234,39 +240,39 @@ gam_validation_data = mutate(
 ### Temperature fractions
 
 ```{r}
-plots_temp_resid = filter(gam_validation_data, climvar == "t_mean") |>
+plots_temp_resid <- filter(gam_validation_data, climvar == "t_mean") |>
   select(-prediction, -chelsa_rast)
 
-plots_temp_resid = pmap(
+plots_temp_resid <- pmap(
   plots_temp_resid,
   .f = function(season, climvar, forms, residual) {
-    residual = st_as_stars(residual)
-    ggplot()+
+    residual <- st_as_stars(residual)
+    ggplot() +
       geom_stars(
         data = residual
-      )+
+      ) +
       scale_fill_continuous_diverging(
         palette = "Blue-Red 3",
         mid = 1,
         na.value = "transparent",
-        name = glue::glue("Prediction / BIOCLIM 
+        name = glue::glue("Prediction / BIOCLIM
                           {climvar}"),
         limits = c(0.5, 2),
         labels = scales::percent,
         trans = ggallin::ssqrt_trans
-      )+
-      theme_test(base_size = 6)+
+      ) +
+      theme_test(base_size = 6) +
       theme(
         legend.position = "right",
         legend.key.height = unit(10, "mm"),
         legend.key.width = unit(2, "mm"),
         axis.title = element_blank()
-      )+
+      ) +
       coord_sf(
         expand = F
-      )+
+      ) +
       labs(
-        title = glue::glue("variable: {climvar} season: {season} 
+        title = glue::glue("variable: {climvar} season: {season}
                            model: {forms}")
       )
   }
@@ -283,39 +289,39 @@ plots_temp_resid[[1]]
 ### Precipitation fractions
 
 ```{r}
-plots_ppt_resid = filter(gam_validation_data, climvar == "ppt") |>
+plots_ppt_resid <- filter(gam_validation_data, climvar == "ppt") |>
   select(-prediction, -chelsa_rast)
-plots_ppt_resid = pmap(
+plots_ppt_resid <- pmap(
   plots_ppt_resid,
   .f = function(season, climvar, forms, residual) {
-    residual = st_as_stars(residual)
-    ggplot()+
+    residual <- st_as_stars(residual)
+    ggplot() +
       geom_stars(
         data = residual
-      )+
+      ) +
       scale_fill_continuous_diverging(
         palette = "Vik",
         rev = T,
         mid = 1,
         na.value = "transparent",
-        name = glue::glue("Prediction / BIOCLIM 
+        name = glue::glue("Prediction / BIOCLIM
                           {climvar}"),
         limits = c(0.1, 5.5),
         labels = scales::percent,
         breaks = c(0.01, 0.5, seq(0.0, 5.5, 1))
-      )+
-      theme_test(base_size = 6)+
+      ) +
+      theme_test(base_size = 6) +
       theme(
         legend.position = "right",
         legend.key.height = unit(10, "mm"),
         legend.key.width = unit(2, "mm"),
         axis.title = element_blank()
-      )+
+      ) +
       coord_sf(
         expand = F
-      )+
+      ) +
       labs(
-        title = glue::glue("variable: {climvar} season: {season} 
+        title = glue::glue("variable: {climvar} season: {season}
                            model: {forms}")
       )
   }
@@ -358,30 +364,31 @@ Hence the 'true' historical value of a climate variable is $\text{GAM prediction
 
 ```{r}
 # subset validation dataset
-temp_correction_layer = gam_validation_data %>% 
+temp_correction_layer <- gam_validation_data %>%
   filter(
     climvar == "t_mean",
     forms == "value~s(elev, k = 3)"
   )
 
 # now get the correction layer
-temp_correction_layer = mutate(
+temp_correction_layer <- mutate(
   temp_correction_layer,
   correction_layer = map2(
     chelsa_rast, prediction, function(ch, pr) {
-      pr = terra::resample(pr, ch) # resampling required
+      pr <- terra::resample(pr, ch) # resampling required
       ch / pr
     }
   )
 )
 
 # make the correction layer a single raster stack object and name correctly
-temp_correction_layer = Reduce(
-  temp_correction_layer$correction_layer, f = c
+temp_correction_layer <- Reduce(
+  temp_correction_layer$correction_layer,
+  f = c
 )
 
 # set names for layers
-names(temp_correction_layer) = c(
+names(temp_correction_layer) <- c(
   "correction_layer_temp_dry",
   "correction_layer_temp_wet"
 )
@@ -397,30 +404,31 @@ terra::writeRaster(
 
 ```{r}
 # subset validation dataset
-ppt_correction_layer = gam_validation_data %>% 
+ppt_correction_layer <- gam_validation_data %>%
   filter(
     climvar == "ppt",
     forms == "value~s(elev, k = 3) + coast + lat"
   )
 
 # now get the correction layer
-ppt_correction_layer = mutate(
+ppt_correction_layer <- mutate(
   ppt_correction_layer,
   correction_layer = map2(
     chelsa_rast, prediction, function(ch, pr) {
-      pr = terra::resample(pr, ch) # resampling required
+      pr <- terra::resample(pr, ch) # resampling required
       ch / pr
     }
   )
 )
 
 # make the correction layer a single raster stack object and name correctly
-ppt_correction_layer = Reduce(
-  ppt_correction_layer$correction_layer, f = c
+ppt_correction_layer <- Reduce(
+  ppt_correction_layer$correction_layer,
+  f = c
 )
 
 # set names for layers
-names(ppt_correction_layer) = c(
+names(ppt_correction_layer) <- c(
   "correction_layer_ppt_dry",
   "correction_layer_ppt_wet"
 )

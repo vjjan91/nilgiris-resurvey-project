@@ -29,8 +29,10 @@ Load all shapefiles across time periods:
 Please note that the 1870 published maps were based on surveys carried out in 1848 across the landscape. 
 ```{r}
 # list all shapefiles in the directory
-nilgiris <- list.files("data/spatial/1870-nilgiris/", full.names = T,
-                    recursive = T, pattern=".shp$")
+nilgiris <- list.files("data/spatial/1870-nilgiris/",
+  full.names = T,
+  recursive = T, pattern = ".shp$"
+)
 
 # create vector files
 cultivated_nil1870 <- st_read(nilgiris[1])
@@ -45,7 +47,7 @@ waterBodies_nil1870 <- st_read(nilgiris[7])
 
 # fix class names and remove empty geometries
 plantations_nil1870$class <- "plantations"
-settlements_nil1870 <- settlements_nil1870[-371,]
+settlements_nil1870 <- settlements_nil1870[-371, ]
 
 # Note: the roads shapefile is a linestring while the other geometry types are polygon
 
@@ -59,18 +61,20 @@ waterBodies_nil1870 <- st_transform(waterBodies_nil1870, 32643)
 
 # some more processing to ensure class names are standardized across time periods
 forest_nil1870$class <- "Shola Forest"
-grassland_nil1870 <- st_cast(grassland_nil1870,"POLYGON")
+grassland_nil1870 <- st_cast(grassland_nil1870, "POLYGON")
 grassland_nil1870$class <- "Shola Grassland"
 waterBodies_nil1870$class <- "waterbodies"
 
 # creating a single simple feature collection
-nil1870 <- rbind(cultivated_nil1870, forest_nil1870, grassland_nil1870,
-           plantations_nil1870, settlements_nil1870, waterBodies_nil1870)
+nil1870 <- rbind(
+  cultivated_nil1870, forest_nil1870, grassland_nil1870,
+  plantations_nil1870, settlements_nil1870, waterBodies_nil1870
+)
 
 # crop the 1870 shapefiles to within the 1400m contour only
 nil1870 <- st_buffer(nil1870, dist = 0)
 nil1870 <- st_intersection(nil1870, contourNil)
-nil1870 <- nil1870[,-c(4,5,6)]
+nil1870 <- nil1870[, -c(4, 5, 6)]
 
 # the above steps have resulted in a single dataframe for the 1400m contour only
 ```
@@ -78,19 +82,21 @@ nil1870 <- nil1870[,-c(4,5,6)]
 Loading the Kundah 1870 shapefiles
 ```{r}
 # load the Kundah 1870 shapefiles
-kundah <- list.files("data/spatial/1870-kundah/", full.names = T,
-                    recursive = T, pattern=".shp$")
+kundah <- list.files("data/spatial/1870-kundah/",
+  full.names = T,
+  recursive = T, pattern = ".shp$"
+)
 
 # create vector files
 forest_kun1870 <- st_read(kundah[1])
 grassland_kun1870 <- st_read(kundah[2])
 settlements_kun1870 <- st_read(kundah[3])
 waterbodies_kun1870 <- st_read(kundah[4])
-#whitebars_kun1870 <- st_read(kundah[5])
+# whitebars_kun1870 <- st_read(kundah[5])
 
 # explore and fix any issues with the above vector files
 
-names(forest_kun1870) <- c("id","class","gridcode","geometry")
+names(forest_kun1870) <- c("id", "class", "gridcode", "geometry")
 settlements_kun1870$class <- "settlements"
 
 # transform to UTM 43N
@@ -101,24 +107,24 @@ waterbodies_kun1870 <- st_transform(waterbodies_kun1870, 32643)
 
 # some more processing to ensure class names are standardized across time periods
 forest_kun1870$class <- "Shola Forest"
-grassland_kun1870 <- st_cast(grassland_kun1870,"POLYGON")
+grassland_kun1870 <- st_cast(grassland_kun1870, "POLYGON")
 grassland_kun1870$class <- "Shola Grassland"
 
 # creating a single simple feature collection
 kun1870 <- rbind(forest_kun1870, grassland_kun1870, settlements_kun1870, waterbodies_kun1870)
 
 # crop the 1870 shapefiles to within the 1400m contour only
-kun1870 <- st_buffer(kun1870,dist=0)
+kun1870 <- st_buffer(kun1870, dist = 0)
 kun1870 <- st_intersection(kun1870, contourNil)
-kun1870 <- kun1870[,-c(4,5,6)]
+kun1870 <- kun1870[, -c(4, 5, 6)]
 
 # cast once to make sure all are polygons
-kun1870 <- st_cast(kun1870,"POLYGON")
+kun1870 <- st_cast(kun1870, "POLYGON")
 
-# Combine the nilgiris 1870 (Ouchterlony map) and the kundah 1870 for clipping 
+# Combine the nilgiris 1870 (Ouchterlony map) and the kundah 1870 for clipping
 # with files from other time periods (see below)
 all1870 <- rbind(nil1870, kun1870)
-all1870 <- st_buffer(st_union(all1870),dist=0)
+all1870 <- st_buffer(st_union(all1870), dist = 0)
 ```
 
 
@@ -135,25 +141,29 @@ nil2017 <- st_read("data/spatial/2017-nilgiris/2017D.shp")
 
 # Let's first add class name to nil1973 shapefile
 nil1973 <- nil1973 %>%
-  mutate(class = case_when(gridcode == 1 ~ "Shola Grassland",
-                           gridcode == 2 ~ "Shola Forest",
-                           gridcode == 3 ~ "Timber Plantations",
-                           gridcode == 4 ~ "Tea Plantations",
-                           gridcode == 5 ~ "Ochlandra",
-                           gridcode == 6 ~ "Settlements",
-                           gridcode == 7 ~ "Agricultural Land",
-                           gridcode == 8 ~ "Water bodies"))
+  mutate(class = case_when(
+    gridcode == 1 ~ "Shola Grassland",
+    gridcode == 2 ~ "Shola Forest",
+    gridcode == 3 ~ "Timber Plantations",
+    gridcode == 4 ~ "Tea Plantations",
+    gridcode == 5 ~ "Ochlandra",
+    gridcode == 6 ~ "Settlements",
+    gridcode == 7 ~ "Agricultural Land",
+    gridcode == 8 ~ "Water bodies"
+  ))
 
 # Let's add class name to nil1995 shapefile
 nil1995 <- nil1995 %>%
-  mutate(class = case_when(gridcode == 1 ~ "Shola Grassland",
-                           gridcode == 2 ~ "Shola Forest",
-                           gridcode == 3 ~ "Timber Plantations",
-                           gridcode == 4 ~ "Tea Plantations",
-                           gridcode == 5 ~ "Ochlandra",
-                           gridcode == 6 ~ "Settlements",
-                           gridcode == 7 ~ "Agricultural Land",
-                           gridcode == 8 ~ "Water bodies"))
+  mutate(class = case_when(
+    gridcode == 1 ~ "Shola Grassland",
+    gridcode == 2 ~ "Shola Forest",
+    gridcode == 3 ~ "Timber Plantations",
+    gridcode == 4 ~ "Tea Plantations",
+    gridcode == 5 ~ "Ochlandra",
+    gridcode == 6 ~ "Settlements",
+    gridcode == 7 ~ "Agricultural Land",
+    gridcode == 8 ~ "Water bodies"
+  ))
 
 # cast from MULTIPOLYGON to POLYGON to match nil2017 shapefile
 nil1973 <- st_cast(nil1973, "POLYGON")
@@ -169,7 +179,6 @@ nil2017 <- st_intersection(nil2017, all1870)
 # nil1973 <- st_cast(nil1973,"POLYGON")
 # nil1995 <- st_cast(nil1995,"POLYGON")
 # nil2017 <- st_cast(nil2017,"POLYGON")
-
 ```
 
 Calculating areas of land cover types 
@@ -182,112 +191,125 @@ Let's first carry out area-based analysis (we will use rasters for now)
 
 # nil1870 raster
 vectnil1870 <- terra::vect(nil1870)
-emptyRast <- terra::rast(res = 12,xmin=661012.738348484, xmax= 718286.685853398, ymin=1240744.4111945, ymax=1275965.51753469, crs="+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
-rastnil1870 <- terra::rasterize(vectnil1870, emptyRast,"class")
+emptyRast <- terra::rast(res = 12, xmin = 661012.738348484, xmax = 718286.685853398, ymin = 1240744.4111945, ymax = 1275965.51753469, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
+rastnil1870 <- terra::rasterize(vectnil1870, emptyRast, "class")
 
 # kun1870 raster
 vectkun1870 <- terra::vect(kun1870)
-emptyRast <- terra::rast(res = 6, xmin= 655224.34214709, xmax = 684285.317723394, ymin = 1230555.09211126, ymax = 1259825.72789338, crs="+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
-rastkun1870 <- terra::rasterize(vectkun1870, emptyRast,"class")
+emptyRast <- terra::rast(res = 6, xmin = 655224.34214709, xmax = 684285.317723394, ymin = 1230555.09211126, ymax = 1259825.72789338, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
+rastkun1870 <- terra::rasterize(vectkun1870, emptyRast, "class")
 
 # Let's load the 1973, 1995 and 2017 series and rasterize them
 vectnil1973 <- vect(nil1973)
-emptyRast1973 <- terra::rast(res = 30,xmin=655224.34214709, xmax= 718286.685853398, ymin=1230555.09211126, ymax=1275965.51753469, crs="+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
-rastnil1973 <- terra::rasterize(vectnil1973, emptyRast1973,"class")
-sz1973 <- cellSize(rastnil1973, unit="m")
+emptyRast1973 <- terra::rast(res = 30, xmin = 655224.34214709, xmax = 718286.685853398, ymin = 1230555.09211126, ymax = 1275965.51753469, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
+rastnil1973 <- terra::rasterize(vectnil1973, emptyRast1973, "class")
+sz1973 <- cellSize(rastnil1973, unit = "m")
 areaRast1973 <- zonal(sz1973, rastnil1973, sum)
-areaRast1973SqKm <- (areaRast1973$area/1000000)
-areaRast1973 <- cbind(areaRast1973,areaRast1973SqKm)
-names(areaRast1973) <- c("class","areaInMeters","sumArea")
+areaRast1973SqKm <- (areaRast1973$area / 1000000)
+areaRast1973 <- cbind(areaRast1973, areaRast1973SqKm)
+names(areaRast1973) <- c("class", "areaInMeters", "sumArea")
 
 # 1995
 vectnil1995 <- vect(nil1995)
-emptyRast1995 <- terra::rast(res = 30,xmin=655224.34214709, xmax= 718286.685853398, ymin=1230555.09211126, ymax=1275965.51753469, crs="+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
-rastnil1995 <- terra::rasterize(vectnil1995, emptyRast1995,"class")
-sz1995 <- cellSize(rastnil1995, unit="m")
+emptyRast1995 <- terra::rast(res = 30, xmin = 655224.34214709, xmax = 718286.685853398, ymin = 1230555.09211126, ymax = 1275965.51753469, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
+rastnil1995 <- terra::rasterize(vectnil1995, emptyRast1995, "class")
+sz1995 <- cellSize(rastnil1995, unit = "m")
 areaRast1995 <- zonal(sz1995, rastnil1995, sum)
-areaRast1995SqKm <- (areaRast1995$area/1000000)
-areaRast1995 <- cbind(areaRast1995,areaRast1995SqKm)
-names(areaRast1995) <- c("class","areaInMeters","sumArea")
+areaRast1995SqKm <- (areaRast1995$area / 1000000)
+areaRast1995 <- cbind(areaRast1995, areaRast1995SqKm)
+names(areaRast1995) <- c("class", "areaInMeters", "sumArea")
 
 # 2017
 vectnil2017 <- vect(nil2017)
-emptyRast2017 <- terra::rast(res = 30,xmin=655224.34214709, xmax= 718286.685853398, ymin=1230555.09211126, ymax=1275965.51753469, crs="+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
-rastnil2017 <- terra::rasterize(vectnil2017, emptyRast2017,"class")
-sz2017 <- cellSize(rastnil2017, unit="m")
+emptyRast2017 <- terra::rast(res = 30, xmin = 655224.34214709, xmax = 718286.685853398, ymin = 1230555.09211126, ymax = 1275965.51753469, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
+rastnil2017 <- terra::rasterize(vectnil2017, emptyRast2017, "class")
+sz2017 <- cellSize(rastnil2017, unit = "m")
 areaRast2017 <- zonal(sz2017, rastnil2017, sum)
-areaRast2017SqKm <- (areaRast2017$area/1000000)
-areaRast2017 <- cbind(areaRast2017,areaRast2017SqKm)
-names(areaRast2017) <- c("class","areaInMeters","sumArea")
+areaRast2017SqKm <- (areaRast2017$area / 1000000)
+areaRast2017 <- cbind(areaRast2017, areaRast2017SqKm)
+names(areaRast2017) <- c("class", "areaInMeters", "sumArea")
 
 # resampling rasters to ensure they are all of the same spatial resolution and extent
 # We have to do this for the nil1870 and kun1870 rasters
 
-resamNil1870 <- terra::resample(rastnil1870, rastnil1973, method="near")
-sz1870 <- cellSize(resamNil1870, unit="m")
+resamNil1870 <- terra::resample(rastnil1870, rastnil1973, method = "near")
+sz1870 <- cellSize(resamNil1870, unit = "m")
 areaNil1870 <- zonal(sz1870, resamNil1870, sum)
-areaNil1870SqKm <- (areaNil1870$area/1000000)
-areaNil1870 <- cbind(areaNil1870,areaNil1870SqKm)
+areaNil1870SqKm <- (areaNil1870$area / 1000000)
+areaNil1870 <- cbind(areaNil1870, areaNil1870SqKm)
 
-resamKun1870 <- terra::resample(rastkun1870, rastnil1973, method="near")
-sz1870 <- cellSize(resamKun1870, unit="m")
+resamKun1870 <- terra::resample(rastkun1870, rastnil1973, method = "near")
+sz1870 <- cellSize(resamKun1870, unit = "m")
 areaKun1870 <- zonal(sz1870, resamKun1870, sum)
-areaKun1870SqKm <- (areaKun1870$area/1000000)
-areaKun1870 <- cbind(areaKun1870,areaKun1870SqKm)
+areaKun1870SqKm <- (areaKun1870$area / 1000000)
+areaKun1870 <- cbind(areaKun1870, areaKun1870SqKm)
 
 # Joining the nil1870 and kun1870 statistics to get a single table
 
-areaNil1870 <-  left_join(areaNil1870, areaKun1870, by=c("class"="class")) %>%
+areaNil1870 <- left_join(areaNil1870, areaKun1870, by = c("class" = "class")) %>%
   filter(!is.na(class)) %>%
   rowwise() %>%
   mutate(sumArea = sum(areaNil1870SqKm, areaKun1870SqKm, na.rm = T)) %>%
   select(class, sumArea)
 
-areaNil1870$class <- c("Shola Forest","Shola Grassland",
-                              "Agricultural Land", "Plantations (Tea & Timber)",
-                              "Settlements", "Water bodies")
+areaNil1870$class <- c(
+  "Shola Forest", "Shola Grassland",
+  "Agricultural Land", "Plantations (Tea & Timber)",
+  "Settlements", "Water bodies"
+)
 
 
-trial <-mosaic(resamNil1870,resamKun1870)
-szt <- cellSize(trial, unit="m")
+trial <- mosaic(resamNil1870, resamKun1870)
+szt <- cellSize(trial, unit = "m")
 
 area <- zonal(szt, trial, sum)
-areasqm <- (area$area/1000000)
-area <- cbind(area,areasqm)
-
+areasqm <- (area$area / 1000000)
+area <- cbind(area, areasqm)
 ```
 
 
 Making plots of the overall area of land cover types
 ```{r}
 # Joining all dataframes to create a single one for plotting and visualization
-areaCalc <- purrr::reduce(list(areaNil1870, areaRast1973, areaRast1995,
-                            areaRast2017), dplyr::full_join, by = 'class')
-names(areaCalc)<- c("class","1870","areaMt1973","1973","areaMt1995","1995","areaMt2017","2017")
+areaCalc <- purrr::reduce(list(
+  areaNil1870, areaRast1973, areaRast1995,
+  areaRast2017
+), dplyr::full_join, by = "class")
+names(areaCalc) <- c("class", "1870", "areaMt1973", "1973", "areaMt1995", "1995", "areaMt2017", "2017")
 
-areaCalc <-  areaCalc %>%
+areaCalc <- areaCalc %>%
   select("class", "1870", "1973", "1995", "2017") %>%
   pivot_longer(!class, names_to = "Year", values_to = "Area")
 
-write.csv(areaCalc,"results/totalArea-by-landCover-timePeriod.csv", row.names = F)
+write.csv(areaCalc, "results/totalArea-by-landCover-timePeriod.csv", row.names = F)
 
 # make plot
-fig_area <- ggplot(areaCalc, aes(x=class, y = Area, fill=class)) + geom_bar(stat="identity", position=position_dodge(), fill="#883107", alpha=0.9) +
-    geom_text(aes(label = round(Area), hjust="middle", vjust=-0.5), 
-             position = position_dodge(), angle=0, size=5) +
+fig_area <- ggplot(areaCalc, aes(x = class, y = Area, fill = class)) +
+  geom_bar(stat = "identity", position = position_dodge(), fill = "#883107", alpha = 0.9) +
+  geom_text(aes(label = round(Area), hjust = "middle", vjust = -0.5),
+    position = position_dodge(), angle = 0, size = 5
+  ) +
   scale_fill_scico_d(palette = "batlow") +
-    facet_wrap(~Year) +
-    theme_bw() +
-    labs(x="\nLand cover type", 
-         y="Area in sq.km. \n") +
-    theme(axis.title = element_text(family = "Century Gothic",
-                                    size = 14, face = "bold"),
-          axis.text = element_text(family="Century Gothic",size = 14),
-          axis.text.x = element_text(angle=90, vjust=0.5, hjust=1),
-          legend.position = "none")
+  facet_wrap(~Year) +
+  theme_bw() +
+  labs(
+    x = "\nLand cover type",
+    y = "Area in sq.km. \n"
+  ) +
+  theme(
+    axis.title = element_text(
+      family = "Century Gothic",
+      size = 14, face = "bold"
+    ),
+    axis.text = element_text(family = "Century Gothic", size = 14),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
+    legend.position = "none"
+  )
 
-ggsave(fig_area, filename = "figs/fig_totalArea_landCover.png", width=15, height=13,
-         device = png(), units="in", dpi = 300)
+ggsave(fig_area,
+  filename = "figs/fig_totalArea_landCover.png", width = 15, height = 13,
+  device = png(), units = "in", dpi = 300
+)
 ```
 
 
@@ -296,25 +318,33 @@ Create a figure of proportion of landcover across areas over time
 # get percentArea occupied by each land cover class
 percentArea <- areaCalc %>%
   group_by(Year) %>%
-  mutate(totalArea = sum(Area,na.rm = T),
-         percentArea = (Area/totalArea)*100)
+  mutate(
+    totalArea = sum(Area, na.rm = T),
+    percentArea = (Area / totalArea) * 100
+  )
 
 # plot figure
-fig_percent_area <- ggplot(percentArea, aes(x=class, y = percentArea, fill=class)) + geom_bar(stat="identity", position=position_dodge(), alpha=0.9) +
-    geom_text(aes(label = round(percentArea, digits=1), hjust="middle", vjust=-0.5),              position = position_dodge(), angle=0, size=5) +
+fig_percent_area <- ggplot(percentArea, aes(x = class, y = percentArea, fill = class)) +
+  geom_bar(stat = "identity", position = position_dodge(), alpha = 0.9) +
+  geom_text(aes(label = round(percentArea, digits = 1), hjust = "middle", vjust = -0.5), position = position_dodge(), angle = 0, size = 5) +
   scale_fill_scico_d(palette = "batlow") +
-    facet_wrap(~Year) +
-    theme_bw() +
-    labs(x="\nLand cover type", 
-         y="Percent Area \n") +
-    theme(axis.title = element_text(family = "Century Gothic",
-                                    size = 14, face = "bold"),
-          axis.text = element_text(family="Century Gothic",size = 14),
-          axis.text.x = element_text(angle=90, vjust=0.5, hjust=1),
-          legend.position = "none")
+  facet_wrap(~Year) +
+  theme_bw() +
+  labs(
+    x = "\nLand cover type",
+    y = "Percent Area \n"
+  ) +
+  theme(
+    axis.title = element_text(
+      family = "Century Gothic",
+      size = 14, face = "bold"
+    ),
+    axis.text = element_text(family = "Century Gothic", size = 14),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
+    legend.position = "none"
+  )
 
-ggsave(fig_percent_area, filename = "figs/fig_percentArea_landCover.png", width=14, height=13, device = png(), units="in", dpi = 300)
-
+ggsave(fig_percent_area, filename = "figs/fig_percentArea_landCover.png", width = 14, height = 13, device = png(), units = "in", dpi = 300)
 ```
 
 
