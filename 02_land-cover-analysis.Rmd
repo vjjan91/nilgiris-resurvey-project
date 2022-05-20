@@ -3,9 +3,11 @@ editor_options:
   chunk_output_type: console
 ---
 
-# Land cover data
+# Land cover data analysis
 
-This script analyzes land cover data between 1870 and 2017
+In this script, we will analyze land cover changes for multiple land cover classes between 1870 and 2017.  
+
+### Load necessary libraries
 ```{r}
 library(sf)
 library(raster)
@@ -18,28 +20,30 @@ library(landscapemetrics)
 library(scico)
 ```
 
-Load the contour for the Nilgiris to which all other shapefiles will be clipped to
+### Load the Nilgiris contour 
+
+This is the contour to which all other shapefiles will be clipped to and is essentially a 1400 m contour. 
 ```{r}
 # load the 1400m contour
 contourNil <- st_read("data/spatial/contour-1400m-nilgiris.shp")
 ```
 
-Load all shapefiles across time periods:
+### Loading digitized shapefiles of the 1870 Ouchterlony map
 
-Please note that the 1870 published maps were based on surveys carried out in 1848 across the landscape. 
+The 1870 published maps were based on a survey carried out in 1848 by J. Ouchterlony. 
 ```{r}
 # list all shapefiles in the directory
-nilgiris <- list.files("data/spatial/1870-nilgiris/", full.names = T,
+nilgiris1870 <- list.files("data/spatial/1870-nilgiris/", full.names = T,
                     recursive = T, pattern=".shp$")
 
 # create vector files
-cultivated_nil1870 <- st_read(nilgiris[1])
-forest_nil1870 <- st_read(nilgiris[2])
-grassland_nil1870 <- st_read(nilgiris[3])
-plantations_nil1870 <- st_read(nilgiris[4])
-roads_nil1870 <- st_read(nilgiris[5])
-settlements_nil1870 <- st_read(nilgiris[6])
-waterBodies_nil1870 <- st_read(nilgiris[7])
+cultivated_nil1870 <- st_read(nilgiris1870[1])
+forest_nil1870 <- st_read(nilgiris1870[2])
+grassland_nil1870 <- st_read(nilgiris1870[3])
+plantations_nil1870 <- st_read(nilgiris1870[4])
+roads_nil1870 <- st_read(nilgiris1870[5])
+settlements_nil1870 <- st_read(nilgiris1870[6])
+waterBodies_nil1870 <- st_read(nilgiris1870[7])
 
 # explore and fix any issues with the above vector files
 
@@ -75,7 +79,9 @@ nil1870 <- nil1870[,-c(4,5,6)]
 # the above steps have resulted in a single dataframe for the 1400m contour only
 ```
 
-Loading the Kundah 1870 shapefiles
+### Loading the Kundah 1870 digitized shapefiles
+
+These shapefiles have been digitized from a map of the Koondah mountains (based on a survey by J. Ouchterlony).  
 ```{r}
 # load the Kundah 1870 shapefiles
 kundah <- list.files("data/spatial/1870-kundah/", full.names = T,
@@ -120,6 +126,67 @@ kun1870 <- st_cast(kun1870,"POLYGON")
 all1870 <- rbind(nil1870, kun1870)
 all1870 <- st_buffer(st_union(all1870),dist=0)
 ```
+
+### Load digitized shapefiles of a 1910 map
+
+The 1910 map is a stitched raster based on tiles created by Survey of India.  
+
+```{r}
+# load the nilgiris 1910 shapefiles
+nil1910 <- list.files("data/spatial/1910-nilgiris/", full.names = T,
+                    recursive = T, pattern=".shp$")
+
+# create vector files
+cultivated_nil1910 <- st_read(nil1910[1])
+forest_nil1910 <- st_read(nil1910[2])
+grassland_nil1910 <- st_read(nil1910[3])
+plantations_nil1910 <- st_read(nil1910[4]) # note: 1 geometry is empty
+settlements_nil1910 <- st_read(nil1910[5])
+unclassified_nil1910 <- st_read(nil1910[6])
+waterBodies_nil1910 <- st_read(nil1910[7])
+
+# fixing issues with the vector files above
+# remove empty geometries and correct column name errors
+plantations_nil1910 <- plantations_nil1910[-35,]
+names(forest_nil1910)[2] <- "class"
+names(unclassified_nil1910)[2] <- "class"
+names(waterBodies_nil1910)[2] <- "class"
+
+# fix class names
+settlements_nil1910$class <- "settlements"
+forest_nil1910$class <- "Shola Forest"
+grassland_nil1910$class <- "Shola Grassland"
+
+# transform to UTM 43N
+cultivated_nil1910 <- st_transform(cultivated_nil1910, 32643)
+forest_nil1910 <- st_transform(forest_nil1910, 32643)
+grassland_nil1910 <- st_transform(grassland_nil1910, 32643)
+plantations_nil1910 <- st_transform(plantations_nil1910, 32643)
+settlements_nil1910 <- st_transform(settlements_nil1910, 32643)
+unclassified_nil1910 <- st_transform(unclassified_nil1910, 32643)
+waterBodies_nil1910 <- st_transform(waterBodies_nil1910, 32643)
+
+# creating a single simple feature collection
+nil1910 <- rbind(cultivated_nil1910, forest_nil1910, grassland_nil1910,
+           plantations_nil1910, settlements_nil1910, unclassified_nil1910, 
+           waterBodies_nil1870)
+
+
+# to do:
+# st_cast the multipolygons to polygons?
+# overlap in multiple land cover....?
+# maybe don't rbind them? hmmm but it needs to be the same contour that's all
+# overlap doesnt matter because we are calculating area of class by class? 
+
+# crop the 1910 shapefiles to within the 1400m contour only
+nil1910 <- st_buffer(nil1910,dist=0)
+nil1910 <- st_intersection(nil1910, all1870)
+kun1870 <- kun1870[,-c(4,5,6)]
+
+  
+
+```
+
 
 
 Load the shapefiles from 1973, 1995 and 2017 for the Nilgiris
@@ -172,7 +239,7 @@ nil2017 <- st_intersection(nil2017, all1870)
 
 ```
 
-Calculating areas of land cover types 
+### Calculating area of land cover types 
 
 The decision to use a vector or raster for further analysis depends on the question being asked. Please refer to script in code/01_vectorVsRaster.R
 
