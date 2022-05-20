@@ -33,15 +33,8 @@ contourNil <- st_read("data/spatial/contour-1400m-nilgiris.shp")
 The 1870 published maps were based on a survey carried out in 1848 by J. Ouchterlony. 
 ```{r}
 # list all shapefiles in the directory
-<<<<<<< HEAD:02_land-cover-analysis.Rmd
 nilgiris1870 <- list.files("data/spatial/1870-nilgiris/", full.names = T,
                     recursive = T, pattern=".shp$")
-=======
-nilgiris <- list.files("data/spatial/1870-nilgiris/",
-  full.names = T,
-  recursive = T, pattern = ".shp$"
-)
->>>>>>> 5911f2d9b78c6c443539ebf23034def12b065220:scripts/02_land-cover-analysis.Rmd
 
 # create vector files
 cultivated_nil1870 <- st_read(nilgiris1870[1])
