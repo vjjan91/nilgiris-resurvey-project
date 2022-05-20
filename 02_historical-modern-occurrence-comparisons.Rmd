@@ -62,7 +62,7 @@ modExt <- hist_mod %>%
 # A total of 122 unique species were not detected across the modern resurvey. 
 
 # write to file
-write.csv(modExt, "results/naive-undetectedExtinct-spp.csv", row.names = F)
+write.csv(modExt, "results/naive-undetected-spp.csv", row.names = F)
 
 # figure of species by locality
 fig_modExt <- ggplot(modExt, aes(x=historical_site_code, y=n, fill=historical_site_code)) + geom_bar(stat="identity", position=position_dodge(), fill="#883107", alpha=0.9) +
