@@ -49,3 +49,14 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+#ignore these files
+
+# ignore data
+data/raw
+data/output
+data/spatial
+.Rproj.user
+
+# allow chelsa list
+!*envidatS3paths.txt
