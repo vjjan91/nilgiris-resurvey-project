@@ -84,73 +84,31 @@ nil1870 <- nil1870[, -c(4, 5, 6)]
 ### Load digitized shapefiles of a 1910 map
 
 The 1910 map is a stitched raster based on tiles created by Survey of India.  
-
 ```{r}
 # load the nilgiris 1910 shapefiles
-nil1910 <- list.files("data/spatial/1910-nilgiris/", full.names = T,
-                    recursive = T, pattern=".shp$")
+nil1910 <- st_read("data/spatial/1910-nilgiris/1910.shp")
 
-# create vector files
-cultivated_nil1910 <- st_read(nil1910[1])
-forest_nil1910 <- st_read(nil1910[2])
-grassland_nil1910 <- st_read(nil1910[3])
-plantations_nil1910 <- st_read(nil1910[4]) # note: 1 geometry is empty
-settlements_nil1910 <- st_read(nil1910[5])
-unclassified_nil1910 <- st_read(nil1910[6])
-waterBodies_nil1910 <- st_read(nil1910[7])
+# note that there are four geometries empty and certain class names need to be fixed
+# the CRS is a projected coordinate system (UTM43N)
 
-# fixing issues with the vector files above
-# remove empty geometries and correct column name errors
-plantations_nil1910 <- plantations_nil1910[-35,]
-names(forest_nil1910)[2] <- "class"
-names(unclassified_nil1910)[2] <- "class"
-names(waterBodies_nil1910)[2] <- "class"
+# remove empty geometries
+nil1910 <- nil1910[!st_is_empty(nil1910$geometry),]
 
-# fix class names
-settlements_nil1910$class <- "settlements"
-forest_nil1910$class <- "Shola Forest"
-grassland_nil1910$class <- "Shola Grassland"
+# renaming column values for class column
+names(nil1910)[2] <- "class"
+nil1910$class <- recode(nil1910$class,
+                      "cultivated areacultivated area" = "cultivated area",
+                      "grassland" = "Shola Grassland",
+                      "remaining" = "Unclassified area",
+                      "reserve forest" = "Shola Forest")
 
 # transform to UTM 43N
-cultivated_nil1910 <- st_transform(cultivated_nil1910, 32643)
-forest_nil1910 <- st_transform(forest_nil1910, 32643)
-grassland_nil1910 <- st_transform(grassland_nil1910, 32643)
-plantations_nil1910 <- st_transform(plantations_nil1910, 32643)
-settlements_nil1910 <- st_transform(settlements_nil1910, 32643)
-unclassified_nil1910 <- st_transform(unclassified_nil1910, 32643)
-waterBodies_nil1910 <- st_transform(waterBodies_nil1910, 32643)
+nil1910 <- st_transform(nil1910, 32643)
 
-# creating a single simple feature collection
-nil1910 <- rbind(cultivated_nil1910, forest_nil1910, grassland_nil1910,
-           plantations_nil1910, settlements_nil1910, unclassified_nil1910, 
-           waterBodies_nil1870)
-
-# crop the 1910 shapefiles to within the 1400m contour only
-nil1910 <- st_buffer(nil1910,dist=0)
-nil1910 <- st_intersection(nil1910, all1870)
-
-
-trial <-  st_read("data/spatial/1910-new-clipped-version.shp")
-
-trial <- st_read("data/spatial/1910-nilgiris/1910.shp")
-trial <- st_buffer(trial, dist = 0)
-
+# clip to Nilgiris 1870 boundary
 boundToClip <- st_buffer(st_union(nil1870), dist = 0)
-
-trial2 <- st_intersection(trial, boundToClip)
-
-# we decided to use the 1870 nilgiris raster only as the boundary to clip to 
-# fix the names of land cover classes for 1910
-# double check if certain rows are being duplicated??
-# clip 1910 by 1870 boundary
-# clip 1973, 1995, 2017 by 1870 boundary
-
-# then land cover change detection
-
-
-trial3 <- st_intersection(trial, contourNil)
-
-
+nil1910 <- st_buffer(nil1910, dist = 0)
+nil1910 <- st_intersection(nil1910, boundToClip)
 ```
 
 
@@ -191,35 +149,24 @@ nil1995 <- nil1995 %>%
     gridcode == 8 ~ "Water bodies"
   ))
 
-# cast from MULTIPOLYGON to POLYGON to match nil2017 shapefile (not required @pratikunterwegs?)
-# nil1973 <- st_cast(nil1973, "POLYGON")
-# nil1995 <- st_cast(nil1995, "POLYGON")
-
 # crop the 1973, 1995 and 2017 shapefiles to within the 1400m contour only
-nil1973 <- st_intersection(nil1973, all1870)
-nil1995 <- st_intersection(nil1995, all1870)
-nil2017 <- st_intersection(nil2017, all1870)
+nil1973 <- st_intersection(nil1973, boundToClip)
+nil1995 <- st_intersection(nil1995, boundToClip)
+nil2017 <- st_intersection(nil2017, boundToClip)
 ```
 
 ### Rasterization of vector files
 
 The decision to use a vector or raster for further analysis depends on the question being asked. Please refer to script in code/01_vectorVsRaster.R  
 ```{r}
-# Please note that for the sake of calculation of areas, we separate the nil1870 and kun 1870 files as they are of different resolutions and need to be resampled and rasterized
-
 # nil1870 raster
 vectnil1870 <- terra::vect(nil1870)
 emptyRast <- terra::rast(res = 12, xmin = 661012.738348484, xmax = 718286.685853398, ymin = 1240744.4111945, ymax = 1275965.51753469, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
 rastnil1870 <- terra::rasterize(vectnil1870, emptyRast, "class")
 
-# kun1870 raster
-vectkun1870 <- terra::vect(kun1870)
-emptyRast <- terra::rast(res = 6, xmin = 655224.34214709, xmax = 684285.317723394, ymin = 1230555.09211126, ymax = 1259825.72789338, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
-rastkun1870 <- terra::rasterize(vectkun1870, emptyRast, "class")
-
 # nil1910 raster
 vectnil1910 <- terra::vect(nil1910)
-emptyRast1910 <- terra::rast(res = 30, xmin = 655224.34214709, xmax = 718286.685853398, ymin = 1230555.09211126, ymax = 1275965.51753469, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
+emptyRast1910 <- terra::rast(res = 30, xmin = 661012.738348484, xmax = 718286.685853398, ymin = 1240744.4111945, ymax = 1275965.51753469, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
 rastnil1910 <- terra::rasterize(vectnil1910, emptyRast1910, "class")
 sz1910 <- cellSize(rastnil1910, unit = "m")
 areaRast1910 <- zonal(sz1910, rastnil1910, sum)
@@ -229,7 +176,7 @@ names(areaRast1910) <- c("class", "areaInMeters", "sumArea")
 
 # Let's load the 1973, 1995 and 2017 series and rasterize them
 vectnil1973 <- vect(nil1973)
-emptyRast1973 <- terra::rast(res = 30, xmin = 655224.34214709, xmax = 718286.685853398, ymin = 1230555.09211126, ymax = 1275965.51753469, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
+emptyRast1973 <- terra::rast(res = 30, xmin = 661012.738348484, xmax = 718286.685853398, ymin = 1240744.4111945, ymax = 1275965.51753469, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
 rastnil1973 <- terra::rasterize(vectnil1973, emptyRast1973, "class")
 sz1973 <- cellSize(rastnil1973, unit = "m")
 areaRast1973 <- zonal(sz1973, rastnil1973, sum)
@@ -239,7 +186,7 @@ names(areaRast1973) <- c("class", "areaInMeters", "sumArea")
 
 # 1995
 vectnil1995 <- vect(nil1995)
-emptyRast1995 <- terra::rast(res = 30, xmin = 655224.34214709, xmax = 718286.685853398, ymin = 1230555.09211126, ymax = 1275965.51753469, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
+emptyRast1995 <- terra::rast(res = 30, xmin = 661012.738348484, xmax = 718286.685853398, ymin = 1240744.4111945, ymax = 1275965.51753469, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
 rastnil1995 <- terra::rasterize(vectnil1995, emptyRast1995, "class")
 sz1995 <- cellSize(rastnil1995, unit = "m")
 areaRast1995 <- zonal(sz1995, rastnil1995, sum)
@@ -249,7 +196,7 @@ names(areaRast1995) <- c("class", "areaInMeters", "sumArea")
 
 # 2017
 vectnil2017 <- vect(nil2017)
-emptyRast2017 <- terra::rast(res = 30, xmin = 655224.34214709, xmax = 718286.685853398, ymin = 1230555.09211126, ymax = 1275965.51753469, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
+emptyRast2017 <- terra::rast(res = 30, xmin = 661012.738348484, xmax = 718286.685853398, ymin = 1240744.4111945, ymax = 1275965.51753469, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
 rastnil2017 <- terra::rasterize(vectnil2017, emptyRast2017, "class")
 sz2017 <- cellSize(rastnil2017, unit = "m")
 areaRast2017 <- zonal(sz2017, rastnil2017, sum)
@@ -265,22 +212,13 @@ sz1870 <- cellSize(resamNil1870, unit = "m")
 areaNil1870 <- zonal(sz1870, resamNil1870, sum)
 areaNil1870SqKm <- (areaNil1870$area / 1000000)
 areaNil1870 <- cbind(areaNil1870, areaNil1870SqKm)
-
-resamKun1870 <- terra::resample(rastkun1870, rastnil1973, method = "near")
-sz1870 <- cellSize(resamKun1870, unit = "m")
-areaKun1870 <- zonal(sz1870, resamKun1870, sum)
-areaKun1870SqKm <- (areaKun1870$area / 1000000)
-areaKun1870 <- cbind(areaKun1870, areaKun1870SqKm)
 ```
 
 ### Cleaning up the 1870 and 1910 maps
 ```{r}
-# Joining the nil1870 and kun1870 statistics to get a single table
-areaNil1870 <- left_join(areaNil1870, areaKun1870, by = c("class" = "class")) %>%
-  filter(!is.na(class)) %>%
-  rowwise() %>%
-  mutate(sumArea = sum(areaNil1870SqKm, areaKun1870SqKm, na.rm = T)) %>%
-  select(class, sumArea)
+# 1870 map
+areaNil1870 <- areaNil1870 %>%
+  filter(!is.na(class))
 
 areaNil1870$class <- c(
   "Shola Forest", "Shola Grassland",
@@ -289,13 +227,9 @@ areaNil1870$class <- c(
 )
 
 # cleaning up the 1910 raster
-areaRast1910 <- areaRast1910 %>%
-  filter(!is.na(class)) %>%
-  select(class, sumArea)
-
 areaRast1910$class <- c(
-  "Shola Forest", "Shola Grassland",
-  "Agricultural Land", "Plantations (Tea & Timber)", "Unclassified Area",
+  "Shola Forest", "Shola Grassland", "Unclassified Area", 
+  "Agricultural Land", "Plantations (Tea & Timber)",
   "Settlements", "Water bodies"
 )
 ```
@@ -309,7 +243,10 @@ areaCalc <- purrr::reduce(list(
   areaNil1870, areaRast1910, areaRast1973, areaRast1995,
   areaRast2017
 ), dplyr::full_join, by = "class")
-names(areaCalc) <- c("class", "1870", "1910","areaMt1973", "1973", "areaMt1995", "1995", "areaMt2017", "2017")
+
+names(areaCalc) <- c("class", "areaMt1870", "1870", "areaMt1910",
+                     "1910","areaMt1973", "1973", "areaMt1995", "1995",
+                     "areaMt2017", "2017")
 
 areaCalc <- areaCalc %>%
   select("class", "1870", "1910","1973", "1995", "2017") %>%
