@@ -81,57 +81,6 @@ nil1870 <- nil1870[, -c(4, 5, 6)]
 # the above steps have resulted in a single dataframe for the 1400m contour only
 ```
 
-### Loading the Kundah 1870 digitized shapefiles
-
-These shapefiles have been digitized from a map of the Koondah mountains (based on a survey by J. Ouchterlony).  
-```{r}
-# load the Kundah 1870 shapefiles
-kundah <- list.files("data/spatial/1870-kundah/",
-  full.names = T,
-  recursive = T, pattern = ".shp$"
-)
-
-# create vector files
-forest_kun1870 <- st_read(kundah[1])
-grassland_kun1870 <- st_read(kundah[2])
-settlements_kun1870 <- st_read(kundah[3])
-waterbodies_kun1870 <- st_read(kundah[4])
-# whitebars_kun1870 <- st_read(kundah[5])
-
-# explore and fix any issues with the above vector files
-
-names(forest_kun1870) <- c("id", "class", "gridcode", "geometry")
-settlements_kun1870$class <- "settlements"
-
-# transform to UTM 43N
-forest_kun1870 <- st_transform(forest_kun1870, 32643)
-grassland_kun1870 <- st_transform(grassland_kun1870, 32643)
-settlements_kun1870 <- st_transform(settlements_kun1870, 32643)
-waterbodies_kun1870 <- st_transform(waterbodies_kun1870, 32643)
-
-# some more processing to ensure class names are standardized across time periods
-forest_kun1870$class <- "Shola Forest"
-#grassland_kun1870 <- st_cast(grassland_kun1870, "POLYGON")
-grassland_kun1870$class <- "Shola Grassland"
-
-# creating a single simple feature collection
-kun1870 <- rbind(forest_kun1870, grassland_kun1870, settlements_kun1870, waterbodies_kun1870)
-
-# crop the 1870 shapefiles to within the 1400m contour only
-kun1870 <- st_buffer(kun1870, dist = 0)
-kun1870 <- st_intersection(kun1870, contourNil)
-kun1870 <- kun1870[, -c(4, 5, 6)]
-
-# cast once to make sure all are polygons
-# not sure if st_cast:: is required in this case @pratikunterwegs? 
-# kun1870 <- st_cast(kun1870, "POLYGON")
-
-# Combine the nilgiris 1870 (Ouchterlony map) and the kundah 1870 for clipping
-# with files from other time periods (see below)
-all1870 <- rbind(nil1870, kun1870)
-all1870 <- st_buffer(st_union(all1870), dist = 0)
-```
-
 ### Load digitized shapefiles of a 1910 map
 
 The 1910 map is a stitched raster based on tiles created by Survey of India.  
@@ -179,6 +128,29 @@ nil1910 <- rbind(cultivated_nil1910, forest_nil1910, grassland_nil1910,
 # crop the 1910 shapefiles to within the 1400m contour only
 nil1910 <- st_buffer(nil1910,dist=0)
 nil1910 <- st_intersection(nil1910, all1870)
+
+
+trial <-  st_read("data/spatial/1910-new-clipped-version.shp")
+
+trial <- st_read("data/spatial/1910-nilgiris/1910.shp")
+trial <- st_buffer(trial, dist = 0)
+
+boundToClip <- st_buffer(st_union(nil1870), dist = 0)
+
+trial2 <- st_intersection(trial, boundToClip)
+
+# we decided to use the 1870 nilgiris raster only as the boundary to clip to 
+# fix the names of land cover classes for 1910
+# double check if certain rows are being duplicated??
+# clip 1910 by 1870 boundary
+# clip 1973, 1995, 2017 by 1870 boundary
+
+# then land cover change detection
+
+
+trial3 <- st_intersection(trial, contourNil)
+
+
 ```
 
 
