@@ -30,7 +30,7 @@ contourNil <- st_read("data/spatial/contour-1400m-nilgiris.shp")
 
 ### Loading digitized shapefiles of the 1870 Ouchterlony map
 
-The 1870 published maps were based on a survey carried out in 1848 by J. Ouchterlony. 
+The 1870 published maps were based on a survey carried out in 1848 by J. Ouchterlony.  
 ```{r}
 # list all shapefiles in the directory
 nilgiris1870 <- list.files("data/spatial/1870-nilgiris/", full.names = T,
@@ -66,11 +66,101 @@ forest_nil1870$class <- "Shola Forest"
 # grassland_nil1870 <- st_cast(grassland_nil1870, "POLYGON")
 grassland_nil1870$class <- "Shola Grassland"
 waterBodies_nil1870$class <- "waterbodies"
+```
+
+### Loading the Kundah 1870 digitized shapefiles
+
+These shapefiles have been digitized from a map of the Koondah mountains (based on a survey by J. Ouchterlony). 
+```{r}
+# load the Kundah 1870 shapefiles
+kundah <- list.files("data/spatial/1870-kundah/",
+  full.names = T,
+  recursive = T, pattern = ".shp$"
+)
+
+# create vector files
+forest_kun1870 <- st_read(kundah[1])
+grassland_kun1870 <- st_read(kundah[2])
+settlements_kun1870 <- st_read(kundah[3])
+waterbodies_kun1870 <- st_read(kundah[4])
+# whitebars_kun1870 <- st_read(kundah[5])
+
+# explore and fix any issues with the above vector files
+names(forest_kun1870) <- c("id", "class", "gridcode", "geometry")
+settlements_kun1870$class <- "settlements"
+
+# transform to UTM 43N
+forest_kun1870 <- st_transform(forest_kun1870, 32643)
+grassland_kun1870 <- st_transform(grassland_kun1870, 32643)
+settlements_kun1870 <- st_transform(settlements_kun1870, 32643)
+waterbodies_kun1870 <- st_transform(waterbodies_kun1870, 32643)
+
+# some more processing to ensure class names are standardized across time periods
+forest_kun1870$class <- "Shola Forest"
+#grassland_kun1870 <- st_cast(grassland_kun1870, "POLYGON")
+grassland_kun1870$class <- "Shola Grassland"
+```
+
+### Combining/unionizing geometries across the Nilgiris 1870 and the Kundah 1870 map
+
+In this script, we unionize geometries across the above two digitized maps that were loaded to ensure that overlap in certain areas is counted as a single entity. This is being done to include the Kundah map in the final analysis.  
+```{r}
+# the classes that are common across the Nilgiris 1870 and the Kundah 1870 are:
+# Shola forests
+# Shola grasslands
+# Settlements 
+# Water bodies
+
+# Unionizing the above features
+# forests
+forest1870 <- rbind(forest_nil1870, forest_kun1870)
+forest1870 <- st_buffer(forest1870, dist=0)
+forest1870 <- st_union(forest1870)
+
+# grasslands
+grasslands1870 <- rbind(grassland_nil1870, grassland_kun1870)
+grasslands1870 <- st_buffer(grasslands1870, dist=0)
+grasslands1870 <- st_union(grasslands1870)
+
+# settlements
+settlements1870 <- rbind(settlements_nil1870, settlements_kun1870)
+settlements1870 <- st_buffer(settlements1870, dist=0)
+settlements1870 <- st_union(settlements1870)
+
+# water bodies
+waterBodies1870 <- rbind(waterBodies_nil1870, waterbodies_kun1870)
+waterBodies1870 <- st_buffer(waterBodies1870, dist=0)
+waterBodies1870 <- st_union(waterBodies1870)
+
+# converting geometries back to simple feature collections/dataframes
+# Forests
+forestnil1870 <- st_sf(geometry = forest1870)
+forestnil1870$class <- "Shola Forest"
+forestnil1870$id <- 1:length(forest1870)
+forestnil1870$gridcode <- 1:length(forest1870)
+
+# grasslands
+grasslandsnil1870 <- st_sf(geometry = grasslands1870)
+grasslandsnil1870$class <- "Shola Grassland"
+grasslandsnil1870$id <- 1:length(grasslands1870)
+grasslandsnil1870$gridcode <- 1:length(grasslands1870)
+
+# settlements
+settlementsnil1870 <- st_sf(geometry = settlements1870)
+settlementsnil1870$class <- "settlements"
+settlementsnil1870$id <- 1:length(settlements1870)
+settlementsnil1870$gridcode <- 1:length(settlements1870)
+
+# water bodies
+waterBodiesnil1870 <- st_sf(geometry = waterBodies1870)
+waterBodiesnil1870$class <- "waterbodies"
+waterBodiesnil1870$id <- 1:length(waterBodies1870)
+waterBodiesnil1870$gridcode <- 1:length(waterBodies1870)
 
 # creating a single simple feature collection
 nil1870 <- rbind(
-  cultivated_nil1870, forest_nil1870, grassland_nil1870,
-  plantations_nil1870, settlements_nil1870, waterBodies_nil1870
+  cultivated_nil1870, forestnil1870, grasslandsnil1870,
+  plantations_nil1870, settlementsnil1870, waterBodiesnil1870
 )
 
 # crop the 1870 shapefiles to within the 1400m contour only
@@ -79,36 +169,10 @@ nil1870 <- st_intersection(nil1870, contourNil)
 nil1870 <- nil1870[, -c(4, 5, 6)]
 
 # the above steps have resulted in a single dataframe for the 1400m contour only
-```
 
-### Load digitized shapefiles of a 1910 map
-
-The 1910 map is a stitched raster based on tiles created by Survey of India.  
-```{r}
-# load the nilgiris 1910 shapefiles
-nil1910 <- st_read("data/spatial/1910-nilgiris/1910.shp")
-
-# note that there are four geometries empty and certain class names need to be fixed
-# the CRS is a projected coordinate system (UTM43N)
-
-# remove empty geometries
-nil1910 <- nil1910[!st_is_empty(nil1910$geometry),]
-
-# renaming column values for class column
-names(nil1910)[2] <- "class"
-nil1910$class <- recode(nil1910$class,
-                      "cultivated areacultivated area" = "cultivated area",
-                      "grassland" = "Shola Grassland",
-                      "remaining" = "Unclassified area",
-                      "reserve forest" = "Shola Forest")
-
-# transform to UTM 43N
-nil1910 <- st_transform(nil1910, 32643)
-
-# clip to Nilgiris 1870 boundary
-boundToClip <- st_buffer(st_union(nil1870), dist = 0)
-nil1910 <- st_buffer(nil1910, dist = 0)
-nil1910 <- st_intersection(nil1910, boundToClip)
+# Combine the nilgiris 1870 (Ouchterlony map) and the kundah 1870 for clipping
+# with files from other time periods (see below)
+all1870 <- st_buffer(st_union(nil1870), dist = 0)
 ```
 
 
@@ -152,7 +216,7 @@ nil1995 <- nil1995 %>%
 # crop the 1973, 1995 and 2017 shapefiles to within the 1400m contour only
 nil1973 <- st_intersection(nil1973, boundToClip)
 nil1995 <- st_intersection(nil1995, boundToClip)
-nil2017 <- st_intersection(nil2017, boundToClip)
+nil2017 <- st_intersection(nil2017, contourNil)
 ```
 
 ### Rasterization of vector files
@@ -318,6 +382,17 @@ fig_percent_area <- ggplot(percentArea, aes(x = class, y = percentArea, fill = c
 ggsave(fig_percent_area, filename = "figs/fig_percentArea_landCover.png", width = 14, height = 13, device = png(), units = "in", dpi = 300)
 ```
 
+
+
+```{r}
+m1 <- mapview(forest_nil1870)
+m2 <- mapview(forest_kun1870, col.regions="red")
+
+m2017 <- nil2017[nil2017$class=="Shola Forest",]
+m3 <- mapview(m2017, col.regions="green")
+
+
+```
 
 
 # to do:
