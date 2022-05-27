@@ -133,6 +133,7 @@ waterBodies1870 <- st_buffer(waterBodies1870, dist=0)
 waterBodies1870 <- st_union(waterBodies1870)
 
 # converting geometries back to simple feature collections/dataframes
+# gridcode/id does not matter for the purpose of our analysis
 # Forests
 forestnil1870 <- st_sf(geometry = forest1870)
 forestnil1870$class <- "Shola Forest"
@@ -214,9 +215,9 @@ nil1995 <- nil1995 %>%
   ))
 
 # crop the 1973, 1995 and 2017 shapefiles to within the 1400m contour only
-nil1973 <- st_intersection(nil1973, boundToClip)
-nil1995 <- st_intersection(nil1995, boundToClip)
-nil2017 <- st_intersection(nil2017, contourNil)
+nil1973 <- st_intersection(nil1973, all1870)
+nil1995 <- st_intersection(nil1995, all1870)
+nil2017 <- st_intersection(nil2017, all1870)
 ```
 
 ### Rasterization of vector files
@@ -225,22 +226,12 @@ The decision to use a vector or raster for further analysis depends on the quest
 ```{r}
 # nil1870 raster
 vectnil1870 <- terra::vect(nil1870)
-emptyRast <- terra::rast(res = 12, xmin = 661012.738348484, xmax = 718286.685853398, ymin = 1240744.4111945, ymax = 1275965.51753469, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
+emptyRast <- terra::rast(res = 12, xmin = 655224.34214709, xmax = 718286.685853398, ymin = 1229957.78965221, ymax = 1275965.51753469, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
 rastnil1870 <- terra::rasterize(vectnil1870, emptyRast, "class")
-
-# nil1910 raster
-vectnil1910 <- terra::vect(nil1910)
-emptyRast1910 <- terra::rast(res = 30, xmin = 661012.738348484, xmax = 718286.685853398, ymin = 1240744.4111945, ymax = 1275965.51753469, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
-rastnil1910 <- terra::rasterize(vectnil1910, emptyRast1910, "class")
-sz1910 <- cellSize(rastnil1910, unit = "m")
-areaRast1910 <- zonal(sz1910, rastnil1910, sum)
-areaRast1910SqKm <- (areaRast1910$area / 1000000)
-areaRast1910 <- cbind(areaRast1910, areaRast1910SqKm)
-names(areaRast1910) <- c("class", "areaInMeters", "sumArea")
 
 # Let's load the 1973, 1995 and 2017 series and rasterize them
 vectnil1973 <- vect(nil1973)
-emptyRast1973 <- terra::rast(res = 30, xmin = 661012.738348484, xmax = 718286.685853398, ymin = 1240744.4111945, ymax = 1275965.51753469, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
+emptyRast1973 <- terra::rast(res = 30, xmin = 655224.34214709, xmax = 718286.685853398, ymin = 1229957.78965221, ymax = 1275965.51753469, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
 rastnil1973 <- terra::rasterize(vectnil1973, emptyRast1973, "class")
 sz1973 <- cellSize(rastnil1973, unit = "m")
 areaRast1973 <- zonal(sz1973, rastnil1973, sum)
@@ -250,7 +241,7 @@ names(areaRast1973) <- c("class", "areaInMeters", "sumArea")
 
 # 1995
 vectnil1995 <- vect(nil1995)
-emptyRast1995 <- terra::rast(res = 30, xmin = 661012.738348484, xmax = 718286.685853398, ymin = 1240744.4111945, ymax = 1275965.51753469, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
+emptyRast1995 <- terra::rast(res = 30, xmin = 655224.34214709, xmax = 718286.685853398, ymin = 1229957.78965221, ymax = 1275965.51753469, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
 rastnil1995 <- terra::rasterize(vectnil1995, emptyRast1995, "class")
 sz1995 <- cellSize(rastnil1995, unit = "m")
 areaRast1995 <- zonal(sz1995, rastnil1995, sum)
@@ -260,7 +251,7 @@ names(areaRast1995) <- c("class", "areaInMeters", "sumArea")
 
 # 2017
 vectnil2017 <- vect(nil2017)
-emptyRast2017 <- terra::rast(res = 30, xmin = 661012.738348484, xmax = 718286.685853398, ymin = 1240744.4111945, ymax = 1275965.51753469, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
+emptyRast2017 <- terra::rast(res = 30, xmin = 655224.34214709, xmax = 718286.685853398, ymin = 1229957.78965221, ymax = 1275965.51753469, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
 rastnil2017 <- terra::rasterize(vectnil2017, emptyRast2017, "class")
 sz2017 <- cellSize(rastnil2017, unit = "m")
 areaRast2017 <- zonal(sz2017, rastnil2017, sum)
@@ -278,42 +269,31 @@ areaNil1870SqKm <- (areaNil1870$area / 1000000)
 areaNil1870 <- cbind(areaNil1870, areaNil1870SqKm)
 ```
 
-### Cleaning up the 1870 and 1910 maps
+### Cleaning up the 1870 map
 ```{r}
 # 1870 map
-areaNil1870 <- areaNil1870 %>%
-  filter(!is.na(class))
-
 areaNil1870$class <- c(
   "Shola Forest", "Shola Grassland",
   "Agricultural Land", "Plantations (Tea & Timber)",
   "Settlements", "Water bodies"
 )
-
-# cleaning up the 1910 raster
-areaRast1910$class <- c(
-  "Shola Forest", "Shola Grassland", "Unclassified Area", 
-  "Agricultural Land", "Plantations (Tea & Timber)",
-  "Settlements", "Water bodies"
-)
 ```
 
-### Calculating areas of different land cover classes across time periods
+### Calculating areas of different land cover classes across time periods using rasters
 
 Making plots of the overall area of land cover types
 ```{r}
 # Joining all dataframes to create a single one for plotting and visualization
 areaCalc <- purrr::reduce(list(
-  areaNil1870, areaRast1910, areaRast1973, areaRast1995,
+  areaNil1870, areaRast1973, areaRast1995,
   areaRast2017
 ), dplyr::full_join, by = "class")
 
-names(areaCalc) <- c("class", "areaMt1870", "1870", "areaMt1910",
-                     "1910","areaMt1973", "1973", "areaMt1995", "1995",
-                     "areaMt2017", "2017")
+names(areaCalc) <- c("class", "areaMt1870", "1870", "areaMt1973", "1973", "areaMt1995", 
+                     "1995", "areaMt2017", "2017")
 
 areaCalc <- areaCalc %>%
-  select("class", "1870", "1910","1973", "1995", "2017") %>%
+  select("class", "1870", "1973", "1995", "2017") %>%
   pivot_longer(!class, names_to = "Year", values_to = "Area")
 
 write.csv(areaCalc, "results/totalArea-by-landCover-timePeriod.csv", row.names = F)
@@ -347,8 +327,7 @@ ggsave(fig_area,
 )
 ```
 
-
-Create a figure of proportion of landcover across areas over time
+### Create a figure of proportion of landcover across areas over time (using rasters)
 ```{r}
 # get percentArea occupied by each land cover class
 percentArea <- areaCalc %>%
@@ -382,28 +361,134 @@ fig_percent_area <- ggplot(percentArea, aes(x = class, y = percentArea, fill = c
 ggsave(fig_percent_area, filename = "figs/fig_percentArea_landCover.png", width = 14, height = 13, device = png(), units = "in", dpi = 300)
 ```
 
+## Re-running the area calculations with vector files
 
-
+This calculation is being run to assess if the area-wise calculations of changes when vector files are being used. 
 ```{r}
-m1 <- mapview(forest_nil1870)
-m2 <- mapview(forest_kun1870, col.regions="red")
+# 1870 
+areaVect1870 <- nil1870 %>%
+  mutate(areaSqKm = as.numeric(st_area(nil1870)/1000000)) # in sq. km.
 
-m2017 <- nil2017[nil2017$class=="Shola Forest",]
-m3 <- mapview(m2017, col.regions="green")
+sumArea1870 <- areaVect1870 %>%
+  group_by(class) %>%
+  mutate(sumArea = sum(areaSqKm)) %>%
+  distinct(class, sumArea)
 
+# 1973
+areaVect1973 <- nil1973 %>%
+  mutate(areaSqKm = as.numeric(st_area(nil1973)/1000000)) # in sq. km.
 
+sumArea1973 <- areaVect1973 %>%
+  group_by(class) %>%
+  mutate(sumArea = sum(areaSqKm)) %>%
+  distinct(class, sumArea)
+
+# 1995
+areaVect1995 <- nil1995 %>%
+  mutate(areaSqKm = as.numeric(st_area(nil1995)/1000000)) # in sq. km.
+
+sumArea1995 <- areaVect1995 %>%
+  group_by(class) %>%
+  mutate(sumArea = sum(areaSqKm)) %>%
+  distinct(class, sumArea)
+
+# 1973
+areaVect2017 <- nil2017 %>%
+  mutate(areaSqKm = as.numeric(st_area(nil2017)/1000000)) # in sq. km.
+
+sumArea2017 <- areaVect2017 %>%
+  group_by(class) %>%
+  mutate(sumArea = sum(areaSqKm)) %>%
+  distinct(class, sumArea)
+
+# fix 1870 class names
+sumArea1870$class <- c("Agricultural Land",
+  "Shola Forest", "Shola Grassland",
+   "Plantations (Tea & Timber)",
+  "Settlements", "Water bodies"
+)
 ```
 
+### Calculating areas of different land cover classes across time periods (vector files)
 
-# to do:
-# issues so far:
-# coordinate system does not necessarily align for 1870 maps (nilgiris and kundah)
-# issue with remaining area in 1910 map
-# is it still ok for me to use st_intersection to ensure that it's approx. the same area that we are trying to calculate differences in area? 
+Making plots of the overall area of land cover types
+```{r}
+# Joining all dataframes to create a single one for plotting and visualization
+areaCalc <- purrr::reduce(list(
+  sumArea1870, sumArea1973, sumArea1995,
+  sumArea2017
+), dplyr::full_join, by = "class")
 
-# what is this script trying to do:
-# a) calculate land cover area for different classes
-# b) at a later step - extract lc class where resurveys were carried out? 
+names(areaCalc) <- c("class", "1870", "1973","1995", "2017")
+
+areaCalc <- areaCalc %>%
+  select("class", "1870", "1973", "1995", "2017") %>%
+  pivot_longer(!class, names_to = "Year", values_to = "Area")
+
+write.csv(areaCalc, "results/totalArea-by-landCover-timePeriod-vector.csv", row.names = F)
+
+# make plot
+fig_area <- ggplot(areaCalc, aes(x = class, y = Area, fill = class)) +
+  geom_bar(stat = "identity", position = position_dodge(), fill = "#883107", alpha = 0.9) +
+  geom_text(aes(label = round(Area), hjust = "middle", vjust = -0.5),
+    position = position_dodge(), angle = 0, size = 5
+  ) +
+  scale_fill_scico_d(palette = "batlow") +
+  facet_wrap(~Year) +
+  theme_bw() +
+  labs(
+    x = "\nLand cover type",
+    y = "Area in sq.km. \n"
+  ) +
+  theme(
+    axis.title = element_text(
+      family = "Century Gothic",
+      size = 14, face = "bold"
+    ),
+    axis.text = element_text(family = "Century Gothic", size = 14),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
+    legend.position = "none"
+  )
+
+ggsave(fig_area,
+  filename = "figs/fig_totalArea_landCover-vector.png", width = 15, height = 13,
+  device = png(), units = "in", dpi = 300
+)
+```
+
+### Create a figure of proportion of landcover across areas over time
+```{r}
+# get percentArea occupied by each land cover class
+percentArea <- areaCalc %>%
+  group_by(Year) %>%
+  mutate(
+    totalArea = sum(Area, na.rm = T),
+    percentArea = (Area / totalArea) * 100
+  )
+
+# plot figure
+fig_percent_area <- ggplot(percentArea, aes(x = class, y = percentArea, fill = class)) +
+  geom_bar(stat = "identity", position = position_dodge(), alpha = 0.9) +
+  geom_text(aes(label = round(percentArea, digits = 1), hjust = "middle", vjust = -0.5), position = position_dodge(), angle = 0, size = 5) +
+  scale_fill_scico_d(palette = "batlow") +
+  facet_wrap(~Year) +
+  theme_bw() +
+  labs(
+    x = "\nLand cover type",
+    y = "Percent Area \n"
+  ) +
+  theme(
+    axis.title = element_text(
+      family = "Century Gothic",
+      size = 14, face = "bold"
+    ),
+    axis.text = element_text(family = "Century Gothic", size = 14),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
+    legend.position = "none"
+  )
+
+ggsave(fig_percent_area, filename = "figs/fig_percentArea_landCover-vector.png", width = 14, height = 13, device = png(), units = "in", dpi = 300)
+```
 
 
 1. total area by land cover + time Period - DONE
@@ -411,8 +496,3 @@ m3 <- mapview(m2017, col.regions="green")
 2. pathc-level area analysis by land cover + time Period
 3. heterogeneity of the land cover data using vegan::diversity() (Auffret et al. 2018)
 
-
-Questions:
-
--rasterize & resample to same resolution to compare total area changed across land covers
--keep nil1870 and kun1870 separately and sum by class prior to comaprisons with nil1973, 1995 and 2005
