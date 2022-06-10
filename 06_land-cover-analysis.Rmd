@@ -5,9 +5,10 @@ editor_options:
 
 # Land cover data analysis
 
-In this script, we will analyze land cover changes for multiple land cover classes between 1870 and 2017.  
+In this script, we will analyze land cover changes for multiple land cover classes between 1870 and 2017.
 
-### Load necessary libraries
+#### Load necessary libraries
+
 ```{r}
 library(sf)
 library(raster)
@@ -20,9 +21,10 @@ library(landscapemetrics)
 library(scico)
 ```
 
-### Load the Nilgiris contour 
+### Load the Nilgiris contour
 
-This is the contour to which all other shapefiles will be clipped to and is essentially a 1400 m contour. 
+This is the contour to which all other shapefiles will be clipped to and is essentially a 1400 m contour.
+
 ```{r}
 # load the 1400m contour
 contourNil <- st_read("data/spatial/contour-1400m-nilgiris.shp")
@@ -30,7 +32,8 @@ contourNil <- st_read("data/spatial/contour-1400m-nilgiris.shp")
 
 ### Loading digitized shapefiles of the 1870 Ouchterlony map
 
-The 1870 published maps were based on a survey carried out in 1848 by J. Ouchterlony.  
+The 1870 published maps were based on a survey carried out in 1848 by J. Ouchterlony.
+
 ```{r}
 # list all shapefiles in the directory
 nilgiris1870 <- list.files("data/spatial/1870-nilgiris/", full.names = T,
@@ -70,7 +73,8 @@ waterBodies_nil1870$class <- "waterbodies"
 
 ### Loading the Kundah 1870 digitized shapefiles
 
-These shapefiles have been digitized from a map of the Koondah mountains (based on a survey by J. Ouchterlony). 
+These shapefiles have been digitized from a map of the Koondah mountains (based on a survey by J. Ouchterlony).
+
 ```{r}
 # load the Kundah 1870 shapefiles
 kundah <- list.files("data/spatial/1870-kundah/",
@@ -83,7 +87,7 @@ forest_kun1870 <- st_read(kundah[1])
 grassland_kun1870 <- st_read(kundah[2])
 settlements_kun1870 <- st_read(kundah[3])
 waterbodies_kun1870 <- st_read(kundah[4])
-# whitebars_kun1870 <- st_read(kundah[5])
+whitebars_kun1870 <- st_read(kundah[5])
 
 # explore and fix any issues with the above vector files
 names(forest_kun1870) <- c("id", "class", "gridcode", "geometry")
@@ -94,6 +98,7 @@ forest_kun1870 <- st_transform(forest_kun1870, 32643)
 grassland_kun1870 <- st_transform(grassland_kun1870, 32643)
 settlements_kun1870 <- st_transform(settlements_kun1870, 32643)
 waterbodies_kun1870 <- st_transform(waterbodies_kun1870, 32643)
+whitebars_kun1870 <- st_transform(whitebars_kun1870, 32643)
 
 # some more processing to ensure class names are standardized across time periods
 forest_kun1870$class <- "Shola Forest"
@@ -103,7 +108,8 @@ grassland_kun1870$class <- "Shola Grassland"
 
 ### Combining/unionizing geometries across the Nilgiris 1870 and the Kundah 1870 map
 
-In this script, we unionize geometries across the above two digitized maps that were loaded to ensure that overlap in certain areas is counted as a single entity. This is being done to include the Kundah map in the final analysis.  
+In this script, we unionize geometries across the above two digitized maps that were loaded to ensure that overlap in certain areas is counted as a single entity. This is being done to include the Kundah map in the final analysis.
+
 ```{r}
 # the classes that are common across the Nilgiris 1870 and the Kundah 1870 are:
 # Shola forests
@@ -164,8 +170,13 @@ nil1870 <- rbind(
   plantations_nil1870, settlementsnil1870, waterBodiesnil1870
 )
 
-# crop the 1870 shapefiles to within the 1400m contour only
+# remove kundahwhitebars from the 1870 object
 nil1870 <- st_buffer(nil1870, dist = 0)
+whitebars_kun1870 <- st_buffer(whitebars_kun1870, dist = 0)
+nil1870 <- st_difference(nil1870,whitebars_kun1870)
+nil1870 <- nil1870[, -c(4, 5, 6)]
+
+# crop the 1870 shapefiles to within the 1400m contour only
 nil1870 <- st_intersection(nil1870, contourNil)
 nil1870 <- nil1870[, -c(4, 5, 6)]
 
@@ -176,8 +187,8 @@ nil1870 <- nil1870[, -c(4, 5, 6)]
 all1870 <- st_buffer(st_union(nil1870), dist = 0)
 ```
 
-
 ### Load the shapefiles from 1973, 1995 and 2017 for the Nilgiris
+
 ```{r}
 # load the 1973, 1995 and 2017 shapefiles
 nil1973 <- st_read("data/spatial/1973-nilgiris/1973D.shp")
@@ -218,11 +229,16 @@ nil1995 <- nil1995 %>%
 nil1973 <- st_intersection(nil1973, all1870)
 nil1995 <- st_intersection(nil1995, all1870)
 nil2017 <- st_intersection(nil2017, all1870)
+
+#st_write(nil1870, "data/spatial/1870.shp", driver = "ESRI Shapefile")
+#st_write(nil2017, "data/spatial/2017.shp", driver = "ESRI Shapefile")
+
 ```
 
 ### Rasterization of vector files
 
-The decision to use a vector or raster for further analysis depends on the question being asked. Please refer to script in code/01_vectorVsRaster.R  
+The decision to use a vector or raster for further analysis depends on the question being asked. Please refer to script in code/01_vectorVsRaster.R
+
 ```{r}
 # nil1870 raster
 vectnil1870 <- terra::vect(nil1870)
@@ -270,6 +286,7 @@ areaNil1870 <- cbind(areaNil1870, areaNil1870SqKm)
 ```
 
 ### Cleaning up the 1870 map
+
 ```{r}
 # 1870 map
 areaNil1870$class <- c(
@@ -282,6 +299,7 @@ areaNil1870$class <- c(
 ### Calculating areas of different land cover classes across time periods using rasters
 
 Making plots of the overall area of land cover types
+
 ```{r}
 # Joining all dataframes to create a single one for plotting and visualization
 areaCalc <- purrr::reduce(list(
@@ -328,6 +346,7 @@ ggsave(fig_area,
 ```
 
 ### Create a figure of proportion of landcover across areas over time (using rasters)
+
 ```{r}
 # get percentArea occupied by each land cover class
 percentArea <- areaCalc %>%
@@ -363,7 +382,8 @@ ggsave(fig_percent_area, filename = "figs/fig_percentArea_landCover.png", width 
 
 ## Re-running the area calculations with vector files
 
-This calculation is being run to assess if the area-wise calculations of changes when vector files are being used. 
+This calculation is being run to assess if the area-wise calculations of changes when vector files are being used.
+
 ```{r}
 # 1870 
 areaVect1870 <- nil1870 %>%
@@ -412,6 +432,7 @@ sumArea1870$class <- c("Agricultural Land",
 ### Calculating areas of different land cover classes across time periods (vector files)
 
 Making plots of the overall area of land cover types
+
 ```{r}
 # Joining all dataframes to create a single one for plotting and visualization
 areaCalc <- purrr::reduce(list(
@@ -457,6 +478,7 @@ ggsave(fig_area,
 ```
 
 ### Create a figure of proportion of landcover across areas over time
+
 ```{r}
 # get percentArea occupied by each land cover class
 percentArea <- areaCalc %>%
@@ -491,8 +513,12 @@ ggsave(fig_percent_area, filename = "figs/fig_percentArea_landCover-vector.png",
 ```
 
 
-1. total area by land cover + time Period - DONE
-2. Proportion of the landscape occupied by each landcover over time - DONE
-2. pathc-level area analysis by land cover + time Period
-3. heterogeneity of the land cover data using vegan::diversity() (Auffret et al. 2018)
+```{r}
+cult1870 <- nil1870[nil1870$class=="cultivated tracts",]
+m1 <- mapview(cult1870, col.regions="green")
+
+cult2017 <- nil2017[nil2017$class=="Agricultural Land",]
+m2 <- mapview(cult2017)
+
+```
 
