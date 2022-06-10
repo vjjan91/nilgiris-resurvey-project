@@ -45,26 +45,63 @@ sites <- cbind(sites, elev)
 
 ### Load historical and modern occurrence data
 
-For the historical occurrence data, we will choose data from the time period 1850-1900 as majority of specimen collections were carried out in this time period. Further below, we will also choose data from 1900-1950 to explore comparisons with modern occurrence data.
+For the historical occurrence data, we will choose data from the time period 1850-1900 as majority of specimen collections were carried out in this time period. Further below, we will also choose data from 1900-1950 and 1950-2000 to explore comparisons with modern occurrence data.
 
 ```{r}
 ## read in historical occurrence data
 hist_occ <- read.csv("data/historical-occurrence-data.csv")
-hist_occ <- hist_occ %>%
+
+### pre-1900
+hist_occ_pre1900 <- hist_occ %>%
   filter(year <= 1900)
 
 ## filter by site and get unique species per site (historical)
-histOcc_spp <- hist_occ %>%
+histOcc_spp_pre1900 <- hist_occ_pre1900 %>%
   group_by(scientific_name, historical_site_code) %>%
   count()
 
-colnames(histOcc_spp)[3] <- "histCount"
+colnames(histOcc_spp_pre1900)[3] <- "histCount"
 
 # add elevation
-hist_occ_elev <-  left_join(histOcc_spp, sites, by=c("historical_site_code"="historical_site_code")) %>%
+hist_occ_elev_pre1900 <-  left_join(histOcc_spp_pre1900, sites, by=c("historical_site_code"="historical_site_code")) %>%
   filter(!is.na(scientific_name)) %>%
   replace(is.na(.), 0) %>%
-  mutate(Historic = case_when(histCount >= 1 ~ 1,TRUE ~ 0))
+  mutate("1850-1900" = case_when(histCount >= 1 ~ 1,TRUE ~ 0))
+
+# repeat above for two more time-periods
+## 1900-1950
+hist_occ_1900_1950 <- hist_occ %>%
+  filter(year > 1900 & year <= 1950)
+
+## filter by site and get unique species per site (historical)
+histOcc_spp_1900_1950 <- hist_occ_1900_1950 %>%
+  group_by(scientific_name, historical_site_code) %>%
+  count()
+
+colnames(histOcc_spp_1900_1950)[3] <- "histCount"
+
+# add elevation
+hist_occ_elev_1900_1950 <-  left_join(histOcc_spp_1900_1950, sites, by=c("historical_site_code"="historical_site_code")) %>%
+  filter(!is.na(scientific_name)) %>%
+  replace(is.na(.), 0) %>%
+  mutate("1900-1950" = case_when(histCount >= 1 ~ 1,TRUE ~ 0))
+
+### 1950 - 2000
+hist_occ_1950_2000 <- hist_occ %>%
+  filter(year > 1950 & year <= 2000)
+
+## filter by site and get unique species per site (historical)
+histOcc_spp_1950_2000 <- hist_occ_1950_2000 %>%
+  group_by(scientific_name, historical_site_code) %>%
+  count()
+
+colnames(histOcc_spp_1950_2000)[3] <- "histCount"
+
+# add elevation
+hist_occ_elev_1950_2000 <-  left_join(histOcc_spp_1950_2000, sites, by=c("historical_site_code"="historical_site_code")) %>%
+  filter(!is.na(scientific_name)) %>%
+  replace(is.na(.), 0) %>%
+  mutate("1950-2000" = case_when(histCount >= 1 ~ 1,TRUE ~ 0))
 
 ## read in modern occurrence data
 mod_occ <- read.csv("data/modern-occurrence-data.csv")
@@ -78,14 +115,16 @@ modOcc_spp <- mod_occ %>%
 mod_occ_elev <-  left_join(modOcc_spp, sites, by=c("modern_site_code"="modern_site_code")) %>%
   filter(!is.na(scientific_name)) %>%
   replace(is.na(.), 0) %>%
-  mutate(Modern = case_when(modCount >= 1 ~ 1,TRUE ~ 0))
+  mutate("2021" = case_when(modCount >= 1 ~ 1,TRUE ~ 0))
 ```
 
 ### Comparing historical-modern counts by elevation
 
 ```{r}
-## joining historical and modern occurrence datasets
-hist_mod <- full_join(hist_occ_elev, mod_occ_elev, by = c("scientific_name","modern_site_code","historical_site_code","elev","site_name","geometry")) %>%
+## joining the historical datasets
+hist_mod <- full_join(hist_occ_elev_pre1900, hist_occ_elev_1900_1950, by = c("scientific_name","modern_site_code","histCount","historical_site_code","elev","site_name","geometry")) %>%
+  full_join(., hist_occ_elev_1950_2000, by = c("scientific_name","modern_site_code","histCount","historical_site_code","elev","site_name","geometry")) %>%
+   full_join(., mod_occ_elev, by = c("scientific_name","modern_site_code","historical_site_code","elev","site_name","geometry")) %>%
   replace(is.na(.), 0) %>%
   arrange(scientific_name)
 
@@ -97,8 +136,9 @@ for(i in 1:length(unique(hist_mod$scientific_name))) {
   # extract data species by species
   a <- unique(hist_mod$scientific_name)[i]
   data <- hist_mod[hist_mod$scientific_name==a,] %>%
-      pivot_longer(cols=c(Historic, Modern), 
-                   names_to="histMod", values_to="PresAbs") 
+      pivot_longer(cols=c("1850-1900", "1900-1950", "1950-2000", "2021"), 
+                   names_to="histMod", values_to="PresAbs") %>%
+    arrange(histMod)
   
   # plot the data
   plots[[i]] <- ggplot(data, aes(x = histMod, y = elev, fill = factor(PresAbs))) +
