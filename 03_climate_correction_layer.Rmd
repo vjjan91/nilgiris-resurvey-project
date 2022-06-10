@@ -3,11 +3,6 @@ editor_options:
   chunk_output_type: console
 ---
 
----
-editor_options: 
-  chunk_output_type: console
----
-
 # GAM error in predicting climate
 
 ```{r}
