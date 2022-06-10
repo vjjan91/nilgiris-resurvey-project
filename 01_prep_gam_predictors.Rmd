@@ -22,7 +22,7 @@ library(sf)
 ### Read data and add date
 
 ```{r}
-clim_files <- list.files("data/raw/iitg-climate", full.names = T)
+clim_files <- list.files("data/climate/raw/iitg-climate", full.names = T)
 data <- map(clim_files, read_delim,
   delim = " ", col_names = c("ppt", "tmin", "tmax", "wind")
 )
@@ -147,7 +147,7 @@ ext <- st_bbox(coord_sf) |>
   st_transform(4326)
 
 # load elevation raster
-elevation <- terra::rast("data/spatial/Elevation/alt")
+elevation <- terra::rast("data/spatial/elevation/alt")
 # crop by extent of study area
 elevation_hills <- terra::crop(elevation, as(ext, "Spatial"))
 
@@ -171,7 +171,7 @@ elev <- terra::rast("data/spatial/raster_elevation.tif")
 elev_utm <- terra::project(elev, "epsg:32643")
 ```
 
-Resample raster to 600 m.
+### Resample raster to 600 m.
 
 ```{r}
 # resample the raster to 600 m from 30m
