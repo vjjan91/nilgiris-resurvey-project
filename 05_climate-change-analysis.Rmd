@@ -324,8 +324,3 @@ dev.off()
 
 
 
-1) Should we create an additional column for differences: 2017 - 1870? this can be used as a predictor for analysis? 
-
-
-
-
