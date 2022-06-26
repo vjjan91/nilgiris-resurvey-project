@@ -1,0 +1,134 @@
+---
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+# load libraries
+library(sf)
+library(terra)
+```
+
+```{r}
+# load nilgiris
+hills = st_read("data/spatial/hills_shapefile/Nil_Ana_Pal.shp")
+
+# get reconstructions
+climate_reconstructed = list.files(
+  "data/climate", pattern = "raster_reconstructed",
+  full.names = T
+) |> 
+  lapply(rast)
+
+# get differences with respect to first reconstruction
+climate_change = lapply(climate_reconstructed, function(le) {
+  le = le / le[[1]]
+  le = le[[-1]]
+  le = le - 1
+  terra::crop(
+    le, vect(hills)
+  )
+})
+```
+
+Plot change in climate as percentages.
+
+```{r}
+ppt_dry_change = tm_shape(climate_change[[1]])+
+  tm_raster(
+    palette = colorspace::diverging_hcl(
+      31,
+      palette = "Blue-Yellow",
+      rev = T
+    ),
+    style = "cont", midpoint = 0,
+    title = "% difference, dry season ppt.",
+    legend.is.portrait = F
+  )+
+  tm_shape(hills)+
+  tm_borders()+
+  tm_legend(
+    legend.outside = T,
+    legend.outside.position = "bottom",
+    legend.outside.size = .1
+  )
+
+tmap_save(
+  ppt_dry_change, filename = "figs/fig_ppt_dry_change.png"
+)
+```
+
+
+```{r}
+ppt_wet_change = tm_shape(climate_change[[2]])+
+  tm_raster(
+    palette = colorspace::diverging_hcl(
+      31,
+      palette = "Blue-Yellow",
+      rev = T
+    ),
+    style = "cont", midpoint = 0,
+    title = "% difference, wet season ppt.",
+    legend.is.portrait = F
+  )+
+  tm_shape(hills)+
+  tm_borders()+
+  tm_legend(
+    legend.outside = T,
+    legend.outside.position = "bottom",
+    legend.outside.size = .1
+  )
+
+tmap_save(
+  ppt_wet_change, filename = "figs/fig_ppt_wet_change.png"
+)
+```
+
+```{r}
+temp_dry_change = tm_shape(climate_change[[3]])+
+  tm_raster(
+    palette = colorspace::diverging_hcl(
+      31,
+      rev = F
+    ),
+    style = "cont", midpoint = 0,
+    title = "% difference, dry season temp.",
+    legend.is.portrait = F
+  )+
+  tm_shape(hills)+
+  tm_borders()+
+  tm_legend(
+    legend.outside = T,
+    legend.outside.position = "bottom",
+    legend.outside.size = .1
+  )
+
+tmap_save(
+  temp_dry_change, filename = "figs/fig_temp_dry_change.png"
+)
+```
+
+
+```{r}
+temp_wet_change = tm_shape(climate_change[[4]])+
+  tm_raster(
+    palette = colorspace::diverging_hcl(
+      31,
+      rev = F
+    ),
+    style = "cont", midpoint = 0,
+    title = "% difference, wet season temp.",
+    legend.is.portrait = F
+  )+
+  tm_shape(hills)+
+  tm_borders()+
+  tm_legend(
+    legend.outside = T,
+    legend.outside.position = "bottom",
+    legend.outside.size = .1
+  )
+
+tmap_save(
+  temp_wet_change, filename = "figs/fig_temp_wet_change.png"
+)
+```

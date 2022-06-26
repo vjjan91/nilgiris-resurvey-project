@@ -54,6 +54,8 @@ vignettes/*.pdf
 
 # ignore data
 data/raw
+data/climate/raw
+data/historical_data/
 data/output
 data/spatial
 .Rproj.user
