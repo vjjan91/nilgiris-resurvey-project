@@ -203,7 +203,7 @@ relAbun <- full_join(relAbun1850, relAbun1900, by = c("species")) %>%
 
 ## Visualizing changes in relative abundance over time
 ```{r}
-## This analysis is being done at the community-level
+## This analysis is being done at the landscape-level
 
 ## one:one comparisons of abundance between 1850-1900 and 2021 (all species and sites pooled)
 fig_1850v2021_rel <- ggplot(data=relAbun,aes(x=bayes_mean_2021,y=bayes_mean_1950))    + geom_point() +
@@ -233,7 +233,7 @@ fig_relAbun_over_time <- relAbun %>%
   scale_fill_scico_d(palette = "batlow") +
   theme_bw()
 
-ggsave(fig_relAbun_over_time, filename = "figs/fig_relAbun_communityLevel.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+ggsave(fig_relAbun_over_time, filename = "figs/fig_relAbun_landscapeLevel.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
 ```
 
 Repeating the above analysis at the site-level
