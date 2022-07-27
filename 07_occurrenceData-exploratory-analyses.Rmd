@@ -5,7 +5,7 @@ editor_options:
 
 # Exploratory analysis of occurrence data
 
-This script carries out exploratory analysis of historical and modern occurrence data from the Nilgiri hills. 
+This script carries out exploratory analysis of historical and modern occurrence data from the Nilgiri hills. In this script, we plot the total count of specimens by time period and the number of specimens per species by time period.   
 
 ### Load necessary libraries
 ```{r}
