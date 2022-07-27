@@ -1,0 +1,182 @@
+---
+editor_options: 
+  chunk_output_type: console
+---
+
+## Estimating species turnover across time periods
+
+We use temporal diversity metrics from Hallett et al. 2016 based on Collins et al. 2008 and Cleland et al. 2013. We use functions from the package codyn to calculate temporal diversity indices. Please see this link for a detailed vignette: <https://cran.r-project.org/web/packages/codyn/vignettes/Temporal_Diversity_Indices.html>
+
+### Load necessary libraries
+
+```{r}
+library(dplyr)
+library(stringr)
+library(tidyverse)
+library(scico)
+library(RColorBrewer)
+library(extrafont)
+library(sf)
+library(raster)
+library(data.table)
+library(codyn)
+```
+
+### Load list of resurvey locations
+
+We will load the list of sites across which a modern resurvey was carried out, along with elevation rasters.
+
+```{r}
+# load list of resurvey locations and add elevation as a variable
+# remove the modern resurvey locations only (ie. ASFQ)
+sites <- read.csv("data/list-of-resurvey-locations.csv")
+sites <- sites[-c(1:50),]
+
+# convert to sf object and transform
+sites <- st_as_sf(sites, coords = c("longitude", "latitude")) %>%
+  `st_crs<-`(4326) %>%
+  st_transform(32643)
+
+# add elevation raster
+alt <- raster("data/spatial/elevation/alt") # this layer is not added to github as a result of its large size and can be downloaded from SRTM (Farr et al. (2007))
+
+# extract values from that raster (note: transformation of coordinate system)
+elev <- extract(alt, sites)
+sites <- cbind(sites, elev)
+```
+
+For the historical occurrence data, we will choose data from three time periods: 1850-1900, 1900-1950 and 1950-2000.
+
+```{r}
+## read in historical occurrence data
+hist_occ <- read.csv("data/historical-occurrence-data.csv")
+
+### pre-1900
+hist_occ_pre1900 <- hist_occ %>%
+  filter(year <= 1900)
+
+### fix the count column
+hist_occ_pre1900 <-  hist_occ_pre1900 %>%
+  mutate(histCount = case_when(individualCount == "X" ~ 1,
+                               individualCount == "" ~ 1,
+                               TRUE ~ as.numeric(individualCount)))
+
+## subset data
+hist_pre1900 <-  hist_occ_pre1900[,c(3,5,9,18)] %>%
+  group_by(scientific_name, year, historical_site_code) %>%
+  mutate(histCount = sum(histCount)) %>%
+  distinct(.) %>%
+  rename(., "1850" = histCount) %>%
+  ungroup()
+
+## 1900-1950
+hist_occ_1900_1950 <- hist_occ %>%
+  filter(year > 1900 & year <= 1950)
+
+### fix the count column
+hist_occ_1900_1950 <-  hist_occ_1900_1950 %>%
+  mutate(histCount = case_when(individualCount == "X" ~ 1,
+                               individualCount == "" ~ 1,
+                               TRUE ~ as.numeric(individualCount)))
+
+## subset data
+hist_1900_1950 <-  hist_occ_1900_1950[,c(3,5,9,18)] %>%
+  group_by(scientific_name, year, historical_site_code) %>%
+  mutate(histCount = sum(histCount)) %>%
+  distinct(.) %>%
+  rename(., "1900" = histCount) %>%
+  ungroup()
+
+### 1950 - 2000
+hist_occ_1950_2000 <- hist_occ %>%
+  filter(year > 1950 & year <= 2000)
+
+### fix the count column
+hist_occ_1950_2000 <-  hist_occ_1950_2000 %>%
+  mutate(histCount = case_when(individualCount == "X" ~ 1,
+                               individualCount == "" ~ 1,
+                               TRUE ~ as.numeric(individualCount)))
+
+## subset data
+hist_1950_2000 <-  hist_occ_1950_2000[,c(3,5,9,18)] %>%
+  group_by(scientific_name, year, historical_site_code) %>%
+  mutate(histCount = sum(histCount)) %>%
+  distinct(.) %>%
+  rename(., "1950" = histCount) %>%
+  ungroup()
+
+## read in modern occurrence data
+mod_occ <- read.csv("data/modern-occurrence-data.csv")
+
+## remove sites without historical_site_code
+modOcc_spp <- mod_occ %>%
+  filter(!is.na(historical_site_code))
+
+## for the sake of downstream analysis, change the year column
+modOcc_spp$year <- 2021
+
+## subset data
+mod_2021 <- modOcc_spp[,c(3,5,7,11)] %>%
+  group_by(scientific_name, year, historical_site_code) %>%
+  mutate(number = sum(number)) %>%
+  distinct(.) %>%
+  rename(., "2021" = number) %>%
+  ungroup()
+
+# change structure
+mod_2021$`2021` <- as.numeric(mod_2021$`2021`)
+```
+
+## Preparing a dataframe to calculate species turnover
+
+```{r}
+## Get unique species abundances 
+
+## Please note: for the sake of downstream analysis, we have renamed 1850-1900 as 1850, 1900-1950 as 1900 and 1950-2000 as 1950. In other words, each year - except for 2021 represents a 50 year time period. 
+
+## join all the datasets together
+abund_by_site <- full_join(hist_pre1900, hist_1900_1950, by = c("scientific_name", "historical_site_code", "year")) %>%
+  full_join(., hist_1950_2000, by=c("scientific_name", "historical_site_code", "year")) %>% 
+  full_join(., mod_2021, by=c("scientific_name", "historical_site_code", "year")) %>%
+  arrange(scientific_name) 
+
+# replace NAs to 0
+abund_by_site[,c(4:7)][is.na(abund_by_site)[,c(4:7)]] <- 0
+
+## prepare the dataframe
+turnover_dat <-  abund_by_site %>%
+  rowwise() %>%
+  mutate(abundance = sum(`1850`,`1900`,`1950`,`2021`)) %>%
+  ungroup()
+
+# check structure of dataframes
+turnover_dat <- as.data.frame(turnover_dat)
+turnover_dat$year <- as.integer(turnover_dat$year)
+turnover_dat$scientific_name <- as.factor(turnover_dat$scientific_name)
+turnover_dat$historical_site_code <- as.factor(turnover_dat$historical_site_code)
+
+## We will calculate total turnover as well as the proportion of species that either appear or disappear between time points.
+
+spTurnover <- turnover(df = turnover_dat, 
+                         time.var = "year", 
+                         species.var = "scientific_name", 
+                         abundance.var = "abundance",
+                       replicate.var = "historical_site_code")
+
+
+trial <- turnover(df=knz_001d,
+time.var = "year",
+species.var = "species",
+abundance.var = "abundance",
+replicate.var="subplot")
+
+# to do:
+
+
+
+
+
+
+```
+
+
