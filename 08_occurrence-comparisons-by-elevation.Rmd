@@ -3,9 +3,13 @@ editor_options:
   chunk_output_type: console
 ---
 
-## Historical-modern occurrence comparisons
+## Historical-modern occurrence comparisons by elevation
 
-Here, we will compare historical and modern occurrence data and test for differences in presences/absences of species across time periods and sites
+Here, we will compare historical and modern occurrence data and test for differences in presences/absences of species across time periods and sites by elevation. 
+
+Scenario 1  
+
+We plot the presence/absence of each species by elevation assuming that the data from multiple modern survey sites correspond to a single historical survey site. Due to lack of clarity on the exact location where species were historically collected from, multiple modern survey locations were chosen to correspond to a single historic survey site. In some cases, these modern survey sites span a range of elevations and hence the assumption here is that the elevational range for a species historically could span the range of elevations corresponding to the modern survey locations.  
 
 ### Load necessary libraries
 
@@ -22,8 +26,7 @@ library(raster)
 
 ### Load list of resurvey locations
 
-We will load the list of sites across which a modern resurvey was carried out, along with
-
+We will load the list of sites across which a modern resurvey was carried out, along with elevation rasters. 
 ```{r}
 # load list of resurvey locations and add elevation as a variable
 # remove the modern resurvey locations only (ie. ASFQ)
@@ -45,8 +48,7 @@ sites <- cbind(sites, elev)
 
 ### Load historical and modern occurrence data
 
-For the historical occurrence data, we will choose data from the time period 1850-1900 as majority of specimen collections were carried out in this time period. Further below, we will also choose data from 1900-1950 and 1950-2000 to explore comparisons with modern occurrence data.
-
+For the historical occurrence data, we will choose data from three time periods: 1850-1900, 1900-1950 and 1950-2000. 
 ```{r}
 ## read in historical occurrence data
 hist_occ <- read.csv("data/historical-occurrence-data.csv")
@@ -55,7 +57,7 @@ hist_occ <- read.csv("data/historical-occurrence-data.csv")
 hist_occ_pre1900 <- hist_occ %>%
   filter(year <= 1900)
 
-## filter by site and get unique species per site (historical)
+## group by scientific name and historical site code
 histOcc_spp_pre1900 <- hist_occ_pre1900 %>%
   group_by(scientific_name, historical_site_code) %>%
   count()
@@ -73,7 +75,7 @@ hist_occ_elev_pre1900 <-  left_join(histOcc_spp_pre1900, sites, by=c("historical
 hist_occ_1900_1950 <- hist_occ %>%
   filter(year > 1900 & year <= 1950)
 
-## filter by site and get unique species per site (historical)
+## group by scientific name and historical site code
 histOcc_spp_1900_1950 <- hist_occ_1900_1950 %>%
   group_by(scientific_name, historical_site_code) %>%
   count()
@@ -90,7 +92,7 @@ hist_occ_elev_1900_1950 <-  left_join(histOcc_spp_1900_1950, sites, by=c("histor
 hist_occ_1950_2000 <- hist_occ %>%
   filter(year > 1950 & year <= 2000)
 
-## filter by site and get unique species per site (historical)
+## group by scientific name and historical site code
 histOcc_spp_1950_2000 <- hist_occ_1950_2000 %>%
   group_by(scientific_name, historical_site_code) %>%
   count()
@@ -106,7 +108,7 @@ hist_occ_elev_1950_2000 <-  left_join(histOcc_spp_1950_2000, sites, by=c("histor
 ## read in modern occurrence data
 mod_occ <- read.csv("data/modern-occurrence-data.csv")
 
-## filter by site and get unique species per site (modern)
+## group by scientific name and modern site code
 modOcc_spp <- mod_occ %>%
   filter(!is.na(historical_site_code)) %>%
   group_by(scientific_name, modern_site_code) %>%
@@ -121,7 +123,7 @@ mod_occ_elev <-  left_join(modOcc_spp, sites, by=c("modern_site_code"="modern_si
 ### Comparing historical-modern counts by elevation
 
 ```{r}
-## joining the historical datasets
+## joining the historic and modern datasets
 hist_mod <- full_join(hist_occ_elev_pre1900, hist_occ_elev_1900_1950, by = c("scientific_name","modern_site_code","histCount","historical_site_code","elev","site_name","geometry")) %>%
   full_join(., hist_occ_elev_1950_2000, by = c("scientific_name","modern_site_code","histCount","historical_site_code","elev","site_name","geometry")) %>%
    full_join(., mod_occ_elev, by = c("scientific_name","modern_site_code","historical_site_code","elev","site_name","geometry")) %>%
@@ -173,3 +175,10 @@ cairo_pdf(
 plots
 dev.off()
 ```
+
+
+## For later:
+
+Insert code here to model Scenario 2:
+
+Where a single historical survey location corresponds to only a single modern survey location (we average elevations across modern survey locations and assume that a presence at any one of the X number of modern survey locations = 1 for the historical survey locations and the species is only absent if it was not detected = 0 at each of the modern survey locations)
