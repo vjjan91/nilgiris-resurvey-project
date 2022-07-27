@@ -131,36 +131,127 @@ mod_occ_sites <-  left_join(modOcc_spp, sites, by=c("modern_site_code"="modern_s
 
 ### Calculate dirichlet distributions of relative abundance
 
-Here, we will functions from Gotelli et al. 2021 to calculate relative species abundances at each site between historic and modern periods
+Here, we will functions from Gotelli et al. 2021 to calculate relative species abundances between historic and modern periods. For the first level of analysis, we ignore information at the site-level and calculate overall relative abundance per time-period at the landscape level. 
 ```{r}
-## joining the datasets
-hist_mod <- full_join(hist_occ_sites_pre1900, hist_occ_sites_1900_1950, by = c("scientific_name","modern_site_code","historical_site_code","elev","site_name","geometry")) %>%
-  full_join(., hist_occ_sites_1950_2000, by = c("scientific_name","modern_site_code","historical_site_code","elev","site_name","geometry")) %>%
-   full_join(., mod_occ_sites, by = c("scientific_name","modern_site_code","historical_site_code","elev","site_name","geometry")) %>%
-  replace(is.na(.), 0) %>%
-  arrange(scientific_name)
-
 # note: the level of the analysis is at the 'historic-site' and not the 'modern-site' (which essentially corresponds to three unique sites for every 'historic-site')
 # to ensure that the analysis is consistent, we sum abundances across the modern sites corresponding to each historic site
-
-unique_hist_mod <- hist_mod %>%
-  group_by(historical_site_code, scientific_name) %>%
-  mutate("2021" = sum(`2021`)) 
-
-# remove the modern_site_code, geometry and elev and keep only distinct rows
-unique_hist_mod <- distinct(unique_hist_mod[,c(1:3,5,8:10)])
+# However, our analysis calculates relative species abundances for the give time period rather than by site + time-period
 
 ## calculating relative species abundances for the time period 1850-1900
+
+# we remove modern site_code and get only distinct rows
+unique_hist_pre1900 <- hist_occ_sites_pre1900[,c(1,3)] %>%
+  group_by(scientific_name) %>%
+  summarise("relAbund1850" = sum(`1850-1900`)) 
+
+# apply dirichlet distribution
+dat <- tibble::deframe(unique_hist_pre1900) ## choosing 1850-1900 data
+
+relAbun1850 <- dirch_stats(dat) %>%
+  dplyr::select(species, bayes_mean) %>%
+  rename(., bayes_mean_1850 = bayes_mean)
+
+## calculating relative species abundances for the time period 1900-1950
+
+# we remove modern site_code and get only distinct rows
+unique_hist_1900_1950 <- hist_occ_sites_1900_1950[,c(1,3)] %>%
+  group_by(scientific_name) %>%
+  summarise("relAbund1900" = sum(`1900-1950`)) 
+
+# apply dirichlet distribution
+dat <- tibble::deframe(unique_hist_1900_1950) ## choosing 1900-1950 data
+
+relAbun1900 <- dirch_stats(dat) %>%
+  dplyr::select(species, bayes_mean) %>%
+  rename(., bayes_mean_1900 = bayes_mean)
+
+## calculating relative species abundances for the time period 1950-2000
+
+# we remove modern site_code and get only distinct rows
+unique_hist_1950_2000 <- hist_occ_sites_1950_2000[,c(1,3)] %>%
+  group_by(scientific_name) %>%
+  summarise("relAbund1950" = sum(`1950-2000`)) 
+
+# apply dirichlet distribution
+dat <- tibble::deframe(unique_hist_1950_2000) ## choosing 1950-2000 data
+
+relAbun1950 <- dirch_stats(dat) %>%
+  dplyr::select(species, bayes_mean) %>%
+  rename(., bayes_mean_1950 = bayes_mean)
+
+## calculating relative species abundances for the modern time period
+
+# we remove modern site_code and get only distinct rows
+unique_mod <- mod_occ_sites[,c(1,3)] %>%
+  group_by(scientific_name) %>%
+  summarise("relAbund2021" = sum(`2021`)) 
+
+# apply dirichlet distribution
+dat <- tibble::deframe(unique_mod) ## choosing modern data
+
+relAbun2021 <- dirch_stats(dat) %>%
+  dplyr::select(species, bayes_mean) %>%
+  rename(., bayes_mean_2021 = bayes_mean)
+
+### join the relative abundance datasets together
+relAbun <- full_join(relAbun1850, relAbun1900, by = c("species")) %>%
+  full_join(., relAbun1950, by = c("species")) %>%
+   full_join(., relAbun2021, by = c("species")) %>%
+  replace(is.na(.), 0) %>%
+  arrange(species)
+```
+
+## Visualizing changes in relative abundance over time
+```{r}
+## This analysis is being done at the community-level
+
+## one:one comparisons of abundance between 1850-1900 and 2021 (all species and sites pooled)
+fig_1850v2021_rel <- ggplot(data=relAbun,aes(x=bayes_mean_2021,y=bayes_mean_1950))    + geom_point() +
+   scale_y_log10() +
+  geom_abline(slope=1, intercept=0,linetype="dashed") +
+  scale_x_log10()+
+  labs(y = "1850-1900 Relative abundance", 
+       x = "2021 Relative abundance") +
+   geom_point(shape = 21, colour = "black", fill = "white", size = 2, stroke = 1)+
+   geom_smooth(method="lm", se=TRUE, fullrange=FALSE, level=0.95,linetype="solid") +  theme_bw(base_size=20) 
+
+ggsave(fig_1850v2021_rel, filename = "figs/fig_1850-1900vs2021_relAbun.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+
+fig_relAbun_over_time <- relAbun %>%
+  dplyr::select(-species) %>%
+  pivot_longer(everything()) %>%
+  ggplot(aes(x=name, y = value,
+             fill = name)) +
+  geom_boxplot() +
+  scale_y_log10() +
+  geom_point(size=4,shape=21, alpha=0.5,
+             color="black",fill="grey70") +
+  geom_jitter(width=0.2,size=4,shape=21, alpha=0.5,
+              color="black",fill="grey70") +
+  xlab("Time period") +
+  ylab("Relative abundance") +
+  scale_fill_scico_d(palette = "batlow") +
+  theme_bw()
+
+ggsave(fig_relAbun_over_time, filename = "figs/fig_relAbun_communityLevel.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+```
+
+Repeating the above analysis at the site-level
+```{r}
+# we remove modern site_code and get only distinct rows
+hist_pre1900 <- hist_occ_sites_pre1900[,c(1:3)] %>%
+  distinct(.)
+
 relSpAbund_1850_1900 <- c()
 
-for(i in 1:length(unique(unique_hist_mod$historical_site_code))) {
+for(i in 1:length(unique(hist_pre1900$historical_site_code))) {
   
-  a <- unique_hist_mod %>%
-  filter(historical_site_code == unique(unique_hist_mod$historical_site_code)[i])
+  a <- hist_pre1900 %>%
+  filter(historical_site_code == unique(hist_pre1900$historical_site_code)[i])
 
   b <- tibble::deframe(a[,c(1,3)]) ## choosing 1850-1900 data
   
-  loc <- unique(unique_hist_mod$historical_site_code)[i] # what's the site_code?
+  loc <- unique(hist_pre1900$historical_site_code)[i] # what's the site_code?
   
   relSpAbund_1850_1900[[i]] <- dirch_stats(b) %>%
   dplyr::select(species, bayes_mean)
@@ -180,16 +271,21 @@ relSpAbund_1850_1900 <- relSpAbund_1850_1900 %>%
 
 ## repeating the above across other time periods
 ##  time period 1900-1950
+
+# we remove modern site_code and get only distinct rows
+hist_1900_1950 <- hist_occ_sites_1900_1950[,c(1:3)] %>%
+  distinct(.)
+
 relSpAbund_1900_1950 <- c()
 
-for(i in 1:length(unique(unique_hist_mod$historical_site_code))) {
+for(i in 1:length(unique(hist_1900_1950$historical_site_code))) {
   
-  a <- unique_hist_mod %>%
-  filter(historical_site_code == unique(unique_hist_mod$historical_site_code)[i])
+  a <- hist_1900_1950 %>%
+  filter(historical_site_code == unique(hist_1900_1950$historical_site_code)[i])
 
-  b <- tibble::deframe(a[,c(1,5)]) ## choosing 1900-1950 data
+  b <- tibble::deframe(a[,c(1,3)]) ## choosing 1900-1950 data
   
-  loc <- unique(unique_hist_mod$historical_site_code)[i] # what's the site_code?
+  loc <- unique(hist_1900_1950$historical_site_code)[i] # what's the site_code?
   
   relSpAbund_1900_1950[[i]] <- dirch_stats(b) %>%
   dplyr::select(species, bayes_mean)
@@ -208,16 +304,21 @@ relSpAbund_1900_1950 <- relSpAbund_1900_1950 %>%
     reduce(.f=full_join)
 
 ##  time period 1950-2000
+
+# we remove modern site_code and get only distinct rows
+hist_1950_2000 <- hist_occ_sites_1950_2000[,c(1:3)] %>%
+  distinct(.)
+
 relSpAbund_1950_2000 <- c()
 
-for(i in 1:length(unique(unique_hist_mod$historical_site_code))) {
+for(i in 1:length(unique(hist_1950_2000$historical_site_code))) {
   
-  a <- unique_hist_mod %>%
-  filter(historical_site_code == unique(unique_hist_mod$historical_site_code)[i])
+  a <- hist_1950_2000 %>%
+  filter(historical_site_code == unique(hist_1950_2000$historical_site_code)[i])
 
-  b <- tibble::deframe(a[,c(1,6)]) ## choosing 1950-2000 data
+  b <- tibble::deframe(a[,c(1,3)]) ## choosing 1950-2000 data
   
-  loc <- unique(unique_hist_mod$historical_site_code)[i] # what's the site_code?
+  loc <- unique(hist_1950_2000$historical_site_code)[i] # what's the site_code?
   
   relSpAbund_1950_2000[[i]] <- dirch_stats(b) %>%
   dplyr::select(species, bayes_mean)
@@ -236,16 +337,21 @@ relSpAbund_1950_2000 <- relSpAbund_1950_2000 %>%
     reduce(.f=full_join)
 
 ##  time period 2021
+mod_2021 <- mod_occ_sites[,c(1,3,5)] %>%
+  group_by(scientific_name, historical_site_code) %>%
+  mutate("2021" = sum(`2021`)) %>%
+  distinct(.)
+
 relSpAbund_2021 <- c()
 
-for(i in 1:length(unique(unique_hist_mod$historical_site_code))) {
+for(i in 1:length(unique(mod_2021$historical_site_code))) {
   
-  a <- unique_hist_mod %>%
-  filter(historical_site_code == unique(unique_hist_mod$historical_site_code)[i])
+  a <- mod_2021 %>%
+  filter(historical_site_code == unique(mod_2021$historical_site_code)[i])
 
-  b <- tibble::deframe(a[,c(1,7)]) ## choosing modern data
+  b <- tibble::deframe(a[,c(1,2)]) ## choosing modern data
   
-  loc <- unique(unique_hist_mod$historical_site_code)[i] # what's the site_code?
+  loc <- unique(mod_2021$historical_site_code)[i] # what's the site_code?
   
   relSpAbund_2021[[i]] <- dirch_stats(b) %>%
   dplyr::select(species, bayes_mean)
@@ -264,39 +370,41 @@ relSpAbund_2021 <- relSpAbund_2021 %>%
     reduce(.f=full_join)
 
 ## join all the datasets together
-relSpAbund_by_loc <- full_join(relSpAbund_1850_1900, relSpAbund_1900_1950, by = "scientific_name") %>%
+relSpAbund_by_site <- full_join(relSpAbund_1850_1900, relSpAbund_1900_1950, by = "scientific_name") %>%
   full_join(., relSpAbund_1950_2000, by = "scientific_name") %>%
   full_join(., relSpAbund_2021, by = "scientific_name") %>%
   arrange(scientific_name) %>%
   replace(is.na(.), 0) 
 ```
 
-## Visualizing differences in relative species abundances over time
+## Visualizing differences in relative abundance over time at the site level
 ```{r}
-## pivot longer 
-relSpAbund_by_loc <- relSpAbund_by_loc %>%
+## preparing dataframe for visualization
+relSpAbund <- relSpAbund_by_site %>%
   pivot_longer(!scientific_name, names_to = "site_year", values_to = "relAbundance") %>%
   separate(site_year, into = c("site", "year"), sep = "_")
 
-## to do:
+## Please note: for the sake of downstream analysis, we have renamed 1850-1900 as 1850, 1900-1950 as 1900 and 1950-2000 as 1950. In other words, each year - except for 2021 represents a 50 year time period. 
 
-plot by site - over time
-plot by species - over time
-(what we need to plot is % change over time?)
+fig_relAbun_siteLevel <- relSpAbund %>%
+  dplyr::select(-scientific_name) %>%
+  # pivot_longer(everything()) %>%
+  ggplot(aes(x=year, y = relAbundance,
+             fill = year)) +
+  geom_boxplot() +
+  scale_y_log10() +
+  #geom_point(size=4,shape=21, alpha=0.5,
+  #           color="black",fill="grey70") +
+  #geom_jitter(width=0.2,size=4,shape=21, alpha=0.5,
+  #            color="black",fill="grey70") +
+  facet_wrap(~site)+
+  xlab("Time period") +
+  ylab("Relative abundance") +
+  scale_fill_scico_d(palette = "batlow") +
+  theme_bw()
 
-
-
+ggsave(fig_relAbun_siteLevel, filename = "figs/fig_relAbun_siteLevel.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
 ```
 
-
-
-loc <- unique(unique_hist_mod$historical_site_code)[1]
-
-trial <-  relSpAbund_by_loc %>%
-  dplyr::select(scientific_name, contains(loc))
-
-
-
-```
-
+Takeaways: No clear differences in relative abundances over time seen at the landscape level and site-level. Due to incomplete sampling, there are some sites that show a relatively higher abundance in earlier time periods when compared to modern occurrence. 
 
