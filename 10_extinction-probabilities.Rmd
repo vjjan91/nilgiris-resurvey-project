@@ -1,0 +1,224 @@
+---
+editor_options: 
+  chunk_output_type: console
+---
+
+### Estimating species extinction probabilities
+
+In this script, we will estimate probabilities of extinction for each species over time by accounting for sampling method across different years (eg. specimen collected vs. observation for historical data and heard vs. seen for modern occurrence data)
+
+```{r}
+### Load necessary libraries
+library(dplyr)
+library(stringr)
+library(tidyverse)
+library(scico)
+library(RColorBrewer)
+library(extrafont)
+library(sf)
+library(raster)
+library(data.table)
+library(codyn)
+
+# source custom functions
+source("code/03_extinction-probability-functions.R")
+```
+
+### Load list of resurvey locations
+
+We will load the list of sites across which a modern resurvey was carried out, along with elevation rasters.
+```{r}
+# load list of resurvey locations and add elevation as a variable
+# remove the modern resurvey locations only (ie. ASFQ)
+sites <- read.csv("data/list-of-resurvey-locations.csv")
+sites <- sites[-c(1:50),]
+
+# convert to sf object and transform
+sites <- st_as_sf(sites, coords = c("longitude", "latitude")) %>%
+  `st_crs<-`(4326) %>%
+  st_transform(32643)
+
+# add elevation raster
+alt <- raster("data/spatial/elevation/alt") # this layer is not added to github as a result of its large size and can be downloaded from SRTM (Farr et al. (2007))
+
+# extract values from that raster (note: transformation of coordinate system)
+elev <- extract(alt, sites)
+sites <- cbind(sites, elev)
+```
+
+### Load in historical occurrence data
+```{r}
+## read in historical occurrence data
+hist_occ <- read.csv("data/historical-occurrence-data.csv")
+
+# We add in two columns to the above dataframe:
+# pci_lower and pci_upper
+# here pci is a metric from Thompson et al. 2017 which essentially translates to the probability that the taxon is correctly identified as extant. 
+
+# We make a distinction between the upper and lower probabilities that are assigned to the above metric. 
+# We follow Lees et al. (2021) and Thompson et al. (2017) who assigned values of 0.95-0.99 for specimen based records/museum records and conservative values of 0.5-0.65 for journal data (often reporting observations/sightings and not specimens collected). Such probabilities are assigned to account for varying efforts that cannot be quantified from historical observations. 
+
+hist_occ <-  hist_occ %>%
+  mutate("pci_lower" = case_when(institutionCode == "JournalData" ~ 0.5,
+                                 TRUE ~ 0.95)) %>%
+  mutate("pci_upper" = case_when(institutionCode == "JournalData" ~ 0.65,
+                                 TRUE ~ 0.99))
+
+### fix the count column
+hist_occ <-  hist_occ %>%
+  mutate(histCount = case_when(individualCount == "X" ~ 1,
+                               individualCount == "" ~ 1,
+                               TRUE ~ as.numeric(individualCount)))
+```
+
+
+### Load in modern occurrence data
+```{r}
+## read in modern occurrence data
+mod_occ <- read.csv("data/modern-occurrence-data.csv")
+
+## remove sites without historical_site_code
+mod_occ <- mod_occ %>%
+  filter(!is.na(historical_site_code))
+
+## add the pci_lower and pci_upper values
+## here, we do not make a distinction between heard, seen and flyover observations and assign a pci_lower of 0.95 and a pci_upper of 0.99
+
+mod_occ <- mod_occ %>%
+  mutate("pci_lower" =  0.95) %>%
+  mutate("pci_upper" = 0.99)
+```
+
+## Combine modern and historical occurrence data
+
+Choose the columns necessary for further calculations of probabilities of persistence and extinction
+```{r}
+## historical data
+hist_probDat <-  hist_occ %>%
+  dplyr::select(scientific_name, year, historical_site_code, pci_lower,
+         pci_upper, histCount) %>%
+  group_by(scientific_name, year, historical_site_code) %>%
+  mutate(histCount = sum(histCount)) %>%
+  rename(., abundance = "histCount") %>%
+  distinct(.) %>%
+  ungroup()
+
+## modern data
+mod_probDat <- mod_occ %>%
+  mutate(year = 2021) %>% # change year to 2021 for ease of modeling
+  rename(., abundance = "number") %>%
+  dplyr::select(scientific_name, year, historical_site_code, pci_lower,
+         pci_upper, abundance) %>%
+  group_by(scientific_name, year, historical_site_code) %>%
+  mutate(abundance = sum(abundance)) %>%
+  distinct(.) %>%
+  filter(!is.na(scientific_name)) %>%
+  ungroup()
+```
+
+## Calculate probabilities of persistence and extinction
+
+We use functions from Thompson et al. 2017 to calculate the same. 
+
+The analysis needs to be done at the site level and at the landscape level
+```{r}
+# join the above two datasets for ease of calculation
+probDat <- full_join(hist_probDat, mod_probDat)
+
+# note: unlike example datasets, we have data for the same year from different locations for the same species. 
+
+## modeling data by species at the site level
+
+# years in which a species was not detected at all, we insert default probabilities for eps, pi and pr - where eps is the the proportion of the taxon's habitat within its likely entire range that was surveyed (0 ≤ ε ≤ 1).
+# p(i) = the probability that the taxon, or recent evidence of it, could have been reliably identified in the survey if it had been recorded.
+# p(r) = the probability that the taxon, or recent evidence of it, would have been recorded in the survey.
+
+# please refer to Thompson et al. 2017 for more details/information
+
+eps.passive = c(0,	0.05)
+pi.passive = c(0.10,	0.65)
+pr.passive = c(0.40,	0.60)
+pas.sur = c(eps.passive ,pi.passive,pr.passive)
+
+## perhaps an object to store this data in:
+
+
+for(i in 1:length(unique(probDat$scientific_name))) {
+  
+  specDat <- probDat %>%
+    filter(scientific_name == unique(probDat$scientific_name)[1])
+  
+  for(j in 1:length(unique(specDat$historical_site_code))) {
+    
+  recordings <- specDat %>%
+    filter(historical_site_code == unique(specDat$historical_site_code)[1])
+  
+  #recordings <- probDat %>%
+  #  filter(scientific_name == unique(probDat$scientific_name)[2])
+  
+  recordings <- as.data.frame(recordings[,c(2,4,5)]) # select only year & pci
+    
+    # check years are unique - one record per year
+    length(unique(recordings$year)) == nrow(recordings)
+
+    # total number of years (including years without data)
+    years <- seq(min(recordings[,'year']),2021 ,by = 1)
+    
+    # find years in which no data was recorded
+    pas_sur_years <- years[!years %in% recordings[,1]]
+    pas_sur_years <- cbind(pas_sur_years, t(replicate(length(pas_sur_years), pas.sur)))
+    surveys <- as.data.frame(pas_sur_years)
+    names(surveys) <- c("year",	"eps_lower","eps_upper",
+                        "pi_lower","pi_upper", "pr_lower",
+                        "pr_upper")
+    surveys <- surveys[order(surveys[,"year"]),]
+    rownames(surveys) <- NULL
+    
+    # create an object that adds a 1 and 0 for each record/no record
+    rec.year <- cbind(recordings[,'year'],1) 
+    rec.year = rbind(rec.year,cbind(surveys[,'year'],0)) 
+    rec.year = rec.year[order(rec.year[,1]),]
+    
+     # some more tests
+    nrow(rec.year) == (nrow(recordings) + nrow(surveys))
+    (nrow(recordings) + nrow(surveys)) == length(years)
+    
+    PXt <- px.mid()
+    print(cbind(years, PXt))
+    
+    
+
+# visualizing the results:
+    
+xx <- c(years, rev(years))
+yysd <-c(PXt[,1],rev(PXt[,3]))
+
+yyint<- c(PXt[,4],rev(PXt[,5]))
+
+par(family="serif")
+plot(
+  years,PXt[,2], "l",ylim = c(0,1), xaxt = 'n',xaxs = "i", yaxs = "i" ,xlab =
+    "Years", ylab = "P(X|t)"
+)
+
+polygon(xx, yyint, col = 'lightgrey', border = NA)
+polygon(xx, yysd, col = 'darkgrey', border = NA)
+
+lines(years,PXt[,2], "l")
+axis(1, at = seq(min(years), max(years), by = 3), las = 2)
+axis(1, at = c(min(years), max(years)), las = 2)
+
+
+
+
+
+```
+
+
+What do we need:
+
+switch mod_occ to year = 2021 and group_by year and site_code? for abundance data?
+select only year, pic_upper, pci_lower, scientific name, site-code, abundance
+
+
+
