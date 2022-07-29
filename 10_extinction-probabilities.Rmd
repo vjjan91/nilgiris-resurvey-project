@@ -18,7 +18,6 @@ library(extrafont)
 library(sf)
 library(raster)
 library(data.table)
-library(codyn)
 
 # source custom functions
 source("code/03_extinction-probability-functions.R")
@@ -133,28 +132,29 @@ probDat <- full_join(hist_probDat, mod_probDat)
 # p(i) = the probability that the taxon, or recent evidence of it, could have been reliably identified in the survey if it had been recorded.
 # p(r) = the probability that the taxon, or recent evidence of it, would have been recorded in the survey.
 
-# please refer to Thompson et al. 2017 for more details/information
-
 eps.passive = c(0,	0.05)
 pi.passive = c(0.10,	0.65)
 pr.passive = c(0.40,	0.60)
 pas.sur = c(eps.passive ,pi.passive,pr.passive)
 
-## perhaps an object to store this data in:
+# please refer to Thompson et al. 2017 for more details/information
 
+# run the loop to create a list of plots
+allPlots <- list()
 
 for(i in 1:length(unique(probDat$scientific_name))) {
   
   specDat <- probDat %>%
-    filter(scientific_name == unique(probDat$scientific_name)[1])
+    filter(scientific_name == unique(probDat$scientific_name)[i])
+  sciName <- unique(probDat$scientific_name)[i]
+  
+  sitePlots <- list()
   
   for(j in 1:length(unique(specDat$historical_site_code))) {
     
   recordings <- specDat %>%
-    filter(historical_site_code == unique(specDat$historical_site_code)[1])
-  
-  #recordings <- probDat %>%
-  #  filter(scientific_name == unique(probDat$scientific_name)[2])
+    filter(historical_site_code == unique(specDat$historical_site_code)[j])
+    siteName <- unique(specDat$historical_site_code)[j]
   
   recordings <- as.data.frame(recordings[,c(2,4,5)]) # select only year & pci
     
@@ -162,7 +162,7 @@ for(i in 1:length(unique(probDat$scientific_name))) {
     length(unique(recordings$year)) == nrow(recordings)
 
     # total number of years (including years without data)
-    years <- seq(min(recordings[,'year']),2021 ,by = 1)
+    years <- seq(min(recordings[,'year']),2030 ,by = 1)
     
     # find years in which no data was recorded
     pas_sur_years <- years[!years %in% recordings[,1]]
@@ -183,42 +183,188 @@ for(i in 1:length(unique(probDat$scientific_name))) {
     nrow(rec.year) == (nrow(recordings) + nrow(surveys))
     (nrow(recordings) + nrow(surveys)) == length(years)
     
+    # calculate probability of persistence and 95% intervals
     PXt <- px.mid()
-    print(cbind(years, PXt))
     
+    # visualizing probabilities of persistence by species and site
+    specBySiteDat <- as.data.frame(cbind(years,PXt))
+    colnames(specBySiteDat) <- c("years", "sd_lwr", "PXt", "sd_upr", "PXt_min","PXt_max")
     
-
-# visualizing the results:
-    
-xx <- c(years, rev(years))
-yysd <-c(PXt[,1],rev(PXt[,3]))
-
-yyint<- c(PXt[,4],rev(PXt[,5]))
-
-par(family="serif")
-plot(
-  years,PXt[,2], "l",ylim = c(0,1), xaxt = 'n',xaxs = "i", yaxs = "i" ,xlab =
-    "Years", ylab = "P(X|t)"
+    # plots
+    sitePlots[[j]] <- ggplot(specBySiteDat, aes(x = years, y = PXt))+
+      geom_ribbon(aes(ymin=sd_lwr, ymax = sd_upr), linetype = 0, alpha = 0.4)+
+  geom_ribbon(aes(ymin=PXt_min, ymax = PXt_max), linetype = 0, alpha = 0.2) +
+  scale_color_manual(values = c("black", "darkred")) +
+  scale_fill_manual(aesthetics = "fill", values = c("grey10", "grey50")) + 
+  geom_line(size = 1) +
+  ylim(c(0,1)) +
+  scale_x_continuous(breaks = seq(min(years), max(years),10)) +
+  ylab("Probability that taxon is extant")+
+  theme_bw() +
+  ggtitle(paste(sciName,"-",siteName, sep="")) +
+  labs(
+    x = "\nYears",
+    y = "Probability that a taxon is extant\n"
+  ) +
+  theme(
+    plot.title = element_text(family = "Century Gothic", face="bold.italic"),
+    axis.title = element_text(
+      family = "Century Gothic",
+      size = 14, face = "bold"
+    ),
+    axis.text = element_text(family = "Century Gothic", size = 13),
+    legend.title = element_text(family = "Century Gothic"),
+    legend.text = element_text(family = "Century Gothic")) + 
+    guides(size= "none",
+           fill = "none")
+  }
+  allPlots <- c(allPlots, sitePlots)
+  rm(sitePlots)
+}
+  
+# plot and save as a single pdf
+options(max.print = 2000)
+cairo_pdf(
+  filename = "figs/fig_species_by_site_persistenceProb.pdf",
+  onefile = TRUE,
+  width = 12,
+  height = 7
 )
-
-polygon(xx, yyint, col = 'lightgrey', border = NA)
-polygon(xx, yysd, col = 'darkgrey', border = NA)
-
-lines(years,PXt[,2], "l")
-axis(1, at = seq(min(years), max(years), by = 3), las = 2)
-axis(1, at = c(min(years), max(years)), las = 2)
-
-
-
-
-
+allPlots
+dev.off()
 ```
 
 
-What do we need:
+### Rerunning the above analysis but at the landscape level for each species
 
-switch mod_occ to year = 2021 and group_by year and site_code? for abundance data?
-select only year, pic_upper, pci_lower, scientific name, site-code, abundance
+First, we will prep the historical and modern occurrence data
+```{r}
+## historical data
+hist_probDat <-  hist_occ %>%
+  dplyr::select(scientific_name, year, pci_lower,
+         pci_upper, histCount) %>%
+  group_by(scientific_name, year) %>%
+  mutate(histCount = sum(histCount)) %>%
+  rename(., abundance = "histCount") %>%
+  distinct(.) %>%
+  ungroup()
+
+## modern data
+mod_probDat <- mod_occ %>%
+  mutate(year = 2021) %>% # change year to 2021 for ease of modeling
+  rename(., abundance = "number") %>%
+  dplyr::select(scientific_name, year, pci_lower,
+         pci_upper, abundance) %>%
+  group_by(scientific_name, year) %>%
+  mutate(abundance = sum(abundance)) %>%
+  distinct(.) %>%
+  filter(!is.na(scientific_name)) %>%
+  ungroup()
+```
 
 
+## Calculate probabilities of persistence and extinction
+
+We use functions from Thompson et al. 2017 to calculate the same. 
+
+The analysis is now being done at the landscape level
+```{r}
+# join the above two datasets for ease of calculation
+probDat <- full_join(hist_probDat, mod_probDat)
+
+## modeling data by species at the landscape level
+
+# years in which a species was not detected at all, we insert default probabilities for eps, pi and pr - where eps is the the proportion of the taxon's habitat within its likely entire range that was surveyed (0 ≤ ε ≤ 1).
+# p(i) = the probability that the taxon, or recent evidence of it, could have been reliably identified in the survey if it had been recorded.
+# p(r) = the probability that the taxon, or recent evidence of it, would have been recorded in the survey.
+
+eps.passive = c(0,	0.05)
+pi.passive = c(0.10,	0.65)
+pr.passive = c(0.40,	0.60)
+pas.sur = c(eps.passive ,pi.passive,pr.passive)
+
+# please refer to Thompson et al. 2017 for more details/information
+
+# run the loop to create a list of plots
+allPlots <- list()
+
+for(i in 1:length(unique(probDat$scientific_name))) {
+  
+  recordings <- probDat %>%
+  filter(scientific_name == unique(probDat$scientific_name)[i])
+  sciName <- unique(probDat$scientific_name)[i]
+  
+  recordings <- as.data.frame(recordings[,c(2,3,4)]) # select only year & pci
+    
+    # check years are unique - one record per year
+    length(unique(recordings$year)) == nrow(recordings)
+
+    # total number of years (including years without data)
+    years <- seq(min(recordings[,'year']),2030 ,by = 1)
+    
+    # find years in which no data was recorded
+    pas_sur_years <- years[!years %in% recordings[,1]]
+    pas_sur_years <- cbind(pas_sur_years, t(replicate(length(pas_sur_years), pas.sur)))
+    surveys <- as.data.frame(pas_sur_years)
+    names(surveys) <- c("year",	"eps_lower","eps_upper",
+                        "pi_lower","pi_upper", "pr_lower",
+                        "pr_upper")
+    surveys <- surveys[order(surveys[,"year"]),]
+    rownames(surveys) <- NULL
+    
+    # create an object that adds a 1 and 0 for each record/no record
+    rec.year <- cbind(recordings[,'year'],1) 
+    rec.year = rbind(rec.year,cbind(surveys[,'year'],0)) 
+    rec.year = rec.year[order(rec.year[,1]),]
+    
+     # some more tests
+    nrow(rec.year) == (nrow(recordings) + nrow(surveys))
+    (nrow(recordings) + nrow(surveys)) == length(years)
+    
+    # calculate probability of persistence and 95% intervals
+    PXt <- px.mid()
+    
+    # visualizing probabilities of persistence by species and site
+    specDat <- as.data.frame(cbind(years,PXt))
+    colnames(specDat) <- c("years", "sd_lwr", "PXt", "sd_upr", "PXt_min","PXt_max")
+    
+    # plots
+    allPlots[[i]] <- ggplot(specDat, aes(x = years, y = PXt))+
+      geom_ribbon(aes(ymin=sd_lwr, ymax = sd_upr), linetype = 0, alpha = 0.4)+
+  geom_ribbon(aes(ymin=PXt_min, ymax = PXt_max), linetype = 0, alpha = 0.2) +
+  scale_color_manual(values = c("black", "darkred")) +
+  scale_fill_manual(aesthetics = "fill", values = c("grey10", "grey50")) + 
+  geom_line(size = 1) +
+  ylim(c(0,1)) +
+  scale_x_continuous(breaks = seq(min(years), max(years),10)) +
+  ylab("Probability that taxon is extant")+
+  theme_bw() +
+  ggtitle(sciName) +
+  labs(
+    x = "\nYears",
+    y = "Probability that a taxon is extant\n"
+  ) +
+  theme(
+    plot.title = element_text(family = "Century Gothic", face="bold.italic"),
+    axis.title = element_text(
+      family = "Century Gothic",
+      size = 14, face = "bold"
+    ),
+    axis.text = element_text(family = "Century Gothic", size = 13),
+    legend.title = element_text(family = "Century Gothic"),
+    legend.text = element_text(family = "Century Gothic")) + 
+    guides(size= "none",
+           fill = "none")
+  }
+  
+# plot and save as a single pdf
+cairo_pdf(
+  filename = "figs/fig_species_persistenceProb_landscapeLevel.pdf",
+  onefile = TRUE,
+  width = 12,
+  height = 7
+)
+allPlots
+dev.off()
+```
 
