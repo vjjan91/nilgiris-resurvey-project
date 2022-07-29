@@ -3,9 +3,9 @@ editor_options:
   chunk_output_type: console
 ---
 
-### Estimating species extinction probabilities
+### Estimating species persistence probabilities
 
-In this script, we will estimate probabilities of extinction for each species over time by accounting for sampling method across different years (eg. specimen collected vs. observation for historical data and heard vs. seen for modern occurrence data)
+In this script, we will estimate probabilities of persistence for each species over time by accounting for sampling method across different years (eg. specimen collected vs. observation for historical data and heard vs. seen for modern occurrence data)
 
 ```{r}
 ### Load necessary libraries
@@ -20,7 +20,7 @@ library(raster)
 library(data.table)
 
 # source custom functions
-source("code/03_extinction-probability-functions.R")
+source("code/03_persistence-probability-functions.R")
 ```
 
 ### Load list of resurvey locations
@@ -90,7 +90,7 @@ mod_occ <- mod_occ %>%
 
 ## Combine modern and historical occurrence data
 
-Choose the columns necessary for further calculations of probabilities of persistence and extinction
+Choose the columns necessary for further calculations of probabilities of persistence
 ```{r}
 ## historical data
 hist_probDat <-  hist_occ %>%
@@ -115,7 +115,7 @@ mod_probDat <- mod_occ %>%
   ungroup()
 ```
 
-## Calculate probabilities of persistence and extinction
+## Calculate probabilities of persistence
 
 We use functions from Thompson et al. 2017 to calculate the same. 
 
@@ -269,7 +269,7 @@ mod_probDat <- mod_occ %>%
 ```
 
 
-## Calculate probabilities of persistence and extinction
+## Calculate probabilities of persistence
 
 We use functions from Thompson et al. 2017 to calculate the same. 
 
