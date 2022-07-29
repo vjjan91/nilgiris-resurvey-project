@@ -142,6 +142,9 @@ pas.sur = c(eps.passive ,pi.passive,pr.passive)
 # run the loop to create a list of plots
 allPlots <- list()
 
+# save the persistence prob in a dataframe for later use
+spec_site_persProb <- data.frame()
+
 for(i in 1:length(unique(probDat$scientific_name))) {
   
   specDat <- probDat %>%
@@ -187,8 +190,11 @@ for(i in 1:length(unique(probDat$scientific_name))) {
     PXt <- px.mid()
     
     # visualizing probabilities of persistence by species and site
-    specBySiteDat <- as.data.frame(cbind(years,PXt))
-    colnames(specBySiteDat) <- c("years", "sd_lwr", "PXt", "sd_upr", "PXt_min","PXt_max")
+    specBySiteDat <- as.data.frame(cbind(years,PXt,sciName,siteName))
+    colnames(specBySiteDat) <- c("years", "sd_lwr", "PXt", "sd_upr", "PXt_min","PXt_max","scientific_name","historical_site_code")
+    
+    # store it in a dataframe
+    spec_site_persProb <- rbind(specBySiteDat, spec_site_persProb)
     
     # plots
     sitePlots[[j]] <- ggplot(specBySiteDat, aes(x = years, y = PXt))+
@@ -288,6 +294,9 @@ pas.sur = c(eps.passive ,pi.passive,pr.passive)
 # run the loop to create a list of plots
 allPlots <- list()
 
+# save the persistence prob in a dataframe for later use
+spec_persProb <- data.frame()
+
 for(i in 1:length(unique(probDat$scientific_name))) {
   
   recordings <- probDat %>%
@@ -325,8 +334,11 @@ for(i in 1:length(unique(probDat$scientific_name))) {
     PXt <- px.mid()
     
     # visualizing probabilities of persistence by species and site
-    specDat <- as.data.frame(cbind(years,PXt))
-    colnames(specDat) <- c("years", "sd_lwr", "PXt", "sd_upr", "PXt_min","PXt_max")
+    specDat <- as.data.frame(cbind(years,PXt,sciName))
+    colnames(specDat) <- c("years", "sd_lwr", "PXt", "sd_upr", "PXt_min","PXt_max","sciName")
+    
+    # store it in a dataframe
+    spec_persProb <- rbind(specDat, spec_persProb)
     
     # plots
     allPlots[[i]] <- ggplot(specDat, aes(x = years, y = PXt))+
@@ -366,5 +378,217 @@ cairo_pdf(
 )
 allPlots
 dev.off()
+
+## save dataframes to file
+write.csv(spec_site_persProb, "data/species-by-site-persProb.csv", row.names=F)
+write.csv(spec_persProb, "data/species-persProb-landscapeLevel.csv", row.names=F)
+```
+
+## Load the species persistence probabilities at the site level
+
+We choose data for min and max years to see how historic and modern persistence probabilities vary
+```{r}
+## select data from the min and max years
+min_siteDat <- spec_site_persProb %>%
+  dplyr::select(years,PXt,scientific_name,historical_site_code) %>%
+  group_by(scientific_name, historical_site_code) %>%
+  slice(which.min(years)) %>%
+  mutate(pers_prob_year = "minYear") %>%
+  ungroup()
+
+max_siteDat <- spec_site_persProb %>%
+  dplyr::select(years,PXt,scientific_name,historical_site_code) %>%
+  group_by(scientific_name, historical_site_code) %>%
+  filter(years== 2021) %>%
+  mutate(pers_prob_year = "maxYear") %>%
+  ungroup()
+
+# join the above two datasets together
+siteDat <- bind_rows(min_siteDat, max_siteDat)
+
+# visualization of persistence probabilities between min and max year by site
+
+siteDat$pers_prob_year <- factor(siteDat$pers_prob_year, levels = c("minYear", "maxYear"))
+siteDat$PXt <- as.numeric(siteDat$PXt)
+
+fig_site_persProb <- ggplot(siteDat, aes(x=pers_prob_year, y=PXt, fill=pers_prob_year)) +  geom_boxplot(alpha=0.7) +  
+  scale_fill_scico_d(palette = "roma") +
+    theme_bw() +
+    labs(x="\nHistorical vs. modern persistence probability", 
+       y="Persistence probabilty\n") +
+  facet_wrap(~historical_site_code)+
+  scale_x_discrete(labels = c('Historic','Modern')) +
+    theme(axis.title = element_text(family = "Century Gothic",
+      size = 14, face = "bold"),
+        axis.text = element_text(family="Century Gothic",size = 14),
+        legend.position = "none")
+
+ggsave(fig_site_persProb, filename = "figs/fig_persProb_siteLevel.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+```
+
+## Load species persistence probabilities at the landscape level
+
+We choose persistence probabilities for min and max years and repeat analysis we carried out previously. 
+```{r}
+## select data from the min and max years
+min_siteDat <- spec_persProb %>%
+  dplyr::select(years,PXt,sciName) %>%
+  group_by(sciName) %>%
+  slice(which.min(years)) %>%
+  mutate(pers_prob_year = "minYear") %>%
+  ungroup()
+
+max_siteDat <- spec_persProb %>%
+  dplyr::select(years,PXt,sciName) %>%
+  group_by(sciName) %>%
+  filter(years== 2021) %>%
+  mutate(pers_prob_year = "maxYear") %>%
+  ungroup()
+
+# join the above two datasets together
+specDat <- bind_rows(min_siteDat, max_siteDat)
+
+# visualization of persistence probabilities between min and max year by site
+
+specDat$pers_prob_year <- factor(specDat$pers_prob_year, levels = c("minYear", "maxYear"))
+specDat$PXt <- as.numeric(specDat$PXt)
+
+fig_persProb_landscapeLevel <- ggplot(specDat, aes(x=pers_prob_year, y=PXt, fill=pers_prob_year)) +  geom_boxplot(alpha=0.7) +  
+  scale_fill_scico_d(palette = "roma") +
+    theme_bw() +
+    labs(x="\nHistorical vs. modern persistence probability", 
+       y="Persistence probabilty\n") +
+  scale_x_discrete(labels = c('Historic','Modern')) +
+    theme(axis.title = element_text(family = "Century Gothic",
+      size = 14, face = "bold"),
+        axis.text = element_text(family="Century Gothic",size = 14),
+        legend.position = "none")
+
+ggsave(fig_persProb_landscapeLevel, filename = "figs/fig_persProb_landscapeLevel.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+```
+
+## Summarizing persistence probabilities by species trait data
+
+Now that we have persistence probabilities over time, we can examine how they vary for species by site and at the landscape level over time for habitat generalists and specialists. 
+
+#### Let's first curate the species trait data
+```{r}
+## load state of India's birds data to get habitat affiliation
+species_codes <- read.csv("data/species-codes.csv")
+habitat_SoIB <- read.csv("data/SoIB-data.csv")
+
+# join the two dataframes
+habitat_dat <- left_join(species_codes, habitat_SoIB, by=c("scientific_name"="scientific_name"))
+
+# write the above to data folder and recode habitat affiliation
+# write.csv(habitat_dat, "data/species-trait-dat.csv", row.names = F)
+
+# note: the classification of habitat type was taken from the 2020 State of India's Birds report which had a comprehensive list of habitat types for each species. We classified species as forest associated even if it preferred some level of woodland habitat/shrubland (including throny scrubland and dry deciduous forests - lower elevations of the Nilgiris for instance), generalist - if it was found near settlements and habitations and grassland - if it occupied/preferred dry/wet/hill grassland/scrubland or even marshes (exception here: eurasian woodcock)
+
+## load the species trait data (that includes habitat) and merge with the AVONET dataset
+## please note that it is being loaded after curating and adding a column for habitat type based on our understanding of species natural history
+hab_dat <- read.csv("data/species-habitat-dat.csv")
+avonet <- read.csv("data/AVONET-data.csv")
+
+# join the above two datasets
+trait_dat <- left_join(hab_dat, avonet[,c(1,10:20,29:31)], by=c("scientific_name"="Species2"))
+
+## Write the trait data to file
+## write.csv(trait_dat,"data/species-trait-dat.csv",row.names = F)
+```
+
+## Examining persistence probabilities at the site level in conjunction with species traits
+```{r}
+## join pers prob and trait datasets
+site_dat_trait <- left_join(spec_site_persProb,trait_dat, by=c("scientific_name"="scientific_name"))
+
+## select data from the min and max years
+min_siteDat_trait <- site_dat_trait %>%
+  group_by(scientific_name, historical_site_code) %>%
+  slice(which.min(years)) %>%
+  mutate(pers_prob_year = "minYear") %>%
+  filter(Habitat.type != "Aquatic") %>%
+  ungroup()
+
+max_siteDat_trait <- site_dat_trait %>%
+  group_by(scientific_name, historical_site_code) %>%
+  filter(years== 2021) %>%
+  mutate(pers_prob_year = "maxYear") %>%
+  filter(Habitat.type != "Aquatic") %>%
+  ungroup()
+
+# join the above two datasets together
+siteDatTrait <- bind_rows(min_siteDat_trait, max_siteDat_trait)
+
+# visualization of persistence probabilities between min and max year by site
+
+siteDatTrait$pers_prob_year <- factor(siteDatTrait$pers_prob_year, levels = c("minYear", "maxYear"))
+siteDatTrait$PXt <- as.numeric(siteDatTrait$PXt)
+
+## examining habitat type at site level
+fig_site_habitat <- ggplot(siteDatTrait, aes(x=pers_prob_year, y=PXt, fill=Habitat.type)) +  geom_boxplot(alpha=0.7) +  
+  scale_fill_scico_d(palette = "roma",
+                     labels=c("Generalist","Forest","Grassland")) +
+    theme_bw() +
+    labs(x="\nHistorical vs. modern persistence probability", 
+       y="Persistence probabilty\n") +
+  facet_wrap(~historical_site_code)+
+  scale_x_discrete(labels = c('Historic','Modern')) +
+    theme(axis.title = element_text(family = "Century Gothic",
+      size = 14, face = "bold"),
+        axis.text = element_text(family="Century Gothic",size = 14),
+      legend.title = element_text(family="Century Gothic",
+                                    size = 14, face = "bold"),
+        legend.key.size = unit(1,"cm"),
+        legend.text = element_text(family="Century Gothic",size = 14))
+
+ggsave(fig_site_habitat, filename = "figs/fig_persProb_siteLevel_habitatType.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+```
+
+## Examining persistence probabilities at the landscape level in conjunction with species traits
+```{r}
+## join pers prob and trait datasets
+spec_dat_trait <- left_join(spec_persProb,trait_dat, by=c("sciName"="scientific_name"))
+
+## select data from the min and max years
+min_specDat_trait <- spec_dat_trait %>%
+  group_by(sciName) %>%
+  slice(which.min(years)) %>%
+  mutate(pers_prob_year = "minYear") %>%
+  filter(Habitat.type != "Aquatic") %>%
+  ungroup()
+
+max_specDat_trait <- spec_dat_trait %>%
+  group_by(sciName) %>%
+  filter(years== 2021) %>%
+  mutate(pers_prob_year = "maxYear") %>%
+  filter(Habitat.type != "Aquatic") %>%
+  ungroup()
+
+# join the above two datasets together
+specDatTrait <- bind_rows(min_specDat_trait, max_specDat_trait)
+
+# visualization of persistence probabilities between min and max year by site
+
+specDatTrait$pers_prob_year <- factor(specDatTrait$pers_prob_year, levels = c("minYear", "maxYear"))
+specDatTrait$PXt <- as.numeric(specDatTrait$PXt)
+
+## examining habitat type at site level
+fig_spec_habitat <- ggplot(specDatTrait, aes(x=pers_prob_year, y=PXt, fill=Habitat.type)) +  geom_boxplot(alpha=0.7) +  
+  scale_fill_scico_d(palette = "roma",
+                     labels=c("Generalist","Forest","Grassland")) +
+    theme_bw() +
+    labs(x="\nHistorical vs. modern persistence probability", 
+       y="Persistence probabilty\n") +
+  scale_x_discrete(labels = c('Historic','Modern')) +
+    theme(axis.title = element_text(family = "Century Gothic",
+      size = 14, face = "bold"),
+        axis.text = element_text(family="Century Gothic",size = 14),
+      legend.title = element_text(family="Century Gothic",
+                                    size = 14, face = "bold"),
+        legend.key.size = unit(1,"cm"),
+        legend.text = element_text(family="Century Gothic",size = 14))
+
+ggsave(fig_spec_habitat, filename = "figs/fig_persProb_landscapeLevel_habitatType.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
 ```
 
