@@ -1,0 +1,563 @@
+---
+editor_options: 
+  chunk_output_type: console
+---
+
+## Functional space and hypervolume estimation
+
+In this script, we replicate analyses from Gomez et al. (2021) 
+```{r}
+### Load necessary libraries
+library(dplyr)
+library(stringr)
+library(tidyverse)
+library(scico)
+library(RColorBrewer)
+library(extrafont)
+library(sf)
+library(raster)
+library(data.table)
+library(pacman)
+library(FD)
+library(ade4)
+library(cowplot)
+library(mice)
+library(reshape2)
+library(hypervolume)
+library(alphahull)
+library(TTR)
+library(plotrix)
+library(agricolae)
+library(psych)
+library(factoextra)
+library(ggrepel)
+library(tibble)
+library(ks)
+library(foreach)
+library(doSNOW)
+
+# function to z-transform data
+scale_z <- function(x){
+  (x - mean(x, na.rm=TRUE))/sd(x, na.rm=TRUE)
+}
+
+## Function to calculate kernel density probablities
+## Date: October 2017
+## Outputs: Function named 'cl'
+## Args:
+## df = dataframe of kernel density data
+## prob = Probabilty level e.g. 0.95 (95% confidence level)
+## --------------------------------------------------------------
+
+cl <- function(df, prob) {
+  dx <- diff(df$x[1:2])
+  dy <- diff(df$y[1:2])
+  sz <- sort(df$z)
+  c1 <- cumsum(sz) * dx * dy
+  approx(c1, sz, xout = 1 - prob)$y
+}
+
+# function to scale values between 0 and 1
+range01 <- function(x){(x-min(x))/(max(x)-min(x))}
+```
+
+### Load list of resurvey locations
+
+We will load the list of sites across which a modern resurvey was carried out, along with elevation rasters.
+```{r}
+# load list of resurvey locations and add elevation as a variable
+# remove the modern resurvey locations only (ie. ASFQ)
+sites <- read.csv("data/list-of-resurvey-locations.csv")
+sites <- sites[-c(1:50),]
+
+# convert to sf object and transform
+sites <- st_as_sf(sites, coords = c("longitude", "latitude")) %>%
+  `st_crs<-`(4326) %>%
+  st_transform(32643)
+
+# add elevation raster
+alt <- raster("data/spatial/elevation/alt") # this layer is not added to github as a result of its large size and can be downloaded from SRTM (Farr et al. (2007))
+
+# extract values from that raster (note: transformation of coordinate system)
+elev <- raster::extract(alt, sites)
+sites <- cbind(sites, elev)
+```
+
+## Load species persistence probabilities at site and landscape level
+```{r}
+spec_site_persProb <- read.csv( "data/species-persProb-siteLevel.csv")
+spec_persProb <- read.csv("data/species-persProb-landscapeLevel.csv")
+```
+
+### Load species trait data
+```{r}
+trait_dat <- read.csv("data/species-trait-dat.csv")
+```
+
+### Load historical and modern occurrence data
+
+For the historical occurrence data, we will choose data from three time periods: 1850-1900, 1900-1950 and 1950-2000. 
+```{r}
+## read in historical occurrence data
+hist_occ <- read.csv("data/historical-occurrence-data.csv")
+
+### pre-1900
+hist_occ_pre1900 <- hist_occ %>%
+  filter(year <= 1900)
+
+## group by scientific name and historical site code and join the sites dataframe
+hist_occ_pre1900 <- hist_occ_pre1900 %>%
+  group_by(scientific_name, historical_site_code) %>%
+  count() %>%
+  rename(., "abundance1850" = n) %>%
+  mutate("Y1850" = case_when(abundance1850 >= 1 ~ 1,TRUE ~ 0)) %>%
+  left_join(., sites, by=c("historical_site_code"="historical_site_code")) %>%
+  filter(!is.na(scientific_name)) %>%
+  replace(is.na(.), 0)
+  
+# repeat above for two more time-periods
+## 1900-1950
+hist_occ_1900_1950 <- hist_occ %>%
+  filter(year > 1900 & year <= 1950)
+
+## group by scientific name and historical site code and join the sites dataframe
+hist_occ_1900_1950 <- hist_occ_1900_1950 %>%
+  group_by(scientific_name, historical_site_code) %>%
+  count() %>%
+  rename(., "abundance1900" = n) %>%
+  mutate("Y1900" = case_when(abundance1900 >= 1 ~ 1,TRUE ~ 0)) %>%
+  left_join(., sites, by=c("historical_site_code"="historical_site_code")) %>%
+  filter(!is.na(scientific_name)) %>%
+  replace(is.na(.), 0)
+
+### 1950 - 2000
+hist_occ_1950_2000 <- hist_occ %>%
+  filter(year > 1950 & year <= 2000)
+
+## group by scientific name and historical site code and join the sites dataframe
+hist_occ_1950_2000 <- hist_occ_1950_2000 %>%
+  group_by(scientific_name, historical_site_code) %>%
+  count() %>%
+  rename(., "abundance1950" = n) %>%
+  mutate("Y1950" = case_when(abundance1950 >= 1 ~ 1,TRUE ~ 0)) %>%
+  left_join(., sites, by=c("historical_site_code"="historical_site_code")) %>%
+  filter(!is.na(scientific_name)) %>%
+  replace(is.na(.), 0)
+
+## read in modern occurrence data
+mod_occ <- read.csv("data/modern-occurrence-data.csv")
+
+## group by scientific name and modern site code
+mod_occ <- mod_occ %>%
+  filter(!is.na(historical_site_code)) %>%
+  group_by(scientific_name, modern_site_code) %>%
+  summarise(modCount = sum(number))
+
+mod_occ <-  left_join(mod_occ, sites, by=c("modern_site_code"="modern_site_code")) %>% filter(!is.na(scientific_name)) %>%
+  replace(is.na(.), 0) %>%
+  mutate("Y2021" = case_when(modCount >= 1 ~ 1,TRUE ~ 0))
+```
+
+## Join the historical and modern count data
+```{r}
+## joining the historic and modern datasets
+## this dataframe can be used to examine land cover data later on
+hist_mod <- full_join(hist_occ_pre1900, hist_occ_1900_1950, by = c("scientific_name","modern_site_code","historical_site_code","modern_landCover_type","elev","site_name","geometry")) %>%
+  full_join(., hist_occ_1950_2000, by = c("scientific_name","modern_site_code","historical_site_code","modern_landCover_type","elev","site_name","geometry")) %>%
+   full_join(., mod_occ, by = c("scientific_name","modern_site_code","historical_site_code","modern_landCover_type","elev","site_name","geometry")) %>%
+  replace(is.na(.), 0) %>%
+  arrange(scientific_name) %>%
+  ungroup()
+
+## Let's use the above dataframe to get species level data for further analysis downstream
+## We will ignore site codes
+
+pres_abs <- hist_mod %>%
+  dplyr::select(scientific_name, Y1850, Y1900, Y1950, Y2021) %>%
+  group_by(scientific_name) %>%
+  summarise_all(sum) %>%
+  mutate("Y1850" = case_when(Y1850 >= 1 ~ 1,TRUE ~ 0)) %>%
+  mutate("Y1900" = case_when(Y1900 >= 1 ~ 1,TRUE ~ 0)) %>%
+  mutate("Y1950" = case_when(Y1950 >= 1 ~ 1,TRUE ~ 0)) %>%
+  mutate("Y2021" = case_when(Y2021 >= 1 ~ 1,TRUE ~ 0))
+```
+
+## Prepare data for a PCA
+```{r}
+## join morphological trait data with the pres-abs data created
+## and subset only columns required for the PCA and next steps
+## Here, we will choose scientific_name, habitat type,beak_length_culmen, beak length_nares, beak width, beak depth, tarsus length, wing length, hand wing index, tail length and mass 
+
+trait_pres_abs <-  left_join(pres_abs, trait_dat[,c(1,5,46:51,54:56)], by=c("scientific_name"="scientific_name"))
+
+### add scaled trait measures to traits table
+traitScaled <- trait_pres_abs %>% 
+  mutate(beak_len_culmen_z = scale_z(Beak.Length_Culmen)) %>%
+  mutate(beak_len_nares_z = scale_z(Beak.Length_Nares)) %>%
+  mutate(beak_width_z = scale_z(Beak.Width)) %>%
+  mutate(beak_depth_z = scale_z(Beak.Depth)) %>%
+  mutate(tarsus_len_z = scale_z(Tarsus.Length)) %>%
+  mutate(wing_len_z = scale_z(Wing.Length)) %>%
+  mutate(hand_wing_index_z = scale_z(Hand.Wing.Index)) %>%
+  mutate(tail_len_z = scale_z(Tail.Length)) %>%
+  mutate(log_weight = log(Mass)) %>%
+  mutate(weight_z = scale_z(log_weight)) %>%
+  as.data.frame()
+
+# subset scaled measures
+traitScaled <- traitScaled %>% 
+  select(scientific_name, Y1850, Y1900, Y1950, Y2021, weight_z,
+         beak_len_culmen_z, beak_len_nares_z, beak_width_z,
+         beak_depth_z, tarsus_len_z, wing_len_z, hand_wing_index_z, tail_len_z)
+ 
+# table just with columns of morphological traits and species names as rownames
+trait_morph_species <- traitScaled %>% 
+  select(scientific_name, weight_z,
+         beak_len_culmen_z, beak_len_nares_z, beak_width_z,
+         beak_depth_z, tarsus_len_z, wing_len_z, hand_wing_index_z, tail_len_z) %>%
+  column_to_rownames(var = "scientific_name")
+```
+
+## Take a PCA of the morphological trait data
+```{r}
+pcaTotal <- princomp(trait_morph_species, cor = TRUE, scores = TRUE)
+summary(pcaTotal)
+
+# scores
+scoresPCATotal <- as.data.frame(pcaTotal$scores) %>% 
+  tibble::rownames_to_column("scientific_name")
+
+scoresPCATotal <- scoresPCATotal %>% 
+  # convert long to wide
+  tidyr::gather(key, value, -scientific_name) %>% 
+  tidyr::unite(col, key) %>% 
+  tidyr::spread(col, value) 
+
+# loadings
+loadingsPCATotal <- as.data.frame(unclass(pcaTotal$loadings)) %>% 
+  tibble::rownames_to_column("trait") %>% 
+  dplyr::bind_rows()
+
+loadingsPCATotal <- loadingsPCATotal %>% 
+  # convert long to wide
+  tidyr::gather(key, value, -trait) %>% 
+  tidyr::unite(col, key) %>% 
+  tidyr::spread(col, value) 
+
+# scalar to adjust arrow size
+sc_mi <- 7
+
+loadings_sc <- loadingsPCATotal %>% 
+  # rescale for arrow sizes
+  dplyr::mutate_at(vars(contains("Comp")), funs(.*sc_mi)) %>% 
+  # variable names
+  mutate(trait = c("Beak Depth","Beak Length (Culmen)","Beak Length (Nares)","Beak Width","Hand-Wing Index", "Tail length", "Tarsus length", "Body mass", "Wing length"))
+```
+
+## Join the PCA data with the previously created dataframe of 1s and 0s
+```{r}
+# subset for species in each period
+Y1850 <- traitScaled %>% 
+  filter(Y1850 == 1) %>% 
+  select(scientific_name, weight_z,
+         beak_len_culmen_z, beak_len_nares_z, beak_width_z,
+         beak_depth_z, tarsus_len_z, wing_len_z, hand_wing_index_z, tail_len_z) %>% 
+  left_join(scoresPCATotal, by = "scientific_name") 
+
+Y1900 <- traitScaled %>% 
+  filter(Y1900 == 1) %>% 
+  select(scientific_name, weight_z,
+         beak_len_culmen_z, beak_len_nares_z, beak_width_z,
+         beak_depth_z, tarsus_len_z, wing_len_z, hand_wing_index_z, tail_len_z) %>% 
+  left_join(scoresPCATotal, by = "scientific_name") 
+
+Y1950 <- traitScaled %>% 
+  filter(Y1950 == 1) %>% 
+  select(scientific_name, weight_z,
+         beak_len_culmen_z, beak_len_nares_z, beak_width_z,
+         beak_depth_z, tarsus_len_z, wing_len_z, hand_wing_index_z, tail_len_z) %>% 
+  left_join(scoresPCATotal, by = "scientific_name") 
+
+Y2021 <- traitScaled %>% 
+  filter(Y2021 == 1) %>% 
+  select(scientific_name, weight_z,
+         beak_len_culmen_z, beak_len_nares_z, beak_width_z,
+         beak_depth_z, tarsus_len_z, wing_len_z, hand_wing_index_z, tail_len_z) %>% 
+  left_join(scoresPCATotal, by = "scientific_name")
+```
+
+## Multivariate kernel density estimates (following Duong 2019 and Cooke et al. 2019)
+```{r}
+# kernel density estimation for each period
+pc_raw_1850 <- Y1850 %>% 
+  # extract first two principal components
+  dplyr::select(., scientific_name, Comp.1, Comp.2) %>% 
+  tibble::column_to_rownames(var = "scientific_name")
+
+pc_raw_1900 <- Y1900 %>% 
+  # extract first two principal components
+  dplyr::select(., scientific_name, Comp.1, Comp.2) %>% 
+  tibble::column_to_rownames(var = "scientific_name")
+
+pc_raw_1950 <- Y1950 %>% 
+  # extract first two principal components
+  dplyr::select(., scientific_name, Comp.1, Comp.2) %>% 
+  tibble::column_to_rownames(var = "scientific_name")
+
+pc_raw_2021 <- Y2021 %>% 
+  # extract first two principal components
+  dplyr::select(., scientific_name, Comp.1, Comp.2) %>% 
+  tibble::column_to_rownames(var = "scientific_name")
+
+# optimal bandwidth estimation
+hpi_1850 <- Hpi(x = pc_raw_1850)
+hpi_1900 <- Hpi(x = pc_raw_1900)
+hpi_1950 <- Hpi(x = pc_raw_1950)
+hpi_2021 <- Hpi(x = pc_raw_2021)
+
+# kernel density estimation 1850  
+est_1850 <- kde(x = pc_raw_1850, H = hpi_1850, compute.cont = TRUE)  
+den_1850 <- list(est_1850$eval.points[[1]], est_1850$eval.points[[2]], est_1850$estimate)
+names(den_1850) <- c("x", "y", "z")
+dimnames(den_1850$z) <- list(den_1850$x, den_1850$y)
+dcc_1850 <- melt(den_1850$z)
+
+# 0.5 probability kernel
+cl_50_1850 <- cl(df = den_1850, prob = 0.50)
+# 0.95 probability kernel
+cl_95_1850 <- cl(df = den_1850, prob = 0.95)
+# 0.99 probability kernel
+cl_99_1850 <- cl(df = den_1850, prob = 0.99)
+
+# kernel density estimation 1900   
+est_1900 <- kde(x = pc_raw_1900, H = hpi_1900, compute.cont = TRUE)  
+den_1900 <- list(est_1900$eval.points[[1]], est_1900$eval.points[[2]], est_1900$estimate)
+names(den_1900) <- c("x", "y", "z")
+dimnames(den_1900$z) <- list(den_1900$x, den_1900$y)
+dcc_1900 <- melt(den_1900$z)
+
+# 0.5 probability kernel
+cl_50_1900 <- cl(df = den_1900, prob = 0.50)
+# 0.95 probability kernel
+cl_95_1900 <- cl(df = den_1900, prob = 0.95)
+# 0.99 probability kernel
+cl_99_1900 <- cl(df = den_1900, prob = 0.99)
+
+# kernel density estimation 1950   
+est_1950 <- kde(x = pc_raw_1950, H = hpi_1950, compute.cont = TRUE)  
+den_1950 <- list(est_1950$eval.points[[1]], est_1950$eval.points[[2]], est_1950$estimate)
+names(den_1950) <- c("x", "y", "z")
+dimnames(den_1950$z) <- list(den_1950$x, den_1950$y)
+dcc_1950 <- melt(den_1950$z)
+
+# 0.5 probability kernel
+cl_50_1950 <- cl(df = den_1950, prob = 0.50)
+# 0.95 probability kernel
+cl_95_1950 <- cl(df = den_1950, prob = 0.95)
+# 0.99 probability kernel
+cl_99_1950 <- cl(df = den_1950, prob = 0.99)
+
+# kernel density estimation 2021  
+est_2021 <- kde(x = pc_raw_2021, H = hpi_2021, compute.cont = TRUE)  
+den_2021 <- list(est_2021$eval.points[[1]], est_2021$eval.points[[2]], est_2021$estimate)
+names(den_2021) <- c("x", "y", "z")
+dimnames(den_2021$z) <- list(den_2021$x, den_2021$y)
+dcc_2021 <- melt(den_2021$z)
+
+# 0.5 probability kernel
+cl_50_2021 <- cl(df = den_2021, prob = 0.50)
+# 0.95 probability kernel
+cl_95_2021 <- cl(df = den_2021, prob = 0.95)
+# 0.99 probability kernel
+cl_99_2021 <- cl(df = den_2021, prob = 0.99)
+
+# save principal component data
+write.csv(Y1850, file = "data/PCA_1850.csv", row.names = FALSE)
+write.csv(Y1900, file = "data/PCA_1900.csv", row.names = FALSE)
+write.csv(Y1950, file = "data/PCA_1950.csv", row.names = FALSE)
+write.csv(Y2021, file = "data/PCA_2021.csv", row.names = FALSE)
+write.csv(scoresPCATotal, file = "data/PCA-scores.csv")
+write.csv(loadingsPCATotal, file = "data/PCA-loadings.csv", row.names = FALSE)
+```
+
+
+## Visualize the PCA plots 
+
+By visualizing the PCA of the morphological trait space, we can ask if the functional space has changed over time as a result of changes in community composition
+```{r}
+# plot 1850
+pca_plot_1850 <- ggplot(dcc_1850, aes(x = Var1, y = Var2)) +
+  # coloured probabilty background
+  geom_raster(aes(fill = value)) +
+  scale_fill_scico(palette = "lajolla")+
+  # points for species
+  geom_point(data = Y1850, aes(x = Comp.1, y = Comp.2), size = 0.3, alpha = 0.5, colour = "grey20") +
+  # add arrows
+  geom_segment(data = loadings_sc, aes(x = 0, y = 0, xend = Comp.1, yend = Comp.2), arrow = arrow(length = unit(0.2, "cm")), colour = "black") +
+  # probability kernels
+  geom_contour(aes(z = value), breaks = cl_50_1850, colour = "grey30", size = 1) +
+  geom_contour(aes(z = value), breaks = cl_95_1850, colour = "grey60", size = 1) +
+  geom_contour(aes(z = value), breaks = cl_99_1850, colour = "grey70", size = 1) +
+  coord_equal() +
+  # add arrows
+  geom_segment(data = loadings_sc, aes(x = 0, y = 0, xend = Comp.1, yend = Comp.2), arrow = arrow(length = unit(0.2, "cm")), colour = "black") +
+  # add dashed arrows ends
+  geom_segment(data = loadings_sc, aes(x = 0, y = 0, xend = -Comp.1, yend = -Comp.2), lty = 5, colour = "darkgrey") +
+  # add arrow labels
+  geom_text_repel(data = loadings_sc, aes(x = Comp.1, y = Comp.2, label = trait), size = 4, nudge_x = 11, hjust = 0.5, direction = "y", segment.size = 0.5,segment.color = "grey89") +
+  xlim(-5,10) +
+  ylim(-5,5) +
+  # axis labels - see comp_var
+  labs(x = "PC1 - Beak Morphology (67%)", y = "PC2 - Dispersal ability (16%)") +
+  theme_bw() +
+  theme(axis.text = element_text(family = "Century Gothic", size = 13),
+        legend.title = element_text(family = "Century Gothic"),
+    legend.text = element_text(family = "Century Gothic"),
+    text = element_text(family = "CenturyGothic", size = 25)) + 
+    guides(size= "none",
+           fill = "none")
+
+ggsave(pca_plot_1850, filename = "figs/fig_pcaPlot_1850.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+
+# plot 1900
+pca_plot_1900 <- ggplot(dcc_1900, aes(x = Var1, y = Var2)) +
+  # coloured probabilty background
+  geom_raster(aes(fill = value)) +
+  scale_fill_scico(palette = "lajolla")+
+  # points for species
+  geom_point(data = Y1900, aes(x = Comp.1, y = Comp.2), size = 0.3, alpha = 0.5, colour = "grey20") +
+  # add arrows
+  geom_segment(data = loadings_sc, aes(x = 0, y = 0, xend = Comp.1, yend = Comp.2), arrow = arrow(length = unit(0.2, "cm")), colour = "black") +
+  # probability kernels
+  geom_contour(aes(z = value), breaks = cl_50_1900, colour = "grey30", size = 1) +
+  geom_contour(aes(z = value), breaks = cl_95_1900, colour = "grey60", size = 1) +
+  geom_contour(aes(z = value), breaks = cl_99_1900, colour = "grey70", size = 1) +
+  coord_equal() +
+  # add arrows
+  geom_segment(data = loadings_sc, aes(x = 0, y = 0, xend = Comp.1, yend = Comp.2), arrow = arrow(length = unit(0.2, "cm")), colour = "black") +
+  # add dashed arrows ends
+  geom_segment(data = loadings_sc, aes(x = 0, y = 0, xend = -Comp.1, yend = -Comp.2), lty = 5, colour = "darkgrey") +
+  # add arrow labels
+  geom_text_repel(data = loadings_sc, aes(x = Comp.1, y = Comp.2, label = trait), size = 4, nudge_x = 11, hjust = 0.5, direction = "y", segment.size = 0.5,segment.color = "grey89") +
+  xlim(-5,10) +
+  ylim(-5,5) +
+  # axis labels - see comp_var
+  labs(x = "PC1 - Beak Morphology (67%)", y = "PC2 - Dispersal ability (16%)") +
+  theme_bw() +
+  theme(axis.text = element_text(family = "Century Gothic", size = 13),
+        legend.title = element_text(family = "Century Gothic"),
+    legend.text = element_text(family = "Century Gothic"),
+    text = element_text(family = "CenturyGothic", size = 25)) + 
+    guides(size= "none",
+           fill = "none")
+
+ggsave(pca_plot_1900, filename = "figs/fig_pcaPlot_1900.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+
+# plot 1950
+pca_plot_1950 <- ggplot(dcc_1950, aes(x = Var1, y = Var2)) +
+  # coloured probabilty background
+  geom_raster(aes(fill = value)) +
+  scale_fill_scico(palette = "lajolla")+
+  # points for species
+  geom_point(data = Y1950, aes(x = Comp.1, y = Comp.2), size = 0.3, alpha = 0.5, colour = "grey20") +
+  # add arrows
+  geom_segment(data = loadings_sc, aes(x = 0, y = 0, xend = Comp.1, yend = Comp.2), arrow = arrow(length = unit(0.2, "cm")), colour = "black") +
+  # probability kernels
+  geom_contour(aes(z = value), breaks = cl_50_1950, colour = "grey30", size = 1) +
+  geom_contour(aes(z = value), breaks = cl_95_1950, colour = "grey60", size = 1) +
+  geom_contour(aes(z = value), breaks = cl_99_1950, colour = "grey70", size = 1) +
+  coord_equal() +
+  # add arrows
+  geom_segment(data = loadings_sc, aes(x = 0, y = 0, xend = Comp.1, yend = Comp.2), arrow = arrow(length = unit(0.2, "cm")), colour = "black") +
+  # add dashed arrows ends
+  geom_segment(data = loadings_sc, aes(x = 0, y = 0, xend = -Comp.1, yend = -Comp.2), lty = 5, colour = "darkgrey") +
+  # add arrow labels
+  geom_text_repel(data = loadings_sc, aes(x = Comp.1, y = Comp.2, label = trait), size = 4, nudge_x = 11, hjust = 0.5, direction = "y", segment.size = 0.5,segment.color = "grey89") +
+  xlim(-5,10) +
+  ylim(-5,5) +
+  # axis labels - see comp_var
+  labs(x = "PC1 - Beak Morphology (67%)", y = "PC2 - Dispersal ability (16%)") +
+  theme_bw() +
+  theme(axis.text = element_text(family = "Century Gothic", size = 13),
+        legend.title = element_text(family = "Century Gothic"),
+    legend.text = element_text(family = "Century Gothic"),
+    text = element_text(family = "CenturyGothic", size = 25)) + 
+    guides(size= "none",
+           fill = "none")
+
+ggsave(pca_plot_1950, filename = "figs/fig_pcaPlot_1950.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+
+# plot 2021
+pca_plot_2021 <- ggplot(dcc_2021, aes(x = Var1, y = Var2)) +
+  # coloured probabilty background
+  geom_raster(aes(fill = value)) +
+  scale_fill_scico(palette = "lajolla")+
+  # points for species
+  geom_point(data = Y2021, aes(x = Comp.1, y = Comp.2), size = 0.3, alpha = 0.5, colour = "grey20") +
+  # add arrows
+  geom_segment(data = loadings_sc, aes(x = 0, y = 0, xend = Comp.1, yend = Comp.2), arrow = arrow(length = unit(0.2, "cm")), colour = "black") +
+  # probability kernels
+  geom_contour(aes(z = value), breaks = cl_50_2021, colour = "grey30", size = 1) +
+  geom_contour(aes(z = value), breaks = cl_95_2021, colour = "grey60", size = 1) +
+  geom_contour(aes(z = value), breaks = cl_99_2021, colour = "grey70", size = 1) +
+  coord_equal() +
+  # add arrows
+  geom_segment(data = loadings_sc, aes(x = 0, y = 0, xend = Comp.1, yend = Comp.2), arrow = arrow(length = unit(0.2, "cm")), colour = "black") +
+  # add dashed arrows ends
+  geom_segment(data = loadings_sc, aes(x = 0, y = 0, xend = -Comp.1, yend = -Comp.2), lty = 5, colour = "darkgrey") +
+  # add arrow labels
+  geom_text_repel(data = loadings_sc, aes(x = Comp.1, y = Comp.2, label = trait), size = 4, nudge_x = 11, hjust = 0.5, direction = "y", segment.size = 0.5,segment.color = "grey89") +
+  xlim(-5,10) +
+  ylim(-5,5) +
+  # axis labels - see comp_var
+  labs(x = "PC1 - Beak Morphology (67%)", y = "PC2 - Dispersal ability (16%)") +
+  theme_bw() +
+  theme(axis.text = element_text(family = "Century Gothic", size = 13),
+        legend.title = element_text(family = "Century Gothic"),
+    legend.text = element_text(family = "Century Gothic"),
+    text = element_text(family = "CenturyGothic", size = 25)) + 
+    guides(size= "none",
+           fill = "none")
+
+ggsave(pca_plot_2021, filename = "figs/fig_pcaPlot_2021.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+```
+
+## Calculation of hypervolumes
+```{r}
+# dataframes of trait data (PCA scores)
+
+#Y1850
+Y1850A <- Y1850 %>% 
+  select(scientific_name, Comp.1, Comp.2, Comp.3, Comp.4, Comp.5, Comp.6, Comp.7, Comp.8, Comp.9) %>% 
+  tibble::column_to_rownames(var = "scientific_name")
+
+#Y2021
+Y2021A <- Y2021 %>% 
+  select(scientific_name, Comp.1, Comp.2, Comp.3, Comp.4, Comp.5, Comp.6, Comp.7, Comp.8, Comp.9) %>% 
+  tibble::column_to_rownames(var = "scientific_name")
+
+# hypervolumes: Takes a long time to run.
+set.seed(3)
+Y1850_hyper_mi <- hypervolume::hypervolume_svm(Y1850A, name = "1850")
+saveRDS(Y1850_hyper_mi, "data/1850-hyperVolume-mi9.rds")
+
+set.seed(3)
+Y2021_hyper_mi <- hypervolume::hypervolume_svm(Y2021A, name = "2021")
+saveRDS(Y2021_hyper_mi, "2021_hyper_mi9.rds")
+```
+
+
+```{r}
+Steps to follow:
+  
+load sites data
+load spec_pers_prob data (site and species level)
+load species trait data
+
+load hist and modern occurrence data - create 1s and 0s for each time period 1850, 1900, 1950 and 2021
+
+then create a dataframe similar to Gomez et al - final tablos one to run the required  analysis with one column each for 1900...
+
+```
+
+
