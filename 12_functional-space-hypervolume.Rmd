@@ -33,8 +33,8 @@ library(factoextra)
 library(ggrepel)
 library(tibble)
 library(ks)
-library(foreach)
-library(doSNOW)
+library(rgl)
+library(plotly)
 
 # function to z-transform data
 scale_z <- function(x){
@@ -543,21 +543,63 @@ saveRDS(Y1850_hyper_mi, "data/1850-hyperVolume-mi9.rds")
 
 set.seed(3)
 Y2021_hyper_mi <- hypervolume::hypervolume_svm(Y2021A, name = "2021")
-saveRDS(Y2021_hyper_mi, "2021_hyper_mi9.rds")
+saveRDS(Y2021_hyper_mi, "data/2021-hyper-mi9.rds")
+
+# carry out hypervolume comparisons
+# 1850s vs 2021
+set.seed(3)
+bm_set_mi_1850vs2021 <- hypervolume::hypervolume_set(Y1850_hyper_mi, Y2021_hyper_mi, check.memory = FALSE)
+
+# summarise volumes 1850 vs 2021
+sumVolume <- hypervolume::get_volume(bm_set_mi_1850vs2021)
+
+# Plot 3D hypervolumes 
+# 1850 vs 2021
+bm_set_mi_1850vs2021@HVList$HV1 <- NULL
+bm_set_mi_1850vs2021@HVList$HV2 <- NULL
+bm_set_mi_1850vs2021@HVList$Union <- NULL
+
+# trait names
+names <- c("Beak Morphology", "Dispersal ability","Tarsus length", "PC4", "PC5", "PC6", "PC7", "PC8", "PC9")
+
+colnames(bm_set_mi_1850vs2021@HVList$Intersection@RandomPoints) <- names
+colnames(bm_set_mi_1850vs2021@HVList$Unique_1@RandomPoints) <- names
+colnames(bm_set_mi_1850vs2021@HVList$Unique_2@RandomPoints) <- names
+
+# plot hypervolumes 
+hypervolume::plot.HypervolumeList(bm_set_mi_1850vs2021, show.3d = TRUE, plot.3d.axes.id = c(1,2,3), show.random = FALSE, show.data = TRUE, show.centroid = FALSE, show.density = TRUE, cex.random = 5, colors = c("azure3", "red","cornflowerblue"))
 ```
 
-
+## Create fancy 3d plots of hypervolumes
 ```{r}
-Steps to follow:
-  
-load sites data
-load spec_pers_prob data (site and species level)
-load species trait data
+# Data frame for Plotly Hyper Volume Plot
+inter <- data.frame(bm_set_mi_1850vs2021@HVList$Intersection@RandomPoints)
+inter <- inter %>% 
+  mutate(section = "intersection")
 
-load hist and modern occurrence data - create 1s and 0s for each time period 1850, 1900, 1950 and 2021
+uni1 <- data.frame(bm_set_mi_1850vs2021@HVList$Unique_1@RandomPoints) 
+uni1 <- uni1 %>% 
+  mutate(section = "Unique 1850")
 
-then create a dataframe similar to Gomez et al - final tablos one to run the required  analysis with one column each for 1900...
+uni2 <- data.frame(bm_set_mi_1850vs2021@HVList$Unique_2@RandomPoints)
+uni2 <- uni2 %>% 
+  mutate(section = "Unique 2021")
 
+HV <- rbind(inter, uni1, uni2)
+write.csv(HV,"data/hypervolume-data.csv", row.names=F)
+
+colnames(bm_set_mi_1850vs2021@HVList$Intersection@RandomPoints) <- names
+colnames(bm_set_mi_1850vs2021@HVList$Unique_1@RandomPoints) <- names
+colnames(bm_set_mi_1850vs2021@HVList$Unique_2@RandomPoints) <- names
+
+pal <- c("green","red", "cornflowerblue" )
+
+fig <- plot_ly(HV, x = ~Beak.Morphology, y = ~(-Dispersal.ability), z = ~(-Tarsus.length), type = 'scatter3d', mode = 'markers', color = ~section, colors = pal, marker = list(size = 3,opacity = 0.6, line = list(color = 'grey66', width = 2)))
+
+fig_hypervolume <- fig %>% layout(scene = list(xaxis = list(title = 'Beak morphology'),yaxis = list(title = 'Dispersal ability'),
+             zaxis = list(title = 'Tarsus length')))
+
+fig_hypervolume
 ```
 
 
