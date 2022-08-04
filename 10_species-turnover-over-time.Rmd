@@ -96,68 +96,73 @@ mod_occ <- mod_occ %>%
 # join all data
 occ = full_join(hist_occ, mod_occ)
 
-# make a unique identifier for year and site
-occ = mutate(
-  occ,
-  uid = sprintf("%s-%i", historical_site_code, year)
-)
-
-# make year bin col, where pre1900 becomes 1850 (for 1850-1900) etc, except 2021
-occ = mutate(
-  occ,
-  year_bin_num = case_when(
-    year_bin == "pre1900" ~ 1850,
-    year_bin == "1900-1950" ~ 1900,
-    year_bin == "1950-2000" ~ 1950,
-    year_bin == "2000-2020" ~ 2000,
-    year_bin == "2000-2021" ~ 2021
-  )
-)
-
-# remove locations with only one observation ever
-occ = add_count(occ, uid) %>% filter(n > 2)
+# count number of years per site, remove 
+occ = occ |> 
+  group_by(
+    historical_site_code
+  ) |> 
+  mutate(
+    unique_years = length(unique(year))
+  ) |> 
+  filter(
+   unique_years > 1 
+  ) |> 
+  select(-unique_years)
 ```
+
+**Two modern sites sampled only in 2021 are lost! These are CNRG and FHEK.**
+
+## Get turnover for each site separately
 
 ```{r}
-## Get unique species abundances 
+# calculate turnover for a single site
+occ |> 
+  filter(historical_site_code == "CNRG", !is.na(scientific_name)) |> 
+  arrange(year) |> View()
 
-## Please note: for the sake of downstream analysis, we have renamed 1850-1900 as 1850, 1900-1950 as 1900 and 1950-2000 as 1950. In other words, each year - except for 2021 represents a 50 year time period. 
-# 
-# ## join all the datasets together
-# abund_by_site <- full_join(hist_pre1900, hist_1900_1950, by = c("scientific_name", "historical_site_code", "year")) %>%
-#   full_join(., hist_1950_2000, by=c("scientific_name", "historical_site_code", "year")) %>% 
-#   full_join(., mod_2021, by=c("scientific_name", "historical_site_code", "year")) %>%
-#   arrange(scientific_name) 
+# observations by site
+occ_site = split(x = occ, f = occ$historical_site_code)
 
-# replace NAs to 0
-# abund_by_site[,c(4:7)][is.na(abund_by_site)[,c(4:7)]] <- 0
-# 
-# ## prepare the dataframe
-# turnover_dat <-  abund_by_site %>%
-#   rowwise() %>%
-#   mutate(abundance = sum(`1850`,`1900`,`1950`,`2021`)) %>%
-#   ungroup()
-# 
-# # check structure of dataframes
-# turnover_dat <- as.data.frame(turnover_dat)
-# turnover_dat$year <- as.integer(turnover_dat$year)
-# turnover_dat$scientific_name <- as.factor(turnover_dat$scientific_name)
-# turnover_dat$historical_site_code <- as.factor(turnover_dat$historical_site_code)
-
-## We will calculate total turnover as well as the proportion of species that either appear or disappear between time points.
-
-spTurnover <- turnover(df = occ, 
-                       time.var = "year", 
-                       species.var = "scientific_name", 
-                       abundance.var = "histCount",
-                       replicate.var = "historical_site_code")
-
-
-# trial <- turnover(df=knz_001d,
-# time.var = "year",
-# species.var = "species",
-# abundance.var = "abundance",
-# replicate.var="subplot")
-
-# to do:
+# apply function turnover over sites
+turnover_site = lapply(
+  occ_site, function(df) {
+    
+    message(sprintf("this is site: %s", unique(df$historical_site_code)))
+    
+    codyn::turnover(
+      df = df,
+      time.var = "year",
+      species.var = "scientific_name",
+      abundance.var = "histCount",
+      replicate.var = "historical_site_code"
+    )
+  }
+)
 ```
+
+## Get turnover for all sites together
+
+```{r}
+# code for turnover at all sites together --- appears to be the same as code above
+codyn::turnover(
+  df = occ,
+  time.var = "year",
+  species.var = "scientific_name",
+  abundance.var = "histCount",
+  replicate.var = "historical_site_code"
+)
+```
+
+## Rank shifts
+
+```{r}
+# rank shift calculation works without single year sites
+codyn::rank_shift(
+  df = occ,
+  time.var = "year",
+  species.var = "scientific_name",
+  abundance.var = "histCount",
+  replicate.var = "historical_site_code"
+)
+```
+
