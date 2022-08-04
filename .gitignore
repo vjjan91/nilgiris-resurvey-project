@@ -3,16 +3,16 @@
 .Rapp.history
 
 # No .csv files
-*.csv
-*.shp
-*.shx
-*.cpg
-*.prj
-*.dbf
-*.xml
-*.sbn
-*.sbx
-*.gpkg
+#*.csv
+#*.shp
+#*.shx
+#*.cpg
+#*.prj
+#*.dbf
+#*.xml
+#*.sbn
+#*.sbx
+#*.gpkg
 
 # Session Data files
 .RData
