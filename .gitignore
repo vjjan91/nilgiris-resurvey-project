@@ -56,8 +56,8 @@ vignettes/*.pdf
 data/raw
 data/climate/raw
 data/historical_data/
-data/output
-data/spatial
+data/results
+data/spatial/elevation
 .Rproj.user
 
 # allow chelsa list
