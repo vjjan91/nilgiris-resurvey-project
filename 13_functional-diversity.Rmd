@@ -1,0 +1,264 @@
+---
+editor_options: 
+  chunk_output_type: console
+---
+
+### Functional diversity metrics calculation
+
+This is the second script that replicates analyses from Gomez et al. 2021; here we calculate functional diversity metrics including functional distinctiveness over time.
+```{r}
+library(factoextra)
+library(FD)
+library(ks)
+library(ggplot2)
+library(gridExtra)
+library(dplyr)
+library(tidyverse)
+library(data.table)
+library(picante)
+library(tibble)
+library(iNEXT)
+library(funrar)
+library(sf)
+library(raster)
+
+# function to z-transform data
+scale_z <- function(x){
+  (x - mean(x, na.rm=TRUE))/sd(x, na.rm=TRUE)
+}
+
+# function to scale a range of values between 0 and 1
+range01 <- function(x){(x-min(x))/(max(x)-min(x))}
+```
+
+### Load list of resurvey locations
+
+We will load the list of sites across which a modern resurvey was carried out, along with elevation rasters.
+```{r}
+# load list of resurvey locations and add elevation as a variable
+# remove the modern resurvey locations only (ie. ASFQ)
+sites <- read.csv("data/list-of-resurvey-locations.csv")
+sites <- sites[-c(1:50),]
+
+# convert to sf object and transform
+sites <- st_as_sf(sites, coords = c("longitude", "latitude")) %>%
+  `st_crs<-`(4326) %>%
+  st_transform(32643)
+
+# add elevation raster
+alt <- raster("data/spatial/elevation/alt") # this layer is not added to github as a result of its large size and can be downloaded from SRTM (Farr et al. (2007))
+
+# extract values from that raster (note: transformation of coordinate system)
+elev <- raster::extract(alt, sites)
+sites <- cbind(sites, elev)
+```
+
+## Load species persistence probabilities at site and landscape level
+```{r}
+spec_site_persProb <- read.csv( "data/species-persProb-siteLevel.csv")
+spec_persProb <- read.csv("data/species-persProb-landscapeLevel.csv")
+```
+
+### Load species trait data
+```{r}
+trait_dat <- read.csv("data/species-trait-dat.csv")
+```
+
+### Load historical and modern occurrence data
+
+For the historical occurrence data, we will choose data from three time periods: 1850-1900, 1900-1950 and 1950-2000. 
+```{r}
+## read in historical occurrence data
+hist_occ <- read.csv("data/historical-occurrence-data.csv")
+
+### pre-1900
+hist_occ_pre1900 <- hist_occ %>%
+  filter(year <= 1900)
+
+## group by scientific name and historical site code and join the sites dataframe
+hist_occ_pre1900 <- hist_occ_pre1900 %>%
+  group_by(scientific_name, historical_site_code) %>%
+  count() %>%
+  rename(., "abundance1850" = n) %>%
+  mutate("Y1850" = case_when(abundance1850 >= 1 ~ 1,TRUE ~ 0)) %>%
+  left_join(., sites, by=c("historical_site_code"="historical_site_code")) %>%
+  filter(!is.na(scientific_name)) %>%
+  replace(is.na(.), 0)
+  
+# repeat above for two more time-periods
+## 1900-1950
+hist_occ_1900_1950 <- hist_occ %>%
+  filter(year > 1900 & year <= 1950)
+
+## group by scientific name and historical site code and join the sites dataframe
+hist_occ_1900_1950 <- hist_occ_1900_1950 %>%
+  group_by(scientific_name, historical_site_code) %>%
+  count() %>%
+  rename(., "abundance1900" = n) %>%
+  mutate("Y1900" = case_when(abundance1900 >= 1 ~ 1,TRUE ~ 0)) %>%
+  left_join(., sites, by=c("historical_site_code"="historical_site_code")) %>%
+  filter(!is.na(scientific_name)) %>%
+  replace(is.na(.), 0)
+
+### 1950 - 2000
+hist_occ_1950_2000 <- hist_occ %>%
+  filter(year > 1950 & year <= 2000)
+
+## group by scientific name and historical site code and join the sites dataframe
+hist_occ_1950_2000 <- hist_occ_1950_2000 %>%
+  group_by(scientific_name, historical_site_code) %>%
+  count() %>%
+  rename(., "abundance1950" = n) %>%
+  mutate("Y1950" = case_when(abundance1950 >= 1 ~ 1,TRUE ~ 0)) %>%
+  left_join(., sites, by=c("historical_site_code"="historical_site_code")) %>%
+  filter(!is.na(scientific_name)) %>%
+  replace(is.na(.), 0)
+
+## read in modern occurrence data
+mod_occ <- read.csv("data/modern-occurrence-data.csv")
+
+## group by scientific name and modern site code
+mod_occ <- mod_occ %>%
+  filter(!is.na(historical_site_code)) %>%
+  group_by(scientific_name, modern_site_code) %>%
+  summarise(modCount = sum(number))
+
+mod_occ <-  left_join(mod_occ, sites, by=c("modern_site_code"="modern_site_code")) %>% filter(!is.na(scientific_name)) %>%
+  replace(is.na(.), 0) %>%
+  mutate("Y2021" = case_when(modCount >= 1 ~ 1,TRUE ~ 0))
+```
+
+## Join the historical and modern count data
+```{r}
+## joining the historic and modern datasets
+## this dataframe can be used to examine land cover data later on
+hist_mod <- full_join(hist_occ_pre1900, hist_occ_1900_1950, by = c("scientific_name","modern_site_code","historical_site_code","modern_landCover_type","elev","site_name","geometry")) %>%
+  full_join(., hist_occ_1950_2000, by = c("scientific_name","modern_site_code","historical_site_code","modern_landCover_type","elev","site_name","geometry")) %>%
+   full_join(., mod_occ, by = c("scientific_name","modern_site_code","historical_site_code","modern_landCover_type","elev","site_name","geometry")) %>%
+  replace(is.na(.), 0) %>%
+  arrange(scientific_name) %>%
+  ungroup()
+
+## Let's use the above dataframe to get species level data for further analysis downstream
+## We will ignore site codes
+
+pres_abs <- hist_mod %>%
+  dplyr::select(scientific_name, Y1850, Y1900, Y1950, Y2021) %>%
+  group_by(scientific_name) %>%
+  summarise_all(sum) %>%
+  mutate("Y1850" = case_when(Y1850 >= 1 ~ 1,TRUE ~ 0)) %>%
+  mutate("Y1900" = case_when(Y1900 >= 1 ~ 1,TRUE ~ 0)) %>%
+  mutate("Y1950" = case_when(Y1950 >= 1 ~ 1,TRUE ~ 0)) %>%
+  mutate("Y2021" = case_when(Y2021 >= 1 ~ 1,TRUE ~ 0))
+```
+
+## Prep dataframes to calculate functional diversity metrics
+```{r}
+## join trait and presence-absence data
+trait_pres_abs <-  left_join(pres_abs, trait_dat[,c(1,5,46:51,54:56)], by=c("scientific_name"="scientific_name"))
+
+### add scaled trait measures to traits table
+traitScaled <- trait_pres_abs %>%
+  mutate(SD = 1) %>%
+  mutate(beak_len_culmen_z = scale_z(Beak.Length_Culmen)) %>%
+  mutate(beak_len_nares_z = scale_z(Beak.Length_Nares)) %>%
+  mutate(beak_width_z = scale_z(Beak.Width)) %>%
+  mutate(beak_depth_z = scale_z(Beak.Depth)) %>%
+  mutate(tarsus_len_z = scale_z(Tarsus.Length)) %>%
+  mutate(wing_len_z = scale_z(Wing.Length)) %>%
+  mutate(hand_wing_index_z = scale_z(Hand.Wing.Index)) %>%
+  mutate(tail_len_z = scale_z(Tail.Length)) %>%
+  mutate(log_weight = log(Mass)) %>%
+  mutate(weight_z = scale_z(log_weight)) %>%
+  as.data.frame()
+
+# subset scaled measures
+traitScaled <- traitScaled %>% 
+  dplyr::select(scientific_name, weight_z,
+         beak_len_culmen_z, beak_len_nares_z, beak_width_z,
+         beak_depth_z, tarsus_len_z, wing_len_z, hand_wing_index_z, tail_len_z)
+
+# order data
+traitScaled <- traitScaled[order(traitScaled$scientific_name),]
+
+### prep species year matrices with abundance data
+
+# scaled abundance calculation
+species_scaled_abund <- hist_mod %>%
+  dplyr::select(scientific_name, abundance1850, abundance1900, abundance1950, modCount) %>%
+  group_by(scientific_name) %>%
+  summarise_all(sum) %>%
+  mutate("1850" = range01(abundance1850)) %>%
+  mutate("1900" = range01(abundance1900)) %>%
+  mutate("1950" = range01(abundance1950)) %>%
+  mutate("2021" = range01(modCount)) %>%
+  dplyr::select(scientific_name, `1850`, `2021`) %>%
+  mutate(sumVar = rowSums(.[2:3])) %>%
+  filter(sumVar != 0) %>%
+  dplyr::select(scientific_name, `1850`, `2021`) %>%
+  pivot_longer(!scientific_name, names_to = "Year", values_to = "Abundance") %>%
+  as.data.frame()
+
+# make year column numeric
+species_scaled_abund$Year <- as.numeric(species_scaled_abund$Year)
+
+# subset only species with some value of scaled abundance in 1850 or 2021
+traitScaledMat <- left_join(species_scaled_abund,traitScaled, by="scientific_name") %>%   dplyr::select(., -Abundance, -Year) %>%
+  distinct(.)
+traitScaledMat <- traitScaledMat[order(traitScaledMat$scientific_name),]
+traitScaledMat <- data.frame(traitScaledMat[,-1], row.names = traitScaledMat[,1])
+
+# create matrix for func. diversity calculations
+mat <- species_scaled_abund[order(species_scaled_abund$scientific_name),] %>% 
+  pivot_wider(names_from =  scientific_name, values_from = Abundance) %>% 
+  column_to_rownames(var = "Year") 
+
+fd_iNDICES <- dbFD(traitScaledMat, mat ,w.abun = TRUE, calc.FRic = TRUE, m = "max", stand.FRic = TRUE , calc.FDiv = TRUE,calc.CWM = FALSE, print.pco = FALSE, messages = TRUE)
+
+write.csv(as.data.frame(fd_iNDICES),"data/observed-func-div-values.csv")
+
+# Estimating Standard Effect Sizes with Null model (takes long time to run)
+
+#__(a)_Unconstrained model_####
+#____(i)_calculate FD values for random communities----
+
+mat2 <- species_scaled_abund %>% 
+  pivot_wider(names_from =  Year, values_from = Abundance) %>% 
+  column_to_rownames(var = "scientific_name")
+
+# mat2 <- as.matrix(mat2)
+
+fdnullall <- NULL
+
+for(i in 1:999){
+  
+  randomcom <- randomizeMatrix(t(mat2), null.model='richness',iterations = 100)  
+  randomcom <- randomcom[,sort(colnames(randomcom))]
+  randomcom <- randomcom[, which(colSums(randomcom) != 0)]
+
+  # extract info from dataframe 
+  traitScaledMat <- traitScaled[which((traitScaled$scientific_name %in% colnames(randomcom) ==TRUE)),]
+  traitScaledMat <- traitScaledMat[order(traitScaledMat$scientific_name),]
+  traitScaledMat <- data.frame(traitScaledMat[,-1], row.names = traitScaledMat[,1])
+
+  fdcom <- data.frame()
+  FD0[[i]]   <- dbFD(traitScaledMat, randomcom, w.abun = TRUE, calc.FRic = TRUE, m = "max", stand.FRic = TRUE , calc.FDiv = TRUE,calc.CWM = FALSE, print.pco = FALSE, messages = TRUE) 
+
+  fdcom <- as.data.frame(FD0[[i]])
+  fdcom$Year <- rownames(fdcom)
+  rownames(fdcom) <- NULL
+  fdnullall <- rbind(fdnullall, fdcom)
+} 
+
+write.table(fdnullall,'FDnullmodel.txt')
+
+
+
+
+
+
+
+```
+
+
+
