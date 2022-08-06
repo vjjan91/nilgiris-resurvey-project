@@ -4,11 +4,15 @@ editor_options:
   chunk_output_type: console
 ---
 
+## Landcover and climate change at sampling sites
+
 ```{r}
 # load libs
 library(sf)
 library(readr)
 library(dplyr)
+library(terra)
+library(tidyr)
 ```
 
 ```{r}
@@ -64,10 +68,85 @@ lc_sites = Map(
 ```
 
 ```{r}
-# save data
+# get lc change sites
+lc_sites = lc_sites |> 
+  pivot_wider(
+    id_cols = c("modern_site_code", "class"),
+    names_from = c("year"),
+    values_from = "prop_lc",
+    values_fn = mean
+  ) |> 
+  rename(
+    year_1870 = `1870`,
+    year_2017 = `2017`
+  )
+```
+
+```{r}
+# save as is for further processing
 write_csv(
-  lc_sites,
-  file = "data/results/lc_change.csv"
+  lc_sites, file = "data/output/lc_change.csv"
+)
+```
+
+
+## Climate change at sampling sites
+
+```{r}
+# load climate data
+raster_temp = list.files("data/climate/", pattern = "t_mean", full.names = T) |> 
+  lapply(rast)
+
+raster_rain = list.files("data/climate/", pattern = "ppt", full.names = T) |> 
+  lapply(rast)
+```
+
+```{r}
+# get difference between first and last files
+climate_change = lapply(
+  list(raster_temp, raster_rain),
+  function(le) {
+    lapply(le, function(le2) {
+      le2[[length(names(le2))]] - le2[[1]]
+    })
+  }
+) |> 
+  Reduce(f = c) # convert to single list
+
+# get raster names
+climate_change_names = lapply(climate_change, function(ra) {
+  lapply(ra, function(r) {
+    r |> names() |> stringr::str_extract("(.*?)(?=_\\d+)")
+  })
+}) |> unlist()
+```
+
+```{r}
+# get mean change within 250m buffer of resurvey locs
+climate_change_sites = lapply(
+  climate_change, function(ra) {
+    terra::extract(
+      ra, 
+      y = terra::vect(
+        sites_sf |> 
+          st_transform(4326)
+      ), fun = mean
+    )  
+  }
+)
+
+# combine all metrics
+climate_change_sites = Reduce(f = left_join, x = climate_change_sites)
+
+# attach to sampling sites
+sites = mutate(sites, ID = seq(nrow(sites)))
+sites = left_join(sites, climate_change_sites)
+```
+
+```{r}
+# save site data
+write_csv(
+  sites, file = "data/output/climate_change.csv"
 )
 ```
 
