@@ -18,9 +18,19 @@ library(extrafont)
 library(sf)
 library(raster)
 library(data.table)
+library(rcompanion)
+library(multcomp)
+library(report)
+library(lme4)
+library(sjPlot)
 
 # source custom functions
 source("code/03_persistence-probability-functions.R")
+
+# function to z-transform data
+scale_z <- function(x){
+  (x - mean(x, na.rm=TRUE))/sd(x, na.rm=TRUE)
+}
 ```
 
 
@@ -48,8 +58,8 @@ sites <- cbind(sites, elev)
 
 ## Load species persistence probabilities at site and landscape level
 ```{r}
-spec_site_persProb <- read.csv( "data/species-persProb-siteLevel.csv")
-spec_persProb <- read.csv("data/species-persProb-landscapeLevel.csv")
+spec_site_persProb <- read.csv( "results/species-persProb-siteLevel.csv")
+spec_persProb <- read.csv("results/species-persProb-landscapeLevel.csv")
 ```
 
 ## Load the species persistence probabilities at the site level
@@ -248,6 +258,42 @@ fig_landCover_trait <- ggplot(trait_landCover, aes(x=years, y=PXt, fill=Habitat.
 ggsave(fig_landCover_trait, filename = "figs/fig_persProb_habitatType_landCover.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
 
 ```
+
+## Mixed-effects models (Change in persistence prob ~ species traits)
+
+In this section, we will run mixed-effects models to test the effect of species trait on changes in persistence probability. In other words, are species of a certain habitat type or dispersal ability have a positive or negative effect on changes in persistence probability over time?
+```{r}
+# if trait data hasn't been loaded
+trait_dat <- read.csv("data/species-trait-dat.csv")
+
+# create a dataframe to run the mixed effects models that join the trait data with the persistence probability datasets
+changeDat <- left_join(spec_site_persProb,trait_dat[,c(1,5,54,56)], by="scientific_name") %>% mutate(hand_wing_index_z = scale_z(Hand.Wing.Index)) %>%
+  mutate(log_weight = log(Mass)) %>%
+  mutate(weight_z = scale_z(log_weight)) %>%
+  filter(Habitat.type != "Aquatic")
+
+# glmms
+glmm_habType <- glmer(PXt ~ Habitat.type + (1|scientific_name) + (1|historical_site_code), data = changeDat, family = gaussian(link="identity"))
+
+summary(glmm_habType)
+tukey_glmm_habType <- summary(glht(glmm_habType, linfct=mcp(Habitat.type ="Tukey")))
+cld(tukey_glmm_habType)
+
+# weight
+glmm_bodyMass <- glmer(PXt ~ weight_z + (1|scientific_name) + (1|historical_site_code), data = changeDat, family = gaussian(link="identity"))
+
+summary(glmm_bodyMass)
+plot_model(glmm_bodyMass, type="pred")
+
+# dispersal-ability
+glmm_hwi <- glmer(PXt ~ hand_wing_index_z + (1|scientific_name) + (1|historical_site_code), data = changeDat, family = gaussian(link="identity"))
+
+summary(glmm_hwi)
+plot_model(glmm_hwi, type="pred")
+```
+
+
+
 
 
 
