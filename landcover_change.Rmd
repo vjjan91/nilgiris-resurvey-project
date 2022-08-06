@@ -1,0 +1,73 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+# load libs
+library(sf)
+library(readr)
+library(dplyr)
+```
+
+```{r}
+# load 1870 and 2017 shp
+lc_1870 = st_read("data/spatial/1870.shp")
+lc_2017 = st_read("data/spatial/2017.shp")
+```
+
+```{r}
+# load sites
+sites = read_csv("data/list-of-resurvey-locations.csv")
+sites = distinct(sites, modern_site_code, historical_site_code, longitude, latitude)
+```
+
+```{r}
+# make spatial data from sites, with a 250m buffer
+sites_sf = st_as_sf(
+  sites, coords = c("longitude", "latitude"),
+  crs = 4326
+) |> 
+  st_transform(32643) |> 
+  st_buffer(250)
+```
+
+```{r}
+# get intersection with 1870 and 2017 data
+lc_sites = lapply(
+  list(lc_1870, lc_2017), function(x) {
+    st_intersection(x, sites_sf)
+  }
+)
+
+# calculate area for each lc type for sites based on modern site code
+lc_sites = lapply(lc_sites, function(df) {
+  df |> 
+    mutate(
+      area = as.numeric(st_area(df))
+    ) |> 
+    st_drop_geometry() |> 
+    group_by(modern_site_code, class) |> 
+    summarise(prop_lc = area / sum(area))
+})
+
+# add year and merge
+lc_sites = Map(
+  lc_sites, c(1870, 2017),
+  f = function(df, y) {
+    df$year = y
+    df
+  }
+) |> 
+  bind_rows()
+```
+
+```{r}
+# save data
+write_csv(
+  lc_sites,
+  file = "data/results/lc_change.csv"
+)
+```
+
