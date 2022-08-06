@@ -250,15 +250,113 @@ for(i in 1:999){
   fdnullall <- rbind(fdnullall, fdcom)
 } 
 
-write.table(fdnullall,'FDnullmodel.txt')
+write.table(fdnullall,'results/FDnullmodel.txt')
+```
 
+## Visualizing observed vs. expected values of functional richness and dispersion
 
+```{r}
 
+# Pvalues = (number of Fnull < Fobs + 1)/(999 + 1)
+Y1 <- subset(fdnullall, fdnullall$Year == "1850")
+Y2 <- subset(fdnullall, fdnullall$Year == "2021")
 
+## FRic Pvalues
+ob1 <- nrow(Y1[Y1$FRic< 0.18, ]) + 1
+ob2 <- nrow(Y2[Y2$FRic< 0.28, ]) + 1
+P1850 <- ob1/(999+1)# P = 0.009
+P2021 <- ob2/(999+1)# P = 0.581
 
+## FDis Pvalues
+ob1 <- nrow(Y1[Y1$FDis< 1.49, ]) + 1
+ob2 <- nrow(Y2[Y2$FDis< 1.75, ]) + 1
+P1850 <- ob1/(999+1)# P = 0.001
+P2021 <- ob2/(999+1)# P = 0.099
 
+# Boxplots Observed vs Null model
+# FRic
+fig_obs_v_exp_Fric <- ggplot(fdnullall, aes(x=as.factor(Year), y=FRic)) + 
+  geom_boxplot(colour = "gray40", outlier.shape = NA)+ 
+  geom_jitter(shape=16, size = 0.1,position=position_jitter(0.1), colour = "gray60") + geom_segment(aes(x = 0.55, y = 0.1818924, xend = 1.45, yend = 0.1818924), color = "red", size = 2) +
+ geom_segment(aes(x = 1.5, y = 0.2822567, xend = 2.45, yend = 0.2822567), color = "red", size = 2)+
+  geom_text(x=1, y=1, label="p = 0.009")+
+  geom_text(x=2, y=1, label="p = 0.581")+
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill='white', colour = "black"),
+        axis.text = element_text(colour = "black"),
+        legend.position = "none",
+        text = element_text(size = 20)) +
+  labs(x = "", y = "Functional Richness")+ scale_x_discrete(labels = c("1850s", "2021"))
+
+ggsave(fig_obs_v_exp_Fric, filename = "figs/fig_observed_expected_funcRichness.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+
+# FDis
+fig_obs_v_exp_FDis <- ggplot(fdnullall, aes(x=as.factor(Year), y=FDis)) + 
+  geom_boxplot(colour = "gray40", outlier.shape = NA)+
+  geom_jitter(shape=16, size = 0.1,position=position_jitter(0.1), colour = "gray60") +
+  geom_segment(aes(x = 0.55, y = 1.498572, xend = 1.45, yend = 1.498572), color = "red", size = 2)+
+  geom_segment(aes(x = 1.5, y = 1.756331, xend = 2.45, yend = 1.756331), color = "red", size = 2)+
+  geom_text(x=1, y=3.5, label="p = 0.001")+
+  geom_text(x=2, y=3.5, label="p = 0.099")+
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill='white', colour = "black"),
+        axis.text = element_text(colour = "black"),
+        legend.position = "none",
+        text = element_text(size = 20)) +
+  labs(x = "", y = "Functional Dispersion")+ scale_x_discrete(labels = c("1850s", "2021"))
+
+ggsave(fig_obs_v_exp_FDis, filename = "figs/fig_observed_expected_funcDispersion.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
 
 ```
 
+## Estimate standard effect sizes
 
+```{r}
+# Estimate SES - Standard Effect Size SES = observed mean - mean null / sd null
+fd_Mean <- fdnullall %>% 
+  group_by(Year) %>%
+  summarise_at(vars(FRic, FDis), funs(mean(., na.rm=TRUE))) %>% 
+  transmute(Year = Year, FR_M = FRic, FDis_M = FDis)
+
+fd_SES <- fdnullall %>% 
+  group_by(Year) %>%
+  summarise_at(vars(FRic, FDis), funs(sd(., na.rm=TRUE))) %>% 
+  transmute(Year = Year, FR_SD = FRic, FDis_SD = FDis) %>% 
+  left_join(fd_Mean, by = "Year") %>% 
+  mutate(FRic =c(0.1818924, 0.2822567), FEve = c(0.5104238, 0.3926145), FDiv = c(0.6463526, 0.6936936), FDis = c(1.498572, 1.756331)) %>% 
+  mutate(SES_FRIc = ((FRic - FR_M)/FR_SD),SES_FDis = ((FDis - FDis_M)/FDis_SD))
+
+# Plots SES for FRic and FDis
+fig_ses_funcRichness <- ggplot(fd_SES, aes(x=as.factor(Year), y=SES_FRIc)) + 
+  geom_boxplot(colour = "gray40", outlier.shape = NA) + 
+  geom_jitter(shape=16, size = 0.1,position=position_jitter(0.1), colour = "gray60") +  geom_hline(yintercept=0, linetype="dashed", color = "black", size = 1.5) +
+  scale_y_continuous(limit = c(-5, 2))+
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill='white', colour = "black"),
+        axis.text = element_text(colour = "black"),
+        legend.position = "none",
+        text = element_text(size = 20)) +
+  labs(x = "", y = "SES Functional Richness")+ scale_x_discrete(labels = c("1850s", "2021"))
+
+ggsave(fig_ses_funcRichness, filename = "figs/fig_ses_funcRichness.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+
+fig_ses_funcDisp <- ggplot(fd_SES, aes(x=as.factor(Year), y=SES_FDis)) + 
+  geom_boxplot(colour = "gray40", outlier.shape = NA) + 
+  geom_jitter(shape=16, size = 0.1,position=position_jitter(0.1), colour = "gray60") +
+  geom_hline(yintercept=0, linetype="dashed", color = "black", size = 1.5)+
+  scale_y_continuous(limit = c(-5, 2))+
+  
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill='white', colour = "black"),
+        axis.text = element_text(colour = "black"),
+        legend.position = "none",
+        text = element_text(size = 20)) +
+  labs(x = "", y = "SES Functional Dispersion")+ scale_x_discrete(labels = c("1850s", "2021"))
+
+ggsave(fig_ses_funcDisp, filename = "figs/fig_ses_funcDispersion.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+```
 
