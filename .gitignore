@@ -58,6 +58,21 @@ data/climate/raw
 data/historical_data/
 data/results
 data/spatial/elevation
+data/spatial/Elevation
+data/spatial/hills_shapefile
+data/spatial/India
+data/spatial/India.zip
+
+data/output/*.tif
+data/spatial/*.tif
+
+# remove occurence data
+data/*-occurrence-data.csv
+
+data/output/data_clim_daily.csv
+data/output/data_for_gam.csv
+data/output/data_monthly_climate.csv
+
 .Rproj.user
 
 # allow chelsa list
