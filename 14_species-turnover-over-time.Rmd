@@ -51,14 +51,14 @@ For the historical occurrence data, we will choose data from three time periods:
 ## read in historical occurrence data
 hist_occ <- read_csv("data/historical-occurrence-data.csv")
 
-### pre-1900
-hist_occ = hist_occ %>%
+### prep data and bin by time periods
+hist_occ <- hist_occ %>%
   mutate(
     year_bin = case_when(
-      year <= 1900 ~ "pre1900",
+      year <= 1900 ~ "1850-1900",
       between(year, 1901, 1950) ~ "1900-1950",
       between(year, 1951, 2000) ~ "1950-2000",
-      between(year, 2001, 2020) ~ "2000-2020"
+      between(year, 2001, 2020) ~ "2021"
     ),
     histCount = as.numeric(individualCount),
     histCount = if_else(is.na(histCount), 1, histCount)
@@ -107,7 +107,7 @@ occ = occ |>
   filter(
    unique_years > 1 
   ) |> 
-  select(-unique_years)
+  dplyr::select(-unique_years)
 ```
 
 **Two modern sites sampled only in 2021 are lost! These are CNRG and FHEK.**
