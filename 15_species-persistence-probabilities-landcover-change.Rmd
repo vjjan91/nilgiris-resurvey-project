@@ -1,0 +1,282 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+## Species persistence probabilities as a function of environmental changes
+
+In this script, we will model the effect of species persistence probabilities as a function of environmental changes at each of the sampling sites (environmental changes are calculated as differences in values of a predictor between modern vs. historical time period)
+
+In the first half of the script, we will prepare the environmental predictors at each of the sampling sites
+
+### Load necessary libraries
+```{r}
+# load libs
+library(sf)
+library(readr)
+library(dplyr)
+library(terra)
+library(tidyr)
+library(mapview)
+library(sjPlot)
+library(glmmTMB)
+library(ggplot2)
+library(effects)
+```
+
+## Load land cover data from 1870 and 2017
+```{r}
+# load 1870 and 2017 shp
+lc_1870 <- st_read("data/spatial/1870.shp")
+lc_2017 <- st_read("data/spatial/2017.shp")
+
+# Prior to further analysis, the classes have to be renamed so that they match classifications done in 1870 and 2017
+# For the sake of further downstream analysis, we ensure that the proportion of land cover estimation is consistent with class names
+# We are unable to distinguish between Tea and Timber plantations in the 1870 map and hence, we club Timber and Tea plantations in 2017 as a single class (Plantations)
+
+# cleaning up the 1870 map
+lc_1870$class[lc_1870$class=="cultivated tracts"] <- "Agricultural Land"
+lc_1870$class[lc_1870$class=="plantations"] <- "Plantations (Tea & Timber)"
+lc_1870$class[lc_1870$class=="settlements"] <- "Settlements"
+lc_1870$class[lc_1870$class=="waterbodies"] <- "Water Bodies"
+
+# combining classes in the 2017 map
+lc_2017$class[lc_2017$class=="Timber Plantations"] <- "Plantations (Tea & Timber)"
+lc_2017$class[lc_2017$class=="Tea Plantations"] <- "Plantations (Tea & Timber)"
+lc_2017$class[lc_2017$class=="Water bodies"] <- "Water Bodies"
+```
+
+## Load modern resruvey locations
+```{r}
+# load sites
+sites <- read_csv("data/list-of-resurvey-locations.csv")
+sites <- distinct(sites, modern_site_code, historical_site_code, longitude, latitude)
+sites <- sites[-c(1:50),]
+```
+
+## Create spatial data within a 250m buffer for each site
+```{r}
+# make spatial data from sites, with a 250m buffer
+sites_sf = st_as_sf(
+  sites, coords = c("longitude", "latitude"),
+  crs = 4326
+) |> 
+  st_transform(32643) |> 
+  st_buffer(250)
+```
+
+```{r}
+# get intersection with 1870 and 2017 data
+lc_sites <- lapply(
+  list(lc_1870, lc_2017), function(x) {
+    st_intersection(x, sites_sf)
+  }
+)
+
+# calculate area for each lc type for sites based on modern site code
+lc_sites <- lapply(lc_sites, function(df) {
+  df |> 
+    mutate(
+      area = as.numeric(st_area(df))
+    ) |> 
+    st_drop_geometry() |> 
+    group_by(modern_site_code, class) |> 
+    summarise(prop_lc = area / sum(area))
+})
+
+# add year and merge
+lc_sites <- Map(
+  lc_sites, c(1870, 2017),
+  f = function(df, y) {
+    df$year = y
+    df
+  }
+) |> 
+  bind_rows()
+```
+
+```{r}
+# get lc change sites
+lc_change_dat <- lc_sites |> 
+  pivot_wider(
+    id_cols = c("modern_site_code", "class"),
+    names_from = c("year"),
+    values_from = "prop_lc",
+    values_fn = mean
+  ) |> 
+  rename(
+    year_1870 = `1870`,
+    year_2017 = `2017`
+  ) %>%
+  left_join(., sites, by="modern_site_code") %>%
+  replace(is.na(.), 0) %>%
+  mutate("lc_change" = year_2017 - year_1870) # a -1 implies loss and + 1 implies gain
+```
+
+```{r}
+# save as is for further processing
+write_csv(
+  lc_change_dat, file = "results/lc_change.csv"
+)
+```
+
+## Climate change at sampling sites
+```{r}
+# load climate data
+raster_temp = list.files("data/climate/", pattern = "t_mean", full.names = T) |> 
+  lapply(rast)
+
+raster_rain = list.files("data/climate/", pattern = "ppt", full.names = T) |> 
+  lapply(rast)
+```
+
+```{r}
+# get difference between first and last files
+climate_change = lapply(
+  list(raster_temp, raster_rain),
+  function(le) {
+    lapply(le, function(le2) {
+      le2[[length(names(le2))]] - le2[[1]]
+    })
+  }
+) |> 
+  Reduce(f = c) # convert to single list
+
+# get raster names
+climate_change_names = lapply(climate_change, function(ra) {
+  lapply(ra, function(r) {
+    r |> names() |> stringr::str_extract("(.*?)(?=_\\d+)")
+  })
+}) |> unlist()
+```
+
+```{r}
+# get mean change within 250m buffer of resurvey locs
+climate_change_sites = lapply(
+  climate_change, function(ra) {
+    terra::extract(
+      ra, 
+      y = terra::vect(
+        sites_sf |> 
+          st_transform(4326)
+      ), fun = mean
+    )  
+  }
+)
+
+# combine all metrics
+climate_change_sites = Reduce(f = left_join, x = climate_change_sites)
+
+# attach to sampling sites
+sites <- mutate(sites, ID = seq(nrow(sites)))
+clim_change_dat <- left_join(sites, climate_change_sites)
+```
+
+```{r}
+# save site data
+write_csv(
+  clim_change_dat, file = "results/climate_change.csv"
+)
+```
+
+### Load species persistence probabilities at site and landscape level
+```{r}
+spec_site_persProb <- read.csv( "results/species-persProb-siteLevel.csv")
+spec_persProb <- read.csv("results/species-persProb-landscapeLevel.csv")
+```
+
+## Run mixed-effects models examining persistence probabilties and land cover change
+```{r}
+## change in persistence prob over time
+persProb_min <- spec_site_persProb %>%
+  dplyr::select(years,PXt,scientific_name, historical_site_code) %>%
+  group_by(scientific_name, historical_site_code) %>%
+  slice(which.min(years)) %>%
+  rename(., PXt_min = "PXt") %>%
+  ungroup()
+
+persProb_max <- spec_site_persProb %>%
+  dplyr::select(years,PXt,scientific_name, historical_site_code) %>%
+  group_by(scientific_name, historical_site_code) %>%
+  slice(which.max(years)) %>%
+  rename(., PXt_max = "PXt") %>%
+  ungroup()
+
+## join the two dataframes
+persProb_change <- full_join(persProb_min[,-1], persProb_max[,-1]) %>%
+  mutate("persProbChange" = PXt_min - PXt_max) %>%
+  ungroup()
+
+### make land cover data wider
+lc_change_glmm <- lc_change_dat %>%
+  pivot_wider(names_from = class, values_from = lc_change) %>%
+  ungroup() %>%
+  dplyr::select(`historical_site_code`, `Shola Grassland`, `Settlements`, `Shola Forest`,`Plantations (Tea & Timber)`, `Agricultural Land`) %>%
+  distinct(.) %>%
+  replace(is.na(.), 0) %>% 
+  group_by(historical_site_code) %>%
+  summarise(across(everything(), sum)) %>%
+  mutate("Shola Grassland" = case_when(`Shola Grassland` < -1 ~ -1,
+                                       `Shola Grassland` > 1 ~ 1,
+                                       TRUE ~ as.numeric(`Shola Grassland`))) %>%
+  mutate("Settlements" = case_when(`Settlements` < -1 ~ -1,
+                                       `Settlements` > 1 ~ 1,
+                                       TRUE ~ as.numeric(`Settlements`))) %>%
+  mutate("Shola Forest" = case_when(`Shola Forest` < -1 ~ -1,
+                                       `Shola Forest` > 1 ~ 1,
+                                       TRUE ~ as.numeric(`Shola Forest`))) %>%
+  mutate("Plantations (Tea & Timber)" = case_when(`Plantations (Tea & Timber)`< -1 ~ -1, `Plantations (Tea & Timber)` > 1 ~ 1, TRUE ~ as.numeric(`Plantations (Tea & Timber)`))) %>%
+  mutate("Agricultural Land" = case_when(`Agricultural Land` < -1 ~ -1,
+                                       `Agricultural Land` > 1 ~ 1,
+                                       TRUE ~ as.numeric(`Agricultural Land`))) %>%
+  ungroup()
+
+# in the above dataframe, we lost KJPN and KULR as it's a low elevation site and our land cover data does not sample that area
+# hence we filter those sites from the persProbChange for the landscape change analysis
+
+persProb_landCover <- persProb_change %>%
+  filter(historical_site_code != "KJPN") %>%
+  filter(historical_site_code != "KULR")
+  
+glmm_lc_change <- left_join(persProb_landCover, lc_change_glmm, by="historical_site_code") %>%
+  as.data.frame()
+
+## run the glmm
+glmm_lc <- glmer(persProbChange ~ `Shola Grassland` + `Shola Forest` + `Settlements`+
+                   `Plantations (Tea & Timber)` + `Agricultural Land` +
+                          (1|scientific_name) + (1|historical_site_code), 
+                        data = glmm_lc_change, family = gaussian(link="identity"))
+
+summary(glmm_lc)
+
+plot_model(glmm_lc, type = "est")
+plot_model(glmm_lc, type="pred")
+report::report(glmm_lc)
+```
+
+## Run mixed-effects models examining persistence probabilties and climate change
+```{r}
+## we have four predictors for climate
+## prep data at the level of the historical site
+clim_change_glmm <- clim_change_dat %>%
+  dplyr::select(historical_site_code, t_mean_dry_2010, t_mean_rainy_2010, ppt_dry_2010, ppt_rainy_2010) %>%
+  group_by(historical_site_code) %>%
+  summarise(across(everything(), mean))
+
+## dataframe for glmm
+glmm_cc_change <- left_join(persProb_change, clim_change_glmm, by="historical_site_code") %>%
+  as.data.frame()
+
+## run the glmm
+glmm_cc <- glmer(persProbChange ~ t_mean_dry_2010 + t_mean_rainy_2010 +
+                   ppt_dry_2010 + ppt_rainy_2010 +
+                          (1|scientific_name) + (1|historical_site_code), 
+                        data = glmm_cc_change, family = gaussian(link="identity"))
+
+summary(glmm_cc)
+plot_model(glmm_cc, type="pred")
+plot_model(glmm_cc, type = "est")
+report::report(glmm_cc)
+```
+
