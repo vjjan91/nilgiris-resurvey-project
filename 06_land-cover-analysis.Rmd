@@ -307,8 +307,7 @@ areaCalc <- purrr::reduce(list(
   areaRast2017
 ), dplyr::full_join, by = "class")
 
-names(areaCalc) <- c("class", "areaMt1870", "1870", "areaMt1973", "1973", "areaMt1995", 
-                     "1995", "areaMt2017", "2017")
+names(areaCalc) <- c("class", "areaMt1870", "1870", "areaMt1973", "1973", "areaMt1995", "1995", "areaMt2017", "2017")
 
 areaCalc <- areaCalc %>%
   select("class", "1870", "1973", "1995", "2017") %>%
