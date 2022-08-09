@@ -120,6 +120,7 @@ mod_occ <- read.csv("data/modern-occurrence-data.csv")
 ## group by scientific name and modern site code
 modOcc_spp <- mod_occ %>%
   filter(!is.na(historical_site_code)) %>%
+  filter(!is.na(scientific_name)) %>%
   group_by(scientific_name, modern_site_code) %>%
   summarise("2021" = sum(number))
 
@@ -234,6 +235,72 @@ fig_relAbun_over_time <- relAbun %>%
   theme_bw()
 
 ggsave(fig_relAbun_over_time, filename = "figs/fig_relAbun_landscapeLevel.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+```
+
+## Examining changes in relative abundance as a function of species habitat affiliation
+
+#### Let's first curate the species trait data
+```{r}
+## load state of India's birds data to get habitat affiliation
+species_codes <- read.csv("data/species-codes.csv")
+habitat_SoIB <- read.csv("data/SoIB-data.csv") # note: we used two files - one file from 2020 and an updated habitat specialization file from 2022 (see below)
+
+# join the two dataframes
+habitat_dat <- left_join(species_codes, habitat_SoIB, by=c("scientific_name"="scientific_name"))
+
+# write the above to data folder and recode habitat affiliation
+# write.csv(habitat_dat, "data/species-trait-dat.csv", row.names = F)
+
+# note: the classification of habitat type was taken from a working file of trait data for State of India's Birds report v2 (to be released in 2023). We used the following trait classifications:
+# Wooded habitat: If it preferred some level of wooded habitat but not particularly specialized on rainforest/forest habitat. An example in this case is the black and orange flycatcher. While it is commonly found in shola forest habitat, this species is also common in degraded wooded areas, including timber plantations. If a species preferred just scrub habitat alone, we lumped it under this category.
+# Forest: If a species was a forest specialist. 
+# Grassland: While State of India's birds uses a separate classification for grassland & grassland+scrub, here we combine the two and use a single classification for Grassland. Eg. Black drongo - which favors both grassland areas and scrub habitat. There are four species that are classified as using 'open habitat' which had been subsumed under grasslands in our study - this includes - blue-tailed bee-eater, black-winged kite, long-tailed shrike (eBird lists it as preferring open habitats) and western yellow wagtail. 
+# Generalist: If a spedcies is truly a generalist species and is not particularly occupying/specialized on any particular wooded/forested/grassland habitat.
+
+## load the species trait data (that includes habitat) and merge with the AVONET dataset
+## please note that it is being loaded after curating and adding a column for habitat type based on our understanding of species natural history
+hab_dat <- read.csv("data/species-habitat-dat.csv")
+avonet <- read.csv("data/AVONET-data.csv")
+
+# join the above two datasets
+trait_dat <- left_join(hab_dat, avonet[,c(1,10:20,29:31)], by=c("scientific_name"="Species2"))
+
+## Write the trait data to file
+## write.csv(trait_dat,"data/species-trait-dat.csv",row.names = F)
+```
+
+## Join datasets of relative abundance and species trait
+```{r}
+trait_dat <- read.csv("data/species-trait-dat.csv")
+
+## join rel abun and species trait
+## make dataset puvot longer
+rel_abun_trait <- relAbun %>%
+  pivot_longer(-species, names_to = "Time Period", values_to = "Relative abundance") %>% left_join(., trait_dat, by=c("species"="scientific_name")) %>%
+   filter(Habitat.type != "Aquatic") %>%
+  ungroup()
+  
+# visualization by habitat affiliation
+rel_abun_trait$Habitat.type <- factor(rel_abun_trait$Habitat.type, levels=c("Forest", "Grassland", "Generalist", "Wooded Habitat"))
+
+fig_relAbun_habitat <- ggplot(rel_abun_trait, aes(x=`Time Period`, y=`Relative abundance`, fill = Habitat.type)) +  geom_boxplot(alpha=0.7) +  
+  scale_y_log10() +
+  scale_fill_scico_d(palette = "roma") + theme_bw() +
+  geom_point(size=4,shape=21, alpha=0.5,
+             color="black",fill="grey70") +
+  geom_jitter(width=0.2,size=4,shape=21, alpha=0.5,
+              color="black",fill="grey70") +
+    labs(x="\nTime Period", 
+       y="Relative abundance\n") + 
+    theme(axis.title = element_text(family = "Century Gothic",
+      size = 14, face = "bold"),
+        axis.text = element_text(family="Century Gothic",size = 14),
+      legend.title = element_text(family="Century Gothic",
+                                    size = 14, face = "bold"),
+        legend.key.size = unit(1,"cm"),
+        legend.text = element_text(family="Century Gothic",size = 14))
+  
+ggsave(fig_relAbun_habitat, filename = "figs/fig_relAbun_habitat_landscapeLevel.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
 ```
 
 Repeating the above analysis at the site-level
@@ -406,5 +473,5 @@ fig_relAbun_siteLevel <- relSpAbund %>%
 ggsave(fig_relAbun_siteLevel, filename = "figs/fig_relAbun_siteLevel.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
 ```
 
-Takeaways: No clear differences in relative abundances over time seen at the landscape level and site-level. Due to incomplete sampling, there are some sites that show a relatively higher abundance in earlier time periods when compared to modern occurrence. 
+Takeaways: No clear differences in relative abundances over time seen at the landscape level and site-level. Due to incomplete sampling, there are some sites that show a relatively higher abundance in earlier time periods when compared to modern occurrence. Unsure if the decrease seen between 1950 to 2000 is a real pattern/artifact of incomplete sampling. 
 
