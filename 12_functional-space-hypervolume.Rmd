@@ -85,8 +85,8 @@ sites <- cbind(sites, elev)
 
 ## Load species persistence probabilities at site and landscape level
 ```{r}
-spec_site_persProb <- read.csv( "data/species-persProb-siteLevel.csv")
-spec_persProb <- read.csv("data/species-persProb-landscapeLevel.csv")
+spec_site_persProb <- read.csv( "results/species-persProb-siteLevel.csv")
+spec_persProb <- read.csv("results/species-persProb-landscapeLevel.csv")
 ```
 
 ### Load species trait data
@@ -385,13 +385,26 @@ write.csv(loadingsPCATotal, file = "data/PCA-loadings.csv", row.names = FALSE)
 
 By visualizing the PCA of the morphological trait space, we can ask if the functional space has changed over time as a result of changes in community composition
 ```{r}
+# for plots (let's plot each species by it's habitat affiliation on the plot)
+wood1850 <- left_join(Y1850, trait_dat, by="scientific_name") %>%
+  filter(Habitat.type == "Wooded Habitat")
+for1850 <- left_join(Y1850, trait_dat, by="scientific_name") %>%
+  filter(Habitat.type == "Forest")
+grass1850 <- left_join(Y1850, trait_dat, by="scientific_name") %>%
+  filter(Habitat.type == "Grassland")
+gen1850 <- left_join(Y1850, trait_dat, by="scientific_name") %>%
+  filter(Habitat.type == "Generalist")
+
 # plot 1850
 pca_plot_1850 <- ggplot(dcc_1850, aes(x = Var1, y = Var2)) +
   # coloured probabilty background
-  geom_raster(aes(fill = value)) +
-  scale_fill_scico(palette = "lajolla")+
+  geom_raster(aes(fill = value), show.legend = F) +
+  scale_fill_scico(palette = "grayC")+
   # points for species
-  geom_point(data = Y1850, aes(x = Comp.1, y = Comp.2), size = 0.3, alpha = 0.5, colour = "grey20") +
+  geom_point(data = for1850, aes(x = Comp.1, y = Comp.2), size = 2.5, color = "#7E1900", shape = 15) +
+  geom_point(data = grass1850, aes(x = Comp.1, y = Comp.2), size = 2.5, colour = "#D9D26A", shape = 16) +
+  geom_point(data = gen1850, aes(x = Comp.1, y = Comp.2), size = 2.5, colour = "#60C3D4", shape = 17) +
+  geom_point(data = wood1850, aes(x = Comp.1, y = Comp.2), size = 2.5, alpha = 0.5, colour = "#1A3399", shape = 18) +
   # add arrows
   geom_segment(data = loadings_sc, aes(x = 0, y = 0, xend = Comp.1, yend = Comp.2), arrow = arrow(length = unit(0.2, "cm")), colour = "black") +
   # probability kernels
@@ -405,95 +418,38 @@ pca_plot_1850 <- ggplot(dcc_1850, aes(x = Var1, y = Var2)) +
   geom_segment(data = loadings_sc, aes(x = 0, y = 0, xend = -Comp.1, yend = -Comp.2), lty = 5, colour = "darkgrey") +
   # add arrow labels
   geom_text_repel(data = loadings_sc, aes(x = Comp.1, y = Comp.2, label = trait), size = 4, nudge_x = 11, hjust = 0.5, direction = "y", segment.size = 0.5,segment.color = "grey89") +
-  xlim(-5,10) +
-  ylim(-5,5) +
+  scale_x_continuous(limits = c(-5,10), expand = c(0,0)) +
+  scale_y_continuous(limits = c(-5,5), expand = c(0,0)) +
   # axis labels - see comp_var
   labs(x = "PC1 - Beak Morphology (67%)", y = "PC2 - Dispersal ability (16%)") +
-  theme_bw() +
+  theme_classic() +
   theme(axis.text = element_text(family = "Century Gothic", size = 13),
         legend.title = element_text(family = "Century Gothic"),
     legend.text = element_text(family = "Century Gothic"),
-    text = element_text(family = "CenturyGothic", size = 25)) + 
-    guides(size= "none",
-           fill = "none")
-
+    text = element_text(family = "Century Gothic", size = 25))
+    
 ggsave(pca_plot_1850, filename = "figs/fig_pcaPlot_1850.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
 
-# plot 1900
-pca_plot_1900 <- ggplot(dcc_1900, aes(x = Var1, y = Var2)) +
-  # coloured probabilty background
-  geom_raster(aes(fill = value)) +
-  scale_fill_scico(palette = "lajolla")+
-  # points for species
-  geom_point(data = Y1900, aes(x = Comp.1, y = Comp.2), size = 0.3, alpha = 0.5, colour = "grey20") +
-  # add arrows
-  geom_segment(data = loadings_sc, aes(x = 0, y = 0, xend = Comp.1, yend = Comp.2), arrow = arrow(length = unit(0.2, "cm")), colour = "black") +
-  # probability kernels
-  geom_contour(aes(z = value), breaks = cl_50_1900, colour = "grey30", size = 1) +
-  geom_contour(aes(z = value), breaks = cl_95_1900, colour = "grey60", size = 1) +
-  geom_contour(aes(z = value), breaks = cl_99_1900, colour = "grey70", size = 1) +
-  coord_equal() +
-  # add arrows
-  geom_segment(data = loadings_sc, aes(x = 0, y = 0, xend = Comp.1, yend = Comp.2), arrow = arrow(length = unit(0.2, "cm")), colour = "black") +
-  # add dashed arrows ends
-  geom_segment(data = loadings_sc, aes(x = 0, y = 0, xend = -Comp.1, yend = -Comp.2), lty = 5, colour = "darkgrey") +
-  # add arrow labels
-  geom_text_repel(data = loadings_sc, aes(x = Comp.1, y = Comp.2, label = trait), size = 4, nudge_x = 11, hjust = 0.5, direction = "y", segment.size = 0.5,segment.color = "grey89") +
-  xlim(-5,10) +
-  ylim(-5,5) +
-  # axis labels - see comp_var
-  labs(x = "PC1 - Beak Morphology (67%)", y = "PC2 - Dispersal ability (16%)") +
-  theme_bw() +
-  theme(axis.text = element_text(family = "Century Gothic", size = 13),
-        legend.title = element_text(family = "Century Gothic"),
-    legend.text = element_text(family = "Century Gothic"),
-    text = element_text(family = "CenturyGothic", size = 25)) + 
-    guides(size= "none",
-           fill = "none")
-
-ggsave(pca_plot_1900, filename = "figs/fig_pcaPlot_1900.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
-
-# plot 1950
-pca_plot_1950 <- ggplot(dcc_1950, aes(x = Var1, y = Var2)) +
-  # coloured probabilty background
-  geom_raster(aes(fill = value)) +
-  scale_fill_scico(palette = "lajolla")+
-  # points for species
-  geom_point(data = Y1950, aes(x = Comp.1, y = Comp.2), size = 0.3, alpha = 0.5, colour = "grey20") +
-  # add arrows
-  geom_segment(data = loadings_sc, aes(x = 0, y = 0, xend = Comp.1, yend = Comp.2), arrow = arrow(length = unit(0.2, "cm")), colour = "black") +
-  # probability kernels
-  geom_contour(aes(z = value), breaks = cl_50_1950, colour = "grey30", size = 1) +
-  geom_contour(aes(z = value), breaks = cl_95_1950, colour = "grey60", size = 1) +
-  geom_contour(aes(z = value), breaks = cl_99_1950, colour = "grey70", size = 1) +
-  coord_equal() +
-  # add arrows
-  geom_segment(data = loadings_sc, aes(x = 0, y = 0, xend = Comp.1, yend = Comp.2), arrow = arrow(length = unit(0.2, "cm")), colour = "black") +
-  # add dashed arrows ends
-  geom_segment(data = loadings_sc, aes(x = 0, y = 0, xend = -Comp.1, yend = -Comp.2), lty = 5, colour = "darkgrey") +
-  # add arrow labels
-  geom_text_repel(data = loadings_sc, aes(x = Comp.1, y = Comp.2, label = trait), size = 4, nudge_x = 11, hjust = 0.5, direction = "y", segment.size = 0.5,segment.color = "grey89") +
-  xlim(-5,10) +
-  ylim(-5,5) +
-  # axis labels - see comp_var
-  labs(x = "PC1 - Beak Morphology (67%)", y = "PC2 - Dispersal ability (16%)") +
-  theme_bw() +
-  theme(axis.text = element_text(family = "Century Gothic", size = 13),
-        legend.title = element_text(family = "Century Gothic"),
-    legend.text = element_text(family = "Century Gothic"),
-    text = element_text(family = "CenturyGothic", size = 25)) + 
-    guides(size= "none",
-           fill = "none")
-
-ggsave(pca_plot_1950, filename = "figs/fig_pcaPlot_1950.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+# for plots (let's plot each species by it's habitat affiliation on the plot)
+wood2021 <- left_join(Y2021, trait_dat, by="scientific_name") %>%
+  filter(Habitat.type == "Wooded Habitat")
+for2021 <- left_join(Y2021, trait_dat, by="scientific_name") %>%
+  filter(Habitat.type == "Forest")
+grass2021 <- left_join(Y2021, trait_dat, by="scientific_name") %>%
+  filter(Habitat.type == "Grassland")
+gen2021 <- left_join(Y2021, trait_dat, by="scientific_name") %>%
+  filter(Habitat.type == "Generalist")
 
 # plot 2021
 pca_plot_2021 <- ggplot(dcc_2021, aes(x = Var1, y = Var2)) +
   # coloured probabilty background
-  geom_raster(aes(fill = value)) +
-  scale_fill_scico(palette = "lajolla")+
+  geom_raster(aes(fill = value), show.legend = F) +
+  scale_fill_scico(palette = "grayC")+
   # points for species
-  geom_point(data = Y2021, aes(x = Comp.1, y = Comp.2), size = 0.3, alpha = 0.5, colour = "grey20") +
+  geom_point(data = for2021, aes(x = Comp.1, y = Comp.2), size = 2.5, color = "#7E1900", shape = 15) +
+  geom_point(data = grass2021, aes(x = Comp.1, y = Comp.2), size = 2.5, colour = "#D9D26A", shape = 16) +
+  geom_point(data = gen2021, aes(x = Comp.1, y = Comp.2), size = 2.5, colour = "#60C3D4", shape = 17) +
+  geom_point(data = wood2021, aes(x = Comp.1, y = Comp.2), size = 2.5, alpha = 0.5, colour = "#1A3399", shape = 18) +
   # add arrows
   geom_segment(data = loadings_sc, aes(x = 0, y = 0, xend = Comp.1, yend = Comp.2), arrow = arrow(length = unit(0.2, "cm")), colour = "black") +
   # probability kernels
@@ -507,17 +463,15 @@ pca_plot_2021 <- ggplot(dcc_2021, aes(x = Var1, y = Var2)) +
   geom_segment(data = loadings_sc, aes(x = 0, y = 0, xend = -Comp.1, yend = -Comp.2), lty = 5, colour = "darkgrey") +
   # add arrow labels
   geom_text_repel(data = loadings_sc, aes(x = Comp.1, y = Comp.2, label = trait), size = 4, nudge_x = 11, hjust = 0.5, direction = "y", segment.size = 0.5,segment.color = "grey89") +
-  xlim(-5,10) +
-  ylim(-5,5) +
+  scale_x_continuous(limits = c(-5,10), expand = c(0,0)) +
+  scale_y_continuous(limits = c(-5,5), expand = c(0,0)) +
   # axis labels - see comp_var
   labs(x = "PC1 - Beak Morphology (67%)", y = "PC2 - Dispersal ability (16%)") +
-  theme_bw() +
+  theme_classic() +
   theme(axis.text = element_text(family = "Century Gothic", size = 13),
         legend.title = element_text(family = "Century Gothic"),
     legend.text = element_text(family = "Century Gothic"),
-    text = element_text(family = "CenturyGothic", size = 25)) + 
-    guides(size= "none",
-           fill = "none")
+    text = element_text(family = "Century Gothic", size = 25))
 
 ggsave(pca_plot_2021, filename = "figs/fig_pcaPlot_2021.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
 ```
@@ -525,7 +479,6 @@ ggsave(pca_plot_2021, filename = "figs/fig_pcaPlot_2021.png", width = 15, height
 ## Calculation of hypervolumes
 ```{r}
 # dataframes of trait data (PCA scores)
-
 #Y1850
 Y1850A <- Y1850 %>% 
   select(scientific_name, Comp.1, Comp.2, Comp.3, Comp.4, Comp.5, Comp.6, Comp.7, Comp.8, Comp.9) %>% 
