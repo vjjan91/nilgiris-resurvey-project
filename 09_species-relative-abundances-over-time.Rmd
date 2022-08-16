@@ -181,10 +181,12 @@ relAbun2021 <- dirch_stats(dat) %>%
 
 ### join the relative abundance datasets together
 relAbun <- full_join(relAbun1850, relAbun1900, by = c("species")) %>%
-  full_join(., relAbun1950, by = c("species")) %>%
    full_join(., relAbun2021, by = c("species")) %>%
   replace(is.na(.), 0) %>%
-  arrange(species)
+  arrange(species) %>%
+  rename(., `1850-1900` = "bayes_mean_1850") %>%
+  rename(., `1900-1950` = "bayes_mean_1900") %>%
+  rename(., `2021` = "bayes_mean_2021")
 ```
 
 ## Visualizing changes in relative abundance over time
@@ -192,23 +194,28 @@ relAbun <- full_join(relAbun1850, relAbun1900, by = c("species")) %>%
 ## This analysis is being done at the landscape-level
 
 ## one:one comparisons of abundance between 1850-1900 and 2021 (all species and sites pooled)
-fig_1850v2021_rel <- ggplot(data=relAbun,aes(x=bayes_mean_2021,y=bayes_mean_1950))    + geom_point() +
+fig_1850v2021_rel <- ggplot(data=relAbun,aes(x=`2021`,y=`1850-1900`))  + geom_point() +
    scale_y_log10() +
   geom_abline(slope=1, intercept=0,linetype="dashed") +
   scale_x_log10()+
   labs(y = "1850-1900 Relative abundance", 
        x = "2021 Relative abundance") +
    geom_point(shape = 21, colour = "black", fill = "white", size = 2, stroke = 1)+
-   geom_smooth(method="lm", se=TRUE, fullrange=FALSE, level=0.95,linetype="solid") +  theme_bw(base_size=20) 
+   geom_smooth(method="lm", se=TRUE, fullrange=FALSE, level=0.95,linetype="solid") +  theme_bw() +
+  theme(axis.text = element_text(family = "Century Gothic", size = 13),
+        legend.title = element_text(family = "Century Gothic"),
+    legend.text = element_text(family = "Century Gothic"),
+    text = element_text(family = "Century Gothic", size = 25))
 
 ggsave(fig_1850v2021_rel, filename = "figs/fig_1850-1900vs2021_relAbun.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
 
+## boxplots
 fig_relAbun_over_time <- relAbun %>%
   dplyr::select(-species) %>%
   pivot_longer(everything()) %>%
   ggplot(aes(x=name, y = value,
              fill = name)) +
-  geom_boxplot() +
+  geom_boxplot(alpha=0.7) +
   scale_y_log10() +
   geom_point(size=4,shape=21, alpha=0.5,
              color="black",fill="grey70") +
@@ -217,7 +224,12 @@ fig_relAbun_over_time <- relAbun %>%
   xlab("Time period") +
   ylab("Relative abundance") +
   scale_fill_scico_d(palette = "batlow") +
-  theme_bw()
+  theme_bw() +
+  theme(axis.text = element_text(family = "Century Gothic", size = 13),
+        legend.title = element_text(family = "Century Gothic"),
+    legend.text = element_text(family = "Century Gothic"),
+    text = element_text(family = "Century Gothic", size = 25)) +
+  guides(fill="none")
 
 ggsave(fig_relAbun_over_time, filename = "figs/fig_relAbun_landscapeLevel.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
 ```
@@ -256,6 +268,7 @@ trait_dat <- left_join(hab_dat, avonet[,c(1,10:20,29:31)], by=c("scientific_name
 
 ## Join datasets of relative abundance and species trait
 ```{r}
+## load this in if you have already run the previous chunk of code
 trait_dat <- read.csv("data/species-trait-dat.csv")
 
 ## join rel abun and species trait
@@ -355,39 +368,6 @@ for(i in 1:length(unique(hist_1900_1950$historical_site_code))) {
 relSpAbund_1900_1950 <- relSpAbund_1900_1950 %>%
     reduce(.f=full_join)
 
-##  time period 1950-2000
-
-# we remove modern site_code and get only distinct rows
-hist_1950_2000 <- hist_occ_sites_1950_2000[,c(1:3)] %>%
-  distinct(.)
-
-relSpAbund_1950_2000 <- c()
-
-for(i in 1:length(unique(hist_1950_2000$historical_site_code))) {
-  
-  a <- hist_1950_2000 %>%
-  filter(historical_site_code == unique(hist_1950_2000$historical_site_code)[i])
-
-  b <- tibble::deframe(a[,c(1,3)]) ## choosing 1950-2000 data
-  
-  loc <- unique(hist_1950_2000$historical_site_code)[i] # what's the site_code?
-  
-  relSpAbund_1950_2000[[i]] <- dirch_stats(b) %>%
-  dplyr::select(species, bayes_mean)
-
-  old_varname <-  c('species','bayes_mean')
-  new_varname <- c('scientific_name', paste(loc,"_","1950", sep = ""))
-
-  relSpAbund_1950_2000[[i]] <- relSpAbund_1950_2000[[i]] %>%
-      data.table::setnames(old = old_varname, new = new_varname)
-
-  names(relSpAbund_1950_2000)[i] <- loc 
-}
-
-# save object but full_join across lists
-relSpAbund_1950_2000 <- relSpAbund_1950_2000 %>%
-    reduce(.f=full_join)
-
 ##  time period 2021
 mod_2021 <- mod_occ_sites[,c(1,3,5)] %>%
   group_by(scientific_name, historical_site_code) %>%
@@ -423,7 +403,6 @@ relSpAbund_2021 <- relSpAbund_2021 %>%
 
 ## join all the datasets together
 relSpAbund_by_site <- full_join(relSpAbund_1850_1900, relSpAbund_1900_1950, by = "scientific_name") %>%
-  full_join(., relSpAbund_1950_2000, by = "scientific_name") %>%
   full_join(., relSpAbund_2021, by = "scientific_name") %>%
   arrange(scientific_name) %>%
   replace(is.na(.), 0) 
@@ -436,7 +415,7 @@ relSpAbund <- relSpAbund_by_site %>%
   pivot_longer(!scientific_name, names_to = "site_year", values_to = "relAbundance") %>%
   separate(site_year, into = c("site", "year"), sep = "_")
 
-## Please note: for the sake of downstream analysis, we have renamed 1850-1900 as 1850, 1900-1950 as 1900 and 1950-2000 as 1950. In other words, each year - except for 2021 represents a 50 year time period. 
+## Please note: for the sake of downstream analysis, we have renamed 1850-1900 as 1850, 1900-1950 as 1900. In other words, each year - except for 2021 represents a 50 year time period. 
 
 fig_relAbun_siteLevel <- relSpAbund %>%
   dplyr::select(-scientific_name) %>%
@@ -453,7 +432,15 @@ fig_relAbun_siteLevel <- relSpAbund %>%
   xlab("Time period") +
   ylab("Relative abundance") +
   scale_fill_scico_d(palette = "batlow") +
-  theme_bw()
+  theme_bw() +
+  theme(axis.title = element_text(family = "Century Gothic",
+      size = 14, face = "bold"),
+        axis.text = element_text(family="Century Gothic",size = 14),
+      legend.title = element_text(family="Century Gothic",
+                                    size = 14, face = "bold"),
+        legend.key.size = unit(1,"cm"),
+        legend.text = element_text(family="Century Gothic",size = 14)) +
+  guides(fill="none")
 
 ggsave(fig_relAbun_siteLevel, filename = "figs/fig_relAbun_siteLevel.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
 ```
