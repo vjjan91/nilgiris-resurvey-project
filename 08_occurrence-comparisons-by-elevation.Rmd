@@ -22,6 +22,9 @@ library(RColorBrewer)
 library(extrafont)
 library(sf)
 library(raster)
+
+# function to scale a range of values between 0 and 1
+range01 <- function(x, ...){(x - min(x, ...)) / (max(x, ...) - min(x, ...))}
 ```
 
 ### Load list of resurvey locations
@@ -57,79 +60,73 @@ hist_occ <- read.csv("data/historical-occurrence-data.csv")
 hist_occ_pre1900 <- hist_occ %>%
   filter(year <= 1900)
 
-## group by scientific name and historical site code
-histOcc_spp_pre1900 <- hist_occ_pre1900 %>%
+## group by scientific name and historical site code and join the sites dataframe
+hist_occ_pre1900 <- hist_occ_pre1900 %>%
   group_by(scientific_name, historical_site_code) %>%
-  count()
-
-colnames(histOcc_spp_pre1900)[3] <- "histCount"
-
-# add elevation
-hist_occ_elev_pre1900 <-  left_join(histOcc_spp_pre1900, sites, by=c("historical_site_code"="historical_site_code")) %>%
+  count() %>%
+  rename(., "abundance1850" = n) %>%
+  mutate("Y1850" = case_when(abundance1850 >= 1 ~ 1,TRUE ~ 0)) %>%
+  left_join(., sites, by=c("historical_site_code"="historical_site_code")) %>%
   filter(!is.na(scientific_name)) %>%
-  replace(is.na(.), 0) %>%
-  mutate("1850-1900" = case_when(histCount >= 1 ~ 1,TRUE ~ 0))
-
+  replace(is.na(.), 0)
+  
 # repeat above for two more time-periods
 ## 1900-1950
 hist_occ_1900_1950 <- hist_occ %>%
   filter(year > 1900 & year <= 1950)
 
-## group by scientific name and historical site code
-histOcc_spp_1900_1950 <- hist_occ_1900_1950 %>%
+## group by scientific name and historical site code and join the sites dataframe
+hist_occ_1900_1950 <- hist_occ_1900_1950 %>%
   group_by(scientific_name, historical_site_code) %>%
-  count()
-
-colnames(histOcc_spp_1900_1950)[3] <- "histCount"
-
-# add elevation
-hist_occ_elev_1900_1950 <-  left_join(histOcc_spp_1900_1950, sites, by=c("historical_site_code"="historical_site_code")) %>%
+  count() %>%
+  rename(., "abundance1900" = n) %>%
+  mutate("Y1900" = case_when(abundance1900 >= 1 ~ 1,TRUE ~ 0)) %>%
+  left_join(., sites, by=c("historical_site_code"="historical_site_code")) %>%
   filter(!is.na(scientific_name)) %>%
-  replace(is.na(.), 0) %>%
-  mutate("1900-1950" = case_when(histCount >= 1 ~ 1,TRUE ~ 0))
+  replace(is.na(.), 0)
 
 ### 1950 - 2000
 hist_occ_1950_2000 <- hist_occ %>%
   filter(year > 1950 & year <= 2000)
 
-## group by scientific name and historical site code
-histOcc_spp_1950_2000 <- hist_occ_1950_2000 %>%
+## group by scientific name and historical site code and join the sites dataframe
+hist_occ_1950_2000 <- hist_occ_1950_2000 %>%
   group_by(scientific_name, historical_site_code) %>%
-  count()
-
-colnames(histOcc_spp_1950_2000)[3] <- "histCount"
-
-# add elevation
-hist_occ_elev_1950_2000 <-  left_join(histOcc_spp_1950_2000, sites, by=c("historical_site_code"="historical_site_code")) %>%
+  count() %>%
+  rename(., "abundance1950" = n) %>%
+  mutate("Y1950" = case_when(abundance1950 >= 1 ~ 1,TRUE ~ 0)) %>%
+  left_join(., sites, by=c("historical_site_code"="historical_site_code")) %>%
   filter(!is.na(scientific_name)) %>%
-  replace(is.na(.), 0) %>%
-  mutate("1950-2000" = case_when(histCount >= 1 ~ 1,TRUE ~ 0))
+  replace(is.na(.), 0)
 
 ## read in modern occurrence data
 mod_occ <- read.csv("data/modern-occurrence-data.csv")
 
 ## group by scientific name and modern site code
-modOcc_spp <- mod_occ %>%
+mod_occ <- mod_occ %>%
   filter(!is.na(historical_site_code)) %>%
   group_by(scientific_name, modern_site_code) %>%
   summarise(modCount = sum(number))
 
-mod_occ_elev <-  left_join(modOcc_spp, sites, by=c("modern_site_code"="modern_site_code")) %>%
-  filter(!is.na(scientific_name)) %>%
+mod_occ <-  left_join(mod_occ, sites, by=c("modern_site_code"="modern_site_code")) %>% filter(!is.na(scientific_name)) %>%
   replace(is.na(.), 0) %>%
-  mutate("2021" = case_when(modCount >= 1 ~ 1,TRUE ~ 0))
+  mutate("Y2021" = case_when(modCount >= 1 ~ 1,TRUE ~ 0))
+```
+
+## Join the historical and modern count data
+```{r}
+## joining the historic and modern datasets
+## this dataframe can be used to examine land cover data later on
+hist_mod <- full_join(hist_occ_pre1900, hist_occ_1900_1950, by = c("scientific_name","modern_site_code","historical_site_code","modern_landCover_type","elev","site_name","geometry")) %>%
+  full_join(., hist_occ_1950_2000, by = c("scientific_name","modern_site_code","historical_site_code","modern_landCover_type","elev","site_name","geometry")) %>%
+   full_join(., mod_occ, by = c("scientific_name","modern_site_code","historical_site_code","modern_landCover_type","elev","site_name","geometry")) %>%
+  mutate_at(vars(Y2021), ~replace_na(., 0)) %>%
+  arrange(scientific_name) %>%
+  ungroup()
 ```
 
 ### Comparing historical-modern counts by elevation
-
 ```{r}
-## joining the historic and modern datasets
-hist_mod <- full_join(hist_occ_elev_pre1900, hist_occ_elev_1900_1950, by = c("scientific_name","modern_site_code","histCount","historical_site_code","elev","site_name","geometry")) %>%
-  full_join(., hist_occ_elev_1950_2000, by = c("scientific_name","modern_site_code","histCount","historical_site_code","elev","site_name","geometry")) %>%
-   full_join(., mod_occ_elev, by = c("scientific_name","modern_site_code","historical_site_code","elev","site_name","geometry")) %>%
-  replace(is.na(.), 0) %>%
-  arrange(scientific_name)
-
 # run the loop to create a list of plots
 plots <- list()
 
@@ -138,14 +135,16 @@ for(i in 1:length(unique(hist_mod$scientific_name))) {
   # extract data species by species
   a <- unique(hist_mod$scientific_name)[i]
   data <- hist_mod[hist_mod$scientific_name==a,] %>%
-      pivot_longer(cols=c("1850-1900", "1900-1950", "1950-2000", "2021"), 
+      pivot_longer(cols=c("Y1850", "Y1900", "Y1950", "Y2021"), 
                    names_to="histMod", values_to="PresAbs") %>%
+    mutate("det_nonDet" = case_when(PresAbs == 1 ~ "Detection",
+                                    PresAbs == 0 ~ "Non-detection")) %>%
     arrange(histMod)
   
   # plot the data
-  plots[[i]] <- ggplot(data, aes(x = histMod, y = elev, fill = factor(PresAbs))) +
-    geom_point(aes(shape=factor(PresAbs), size = 3)) +
-    scale_shape_manual(values = c(1, 16)) +
+  plots[[i]] <- ggplot(data, aes(x = histMod, y = elev, fill = factor(det_nonDet))) +
+    geom_point(aes(shape=factor(det_nonDet), size = 3)) +
+    scale_shape_manual(values = c("Detection" = 16, "Non-detection" = 1), na.translate = F) +
   theme_bw() +
   ggtitle(a) +
   labs(
@@ -164,7 +163,7 @@ for(i in 1:length(unique(hist_mod$scientific_name))) {
     legend.text = element_text(family = "Century Gothic")) + 
     guides(size= "none",
            fill = "none",
-           shape = guide_legend(title = "Presence-Absence"))
+           shape = guide_legend(title = ""))
 }
 
 # plot and save as a single pdf
