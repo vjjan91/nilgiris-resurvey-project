@@ -187,6 +187,9 @@ relAbun <- full_join(relAbun1850, relAbun1900, by = c("species")) %>%
   rename(., `1850-1900` = "bayes_mean_1850") %>%
   rename(., `1900-1950` = "bayes_mean_1900") %>%
   rename(., `2021` = "bayes_mean_2021")
+
+## write to file
+write.csv(relAbun, "results/species-relative-abundance.csv", row.names = F)
 ```
 
 ## Visualizing changes in relative abundance over time
