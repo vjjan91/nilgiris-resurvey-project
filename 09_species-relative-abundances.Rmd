@@ -255,7 +255,7 @@ habitat_dat <- left_join(species_codes, habitat_SoIB, by=c("scientific_name"="sc
 # Wooded habitat: If it preferred some level of wooded habitat but not particularly specialized on rainforest/forest habitat. An example in this case is the black and orange flycatcher. While it is commonly found in shola forest habitat, this species is also common in degraded wooded areas, including timber plantations. If a species preferred just scrub habitat alone, we lumped it under this category.
 # Forest: If a species was a forest specialist. 
 # Grassland: While State of India's birds uses a separate classification for grassland & grassland+scrub, here we combine the two and use a single classification for Grassland. Eg. Black drongo - which favors both grassland areas and scrub habitat. There are four species that are classified as using 'open habitat' which had been subsumed under grasslands in our study - this includes - blue-tailed bee-eater, black-winged kite, long-tailed shrike (eBird lists it as preferring open habitats) and western yellow wagtail. 
-# Generalist: If a spedcies is truly a generalist species and is not particularly occupying/specialized on any particular wooded/forested/grassland habitat.
+# Generalist: If a species is truly a generalist species and is not particularly occupying/specialized on any particular wooded/forested/grassland habitat.
 
 ## load the species trait data (that includes habitat) and merge with the AVONET dataset
 ## please note that it is being loaded after curating and adding a column for habitat type based on our understanding of species natural history
