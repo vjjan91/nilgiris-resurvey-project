@@ -188,7 +188,7 @@ spec_persProb <- read.csv("results/species-persProb-landscapeLevel.csv")
 
 ## Run mixed-effects models examining persistence probabilties and land cover change
 ```{r}
-## change in persistence prob over time
+## change in persistence prob over time (site level)
 persProb_min <- spec_site_persProb %>%
   dplyr::select(years,PXt,scientific_name, historical_site_code) %>%
   group_by(scientific_name, historical_site_code) %>%
