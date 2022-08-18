@@ -4,9 +4,9 @@ editor_options:
   chunk_output_type: console
 ---
 
-## Species persistence probabilities as a function of environmental changes
+## Species persistence probabilities and relative abundance as a function of environmental changes
 
-In this script, we will model the effect of species persistence probabilities as a function of environmental changes at each of the sampling sites (environmental changes are calculated as differences in values of a predictor between modern vs. historical time period)
+In this script, we will model the effect of species persistence probabilities and relative abundance as a function of environmental changes at each of the sampling sites (environmental changes are calculated as differences in values of a predictor between modern vs. historical time period)
 
 In the first half of the script, we will prepare the environmental predictors at each of the sampling sites
 
@@ -111,7 +111,7 @@ lc_change_dat <- lc_sites |>
   ) %>%
   left_join(., sites, by="modern_site_code") %>%
   replace(is.na(.), 0) %>%
-  mutate("lc_change" = year_2017 - year_1870) # a -1 implies loss and + 1 implies gain
+  mutate("lc_change" = year_2017 - year_1870) #  -1 implies loss and + 1 implies gain
 ```
 
 ```{r}
@@ -186,6 +186,11 @@ spec_site_persProb <- read.csv( "results/species-persProb-siteLevel.csv")
 spec_persProb <- read.csv("results/species-persProb-landscapeLevel.csv")
 ```
 
+## Load species relative abundance
+```{r}
+relAbun <- read.csv("results/species-relative-abundance-siteLevel.csv")
+```
+
 ## Run mixed-effects models examining persistence probabilties and land cover change
 ```{r}
 ## change in persistence prob over time (site level)
@@ -239,21 +244,69 @@ persProb_landCover <- persProb_change %>%
   filter(historical_site_code != "KJPN") %>%
   filter(historical_site_code != "KULR")
   
-glmm_lc_change <- left_join(persProb_landCover, lc_change_glmm, by="historical_site_code") %>%
+glmm_persProb <- left_join(persProb_landCover, lc_change_glmm, by="historical_site_code") %>%
   as.data.frame()
 
 ## run the glmm
-glmm_lc <- glmer(persProbChange ~ `Shola Grassland` + `Shola Forest` + `Settlements`+
-                   `Plantations (Tea & Timber)` + `Agricultural Land` +
+glmm_lc_persProb <- glmer(persProbChange ~ `Shola Grassland` + `Shola Forest` + `Settlements`+ `Plantations (Tea & Timber)` + `Agricultural Land` +
                           (1|scientific_name) + (1|historical_site_code), 
-                        data = glmm_lc_change, family = gaussian(link="identity"))
+                        data = glmm_persProb, family = gaussian(link="identity"))
 
-summary(glmm_lc)
+summary(glmm_lc_persProb)
+plot_model(glmm_lc_persProb, type="pred")
+report::report(glmm_lc_persProb)
 
-plot_model(glmm_lc, type = "est")
-plot_model(glmm_lc, type="pred")
-report::report(glmm_lc)
+# We fitted a linear mixed model (estimated using REML and nloptwrap optimizer) to predict persProbChange with Shola Grassland, Shola Forest, Settlements, Plantations (Tea & Timber) and Agricultural Land (formula: persProbChange ~ `Shola Grassland` + `Shola Forest` + Settlements + `Plantations (Tea & Timber)` + `Agricultural Land`). The model included scientific_name and historical_site_code as random effects (formula: list(~1 | scientific_name, ~1 | historical_site_code)). The model's total explanatory power is substantial (conditional R2 = 0.64) and the part related to the fixed effects alone (marginal R2) is of 0.03. The model's intercept, corresponding to Shola Grassland = 0, Shola Forest = 0, Settlements = 0, Plantations (Tea & Timber) = 0 and Agricultural Land = 0, is at 0.14 (95% CI [-0.06, 0.35], t(1139) = 1.36, p = 0.175). Within this model:
+
+#  - The effect of Shola Grassland is statistically non-significant and negative (beta = -0.05, 95% CI [-0.25, 0.15], t(1139) = -0.49, p = 0.623; Std. beta = -0.02, 95% CI [-0.09, 0.05])
+#  - The effect of Shola Forest is statistically non-significant and negative (beta = -3.59e-03, 95% CI [-0.03, 0.03], t(1139) = -0.23, p = 0.817; Std. beta = -0.01, 95% CI [-0.13, 0.10])
+#  - The effect of Settlements is statistically significant and positive (beta = 0.05, 95% CI [0.01, 0.08], t(1139) = 2.81, p = 0.005; Std. beta = 0.16, 95% CI [0.05, 0.27])
+#  - The effect of Plantations (Tea & Timber) is statistically non-significant and positive (beta = 0.02, 95% CI [-0.03, 0.07], t(1139) = 0.76, p = 0.448; Std. beta = 0.04, 95% CI [-0.06, 0.14])
+#  - The effect of Agricultural Land is statistically non-significant and positive (beta = 0.01, 95% CI [-0.03, 0.06], t(1139) = 0.57, p = 0.567; Std. beta = 0.03, 95% CI [-0.07, 0.13])
+
+# Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation
 ```
+
+## Run mixed-effects models examining species relative abundance and land cover change
+```{r}
+names(relAbun) <- c("scientific_name","historical_site_code","year","relAbundance")
+
+pivot_1850 <- relAbun %>%
+  filter(year != 1900) %>%
+  filter(year != 2021) %>%
+  pivot_wider(., names_from = "year", values_from = "relAbundance")
+
+pivot_2021 <- relAbun %>%
+  filter(year != 1900) %>%
+  filter(year != 1850) %>%
+  pivot_wider(., names_from = "year", values_from = "relAbundance")
+
+relAbun_wide <- full_join(pivot_1850, pivot_2021, by=c("scientific_name","historical_site_code")) %>%
+  replace(is.na(.), 0) %>%
+  mutate("relAbunChange" = `1850` - `2021`)
+
+glmm_relAbun <- left_join(lc_change_glmm, relAbun_wide, by="historical_site_code") %>% as.data.frame()
+
+## run the glmm
+glmm_lc_relAbun <- glmer(relAbunChange ~ `Shola Grassland` + `Shola Forest` + `Settlements`+ `Plantations (Tea & Timber)` + `Agricultural Land` +
+                          (1|scientific_name) + (1|historical_site_code), 
+                        data = glmm_relAbun, family = gaussian(link="identity"))
+
+summary(glmm_lc_relAbun)
+plot_model(glmm_lc_relAbun, type="pred")
+report::report(glmm_lc_relAbun)
+
+# We fitted a linear mixed model (estimated using REML and nloptwrap optimizer) to predict relAbunChange with Shola Grassland, Shola Forest, Settlements, Plantations (Tea & Timber) and Agricultural Land (formula: relAbunChange ~ `Shola Grassland` + `Shola Forest` + Settlements + `Plantations (Tea & Timber)` + `Agricultural Land`). The model included scientific_name and historical_site_code as random effects (formula: list(~1 | scientific_name, ~1 | historical_site_code)). The model's total explanatory power is moderate (conditional R2 = 0.13) and the part related to the fixed effects alone (marginal R2) is of 2.07e-03. The model's intercept, corresponding to Shola Grassland = 0, Shola Forest = 0, Settlements = 0, Plantations (Tea & Timber) = 0 and Agricultural Land = 0, is at -8.92e-03 (95% CI [-0.02, 1.72e-03], t(4905) = -1.64, p = 0.100). Within this model:
+
+#  - The effect of Shola Grassland is statistically non-significant and negative (beta = -3.37e-03, 95% CI [-0.01, 6.85e-03], t(4905) = -0.65, p = 0.518; Std. beta = -0.01, 95% CI [-0.04, 0.02])
+ # - The effect of Shola Forest is statistically non-significant and negative (beta = -7.56e-04, 95% CI [-2.44e-03, 9.28e-04], t(4905) = -0.88, p = 0.379; Std. beta = -0.02, 95% CI [-0.05, 0.02])
+#  - The effect of Settlements is statistically non-significant and positive (beta = 9.92e-04, 95% CI [-7.97e-04, 2.78e-03], t(4905) = 1.09, p = 0.277; Std. beta = 0.02, 95% CI [-0.01, 0.05])
+#  - The effect of Plantations (Tea & Timber) is statistically non-significant and positive (beta = 2.32e-03, 95% CI [-4.72e-04, 5.11e-03], t(4905) = 1.63, p = 0.103; Std. beta = 0.03, 95% CI [-5.35e-03, 0.06])
+#  - The effect of Agricultural Land is statistically non-significant and positive (beta = 1.20e-03, 95% CI [-1.35e-03, 3.74e-03], t(4905) = 0.92, p = 0.357; Std. beta = 0.01, 95% CI [-0.02, 0.05])
+
+# Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation
+```
+
 
 ## Run mixed-effects models examining persistence probabilties and climate change
 ```{r}
