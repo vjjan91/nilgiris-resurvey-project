@@ -501,5 +501,47 @@ fig_relAbun_elev <- ggplot(relAbun_elev, aes(x= elev, y=relAbundance)) +
     text = element_text(family = "Century Gothic", size = 25))
 
 ggsave(fig_relAbun_elev, filename = "figs/fig_relAbun_elev.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+
+## join relative abundance at site level with trait data
+relAbun_Hab <- left_join(relSpAbund, trait_dat, by="scientific_name") %>% 
+  left_join(., sites, by = "historical_site_code") %>%
+  filter(Habitat.type != "Aquatic") %>%
+  ungroup()
+
+# run by habitat type for year 1850
+relAbunHab1850 <- relAbun_Hab %>%
+  filter(year == 1850)
+
+fig_relAbun_hab1850 <- ggplot(relAbunHab1850, aes(x=elev,y=relAbundance)) +  
+  geom_point(shape = 21, colour = "black", fill = "white", size = 2, stroke = 1)+
+   geom_smooth(method="lm", se=TRUE, fullrange=FALSE, level=0.95,linetype="solid") +  theme_bw() +
+    scale_y_log10() +
+  facet_wrap(~Habitat.type) +
+  labs(x="\nElevation (in meters)", 
+       y="Relative Abundance\n") +
+  theme(axis.text = element_text(family = "Century Gothic", size = 13),
+        legend.title = element_text(family = "Century Gothic"),
+    legend.text = element_text(family = "Century Gothic"),
+    text = element_text(family = "Century Gothic", size = 25))
+
+ggsave(fig_relAbun_hab1850, filename = "figs/fig_relAbun_elev_habitat1850.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+
+# run by habitat type for year 2021
+relAbunHab2021 <- relAbun_Hab %>%
+  filter(year == 2021)
+
+fig_relAbun_hab2021 <- ggplot(relAbunHab2021, aes(x=elev,y=relAbundance)) +  
+  geom_point(shape = 21, colour = "black", fill = "white", size = 2, stroke = 1)+
+   geom_smooth(method="lm", se=TRUE, fullrange=FALSE, level=0.95,linetype="solid") +  theme_bw() +
+  scale_y_log10() +
+  facet_wrap(~Habitat.type) +
+  labs(x="\nElevation (in meters)", 
+       y="Relative Abundance\n") +
+  theme(axis.text = element_text(family = "Century Gothic", size = 13),
+        legend.title = element_text(family = "Century Gothic"),
+    legend.text = element_text(family = "Century Gothic"),
+    text = element_text(family = "Century Gothic", size = 25))
+
+ggsave(fig_relAbun_hab2021, filename = "figs/fig_relAbun_elev_habitat2021.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
 ```
 
