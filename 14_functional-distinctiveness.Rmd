@@ -256,6 +256,9 @@ Di_Sum <- Di_Sum[order(Di_Sum$Di),] %>%
   mutate(ID = c(1:187)) %>% 
   left_join(relAbun_persProb, by = "scientific_name")
 
+# write to file
+write.csv(Di_Sum, "results/func-distinctiveness.csv", row.names = F)
+
 # visualize/plots
 # first we will visualize naive extinctions and novel colonizations
 
