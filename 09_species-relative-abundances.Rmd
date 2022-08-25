@@ -20,6 +20,7 @@ library(extrafont)
 library(sf)
 library(raster)
 library(data.table)
+library(ggrepel)
 
 # source custom functions
 source("code/02_relative-species-abundance-functions.R")
@@ -200,7 +201,7 @@ write.csv(relAbun, "results/species-relative-abundance.csv", row.names = F)
 fig_1850v2021_rel <- ggplot(data=relAbun,aes(x=`2021`,y=`1850-1900`))  + geom_point() +
    scale_y_log10() +
   geom_abline(slope=1, intercept=0,linetype="dashed") +
-  scale_x_log10()+
+  scale_x_log10() +
   labs(y = "1850-1900 Relative abundance", 
        x = "2021 Relative abundance") +
    geom_point(shape = 21, colour = "black", fill = "white", size = 2, stroke = 1)+
@@ -235,6 +236,37 @@ fig_relAbun_over_time <- relAbun %>%
   guides(fill="none")
 
 ggsave(fig_relAbun_over_time, filename = "figs/fig_relAbun_landscapeLevel.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+```
+
+## Visualization as a line plot (for each species)
+```{r}
+## subset data for line plots
+relAbun_forLinePlot <- relAbun %>%
+  pivot_longer(-species, names_to = "timePeriod", values_to = "relAbun") %>%
+  filter(relAbun != 0) 
+
+## ensure that text does not overlap
+options(ggrepel.max.overlaps = Inf)
+
+# fig
+fig_relAbun_linePlot <- ggplot(relAbun_forLinePlot, aes(x=timePeriod, y = relAbun,color = species, group = species)) +
+  geom_point() + 
+  geom_line() +
+  geom_text_repel(data=subset(relAbun_forLinePlot, timePeriod == "2021"),
+            aes(timePeriod,relAbun,label=species)) +
+  scale_y_log10() +
+  xlab("Time period") +
+  ylab("Relative abundance") +
+  scale_color_scico_d(palette = "grayC", begin = 1, end = 1) +
+  theme_bw() +
+  theme(axis.text = element_text(family = "Century Gothic", size = 13),
+        legend.title = element_text(family = "Century Gothic"),
+    legend.text = element_text(family = "Century Gothic"),
+    text = element_text(family = "Century Gothic", size = 25)) +
+  guides(fill="none",
+         color = "none")
+
+ggsave(fig_relAbun_linePlot, filename = "figs/fig_relAbun_linePlot.png", width = 18, height = 15, device = png(), units = "in", dpi = 300)
 ```
 
 ## Examining changes in relative abundance as a function of species habitat affiliation
@@ -279,6 +311,7 @@ trait_dat <- read.csv("data/species-trait-dat.csv")
 rel_abun_trait <- relAbun %>%
   pivot_longer(-species, names_to = "Time Period", values_to = "Relative abundance") %>% left_join(., trait_dat, by=c("species"="scientific_name")) %>%
    filter(Habitat.type != "Aquatic") %>%
+  filter(`Relative abundance` !=0) %>%
   ungroup()
   
 # visualization by habitat affiliation
@@ -287,10 +320,7 @@ rel_abun_trait$Habitat.type <- factor(rel_abun_trait$Habitat.type, levels=c("For
 fig_relAbun_habitat <- ggplot(rel_abun_trait, aes(x=`Time Period`, y=`Relative abundance`, fill = Habitat.type)) +  geom_boxplot(alpha=0.7) +  
   scale_y_log10() +
   scale_fill_scico_d(palette = "roma") + theme_bw() +
-  geom_point(size=4,shape=21, alpha=0.5,
-             color="black",fill="grey70") +
-  geom_jitter(width=0.2,size=4,shape=21, alpha=0.5,
-              color="black",fill="grey70") +
+  geom_point(aes(fill = Habitat.type), size = 4, shape = 21, alpha = 0.3,position = position_jitterdodge()) +
     labs(x="\nTime Period", 
        y="Relative abundance\n") + 
     theme(axis.title = element_text(family = "Century Gothic",
@@ -300,7 +330,7 @@ fig_relAbun_habitat <- ggplot(rel_abun_trait, aes(x=`Time Period`, y=`Relative a
                                     size = 14, face = "bold"),
         legend.key.size = unit(1,"cm"),
         legend.text = element_text(family="Century Gothic",size = 14))
-  
+
 ggsave(fig_relAbun_habitat, filename = "figs/fig_relAbun_habitat_landscapeLevel.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
 
 ## examining relative species abundance and body mass
@@ -456,15 +486,10 @@ write.csv(relSpAbund, "results/species-relative-abundance-siteLevel.csv", row.na
 
 fig_relAbun_siteLevel <- relSpAbund %>%
   dplyr::select(-scientific_name) %>%
-  # pivot_longer(everything()) %>%
   ggplot(aes(x=year, y = relAbundance,
              fill = year)) +
   geom_boxplot() +
   scale_y_log10() +
-  #geom_point(size=4,shape=21, alpha=0.5,
-  #           color="black",fill="grey70") +
-  #geom_jitter(width=0.2,size=4,shape=21, alpha=0.5,
-  #            color="black",fill="grey70") +
   facet_wrap(~site)+
   xlab("Time period") +
   ylab("Relative abundance") +
