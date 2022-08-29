@@ -299,11 +299,8 @@ ggsave(fig_landCover_trait, filename = "figs/fig_persProb_habitatType_landCover.
 
 ## Mixed-effects models (Change in persistence prob ~ species traits)
 
-In this section, we will run mixed-effects models to test the effect of species trait on changes in persistence probability. In other words, are species of a certain habitat type or dispersal ability have a positive or negative effect on changes in persistence probability over time?
+In this section, we will run mixed-effects models to test the effect of species trait on persistence probability. In other words, has persistence probability for species of a certain habitat type or dispersal ability declined or increased over time?
 ```{r}
-# if trait data hasn't been loaded
-trait_dat <- read.csv("data/species-trait-dat.csv")
-
 # create a dataframe to run the mixed effects models that join the trait data with the persistence probability datasets
 
 ## rerun below with a different persistence probability change dataframe 
@@ -322,16 +319,40 @@ cld(tukey_glmm_habType)
 
 # above model simply suggests that the persistence probability of grassland birds are significantly different when compared to other habitat affiliations, but no difference between the others. 
 
+report::report(glmm_habType)
+
+# We fitted a linear mixed model (estimated using REML and nloptwrap optimizer) to predict PXt with Habitat.type (formula: PXt ~ Habitat.type). The model included scientific_name and historical_site_code as random effects (formula: list(~1 | scientific_name, ~1 | historical_site_code)). The model's total explanatory power is substantial (conditional R2 = 0.28) and the part related to the fixed effects alone (marginal R2) is of 5.61e-03. The model's intercept, corresponding to Habitat.type = Forest, is at 0.85 (95% CI [0.82, 0.88], t(75419) = 60.14, p < .001). Within this model:
+
+#  - The effect of Habitat type [Generalist] is statistically non-significant and positive (beta = 5.94e-03, 95% CI [-0.02, 0.03], t(75419) = 0.50, p = 0.614; Std. beta = 0.04, 95% CI [-0.12, 0.20])
+#  - The effect of Habitat type [Grassland] is statistically significant and negative (beta = -0.04, 95% CI [-0.06, -8.80e-03], t(75419) = -2.59, p = 0.010; Std. beta = -0.24, 95% CI [-0.43, -0.06])
+#  - The effect of Habitat type [Wooded Habitat] is statistically non-significant and negative (beta = -2.70e-03, 95% CI [-0.02, 0.02], t(75419) = -0.25, p = 0.800; Std. beta = -0.02, 95% CI [-0.16, 0.12])
+
+# Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation. 
+
 # weight
 glmm_bodyMass <- glmer(PXt ~ weight_z + (1|scientific_name) + (1|historical_site_code), data = changeDat, family = gaussian(link="identity"))
 
 summary(glmm_bodyMass)
 plot_model(glmm_bodyMass, type="pred")
+report::report(glmm_bodyMass)
+
+# We fitted a linear mixed model (estimated using REML and nloptwrap optimizer) to predict PXt with weight_z (formula: PXt ~ weight_z). The model included scientific_name and historical_site_code as random effects (formula: list(~1 | scientific_name, ~1 | historical_site_code)). The model's total explanatory power is substantial (conditional R2 = 0.28) and the part related to the fixed effects alone (marginal R2) is of 4.05e-03. The model's intercept, corresponding to weight_z = 0, is at 0.85 (95% CI [0.82, 0.87], t(75421) = 70.98, p < .001). Within this model:
+
+#  - The effect of weight z is statistically significant and negative (beta = -9.82e-03, 95% CI [-0.02, -2.89e-03], t(75421) = -2.78, p = 0.005; Std. beta = -0.07, 95% CI [-0.11, -0.02])
+
+# Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation. 
 
 # dispersal-ability
 glmm_hwi <- glmer(PXt ~ hand_wing_index_z + (1|scientific_name) + (1|historical_site_code), data = changeDat, family = gaussian(link="identity"))
 
 summary(glmm_hwi)
 plot_model(glmm_hwi, type="pred")
+report::report(glmm_hwi)
+
+# We fitted a linear mixed model (estimated using REML and nloptwrap optimizer) to predict PXt with hand_wing_index_z (formula: PXt ~ hand_wing_index_z). The model included scientific_name and historical_site_code as random effects (formula: list(~1 | scientific_name, ~1 | historical_site_code)). The model's total explanatory power is substantial (conditional R2 = 0.28) and the part related to the fixed effects alone (marginal R2) is of 2.34e-03. The model's intercept, corresponding to hand_wing_index_z = 0, is at 0.85 (95% CI [0.83, 0.87], t(75421) = 70.66, p < .001). Within this model:
+
+#  - The effect of hand wing index z is statistically significant and negative (beta = -7.46e-03, 95% CI [-0.01, -6.36e-04], t(75421) = -2.14, p = 0.032; Std. beta = -0.05, 95% CI [-0.10, -4.32e-03])
+
+# Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation. 
 ```
 
