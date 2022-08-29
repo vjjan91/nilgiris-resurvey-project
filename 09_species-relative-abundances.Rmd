@@ -541,75 +541,94 @@ relAbun_Hab <- left_join(relSpAbund, trait_dat, by="scientific_name") %>%
   left_join(., sites, by = "historical_site_code") %>%
   filter(Habitat.type != "Aquatic") %>%
   ungroup()
+```
 
-## running glmers
+## Running generalized linear mixed models
+```{r}
+## overall
+glmm_overall <- glmer(relAbundance ~ year + (1|historical_site_code) + (1|scientific_name),
+                      data = relSpAbund, family = gaussian(link="identity"))
+
+summary(glmm_overall)
+tukey_glmm_overall <- summary(glht(glmm_overall, linfct=mcp(year ="Tukey")))
+cld(tukey_glmm_overall) # significant diff between each time period
+report::report(glmm_overall)
+
+# We fitted a linear mixed model (estimated using REML and nloptwrap optimizer) to predict relAbundance with year (formula: relAbundance ~ year). The model included historical_site_code and scientific_name as random effects (formula: list(~1 | historical_site_code, ~1 | scientific_name)). The model's total explanatory power is substantial (conditional R2 = 0.28) and the part related to the fixed effects alone (marginal R2) is of 0.10. The model's intercept, corresponding to year = 1850, is at 0.06 (95% CI [0.05, 0.07], t(1432) = 9.65, p < .001). Within this model:
+
+#  - The effect of year [1900] is statistically significant and positive (beta = 0.03, 95% CI [0.02, 0.04], t(1432) = 5.07, p < .001; Std. beta = 0.44, 95% CI [0.27, 0.61])
+#  - The effect of year [2021] is statistically significant and negative (beta = -0.03, 95% CI [-0.04, -0.02], t(1432) = -5.51, p < .001; Std. beta = -0.42, 95% CI [-0.57, -0.27])
+
+# Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation. 
+
+## habitat affiliation
 forest_glmm <- relAbun_Hab %>%
   filter(Habitat.type == "Forest")
 
-glmm_forest <- glmer(relAbundance ~ year + +(1|historical_site_code), data = forest_glmm, family = gaussian(link="identity"))
+glmm_forest <- glmer(relAbundance ~ year +(1|historical_site_code) + (1|scientific_name), data = forest_glmm, family = gaussian(link="identity"))
 
 summary(glmm_forest)
 tukey_glmm_forest <- summary(glht(glmm_forest, linfct=mcp(year ="Tukey")))
 cld(tukey_glmm_forest) # diff between each pair of time periods
 report::report(glmm_forest)
 
-# We fitted a linear mixed model (estimated using REML and nloptwrap optimizer) to predict relAbundance with year (formula: relAbundance ~ year). The model included historical_site_code as random effect (formula: ~1 | historical_site_code). The model's total explanatory power is substantial (conditional R2 = 0.57) and the part related to the fixed effects alone (marginal R2) is of 0.27. The model's intercept, corresponding to year = 1850, is at 0.05 (95% CI [0.04, 0.06], t(556) = 11.74, p < .001). Within this model:
+# We fitted a linear mixed model (estimated using REML and nloptwrap optimizer) to predict relAbundance with year (formula: relAbundance ~ year). The model included historical_site_code and scientific_name as random effects (formula: list(~1 | historical_site_code, ~1 | scientific_name)). The model's total explanatory power is substantial (conditional R2 = 0.62) and the part related to the fixed effects alone (marginal R2) is of 0.30. The model's intercept, corresponding to year = 1850, is at 0.05 (95% CI [0.04, 0.06], t(555) = 10.81, p < .001). Within this model:
 
-#  - The effect of year [1900] is statistically significant and positive (beta = 0.02, 95% CI [0.01, 0.02], t(556) = 5.53, p < .001; Std. beta = 0.55, 95% CI [0.35, 0.74])
-#  - The effect of year [2021] is statistically significant and negative (beta = -0.03, 95% CI [-0.03, -0.02], t(556) = -9.71, p < .001; Std. beta = -0.85, 95% CI [-1.02, -0.68])
+#  - The effect of year [1900] is statistically significant and positive (beta = 0.02, 95% CI [9.90e-03, 0.02], t(555) = 5.29, p < .001; Std. beta = 0.51, 95% CI [0.32, 0.70])
+#  - The effect of year [2021] is statistically significant and negative (beta = -0.03, 95% CI [-0.03, -0.02], t(555) = -10.42, p < .001; Std. beta = -0.94, 95% CI [-1.12, -0.76])
 
-# Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation. (differences in each time period observed)
+# Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation. 
 
 grassland_glmm <- relAbun_Hab %>%
   filter(Habitat.type == "Grassland")
 
-glmm_grassland <- glmer(relAbundance ~ year + +(1|historical_site_code), data = grassland_glmm, family = gaussian(link="identity"))
+glmm_grassland <- glmer(relAbundance ~ year + (1|historical_site_code) + (1|scientific_name), data = grassland_glmm, family = gaussian(link="identity"))
 
 summary(glmm_grassland)
 tukey_glmm_grassland <- summary(glht(glmm_grassland, linfct=mcp(year ="Tukey")))
 cld(tukey_glmm_grassland) # diff between 2021 and 1850 and 2021 and 1900, but not between 1850 and 1900
 report::report(glmm_grassland)
 
-# We fitted a linear mixed model (estimated using REML and nloptwrap optimizer) to predict relAbundance with year (formula: relAbundance ~ year). The model included historical_site_code as random effect (formula: ~1 | historical_site_code). The model's total explanatory power is substantial (conditional R2 = 0.57) and the part related to the fixed effects alone (marginal R2) is of 0.07. The model's intercept, corresponding to year = 1850, is at 0.13 (95% CI [0.06, 0.19], t(156) = 3.96, p < .001). Within this model:
+# We fitted a linear mixed model (estimated using REML and nloptwrap optimizer) to predict relAbundance with year (formula: relAbundance ~ year). The model included historical_site_code and scientific_name as random effects (formula: list(~1 | historical_site_code, ~1 | scientific_name)). The model's total explanatory power is substantial (conditional R2 = 0.60) and the part related to the fixed effects alone (marginal R2) is of 0.09. The model's intercept, corresponding to year = 1850, is at 0.12 (95% CI [0.06, 0.19], t(155) = 3.88, p < .001). Within this model:
 
-#  - The effect of year [1900] is statistically non-significant and positive (beta = 8.38e-03, 95% CI [-0.04, 0.06], t(156) = 0.34, p = 0.733; Std. beta = 0.07, 95% CI [-0.31, 0.45])
-#  - The effect of year [2021] is statistically significant and negative (beta = -0.09, 95% CI [-0.15, -0.03], t(156) = -3.02, p = 0.003; Std. beta = -0.71, 95% CI [-1.17, -0.24])
+#  - The effect of year [1900] is statistically non-significant and positive (beta = 4.73e-03, 95% CI [-0.04, 0.05], t(155) = 0.19, p = 0.848; Std. beta = 0.04, 95% CI [-0.35, 0.42])
+#  - The effect of year [2021] is statistically significant and negative (beta = -0.11, 95% CI [-0.17, -0.04], t(155) = -3.42, p < .001; Std. beta = -0.83, 95% CI [-1.30, -0.35])
 
-# Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation (differences between 1850 and 2021; and 1900 and 2021)
+# Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation. 
 
 wooded_glmm <- relAbun_Hab %>%
   filter(Habitat.type == "Wooded Habitat")
 
-glmm_wooded <- glmer(relAbundance ~ year + +(1|historical_site_code), data = wooded_glmm, family = gaussian(link="identity"))
+glmm_wooded <- glmer(relAbundance ~ year + (1|historical_site_code) + (1|scientific_name), data = wooded_glmm, family = gaussian(link="identity"))
 
 summary(glmm_wooded)
 tukey_glmm_wooded <- summary(glht(glmm_wooded, linfct=mcp(year ="Tukey")))
 cld(tukey_glmm_wooded) # diff between each pair of time periods
 report::report(glmm_wooded)
 
-# We fitted a linear mixed model (estimated using REML and nloptwrap optimizer) to predict relAbundance with year (formula: relAbundance ~ year). The model included historical_site_code as random effect (formula: ~1 | historical_site_code). The model's total explanatory power is moderate (conditional R2 = 0.25) and the part related to the fixed effects alone (marginal R2) is of 0.10. The model's intercept, corresponding to year = 1850, is at 0.05 (95% CI [0.04, 0.07], t(993) = 8.48, p < .001). Within this model:
+# We fitted a linear mixed model (estimated using REML and nloptwrap optimizer) to predict relAbundance with year (formula: relAbundance ~ year). The model included historical_site_code and scientific_name as random effects (formula: list(~1 | historical_site_code, ~1 | scientific_name)). The model's total explanatory power is substantial (conditional R2 = 0.39) and the part related to the fixed effects alone (marginal R2) is of 0.10. The model's intercept, corresponding to year = 1850, is at 0.05 (95% CI [0.04, 0.06], t(992) = 7.07, p < .001). Within this model:
 
-#  - The effect of year [1900] is statistically significant and positive (beta = 0.03, 95% CI [0.02, 0.04], t(993) = 4.96, p < .001; Std. beta = 0.49, 95% CI [0.30, 0.69])
-#  - The effect of year [2021] is statistically significant and negative (beta = -0.02, 95% CI [-0.03, -0.01], t(993) = -4.34, p < .001; Std. beta = -0.37, 95% CI [-0.53, -0.20])
+#  - The effect of year [1900] is statistically significant and positive (beta = 0.03, 95% CI [0.02, 0.04], t(992) = 4.65, p < .001; Std. beta = 0.46, 95% CI [0.27, 0.66])
+#  - The effect of year [2021] is statistically significant and negative (beta = -0.02, 95% CI [-0.03, -0.01], t(992) = -4.74, p < .001; Std. beta = -0.42, 95% CI [-0.59, -0.24])
 
-# Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation. Signficant differences between each time period. 
+# Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation. 
 
 generalist_glmm <- relAbun_Hab %>%
   filter(Habitat.type == "Generalist")
 
-glmm_generalist <- glmer(relAbundance ~ year + +(1|historical_site_code), data = generalist_glmm, family = gaussian(link="identity"))
+glmm_generalist <- glmer(relAbundance ~ year + (1|historical_site_code) + (1|scientific_name), data = generalist_glmm, family = gaussian(link="identity"))
 
 summary(glmm_generalist)
 tukey_glmm_generalist <- summary(glht(glmm_generalist, linfct=mcp(year ="Tukey")))
 cld(tukey_glmm_generalist) # diff between 1850-1900 and 1900-2021 but no diff between 1850 and 2021
 report::report(glmm_generalist)
 
-# We fitted a linear mixed model (estimated using REML and nloptwrap optimizer) to predict relAbundance with year (formula: relAbundance ~ year). The model included historical_site_code as random effect (formula: ~1 | historical_site_code). The model's total explanatory power is substantial (conditional R2 = 0.30) and the part related to the fixed effects alone (marginal R2) is of 0.10. The model's intercept, corresponding to year = 1850, is at 0.04 (95% CI [0.03, 0.05], t(752) = 6.60, p < .001). Within this model:
+# We fitted a linear mixed model (estimated using REML and nloptwrap optimizer) to predict relAbundance with year (formula: relAbundance ~ year). The model included historical_site_code and scientific_name as random effects (formula: list(~1 | historical_site_code, ~1 | scientific_name)). The model's total explanatory power is substantial (conditional R2 = 0.62) and the part related to the fixed effects alone (marginal R2) is of 0.06. The model's intercept, corresponding to year = 1850, is at 0.04 (95% CI [0.02, 0.05], t(751) = 4.69, p < .001). Within this model:
 
-#  - The effect of year [1900] is statistically significant and positive (beta = 0.04, 95% CI [0.03, 0.05], t(752) = 7.83, p < .001; Std. beta = 0.88, 95% CI [0.66, 1.11])
-#  - The effect of year [2021] is statistically non-significant and positive (beta = 1.07e-03, 95% CI [-8.26e-03, 0.01], t(752) = 0.22, p = 0.822; Std. beta = 0.02, 95% CI [-0.17, 0.22])
+#  - The effect of year [1900] is statistically significant and positive (beta = 0.04, 95% CI [0.03, 0.05], t(751) = 7.47, p < .001; Std. beta = 0.77, 95% CI [0.57, 0.97])
+#  - The effect of year [2021] is statistically non-significant and positive (beta = 1.29e-03, 95% CI [-7.28e-03, 9.87e-03], t(751) = 0.30, p = 0.767; Std. beta = 0.03, 95% CI [-0.15, 0.21])
 
-# Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation. 
+# Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation.
 ```
 
 ## Visualizing relative abundance across time periods
