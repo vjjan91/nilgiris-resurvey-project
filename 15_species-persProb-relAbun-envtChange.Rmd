@@ -192,6 +192,11 @@ spec_persProb <- read.csv("results/species-persProb-landscapeLevel.csv")
 relAbun <- read.csv("results/species-relative-abundance-siteLevel.csv")
 ```
 
+## Load species trait data
+```{r}
+trait_dat <- read.csv("data/species-trait-dat.csv")
+```
+
 ## Run mixed-effects models examining persistence probabilties and land cover change
 ```{r}
 ## change in persistence prob over time (site level)
@@ -266,6 +271,102 @@ report::report(glmm_lc_persProb)
 
 # Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation
 ```
+
+## Run the mixed-effects models, but incorporate species habitat affiliation
+```{r}
+glmm_persProb_habitat <- left_join(glmm_persProb, trait_dat, by = "scientific_name") %>%
+  as.data.frame()
+
+## run the glmm
+## grassland birds
+glmm_persProb_grassland <-  glmm_persProb_habitat %>%
+  filter(Habitat.type == "Grassland")
+
+glmm_grassland <- glmer(persProbChange ~ `Shola Grassland` + `Shola Forest` + `Settlements`+ `Plantations (Tea & Timber)` + `Agricultural Land` +
+                          (1|scientific_name) + (1|historical_site_code), 
+                        data = glmm_persProb_grassland, family = gaussian(link="identity"))
+
+summary(glmm_grassland)
+plot_model(glmm_grassland, type="pred")
+report::report(glmm_grassland)
+
+# We fitted a linear mixed model (estimated using REML and nloptwrap optimizer) to predict persProbChange with Shola Grassland, Shola Forest, Settlements, Plantations (Tea & Timber) and Agricultural Land (formula: persProbChange ~ `Shola Grassland` + `Shola Forest` + Settlements + `Plantations (Tea & Timber)` + `Agricultural Land`). The model included scientific_name and historical_site_code as random effects (formula: list(~1 | scientific_name, ~1 | historical_site_code)). The model's total explanatory power is substantial (conditional R2 = 0.66) and the part related to the fixed effects alone (marginal R2) is of 0.11. The model's intercept, corresponding to Shola Grassland = 0, Shola Forest = 0, Settlements = 0, Plantations (Tea & Timber) = 0 and Agricultural Land = 0, is at -0.18 (95% CI [-0.87, 0.50], t(68) = -0.53, p = 0.595). Within this model:
+
+#  - The effect of Shola Grassland is statistically non-significant and negative (beta = -0.36, 95% CI [-1.01, 0.30], t(68) = -1.09, p = 0.282; Std. beta = -0.14, 95% CI [-0.40, 0.12])
+#  - The effect of Shola Forest is statistically non-significant and positive (beta = 0.03, 95% CI [-0.08, 0.15], t(68) = 0.59, p = 0.560; Std. beta = 0.11, 95% CI [-0.25, 0.47])
+#  - The effect of Settlements is statistically non-significant and positive (beta = 0.09, 95% CI [-0.02, 0.21], t(68) = 1.61, p = 0.112; Std. beta = 0.26, 95% CI [-0.06, 0.59])
+#  - The effect of Plantations (Tea & Timber) is statistically non-significant and positive (beta = 0.10, 95% CI [-0.10, 0.30], t(68) = 0.99, p = 0.328; Std. beta = 0.15, 95% CI [-0.15, 0.44])
+#  - The effect of Agricultural Land is statistically non-significant and positive (beta = 0.04, 95% CI [-0.12, 0.21], t(68) = 0.53, p = 0.601; Std. beta = 0.08, 95% CI [-0.23, 0.39])
+
+# Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation. 
+
+## forest birds
+glmm_persProb_forest <-  glmm_persProb_habitat %>%
+  filter(Habitat.type == "Forest")
+
+glmm_forest <- glmer(persProbChange ~ `Shola Grassland` + `Shola Forest` + `Settlements`+ `Plantations (Tea & Timber)` + `Agricultural Land` +
+                          (1|scientific_name) + (1|historical_site_code), 
+                        data = glmm_persProb_forest, family = gaussian(link="identity"))
+
+summary(glmm_forest)
+plot_model(glmm_forest, type="pred")
+report::report(glmm_forest)
+
+# We fitted a linear mixed model (estimated using REML and nloptwrap optimizer) to predict persProbChange with Shola Grassland, Shola Forest, Settlements, Plantations (Tea & Timber) and Agricultural Land (formula: persProbChange ~ `Shola Grassland` + `Shola Forest` + Settlements + `Plantations (Tea & Timber)` + `Agricultural Land`). The model included scientific_name and historical_site_code as random effects (formula: list(~1 | scientific_name, ~1 | historical_site_code)). The model's total explanatory power is substantial (conditional R2 = 0.57) and the part related to the fixed effects alone (marginal R2) is of 0.08. The model's intercept, corresponding to Shola Grassland = 0, Shola Forest = 0, Settlements = 0, Plantations (Tea & Timber) = 0 and Agricultural Land = 0, is at 0.17 (95% CI [-0.36, 0.70], t(233) = 0.64, p = 0.525). Within this model:
+
+#  - The effect of Shola Grassland is statistically non-significant and positive (beta = 0.02, 95% CI [-0.50, 0.54], t(233) = 0.09, p = 0.929; Std. beta = 4.09e-03, 95% CI [-0.09, 0.09])
+#  - The effect of Shola Forest is statistically non-significant and negative (beta = -6.77e-03, 95% CI [-0.06, 0.04], t(233) = -0.28, p = 0.783; Std. beta = -0.02, 95% CI [-0.18, 0.14])
+#  - The effect of Settlements is statistically significant and positive (beta = 0.06, 95% CI [0.01, 0.11], t(233) = 2.53, p = 0.012; Std. beta = 0.20, 95% CI [0.04, 0.36])
+#  - The effect of Plantations (Tea & Timber) is statistically non-significant and positive (beta = 0.04, 95% CI [-0.04, 0.12], t(233) = 1.07, p = 0.284; Std. beta = 0.08, 95% CI [-0.06, 0.22])
+#  - The effect of Agricultural Land is statistically non-significant and positive (beta = 0.04, 95% CI [-0.02, 0.11], t(233) = 1.27, p = 0.206; Std. beta = 0.10, 95% CI [-0.05, 0.25])
+
+# Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation. 
+
+## wooded habitat birds
+glmm_persProb_wooded <-  glmm_persProb_habitat %>%
+  filter(Habitat.type == "Wooded Habitat")
+
+glmm_wooded <- glmer(persProbChange ~ `Shola Grassland` + `Shola Forest` + `Settlements`+ `Plantations (Tea & Timber)` + `Agricultural Land` +
+                          (1|scientific_name) + (1|historical_site_code), 
+                        data = glmm_persProb_wooded, family = gaussian(link="identity"))
+
+summary(glmm_wooded)
+plot_model(glmm_wooded, type="pred")
+report::report(glmm_wooded)
+
+# We fitted a linear mixed model (estimated using REML and nloptwrap optimizer) to predict persProbChange with Shola Grassland, Shola Forest, Settlements, Plantations (Tea & Timber) and Agricultural Land (formula: persProbChange ~ `Shola Grassland` + `Shola Forest` + Settlements + `Plantations (Tea & Timber)` + `Agricultural Land`). The model included scientific_name and historical_site_code as random effects (formula: list(~1 | scientific_name, ~1 | historical_site_code)). The model's total explanatory power is substantial (conditional R2 = 0.69) and the part related to the fixed effects alone (marginal R2) is of 0.03. The model's intercept, corresponding to Shola Grassland = 0, Shola Forest = 0, Settlements = 0, Plantations (Tea & Timber) = 0 and Agricultural Land = 0, is at 0.22 (95% CI [0.02, 0.43], t(458) = 2.12, p = 0.034). Within this model:
+
+#  - The effect of Shola Grassland is statistically non-significant and positive (beta = 6.18e-03, 95% CI [-0.19, 0.20], t(458) = 0.06, p = 0.951; Std. beta = 2.61e-03, 95% CI [-0.08, 0.09])
+#  - The effect of Shola Forest is statistically non-significant and negative (beta = -0.01, 95% CI [-0.04, 0.02], t(458) = -0.89, p = 0.373; Std. beta = -0.05, 95% CI [-0.17, 0.06])
+#  - The effect of Settlements is statistically significant and positive (beta = 0.04, 95% CI [0.01, 0.08], t(458) = 2.91, p = 0.004; Std. beta = 0.16, 95% CI [0.05, 0.27])
+#  - The effect of Plantations (Tea & Timber) is statistically non-significant and negative (beta = -2.18e-04, 95% CI [-0.05, 0.05], t(458) = -8.78e-03, p = 0.993; Std. beta = -4.42e-04, 95% CI [-0.10, 0.10])
+#  - The effect of Agricultural Land is statistically non-significant and positive (beta = 0.02, 95% CI [-0.02, 0.07], t(458) = 1.05, p = 0.297; Std. beta = 0.06, 95% CI [-0.05, 0.16])
+
+# Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation. 
+
+## generalist birds
+glmm_persProb_generalist <-  glmm_persProb_habitat %>%
+  filter(Habitat.type == "Generalist")
+
+glmm_generalist <- glmer(persProbChange ~ `Shola Grassland` + `Shola Forest` + `Settlements`+ `Plantations (Tea & Timber)` + `Agricultural Land` +
+                          (1|scientific_name) + (1|historical_site_code), 
+                        data = glmm_persProb_generalist, family = gaussian(link="identity"))
+
+summary(glmm_generalist)
+plot_model(glmm_generalist, type="pred")
+report::report(glmm_generalist)
+
+# We fitted a linear mixed model (estimated using REML and nloptwrap optimizer) to predict persProbChange with Shola Grassland, Shola Forest, Settlements, Plantations (Tea & Timber) and Agricultural Land (formula: persProbChange ~ `Shola Grassland` + `Shola Forest` + Settlements + `Plantations (Tea & Timber)` + `Agricultural Land`). The model included scientific_name and historical_site_code as random effects (formula: list(~1 | scientific_name, ~1 | historical_site_code)). The model's total explanatory power is substantial (conditional R2 = 0.71) and the part related to the fixed effects alone (marginal R2) is of 0.02. The model's intercept, corresponding to Shola Grassland = 0, Shola Forest = 0, Settlements = 0, Plantations (Tea & Timber) = 0 and Agricultural Land = 0, is at 0.12 (95% CI [-0.11, 0.36], t(349) = 1.03, p = 0.302). Within this model:
+
+#  - The effect of Shola Grassland is statistically non-significant and negative (beta = -0.06, 95% CI [-0.28, 0.17], t(349) = -0.50, p = 0.618; Std. beta = -0.03, 95% CI [-0.13, 0.08])
+#  - The effect of Shola Forest is statistically non-significant and positive (beta = 8.15e-03, 95% CI [-0.02, 0.04], t(349) = 0.49, p = 0.622; Std. beta = 0.04, 95% CI [-0.11, 0.19])
+#  - The effect of Settlements is statistically non-significant and positive (beta = 0.03, 95% CI [-3.58e-03, 0.07], t(349) = 1.76, p = 0.079; Std. beta = 0.13, 95% CI [-0.02, 0.28])
+#  - The effect of Plantations (Tea & Timber) is statistically non-significant and positive (beta = 7.71e-03, 95% CI [-0.05, 0.06], t(349) = 0.28, p = 0.783; Std. beta = 0.02, 95% CI [-0.12, 0.15])
+#  - The effect of Agricultural Land is statistically non-significant and negative (beta = -0.03, 95% CI [-0.08, 0.02], t(349) = -1.31, p = 0.189; Std. beta = -0.09, 95% CI [-0.23, 0.04])
+
+# Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation. 
+```
+
 
 ## Run mixed-effects models examining species relative abundance and land cover change
 ```{r}
