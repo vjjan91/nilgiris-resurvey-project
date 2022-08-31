@@ -23,6 +23,7 @@ library(sjPlot)
 library(glmmTMB)
 library(ggplot2)
 library(effects)
+library(lme4)
 ```
 
 ## Load land cover data from 1870 and 2017
@@ -244,8 +245,7 @@ persProb_landCover <- persProb_change %>%
   filter(historical_site_code != "KJPN") %>%
   filter(historical_site_code != "KULR")
   
-glmm_persProb <- left_join(persProb_landCover, lc_change_glmm, by="historical_site_code") %>%
-  as.data.frame()
+glmm_persProb <- left_join(persProb_landCover, lc_change_glmm, by="historical_site_code") %>% as.data.frame()
 
 ## run the glmm
 glmm_lc_persProb <- glmer(persProbChange ~ `Shola Grassland` + `Shola Forest` + `Settlements`+ `Plantations (Tea & Timber)` + `Agricultural Land` +
