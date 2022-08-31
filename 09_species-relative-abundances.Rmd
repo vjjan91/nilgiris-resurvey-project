@@ -546,7 +546,7 @@ relAbun_Hab <- left_join(relSpAbund, trait_dat, by="scientific_name") %>%
 ## Running generalized linear mixed models
 ```{r}
 ## overall
-glmm_overall <- glmer(relAbundance ~ year + (1|historical_site_code) + (1|scientific_name),
+glmm_overall <- glmer(relAbundance ~ year + (1|historical_site_code) +(1|scientific_name),
                       data = relSpAbund, family = gaussian(link="identity"))
 
 summary(glmm_overall)
