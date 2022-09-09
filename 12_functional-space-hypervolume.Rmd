@@ -427,7 +427,7 @@ pca_plot_1850 <- ggplot(dcc_1850, aes(x = Var1, y = Var2)) +
         legend.title = element_text(family = "Century Gothic"),
     legend.text = element_text(family = "Century Gothic"),
     text = element_text(family = "Century Gothic", size = 25))
-    
+
 ggsave(pca_plot_1850, filename = "figs/fig_pcaPlot_1850.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
 
 # for plots (let's plot each species by it's habitat affiliation on the plot)
