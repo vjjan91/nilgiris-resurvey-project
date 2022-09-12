@@ -426,7 +426,7 @@ pca_plot_1850 <- ggplot(dcc_1850, aes(x = Var1, y = Var2)) +
   theme(axis.text = element_text(family = "Century Gothic", size = 13),
         legend.title = element_text(family = "Century Gothic"),
     legend.text = element_text(family = "Century Gothic"),
-    text = element_text(family = "Century Gothic", size = 25))
+    text = element_text(family = "Century Gothic", size =15))
 
 ggsave(pca_plot_1850, filename = "figs/fig_pcaPlot_1850.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
 
@@ -471,9 +471,27 @@ pca_plot_2021 <- ggplot(dcc_2021, aes(x = Var1, y = Var2)) +
   theme(axis.text = element_text(family = "Century Gothic", size = 13),
         legend.title = element_text(family = "Century Gothic"),
     legend.text = element_text(family = "Century Gothic"),
-    text = element_text(family = "Century Gothic", size = 25))
+    text = element_text(family = "Century Gothic", size = 15))
 
 ggsave(pca_plot_2021, filename = "figs/fig_pcaPlot_2021.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+```
+
+## Main text Figure 4
+```{r}
+## patchworking the above two plots for the main text
+library(patchwork)
+
+fig_pca_1850_2021 <-
+  wrap_plots(pca_plot_1850, pca_plot_2021,
+    design = 'AB'
+  ) +
+  plot_annotation(
+    tag_levels = "a",
+    tag_prefix = "(",
+    tag_suffix = ")"
+  )
+
+ggsave(fig_pca_1850_2021, filename = "figs/fig04.png", width=15, height=5,device = png(), units="in", dpi = 300); dev.off()
 ```
 
 ## Calculation of hypervolumes
