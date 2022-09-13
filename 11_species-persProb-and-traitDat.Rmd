@@ -53,7 +53,7 @@ sites <- st_as_sf(sites, coords = c("longitude", "latitude")) %>%
 alt <- raster("data/spatial/elevation/alt") # this layer is not added to github as a result of its large size and can be downloaded from SRTM (Farr et al. (2007))
 
 # extract values from that raster (note: transformation of coordinate system)
-elev <- extract(alt, sites)
+elev <- raster::extract(alt, sites)
 sites <- cbind(sites, elev)
 ```
 
