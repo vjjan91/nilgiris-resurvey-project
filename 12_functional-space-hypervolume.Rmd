@@ -423,6 +423,7 @@ pca_plot_1850 <- ggplot(dcc_1850, aes(x = Var1, y = Var2)) +
   # axis labels - see comp_var
   labs(x = "PC1 - Beak Morphology (67%)", y = "PC2 - Dispersal ability (16%)") +
   theme_classic() +
+  ggtitle("Time period: 1850-1900") +
   theme(axis.text = element_text(family = "Century Gothic", size = 13),
         legend.title = element_text(family = "Century Gothic"),
     legend.text = element_text(family = "Century Gothic"),
@@ -468,6 +469,7 @@ pca_plot_2021 <- ggplot(dcc_2021, aes(x = Var1, y = Var2)) +
   # axis labels - see comp_var
   labs(x = "PC1 - Beak Morphology (67%)", y = "PC2 - Dispersal ability (16%)") +
   theme_classic() +
+  ggtitle("Time period: 2021") +
   theme(axis.text = element_text(family = "Century Gothic", size = 13),
         legend.title = element_text(family = "Century Gothic"),
     legend.text = element_text(family = "Century Gothic"),
