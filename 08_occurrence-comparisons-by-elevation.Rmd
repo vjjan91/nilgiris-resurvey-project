@@ -45,7 +45,7 @@ sites <- st_as_sf(sites, coords = c("longitude", "latitude")) %>%
 alt <- raster("data/spatial/elevation/alt") # this layer is not added to github as a result of its large size and can be downloaded from SRTM (Farr et al. (2007))
 
 # extract values from that raster (note: transformation of coordinate system)
-elev <- extract(alt, sites)
+elev <- raster::extract(alt, sites)
 sites <- cbind(sites, elev)
 ```
 
@@ -85,26 +85,13 @@ hist_occ_1900_1950 <- hist_occ_1900_1950 %>%
   filter(!is.na(scientific_name)) %>%
   replace(is.na(.), 0)
 
-### 1950 - 2000
-hist_occ_1950_2000 <- hist_occ %>%
-  filter(year > 1950 & year <= 2000)
-
-## group by scientific name and historical site code and join the sites dataframe
-hist_occ_1950_2000 <- hist_occ_1950_2000 %>%
-  group_by(scientific_name, historical_site_code) %>%
-  count() %>%
-  rename(., "abundance1950" = n) %>%
-  mutate("Y1950" = case_when(abundance1950 >= 1 ~ 1,TRUE ~ 0)) %>%
-  left_join(., sites, by=c("historical_site_code"="historical_site_code")) %>%
-  filter(!is.na(scientific_name)) %>%
-  replace(is.na(.), 0)
-
 ## read in modern occurrence data
 mod_occ <- read.csv("data/modern-occurrence-data.csv")
 
 ## group by scientific name and modern site code
 mod_occ <- mod_occ %>%
   filter(!is.na(historical_site_code)) %>%
+  filter(!is.na(species_code)) %>%
   group_by(scientific_name, modern_site_code) %>%
   summarise(modCount = sum(number))
 
@@ -118,7 +105,6 @@ mod_occ <-  left_join(mod_occ, sites, by=c("modern_site_code"="modern_site_code"
 ## joining the historic and modern datasets
 ## this dataframe can be used to examine land cover data later on
 hist_mod <- full_join(hist_occ_pre1900, hist_occ_1900_1950, by = c("scientific_name","modern_site_code","historical_site_code","modern_landCover_type","elev","site_name","geometry")) %>%
-  full_join(., hist_occ_1950_2000, by = c("scientific_name","modern_site_code","historical_site_code","modern_landCover_type","elev","site_name","geometry")) %>%
    full_join(., mod_occ, by = c("scientific_name","modern_site_code","historical_site_code","modern_landCover_type","elev","site_name","geometry")) %>%
   mutate_at(vars(Y2021), ~replace_na(., 0)) %>%
   arrange(scientific_name) %>%
@@ -135,7 +121,7 @@ for(i in 1:length(unique(hist_mod$scientific_name))) {
   # extract data species by species
   a <- unique(hist_mod$scientific_name)[i]
   data <- hist_mod[hist_mod$scientific_name==a,] %>%
-      pivot_longer(cols=c("Y1850", "Y1900", "Y1950", "Y2021"), 
+      pivot_longer(cols=c("Y1850", "Y1900", "Y2021"), 
                    names_to="histMod", values_to="PresAbs") %>%
     mutate("det_nonDet" = case_when(PresAbs == 1 ~ "Detection",
                                     PresAbs == 0 ~ "Non-detection")) %>%
@@ -174,10 +160,3 @@ cairo_pdf(
 plots
 dev.off()
 ```
-
-
-## For later:
-
-Insert code here to model Scenario 2:
-
-Where a single historical survey location corresponds to only a single modern survey location (we average elevations across modern survey locations and assume that a presence at any one of the X number of modern survey locations = 1 for the historical survey locations and the species is only absent if it was not detected = 0 at each of the modern survey locations)
