@@ -97,26 +97,6 @@ hist_occ_sites_1900_1950 <- left_join(hist_occ_count_1900_1950, sites, by=c("his
   filter(!is.na(scientific_name)) %>%
   replace(is.na(.), 0) 
 
-### 1950 - 2000
-hist_occ_1950_2000 <- hist_occ %>%
-  filter(year > 1950 & year <= 2000)
-
-### fix the count column
-hist_occ_1950_2000 <-  hist_occ_1950_2000 %>%
-  mutate(histCount = case_when(individualCount == "X" ~ 1,
-                               individualCount == "" ~ 1,
-                               TRUE ~ as.numeric(individualCount)))
-
-# calculate total abundance of historical data at each site
-hist_occ_count_1950_2000 <- hist_occ_1950_2000 %>%
-  group_by(scientific_name, historical_site_code) %>%
-  summarise("1950-2000" = sum(histCount)) 
-
-# left join the sites dataframe
-hist_occ_sites_1950_2000 <- left_join(hist_occ_count_1950_2000, sites, by=c("historical_site_code"="historical_site_code")) %>%
-  filter(!is.na(scientific_name)) %>%
-  replace(is.na(.), 0) 
-
 ## read in modern occurrence data
 mod_occ <- read.csv("data/modern-occurrence-data.csv")
 
