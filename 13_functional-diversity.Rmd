@@ -55,8 +55,8 @@ sites <- cbind(sites, elev)
 
 ## Load species persistence probabilities at site and landscape level
 ```{r}
-spec_site_persProb <- read.csv( "data/species-persProb-siteLevel.csv")
-spec_persProb <- read.csv("data/species-persProb-landscapeLevel.csv")
+spec_site_persProb <- read.csv( "results/species-persProb-siteLevel.csv")
+spec_persProb <- read.csv("results/species-persProb-landscapeLevel.csv")
 ```
 
 ### Load species trait data
