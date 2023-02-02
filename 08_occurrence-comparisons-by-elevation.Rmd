@@ -100,7 +100,7 @@ mod_occ <-  left_join(mod_occ, sites, by=c("modern_site_code"="modern_site_code"
   mutate("Y2021" = case_when(modCount >= 1 ~ 1,TRUE ~ 0))
 ```
 
-## Join the historical and modern count data
+### Join the historical and modern count data
 ```{r}
 ## joining the historic and modern datasets
 ## this dataframe can be used to examine land cover data later on
