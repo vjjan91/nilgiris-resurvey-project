@@ -3,13 +3,13 @@ editor_options:
   chunk_output_type: console
 ---
 
-### Species relative abundances over time
+# Species relative abundances over time
 
 We replicate analyses following Gotelli et al. 2021 (who provides a methodological approach to calculate relative species abundances using historical museum records) and Gómez et al. 2021 who assumed two scenarios while calculating extinctions and colonizations - "The first is based on the assumption that all surveys accurately describe the avifauna present and that any records of species not detected in prior surveys of San Antonio represent real colonizations. The second scenario is based on the assumption that all the novel species (i.e., those detected for the first time after the 1910s) were false absences."
 
 The second assumption is that the level of the analysis is at the 'historic-site' and not the 'modern-site' (which essentially corresponds to multiple unique modern survey sites for every 'historic-site'). While calculating relative abundances and for estimation of turnover and to ensure that the analysis is consistent, we sum abundances across the modern sites corresponding to each historic site.  
 
-### Load necessary libraries
+## Load necessary libraries
 ```{r}
 library(dplyr)
 library(stringr)
@@ -32,7 +32,7 @@ library(paletteer)
 source("code/02_relative-species-abundance-functions.R")
 ```
 
-### Load list of resurvey locations
+## Load list of resurvey locations
 
 We will load the list of sites across which a modern resurvey was carried out, along with elevation rasters.  
 ```{r}
@@ -54,8 +54,7 @@ elev <- raster::extract(alt, sites)
 sites <- cbind(sites, elev)
 ```
 
-
-### For the historical occurrence data, we will choose data from three time periods: 1850-1900, 1900-1950 and 1950-2000. 
+## For the historical occurrence data, we will choose data from three time periods: 1850-1900, 1900-1950 and 1950-2000. 
 ```{r}
 ## read in historical occurrence data
 hist_occ <- read.csv("data/historical-occurrence-data.csv")
@@ -116,7 +115,7 @@ mod_occ_sites <-  left_join(modOcc_spp, sites, by=c("modern_site_code"="modern_s
   replace(is.na(.), 0)
 ```
 
-### Calculate dirichlet distributions of relative abundance
+## Calculate dirichlet distributions of relative abundance
 
 Here, we will functions from Gotelli et al. 2021 to calculate relative species abundances between historic and modern periods. For the first level of analysis, we ignore information at the site-level and calculate overall relative abundance per time-period at the landscape level. 
 ```{r}
@@ -208,7 +207,6 @@ fig_relAbun_over_time <- ggbetweenstats(
   data = data_for_violinplot,
   x = name,
   y = value,
-  type = "robust", ## type of statistics
   xlab = "Time Period", 
   ylab = "Relative Abundance",
   title = "Relative abundance by time period",
@@ -228,6 +226,7 @@ fig_relAbun_over_time <- ggbetweenstats(
     ))
 
 ggsave(fig_relAbun_over_time, filename = "figs/fig_relAbun_landscapeLevel.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+dev.off()
 ```
 
 ## Visualization as a line plot (for each species)
@@ -263,11 +262,11 @@ ggsave(fig_relAbun_linePlot, filename = "figs/fig_relAbun_linePlot.png", width =
 
 ## Examining changes in relative abundance as a function of species habitat affiliation
 
-#### Let's first curate the species trait data
+Let's first curate the species trait data
 ```{r}
 ## load state of India's birds data to get habitat affiliation
 species_codes <- read.csv("data/species-codes.csv")
-habitat_SoIB <- read.csv("data/SoIB-data.csv") # note: we used two files - one file from 2020 and an updated habitat specialization file from 2022 (see below)
+habitat_SoIB <- read.csv("data/2022-SoIB-habitat-data.csv") # note: we used two files - one file from 2020 and an updated habitat specialization file from 2022 (see below)
 
 # join the two dataframes
 habitat_dat <- left_join(species_codes, habitat_SoIB, by=c("scientific_name"="scientific_name"))
@@ -317,7 +316,6 @@ fig_relAbun_habitat <- grouped_ggbetweenstats(
   x = `Time Period`,
   y = log_relative_abundance,
   grouping.var = `Habitat.type`,
-  type = "robust", ## type of statistics
   xlab = "Habitat.type", 
   ylab = "Relative Abundance",
   p.adjust.method = "fdr",
@@ -329,6 +327,7 @@ fig_relAbun_habitat <- grouped_ggbetweenstats(
   scale_fill_scico_d(palette = "roma") 
 
 ggsave(fig_relAbun_habitat, filename = "figs/fig_relAbun_habitat_landscapeLevel.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+dev.off()
 
 ## examining relative species abundance and body mass
 ## faceting by time period
