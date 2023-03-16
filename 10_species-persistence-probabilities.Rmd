@@ -3,12 +3,12 @@ editor_options:
   chunk_output_type: console
 ---
 
-### Estimating species persistence probabilities
+# Estimating species persistence probabilities
 
 In this script, we will estimate probabilities of persistence for each species over time by accounting for sampling method across different years (eg. specimen collected vs. observation for historical data and heard vs. seen for modern occurrence data)
 
 ```{r}
-### Load necessary libraries
+## Load necessary libraries
 library(dplyr)
 library(stringr)
 library(tidyverse)
@@ -29,10 +29,12 @@ source("code/03_persistence-probability-functions.R")
 hist_occ <- read.csv("data/historical-occurrence-data.csv")
 
 # We add in two columns to the above dataframe:
-# pci_lower and pci_upper
-# here pci is a metric from Thompson et al. 2017 which essentially translates to the probability that the taxon is correctly identified as extant. 
 
+# pci_lower and pci_upper
+
+# here pci is a metric from Thompson et al. 2017 which essentially translates to the probability that the taxon is correctly identified as extant. 
 # We make a distinction between the upper and lower probabilities that are assigned to the above metric. 
+
 # We follow Lees et al. (2021) and Thompson et al. (2017) who assigned values of 0.95-0.99 for specimen based records/museum records and conservative values of 0.5-0.65 for journal data (often reporting observations/sightings and not specimens collected). Such probabilities are assigned to account for varying efforts that cannot be quantified from historical observations. 
 
 hist_occ <-  hist_occ %>%
@@ -48,8 +50,7 @@ hist_occ <-  hist_occ %>%
                                TRUE ~ as.numeric(individualCount)))
 ```
 
-
-### Load in modern occurrence data
+## Load in modern occurrence data
 ```{r}
 ## read in modern occurrence data
 mod_occ <- read.csv("data/modern-occurrence-data.csv")
@@ -110,9 +111,9 @@ probDat <- full_join(hist_probDat, mod_probDat)
 # p(i) = the probability that the taxon, or recent evidence of it, could have been reliably identified in the survey if it had been recorded.
 # p(r) = the probability that the taxon, or recent evidence of it, would have been recorded in the survey.
 
-eps.passive = c(0,	0.05)
-pi.passive = c(0.10,	0.65)
-pr.passive = c(0.40,	0.60)
+eps.passive = c(0.05,	1)
+pi.passive = c(0.10,	0.99)
+pr.passive = c(0.10,	0.99)
 pas.sur = c(eps.passive ,pi.passive,pr.passive)
 
 # please refer to Thompson et al. 2017 for more details/information
@@ -263,9 +264,9 @@ probDat <- full_join(hist_probDat, mod_probDat)
 # p(i) = the probability that the taxon, or recent evidence of it, could have been reliably identified in the survey if it had been recorded.
 # p(r) = the probability that the taxon, or recent evidence of it, would have been recorded in the survey.
 
-eps.passive = c(0,	0.05)
-pi.passive = c(0.10,	0.65)
-pr.passive = c(0.40,	0.60)
+eps.passive = c(0.05,	1)
+pi.passive = c(0.10,	0.99)
+pr.passive = c(0.10,	0.99)
 pas.sur = c(eps.passive ,pi.passive,pr.passive)
 
 # please refer to Thompson et al. 2017 for more details/information
@@ -360,7 +361,6 @@ allPlots
 dev.off()
 
 ## save dataframes to file
-write.csv(spec_site_persProb, "data/species-persProb-siteLevel.csv", row.names=F)
-write.csv(spec_persProb, "data/species-persProb-landscapeLevel.csv", row.names=F)
+write.csv(spec_site_persProb, "results/species-persProb-siteLevel.csv", row.names=F)
+write.csv(spec_persProb, "results/species-persProb-landscapeLevel.csv", row.names=F)
 ```
-
