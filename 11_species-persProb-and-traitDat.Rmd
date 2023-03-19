@@ -3,7 +3,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-## Visualizing species persistence probabilities by trait
+# Visualizing species persistence probabilities by trait
 
 In this script, we will load species persistence probabilities at the site and landscape level along with species traits to examine how persistence varies over time as a function of species habitat affiliations + site characteristics. 
 
@@ -24,6 +24,7 @@ library(report)
 library(lme4)
 library(sjPlot)
 library(ggpubr)
+library(glmmTMB)
 
 # source custom functions
 source("code/03_persistence-probability-functions.R")
@@ -34,8 +35,7 @@ scale_z <- function(x){
 }
 ```
 
-
-### Load list of resurvey locations
+## Load list of resurvey locations
 
 We will load the list of sites across which a modern resurvey was carried out, along with elevation rasters.
 ```{r}
@@ -90,6 +90,7 @@ fig_site_persProb <- ggplot(siteDat, aes(x=years, y=PXt, fill = PXt)) +  geom_bo
         legend.position = "none")
 
 ggsave(fig_site_persProb, filename = "figs/fig_persProb_siteLevel.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+dev.off()
 
 ## while the above figure is useful, we can visualize persistence probability across sites by elevation
 
@@ -108,6 +109,7 @@ fig_persProb_elev <- ggplot(siteDat_elev, aes(x=elev,y=PXt)) +
     text = element_text(family = "Century Gothic", size = 25))
 
 ggsave(fig_persProb_elev, filename = "figs/fig_persProb_elevation.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+dev.off()
 ```
 
 ## Load species persistence probabilities at the landscape level
@@ -116,8 +118,8 @@ We choose persistence probabilities for min and max years and repeat analysis we
 ```{r}
 ## select data from the min and max years
 specDat <- spec_persProb %>%
-  dplyr::select(years,PXt,scientific_name) %>%
-  group_by(scientific_name) %>%
+  dplyr::select(years,PXt,sciName) %>%
+  group_by(sciName) %>%
   filter(years== 2021) %>%
   ungroup()
 
@@ -136,6 +138,7 @@ fig_persProb_landscapeLevel <- ggplot(specDat, aes(x=years, y=PXt)) +  geom_boxp
         legend.position = "none")
 
 ggsave(fig_persProb_landscapeLevel, filename = "figs/fig_persProb_landscapeLevel.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+dev.off()
 ```
 
 ## Summarizing persistence probabilities by species trait data
@@ -208,6 +211,7 @@ fig_site_habitat <- ggplot(siteDatTrait, aes(x=years, y=PXt, fill=Habitat.type))
         legend.text = element_text(family="Century Gothic",size = 14))
 
 ggsave(fig_site_habitat, filename = "figs/fig_persProb_siteLevel_habitatType.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+dev.off()
 
 ## examining species persistence prob by trait and elevation
 
@@ -228,16 +232,17 @@ fig_persProb_elevTrait <- ggplot(siteDat_elevTrait, aes(x=elev,y=PXt)) +
     text = element_text(family = "Century Gothic", size = 25))
 
 ggsave(fig_persProb_elevTrait, filename = "figs/fig_persProb_elev_habitatType.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+dev.off()
 ```
 
 ## Examining persistence probabilities at the landscape level in conjunction with species traits
 ```{r}
 ## join pers prob and trait datasets
-spec_dat_trait <- left_join(spec_persProb,trait_dat, by=c("scientific_name"="scientific_name"))
+spec_dat_trait <- left_join(spec_persProb,trait_dat, by=c("sciName"="scientific_name"))
 
 ## select data from the min and max years
 specDatTrait <- spec_dat_trait %>%
-  group_by(scientific_name) %>%
+  group_by(sciName) %>%
   filter(years== 2021) %>%
   filter(Habitat.type != "Aquatic") %>%
   ungroup()
@@ -264,11 +269,11 @@ fig_spec_habitat <- ggplot(specDatTrait, aes(x=years, y=PXt, fill=Habitat.type))
         legend.text = element_text(family="Century Gothic",size = 14))
 
 ggsave(fig_spec_habitat, filename = "figs/fig_persProb_landscapeLevel_habitatType.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+dev.off()
 ```
 
 
 ## Modeling species persistence probabilities as function of species habitat affiliation and the site habitat type (grouping sites by the modern land cover data)
-
 ```{r}
 ## join and get data ready for plotting
 trait_landCover <- left_join(spec_site_persProb, sites, by=c("historical_site_code"="historical_site_code")) %>%
@@ -297,6 +302,7 @@ fig_landCover_trait <- ggplot(trait_landCover, aes(x=years, y=PXt, fill=Habitat.
     text = element_text(family = "Century Gothic", size = 25)) 
 
 ggsave(fig_landCover_trait, filename = "figs/fig_persProb_habitatType_landCover.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+dev.off()
 ```
 
 ## Mixed-effects models (Change in persistence prob ~ species traits)
@@ -313,48 +319,125 @@ changeDat <- left_join(spec_site_persProb,trait_dat[,c(1,5,54,56)], by="scientif
   filter(Habitat.type != "Aquatic")
 
 # glmms
-glmm_habType <- glmer(PXt ~ Habitat.type + (1|scientific_name) + (1|historical_site_code), data = changeDat, family = gaussian(link="identity"))
+changeDat <- changeDat %>%
+  mutate(PXt = case_when(PXt == 1 ~ 0.999,
+                                  TRUE ~ PXt))
 
+glmm_habType <- glmmTMB(PXt ~ Habitat.type + (1|scientific_name) + (1|historical_site_code), data = changeDat,
+                      ziformula = ~1,
+                      family = beta_family(link = "logit"))
 summary(glmm_habType)
-tukey_glmm_habType <- summary(glht(glmm_habType, linfct=mcp(Habitat.type ="Tukey")))
-cld(tukey_glmm_habType)
 
-# above model simply suggests that the persistence probability of grassland birds are significantly different when compared to other habitat affiliations, but no difference between the others. 
+# above model simply suggests that the persistence probability is negatively associated with grassland birds
+```
+Family: beta  ( logit )
+Formula:          
+PXt ~ Habitat.type + (1 | scientific_name) + (1 | historical_site_code)
+Zero inflation:       ~1
+Data: changeDat
 
-report::report(glmm_habType)
+     AIC      BIC   logLik deviance df.resid 
+-96814.4 -96740.6  48415.2 -96830.4    75418 
 
-# We fitted a linear mixed model (estimated using REML and nloptwrap optimizer) to predict PXt with Habitat.type (formula: PXt ~ Habitat.type). The model included scientific_name and historical_site_code as random effects (formula: list(~1 | scientific_name, ~1 | historical_site_code)). The model's total explanatory power is substantial (conditional R2 = 0.28) and the part related to the fixed effects alone (marginal R2) is of 5.61e-03. The model's intercept, corresponding to Habitat.type = Forest, is at 0.85 (95% CI [0.82, 0.88], t(75419) = 60.14, p < .001). Within this model:
+Random effects:
 
-#  - The effect of Habitat type [Generalist] is statistically non-significant and positive (beta = 5.94e-03, 95% CI [-0.02, 0.03], t(75419) = 0.50, p = 0.614; Std. beta = 0.04, 95% CI [-0.12, 0.20])
-#  - The effect of Habitat type [Grassland] is statistically significant and negative (beta = -0.04, 95% CI [-0.06, -8.80e-03], t(75419) = -2.59, p = 0.010; Std. beta = -0.24, 95% CI [-0.43, -0.06])
-#  - The effect of Habitat type [Wooded Habitat] is statistically non-significant and negative (beta = -2.70e-03, 95% CI [-0.02, 0.02], t(75419) = -0.25, p = 0.800; Std. beta = -0.02, 95% CI [-0.16, 0.12])
+Conditional model:
+ Groups               Name        Variance Std.Dev.
+ scientific_name      (Intercept) 0.1099   0.3315  
+ historical_site_code (Intercept) 0.1411   0.3756  
+Number of obs: 75426, groups:  
+scientific_name, 193; historical_site_code, 28
 
-# Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation. 
+Dispersion parameter for beta family (): 5.34 
 
-# weight
-glmm_bodyMass <- glmer(PXt ~ weight_z + (1|scientific_name) + (1|historical_site_code), data = changeDat, family = gaussian(link="identity"))
+Conditional model:
+                            Estimate Std. Error z value Pr(>|z|)    
+(Intercept)                 1.589825   0.088347  17.995   <2e-16 ***
+Habitat.typeGeneralist      0.063096   0.071764   0.879   0.3793    
+Habitat.typeGrassland      -0.214470   0.084560  -2.536   0.0112 *  
+Habitat.typeWooded Habitat -0.005742   0.064924  -0.088   0.9295    
+
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Zero-inflation model:
+            Estimate Std. Error z value Pr(>|z|)
+(Intercept)   -23.34     426.51  -0.055    0.956
+
+```{r}
+## Running a model with body mass
+glmm_bodyMass <- glmmTMB(PXt ~ weight_z + (1|scientific_name) + (1|historical_site_code), data = changeDat, ziformula = ~1,
+                      family = beta_family(link = "logit"))
 
 summary(glmm_bodyMass)
-plot_model(glmm_bodyMass, type="pred")
-report::report(glmm_bodyMass)
 
-# We fitted a linear mixed model (estimated using REML and nloptwrap optimizer) to predict PXt with weight_z (formula: PXt ~ weight_z). The model included scientific_name and historical_site_code as random effects (formula: list(~1 | scientific_name, ~1 | historical_site_code)). The model's total explanatory power is substantial (conditional R2 = 0.28) and the part related to the fixed effects alone (marginal R2) is of 4.05e-03. The model's intercept, corresponding to weight_z = 0, is at 0.85 (95% CI [0.82, 0.87], t(75421) = 70.98, p < .001). Within this model:
-
-#  - The effect of weight z is statistically significant and negative (beta = -9.82e-03, 95% CI [-0.02, -2.89e-03], t(75421) = -2.78, p = 0.005; Std. beta = -0.07, 95% CI [-0.11, -0.02])
-
-# Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation. 
-
-# dispersal-ability
-glmm_hwi <- glmer(PXt ~ hand_wing_index_z + (1|scientific_name) + (1|historical_site_code), data = changeDat, family = gaussian(link="identity"))
-
-summary(glmm_hwi)
-plot_model(glmm_hwi, type="pred")
-report::report(glmm_hwi)
-
-# We fitted a linear mixed model (estimated using REML and nloptwrap optimizer) to predict PXt with hand_wing_index_z (formula: PXt ~ hand_wing_index_z). The model included scientific_name and historical_site_code as random effects (formula: list(~1 | scientific_name, ~1 | historical_site_code)). The model's total explanatory power is substantial (conditional R2 = 0.28) and the part related to the fixed effects alone (marginal R2) is of 2.34e-03. The model's intercept, corresponding to hand_wing_index_z = 0, is at 0.85 (95% CI [0.83, 0.87], t(75421) = 70.66, p < .001). Within this model:
-
-#  - The effect of hand wing index z is statistically significant and negative (beta = -7.46e-03, 95% CI [-0.01, -6.36e-04], t(75421) = -2.14, p = 0.032; Std. beta = -0.05, 95% CI [-0.10, -4.32e-03])
-
-# Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation. 
+# marginal negative association between body mass and persistence probability
 ```
+Family: beta  ( logit )
+Formula:          
+PXt ~ weight_z + (1 | scientific_name) + (1 | historical_site_code)
+Zero inflation:       ~1
+Data: changeDat
 
+     AIC      BIC   logLik deviance df.resid 
+-96812.2 -96756.8  48412.1 -96824.2    75420 
+
+Random effects:
+
+Conditional model:
+ Groups               Name        Variance Std.Dev.
+ scientific_name      (Intercept) 0.1127   0.3357  
+ historical_site_code (Intercept) 0.1410   0.3755  
+Number of obs: 75426, groups:  
+scientific_name, 193; historical_site_code, 28
+
+Dispersion parameter for beta family (): 5.34 
+
+Conditional model:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept)  1.58225    0.07548  20.962   <2e-16 ***
+weight_z    -0.04972    0.02186  -2.274    0.023 *  
+
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Zero-inflation model:
+            Estimate Std. Error z value Pr(>|z|)
+(Intercept)   -23.39     437.21  -0.054    0.957
+
+```{r}
+# dispersal-ability
+glmm_hwi <- glmmTMB(PXt ~ hand_wing_index_z + (1|scientific_name) + (1|historical_site_code), data = changeDat, ziformula = ~1,
+                      family = beta_family(link = "logit"))
+summary(glmm_hwi)
+
+# no significant association
+```
+ Family: beta  ( logit )
+Formula:          
+PXt ~ hand_wing_index_z + (1 | scientific_name) + (1 | historical_site_code)
+Zero inflation:       ~1
+Data: changeDat
+
+     AIC      BIC   logLik deviance df.resid 
+-96810.7 -96755.3  48411.4 -96822.7    75420 
+
+Random effects:
+
+Conditional model:
+ Groups               Name        Variance Std.Dev.
+ scientific_name      (Intercept) 0.1137   0.3372  
+ historical_site_code (Intercept) 0.1410   0.3755  
+Number of obs: 75426, groups:  
+scientific_name, 193; historical_site_code, 28
+
+Dispersion parameter for beta family (): 5.34 
+
+Conditional model:
+                  Estimate Std. Error z value Pr(>|z|)    
+(Intercept)        1.58969    0.07587  20.954   <2e-16 ***
+hand_wing_index_z -0.04106    0.02142  -1.917   0.0552 .  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Zero-inflation model:
+            Estimate Std. Error z value Pr(>|z|)
+(Intercept)   -23.22     401.77  -0.058    0.954
