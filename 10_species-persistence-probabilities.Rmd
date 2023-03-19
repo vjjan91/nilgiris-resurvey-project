@@ -111,9 +111,9 @@ probDat <- full_join(hist_probDat, mod_probDat)
 # p(i) = the probability that the taxon, or recent evidence of it, could have been reliably identified in the survey if it had been recorded.
 # p(r) = the probability that the taxon, or recent evidence of it, would have been recorded in the survey.
 
-eps.passive = c(0.05,	1)
-pi.passive = c(0.10,	0.99)
-pr.passive = c(0.10,	0.99)
+eps.passive = c(0.01,	0.05)
+pi.passive = c(0.10,	0.65)
+pr.passive = c(0.40,	0.60)
 pas.sur = c(eps.passive ,pi.passive,pr.passive)
 
 # please refer to Thompson et al. 2017 for more details/information
@@ -221,7 +221,7 @@ dev.off()
 ```
 
 
-### Rerunning the above analysis but at the landscape level for each species
+## Rerunning the above analysis but at the landscape level for each species
 
 First, we will prep the historical and modern occurrence data
 ```{r}
@@ -264,9 +264,9 @@ probDat <- full_join(hist_probDat, mod_probDat)
 # p(i) = the probability that the taxon, or recent evidence of it, could have been reliably identified in the survey if it had been recorded.
 # p(r) = the probability that the taxon, or recent evidence of it, would have been recorded in the survey.
 
-eps.passive = c(0.05,	1)
-pi.passive = c(0.10,	0.99)
-pr.passive = c(0.10,	0.99)
+eps.passive = c(0.01,	0.05)
+pi.passive = c(0.10,	0.65)
+pr.passive = c(0.40,	0.60)
 pas.sur = c(eps.passive ,pi.passive,pr.passive)
 
 # please refer to Thompson et al. 2017 for more details/information
