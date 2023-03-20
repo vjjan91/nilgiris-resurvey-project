@@ -4,13 +4,13 @@ editor_options:
   chunk_output_type: console
 ---
 
-## Species persistence probabilities and relative abundance as a function of environmental changes
+# Species persistence probabilities and relative abundance as a function of environmental changes
 
 In this script, we will model the effect of species persistence probabilities and relative abundance as a function of environmental changes at each of the sampling sites (environmental changes are calculated as differences in values of a predictor between modern vs. historical time period)
 
 In the first half of the script, we will prepare the environmental predictors at each of the sampling sites
 
-### Load necessary libraries
+## Load necessary libraries
 ```{r}
 # load libs
 library(sf)
@@ -258,24 +258,45 @@ persProb_landCover <- persProb_change %>%
 glmm_persProb <- left_join(persProb_landCover, lc_change_glmm, by="historical_site_code") %>% as.data.frame()
 
 ## run the glmm
-glmm_lc_persProb <- glmer(persProbChange ~ `Shola Grassland` + `Shola Forest` + `Settlements`+ `Plantations (Tea & Timber)` + `Agricultural Land` +
-                          (1|scientific_name) + (1|historical_site_code), 
-                        data = glmm_persProb, family = gaussian(link="identity"))
+glmm_lc_persProb <- glmmTMB(persProbChange ~ `Shola Grassland` + `Shola Forest` + `Settlements`+ `Plantations (Tea & Timber)` + `Agricultural Land` + (1|scientific_name) + (1|historical_site_code), 
+                        data = glmm_persProb, family = beta_family(link = "logit"))
 
 summary(glmm_lc_persProb)
-plot_model(glmm_lc_persProb, type="pred")
-report::report(glmm_lc_persProb)
 
-# We fitted a linear mixed model (estimated using REML and nloptwrap optimizer) to predict persProbChange with Shola Grassland, Shola Forest, Settlements, Plantations (Tea & Timber) and Agricultural Land (formula: persProbChange ~ `Shola Grassland` + `Shola Forest` + Settlements + `Plantations (Tea & Timber)` + `Agricultural Land`). The model included scientific_name and historical_site_code as random effects (formula: list(~1 | scientific_name, ~1 | historical_site_code)). The model's total explanatory power is substantial (conditional R2 = 0.64) and the part related to the fixed effects alone (marginal R2) is of 0.03. The model's intercept, corresponding to Shola Grassland = 0, Shola Forest = 0, Settlements = 0, Plantations (Tea & Timber) = 0 and Agricultural Land = 0, is at 0.14 (95% CI [-0.06, 0.35], t(1139) = 1.36, p = 0.175). Within this model:
-
-#  - The effect of Shola Grassland is statistically non-significant and negative (beta = -0.05, 95% CI [-0.25, 0.15], t(1139) = -0.49, p = 0.623; Std. beta = -0.02, 95% CI [-0.09, 0.05])
-#  - The effect of Shola Forest is statistically non-significant and negative (beta = -3.59e-03, 95% CI [-0.03, 0.03], t(1139) = -0.23, p = 0.817; Std. beta = -0.01, 95% CI [-0.13, 0.10])
-#  - The effect of Settlements is statistically significant and positive (beta = 0.05, 95% CI [0.01, 0.08], t(1139) = 2.81, p = 0.005; Std. beta = 0.16, 95% CI [0.05, 0.27])
-#  - The effect of Plantations (Tea & Timber) is statistically non-significant and positive (beta = 0.02, 95% CI [-0.03, 0.07], t(1139) = 0.76, p = 0.448; Std. beta = 0.04, 95% CI [-0.06, 0.14])
-#  - The effect of Agricultural Land is statistically non-significant and positive (beta = 0.01, 95% CI [-0.03, 0.06], t(1139) = 0.57, p = 0.567; Std. beta = 0.03, 95% CI [-0.07, 0.13])
-
-# Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation
+# marginal effect of increase of settlements on change in persistence probability
 ```
+Family: beta  ( logit )
+Formula:          
+persProbChange ~ `Shola Grassland` + `Shola Forest` + Settlements +  
+    `Plantations (Tea & Timber)` + `Agricultural Land` + (1 |  
+    scientific_name) + (1 | historical_site_code)
+Data: glmm_persProb
+
+     AIC      BIC   logLik deviance df.resid 
+ -2279.7  -2234.3   1148.9  -2297.7     1139 
+
+Random effects:
+
+Conditional model:
+ Groups               Name        Variance Std.Dev.
+ scientific_name      (Intercept) 0.59781  0.7732  
+ historical_site_code (Intercept) 0.05833  0.2415  
+Number of obs: 1148, groups:  
+scientific_name, 189; historical_site_code, 26
+
+Dispersion parameter for beta family (): 12.1 
+
+Conditional model:
+                             Estimate Std. Error z value Pr(>|z|)   
+(Intercept)                  -1.99310    0.70228  -2.838  0.00454 **
+`Shola Grassland`            -0.44962    0.68193  -0.659  0.50968   
+`Shola Forest`               -0.01850    0.09850  -0.188  0.85106   
+Settlements                   0.34084    0.10389   3.281  0.00103 **
+`Plantations (Tea & Timber)`  0.11122    0.16393   0.678  0.49747   
+`Agricultural Land`           0.08882    0.14688   0.605  0.54536   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
 
 ## Run the mixed-effects models, but incorporate species habitat affiliation
 ```{r}
@@ -287,90 +308,164 @@ glmm_persProb_habitat <- left_join(glmm_persProb, trait_dat, by = "scientific_na
 glmm_persProb_grassland <-  glmm_persProb_habitat %>%
   filter(Habitat.type == "Grassland")
 
-glmm_grassland <- glmer(persProbChange ~ `Shola Grassland` + `Shola Forest` + `Settlements`+ `Plantations (Tea & Timber)` + `Agricultural Land` +
-                          (1|scientific_name) + (1|historical_site_code), 
-                        data = glmm_persProb_grassland, family = gaussian(link="identity"))
+glmm_grassland <- glmmTMB(persProbChange ~ `Shola Grassland` + `Shola Forest` + `Settlements`+ `Plantations (Tea & Timber)` + `Agricultural Land` + (1|scientific_name) + (1|historical_site_code), 
+                        data = glmm_persProb_grassland, family = beta_family(link = "logit"))
 
 summary(glmm_grassland)
-plot_model(glmm_grassland, type="pred")
-report::report(glmm_grassland)
+```
+Family: beta  ( logit )
+Formula:          
+persProbChange ~ `Shola Grassland` + `Shola Forest` + Settlements +  
+    `Plantations (Tea & Timber)` + `Agricultural Land` + (1 |  
+    scientific_name) + (1 | historical_site_code)
+Data: glmm_persProb_grassland
 
-# We fitted a linear mixed model (estimated using REML and nloptwrap optimizer) to predict persProbChange with Shola Grassland, Shola Forest, Settlements, Plantations (Tea & Timber) and Agricultural Land (formula: persProbChange ~ `Shola Grassland` + `Shola Forest` + Settlements + `Plantations (Tea & Timber)` + `Agricultural Land`). The model included scientific_name and historical_site_code as random effects (formula: list(~1 | scientific_name, ~1 | historical_site_code)). The model's total explanatory power is substantial (conditional R2 = 0.66) and the part related to the fixed effects alone (marginal R2) is of 0.11. The model's intercept, corresponding to Shola Grassland = 0, Shola Forest = 0, Settlements = 0, Plantations (Tea & Timber) = 0 and Agricultural Land = 0, is at -0.18 (95% CI [-0.87, 0.50], t(68) = -0.53, p = 0.595). Within this model:
+     AIC      BIC   logLik deviance df.resid 
+     -60      -39       39      -78       68 
 
-#  - The effect of Shola Grassland is statistically non-significant and negative (beta = -0.36, 95% CI [-1.01, 0.30], t(68) = -1.09, p = 0.282; Std. beta = -0.14, 95% CI [-0.40, 0.12])
-#  - The effect of Shola Forest is statistically non-significant and positive (beta = 0.03, 95% CI [-0.08, 0.15], t(68) = 0.59, p = 0.560; Std. beta = 0.11, 95% CI [-0.25, 0.47])
-#  - The effect of Settlements is statistically non-significant and positive (beta = 0.09, 95% CI [-0.02, 0.21], t(68) = 1.61, p = 0.112; Std. beta = 0.26, 95% CI [-0.06, 0.59])
-#  - The effect of Plantations (Tea & Timber) is statistically non-significant and positive (beta = 0.10, 95% CI [-0.10, 0.30], t(68) = 0.99, p = 0.328; Std. beta = 0.15, 95% CI [-0.15, 0.44])
-#  - The effect of Agricultural Land is statistically non-significant and positive (beta = 0.04, 95% CI [-0.12, 0.21], t(68) = 0.53, p = 0.601; Std. beta = 0.08, 95% CI [-0.23, 0.39])
+Random effects:
 
-# Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation. 
+Conditional model:
+ Groups               Name        Variance Std.Dev.
+ scientific_name      (Intercept) 0.2330   0.4827  
+ historical_site_code (Intercept) 0.3089   0.5558  
+Number of obs: 77, groups:  scientific_name, 26; historical_site_code, 22
 
+Dispersion parameter for beta family (): 11.3 
+
+Conditional model:
+                             Estimate Std. Error z value Pr(>|z|)  
+(Intercept)                   -4.2532     1.9406  -2.192   0.0284 *
+`Shola Grassland`             -2.7095     1.8651  -1.453   0.1463  
+`Shola Forest`                 0.2614     0.2988   0.875   0.3818  
+Settlements                    0.5983     0.3089   1.937   0.0528 .
+`Plantations (Tea & Timber)`   0.6291     0.5290   1.189   0.2344  
+`Agricultural Land`            0.2434     0.4306   0.565   0.5718  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+```{r}
 ## forest birds
 glmm_persProb_forest <-  glmm_persProb_habitat %>%
   filter(Habitat.type == "Forest")
 
-glmm_forest <- glmer(persProbChange ~ `Shola Grassland` + `Shola Forest` + `Settlements`+ `Plantations (Tea & Timber)` + `Agricultural Land` +
-                          (1|scientific_name) + (1|historical_site_code), 
-                        data = glmm_persProb_forest, family = gaussian(link="identity"))
+glmm_forest <- glmmTMB(persProbChange ~ `Shola Grassland` + `Shola Forest` + `Settlements`+ `Plantations (Tea & Timber)` + `Agricultural Land` + (1|scientific_name) + (1|historical_site_code), 
+                        data = glmm_persProb_forest, family = beta_family(link = "logit"))
 
 summary(glmm_forest)
-plot_model(glmm_forest, type="pred")
-report::report(glmm_forest)
+```
+Family: beta  ( logit )
+Formula:          
+persProbChange ~ `Shola Grassland` + `Shola Forest` + Settlements +  
+    `Plantations (Tea & Timber)` + `Agricultural Land` + (1 |  
+    scientific_name) + (1 | historical_site_code)
+Data: glmm_persProb_forest
 
-# We fitted a linear mixed model (estimated using REML and nloptwrap optimizer) to predict persProbChange with Shola Grassland, Shola Forest, Settlements, Plantations (Tea & Timber) and Agricultural Land (formula: persProbChange ~ `Shola Grassland` + `Shola Forest` + Settlements + `Plantations (Tea & Timber)` + `Agricultural Land`). The model included scientific_name and historical_site_code as random effects (formula: list(~1 | scientific_name, ~1 | historical_site_code)). The model's total explanatory power is substantial (conditional R2 = 0.57) and the part related to the fixed effects alone (marginal R2) is of 0.08. The model's intercept, corresponding to Shola Grassland = 0, Shola Forest = 0, Settlements = 0, Plantations (Tea & Timber) = 0 and Agricultural Land = 0, is at 0.17 (95% CI [-0.36, 0.70], t(233) = 0.64, p = 0.525). Within this model:
+     AIC      BIC   logLik deviance df.resid 
+  -387.6   -356.2    202.8   -405.6      233 
 
-#  - The effect of Shola Grassland is statistically non-significant and positive (beta = 0.02, 95% CI [-0.50, 0.54], t(233) = 0.09, p = 0.929; Std. beta = 4.09e-03, 95% CI [-0.09, 0.09])
-#  - The effect of Shola Forest is statistically non-significant and negative (beta = -6.77e-03, 95% CI [-0.06, 0.04], t(233) = -0.28, p = 0.783; Std. beta = -0.02, 95% CI [-0.18, 0.14])
-#  - The effect of Settlements is statistically significant and positive (beta = 0.06, 95% CI [0.01, 0.11], t(233) = 2.53, p = 0.012; Std. beta = 0.20, 95% CI [0.04, 0.36])
-#  - The effect of Plantations (Tea & Timber) is statistically non-significant and positive (beta = 0.04, 95% CI [-0.04, 0.12], t(233) = 1.07, p = 0.284; Std. beta = 0.08, 95% CI [-0.06, 0.22])
-#  - The effect of Agricultural Land is statistically non-significant and positive (beta = 0.04, 95% CI [-0.02, 0.11], t(233) = 1.27, p = 0.206; Std. beta = 0.10, 95% CI [-0.05, 0.25])
+Random effects:
 
-# Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation. 
+Conditional model:
+ Groups               Name        Variance Std.Dev.
+ scientific_name      (Intercept) 0.44272  0.6654  
+ historical_site_code (Intercept) 0.09844  0.3137  
+Number of obs: 242, groups:  scientific_name, 41; historical_site_code, 26
 
+Dispersion parameter for beta family (): 10.7 
+
+Conditional model:
+                             Estimate Std. Error z value Pr(>|z|)   
+(Intercept)                  -1.55241    1.92961  -0.804   0.4211   
+`Shola Grassland`             0.24208    1.90338   0.127   0.8988   
+`Shola Forest`               -0.02058    0.16216  -0.127   0.8990   
+Settlements                   0.46944    0.16172   2.903   0.0037 **
+`Plantations (Tea & Timber)`  0.25003    0.26676   0.937   0.3486   
+`Agricultural Land`           0.31640    0.22028   1.436   0.1509   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+```{r}
 ## wooded habitat birds
 glmm_persProb_wooded <-  glmm_persProb_habitat %>%
   filter(Habitat.type == "Wooded Habitat")
 
-glmm_wooded <- glmer(persProbChange ~ `Shola Grassland` + `Shola Forest` + `Settlements`+ `Plantations (Tea & Timber)` + `Agricultural Land` +
-                          (1|scientific_name) + (1|historical_site_code), 
-                        data = glmm_persProb_wooded, family = gaussian(link="identity"))
+glmm_wooded <- glmmTMB(persProbChange ~ `Shola Grassland` + `Shola Forest` + `Settlements`+ `Plantations (Tea & Timber)` + `Agricultural Land` + (1|scientific_name) + (1|historical_site_code), 
+                        data = glmm_persProb_wooded, family = beta_family(link = "logit"))
 
 summary(glmm_wooded)
-plot_model(glmm_wooded, type="pred")
-report::report(glmm_wooded)
+```
+Family: beta  ( logit )
+Formula:          
+persProbChange ~ `Shola Grassland` + `Shola Forest` + Settlements +  
+    `Plantations (Tea & Timber)` + `Agricultural Land` + (1 |  
+    scientific_name) + (1 | historical_site_code)
+Data: glmm_persProb_wooded
 
-# We fitted a linear mixed model (estimated using REML and nloptwrap optimizer) to predict persProbChange with Shola Grassland, Shola Forest, Settlements, Plantations (Tea & Timber) and Agricultural Land (formula: persProbChange ~ `Shola Grassland` + `Shola Forest` + Settlements + `Plantations (Tea & Timber)` + `Agricultural Land`). The model included scientific_name and historical_site_code as random effects (formula: list(~1 | scientific_name, ~1 | historical_site_code)). The model's total explanatory power is substantial (conditional R2 = 0.69) and the part related to the fixed effects alone (marginal R2) is of 0.03. The model's intercept, corresponding to Shola Grassland = 0, Shola Forest = 0, Settlements = 0, Plantations (Tea & Timber) = 0 and Agricultural Land = 0, is at 0.22 (95% CI [0.02, 0.43], t(458) = 2.12, p = 0.034). Within this model:
+     AIC      BIC   logLik deviance df.resid 
+  -971.0   -933.7    494.5   -989.0      458 
 
-#  - The effect of Shola Grassland is statistically non-significant and positive (beta = 6.18e-03, 95% CI [-0.19, 0.20], t(458) = 0.06, p = 0.951; Std. beta = 2.61e-03, 95% CI [-0.08, 0.09])
-#  - The effect of Shola Forest is statistically non-significant and negative (beta = -0.01, 95% CI [-0.04, 0.02], t(458) = -0.89, p = 0.373; Std. beta = -0.05, 95% CI [-0.17, 0.06])
-#  - The effect of Settlements is statistically significant and positive (beta = 0.04, 95% CI [0.01, 0.08], t(458) = 2.91, p = 0.004; Std. beta = 0.16, 95% CI [0.05, 0.27])
-#  - The effect of Plantations (Tea & Timber) is statistically non-significant and negative (beta = -2.18e-04, 95% CI [-0.05, 0.05], t(458) = -8.78e-03, p = 0.993; Std. beta = -4.42e-04, 95% CI [-0.10, 0.10])
-#  - The effect of Agricultural Land is statistically non-significant and positive (beta = 0.02, 95% CI [-0.02, 0.07], t(458) = 1.05, p = 0.297; Std. beta = 0.06, 95% CI [-0.05, 0.16])
+Random effects:
 
-# Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation. 
+Conditional model:
+ Groups               Name        Variance Std.Dev.
+ scientific_name      (Intercept) 0.71701  0.8468  
+ historical_site_code (Intercept) 0.04037  0.2009  
+Number of obs: 467, groups:  scientific_name, 72; historical_site_code, 26
 
+Dispersion parameter for beta family (): 13.4 
+
+Conditional model:
+                             Estimate Std. Error z value Pr(>|z|)   
+(Intercept)                  -1.30397    0.75446  -1.728  0.08392 . 
+`Shola Grassland`             0.05310    0.72540   0.073  0.94164   
+`Shola Forest`               -0.09691    0.09989  -0.970  0.33195   
+Settlements                   0.32177    0.10476   3.071  0.00213 **
+`Plantations (Tea & Timber)` -0.04214    0.16733  -0.252  0.80116   
+`Agricultural Land`           0.13151    0.14896   0.883  0.37733   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+```{r}
 ## generalist birds
 glmm_persProb_generalist <-  glmm_persProb_habitat %>%
   filter(Habitat.type == "Generalist")
 
-glmm_generalist <- glmer(persProbChange ~ `Shola Grassland` + `Shola Forest` + `Settlements`+ `Plantations (Tea & Timber)` + `Agricultural Land` +
-                          (1|scientific_name) + (1|historical_site_code), 
-                        data = glmm_persProb_generalist, family = gaussian(link="identity"))
+glmm_generalist <- glmmTMB(persProbChange ~ `Shola Grassland` + `Shola Forest` + `Settlements`+ `Plantations (Tea & Timber)` + `Agricultural Land` + (1|scientific_name) + (1|historical_site_code), 
+                        data = glmm_persProb_generalist, family = beta_family(link = "logit"))
 
 summary(glmm_generalist)
-plot_model(glmm_generalist, type="pred")
-report::report(glmm_generalist)
-
-# We fitted a linear mixed model (estimated using REML and nloptwrap optimizer) to predict persProbChange with Shola Grassland, Shola Forest, Settlements, Plantations (Tea & Timber) and Agricultural Land (formula: persProbChange ~ `Shola Grassland` + `Shola Forest` + Settlements + `Plantations (Tea & Timber)` + `Agricultural Land`). The model included scientific_name and historical_site_code as random effects (formula: list(~1 | scientific_name, ~1 | historical_site_code)). The model's total explanatory power is substantial (conditional R2 = 0.71) and the part related to the fixed effects alone (marginal R2) is of 0.02. The model's intercept, corresponding to Shola Grassland = 0, Shola Forest = 0, Settlements = 0, Plantations (Tea & Timber) = 0 and Agricultural Land = 0, is at 0.12 (95% CI [-0.11, 0.36], t(349) = 1.03, p = 0.302). Within this model:
-
-#  - The effect of Shola Grassland is statistically non-significant and negative (beta = -0.06, 95% CI [-0.28, 0.17], t(349) = -0.50, p = 0.618; Std. beta = -0.03, 95% CI [-0.13, 0.08])
-#  - The effect of Shola Forest is statistically non-significant and positive (beta = 8.15e-03, 95% CI [-0.02, 0.04], t(349) = 0.49, p = 0.622; Std. beta = 0.04, 95% CI [-0.11, 0.19])
-#  - The effect of Settlements is statistically non-significant and positive (beta = 0.03, 95% CI [-3.58e-03, 0.07], t(349) = 1.76, p = 0.079; Std. beta = 0.13, 95% CI [-0.02, 0.28])
-#  - The effect of Plantations (Tea & Timber) is statistically non-significant and positive (beta = 7.71e-03, 95% CI [-0.05, 0.06], t(349) = 0.28, p = 0.783; Std. beta = 0.02, 95% CI [-0.12, 0.15])
-#  - The effect of Agricultural Land is statistically non-significant and negative (beta = -0.03, 95% CI [-0.08, 0.02], t(349) = -1.31, p = 0.189; Std. beta = -0.09, 95% CI [-0.23, 0.04])
-
-# Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation. 
 ```
+Family: beta  ( logit )
+Formula:          
+persProbChange ~ `Shola Grassland` + `Shola Forest` + Settlements +  
+    `Plantations (Tea & Timber)` + `Agricultural Land` + (1 |  
+    scientific_name) + (1 | historical_site_code)
+Data: glmm_persProb_generalist
+
+     AIC      BIC   logLik deviance df.resid 
+  -863.8   -828.9    440.9   -881.8      349 
+
+Random effects:
+
+Conditional model:
+ Groups               Name        Variance Std.Dev.
+ scientific_name      (Intercept) 0.74008  0.8603  
+ historical_site_code (Intercept) 0.05585  0.2363  
+Number of obs: 358, groups:  scientific_name, 48; historical_site_code, 26
+
+Dispersion parameter for beta family (): 16.6 
+
+Conditional model:
+                             Estimate Std. Error z value Pr(>|z|)  
+(Intercept)                  -2.11597    0.88724  -2.385   0.0171 *
+`Shola Grassland`            -0.48478    0.85434  -0.567   0.5704  
+`Shola Forest`                0.05631    0.11285   0.499   0.6178  
+Settlements                   0.27041    0.11955   2.262   0.0237 *
+`Plantations (Tea & Timber)`  0.05235    0.19219   0.272   0.7853  
+`Agricultural Land`          -0.27848    0.17227  -1.617   0.1060  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 
 ## Run mixed-effects models examining species relative abundance and land cover change
@@ -394,8 +489,7 @@ relAbun_wide <- full_join(pivot_1850, pivot_2021, by=c("scientific_name","histor
 glmm_relAbun <- left_join(lc_change_glmm, relAbun_wide, by="historical_site_code") %>% as.data.frame()
 
 ## run the glmm
-glmm_lc_relAbun <- glmer(relAbunChange ~ `Shola Grassland` + `Shola Forest` + `Settlements`+ `Plantations (Tea & Timber)` + `Agricultural Land` +
-                          (1|scientific_name) + (1|historical_site_code), 
+glmm_lc_relAbun <- glmer(relAbunChange ~ `Shola Grassland` + `Shola Forest` + `Settlements`+ `Plantations (Tea & Timber)` + `Agricultural Land` + (1|scientific_name) + (1|historical_site_code), 
                         data = glmm_relAbun, family = gaussian(link="identity"))
 
 summary(glmm_lc_relAbun)
@@ -453,6 +547,5 @@ report::report(glmm_cc)
 #  - The effect of ppt rainy 2010 z is statistically non-significant and negative (beta = -8.50e-03, 95% CI [-0.14, 0.12], t(1250) = -0.13, p = 0.895; Std. beta = -0.05, 95% CI [-0.80, 0.70])
 
 # Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation. 
-
 ```
 
