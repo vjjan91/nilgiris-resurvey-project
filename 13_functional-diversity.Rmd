@@ -3,7 +3,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-### Functional diversity metrics calculation
+# Functional diversity metrics calculation
 
 This is the second script that replicates analyses from Gomez et al. 2021; here we calculate functional diversity metrics including functional distinctiveness over time.
 ```{r}
@@ -31,7 +31,7 @@ scale_z <- function(x){
 range01 <- function(x){(x-min(x))/(max(x)-min(x))}
 ```
 
-### Load list of resurvey locations
+## Load list of resurvey locations
 
 We will load the list of sites across which a modern resurvey was carried out, along with elevation rasters.
 ```{r}
