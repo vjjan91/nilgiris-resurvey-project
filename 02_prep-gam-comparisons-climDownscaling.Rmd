@@ -3,7 +3,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-# Validating semi-Spatial GAMs for climate
+# Validating semi-spatial GAMs for climate
 
 ## Prepare weather and spatial data
 
@@ -20,7 +20,7 @@ library(mgcv)
 library(terra)
 ```
 
-Load data prepared for the GAM, and the stack predictor raster.
+### Load data prepared for the GAM, and the stack predictor raster.
 
 ```{r}
 # read data
@@ -28,7 +28,7 @@ data <- read_csv("data/output/data_for_gam.csv")
 stack <- terra::rast("data/output/raster_gam_stack.tif")
 ```
 
-Prepare data covariates and raster.
+### Prepare data covariates and raster.
 
 ```{r}
 # prepare data for gam fitting
@@ -49,7 +49,7 @@ data <- mutate(
 values(stack[["coast"]]) <- values(stack[["coast"]]) / 1000
 ```
 
-Pivot longer to separate by variable.
+### Pivot longer to separate by variable.
 
 ```{r}
 # pivot longer
@@ -64,7 +64,7 @@ data <- dplyr::select(data, !month)
 data <- filter(data, between(year, 1970, 2010))
 ```
 
-Split the data by variable.
+### Split the data by variable.
 
 ```{r}
 data <- nest(
@@ -109,13 +109,13 @@ data <- mutate(
 )
 ```
 
-Save model data.
+### Save model data.
 
 ```{r}
 save(data, file = "data/output/model_gam_climate.Rds")
 ```
 
-## Predict over static environment
+### Predict over static environment
 
 Get predictions
 
@@ -135,7 +135,7 @@ terra::writeRaster(model_pred, "data/output/data_gam_pred.tif")
 model_pred <- terra::rast("data/output/data_gam_pred.tif")
 ```
 
-Average predictions over 1970 -- 2010.
+### Average predictions over 1970 -- 2010.
 
 ```{r}
 # assign as list column
@@ -385,7 +385,7 @@ data_pred <- left_join(
 )
 ```
 
-Get GAM predictions at chelsa sample locations.
+### Get GAM predictions at chelsa sample locations.
 
 ```{r}
 # sample locations from GAM predictions
