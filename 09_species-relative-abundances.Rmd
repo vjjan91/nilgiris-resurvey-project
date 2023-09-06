@@ -657,15 +657,58 @@ p-values were computed using a Wald z-distribution approximation.
 grassland_glmm <- relAbun_Hab %>%
   filter(Habitat.type == "Grassland")
 
-glmm_grassland <- glmmTMB(relAbundance ~ year + (1|site) +(1|scientific_name),
+glmm_grassland <- glmmTMB(relAbundance ~ year +(1|scientific_name) ,
                       data = grassland_glmm, 
                       ziformula = ~1,
                       family = beta_family(link = "logit"))
 
 summary(glmm_grassland)
-# model did not converge
 ```
+Family: beta  ( logit )
+Formula:          relAbundance ~ year + (1 | scientific_name)
+Zero inflation:                ~1
+Data: grassland_glmm
 
+     AIC      BIC   logLik deviance df.resid 
+  -271.7   -257.1    141.8   -283.7       78 
+
+Random effects:
+
+Conditional model:
+ Groups          Name        Variance  Std.Dev. 
+ scientific_name (Intercept) 4.963e-16 2.228e-08
+Number of obs: 84, groups:  scientific_name, 24
+
+Dispersion parameter for beta family (): 3.24 
+
+Conditional model:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept)  -2.2075     0.2100 -10.511   <2e-16 ***
+year1900      0.5204     0.2841   1.831    0.067 .  
+year2021      0.0473     0.2626   0.180    0.857    
+
+Zero-inflation model:
+            Estimate Std. Error z value Pr(>|z|)
+(Intercept)   -22.51    8451.26  -0.003    0.998
+
+We fitted a zero-inflated logistic mixed model (estimated using ML and
+nlminb optimizer) to predict relAbundance with year (formula: relAbundance
+~ year). The model included scientific_name as random effect (formula: ~1 |
+scientific_name). The model's explanatory power related to the fixed
+effects alone (marginal R2) is 0.05. The model's intercept, corresponding
+to year = 1850, is at -2.21 (95% CI [-2.62, -1.80], p < .001). Within this
+model:
+
+  - The effect of year [1900] is statistically non-significant and positive
+(beta = 0.52, 95% CI [-0.04, 1.08], p = 0.067; Std. beta = 0.52, 95% CI
+[-0.04, 1.08])
+  - The effect of year [2021] is statistically non-significant and positive
+(beta = 0.05, 95% CI [-0.47, 0.56], p = 0.857; Std. beta = 0.05, 95% CI
+[-0.47, 0.56])
+
+Standardized parameters were obtained by fitting the model on a
+standardized version of the dataset. 95% Confidence Intervals (CIs) and
+p-values were computed using a Wald z-distribution approximation.
 
 ```{r}
 wooded_glmm <- relAbun_Hab %>%
