@@ -67,7 +67,7 @@ data <- filter(
 )
 ```
 
-Split data by variable, season, and year bin (already assigned in `prep_gam_predictors`.
+Split data by variable, season, and year bin (already assigned in `prep-gam-repdictors-climDownscaling`.
 
 ```{r}
 data <- nest(
