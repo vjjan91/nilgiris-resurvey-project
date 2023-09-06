@@ -27,6 +27,7 @@ library(glmmTMB)
 library(multcomp)
 library(ggstatsplot)
 library(paletteer)
+library(ggpubr)
 
 # source custom functions
 source("code/02_relative-species-abundance-functions.R")
@@ -126,7 +127,9 @@ Here, we will functions from Gotelli et al. 2021 to calculate relative species a
 ## calculating relative species abundances for the time period 1850-1900
 
 # we remove modern site_code and get only distinct rows
-unique_hist_pre1900 <- hist_occ_sites_pre1900[,c(1,3)] %>%
+unique_hist_pre1900 <- hist_occ_sites_pre1900[,c(1,2,3)] %>%
+  group_by(scientific_name, historical_site_code) %>%
+  distinct() %>%
   group_by(scientific_name) %>%
   summarise("relAbund1850" = sum(`1850-1900`)) 
 
@@ -140,7 +143,9 @@ relAbun1850 <- dirch_stats(dat) %>%
 ## calculating relative species abundances for the time period 1900-1950
 
 # we remove modern site_code and get only distinct rows
-unique_hist_1900_1950 <- hist_occ_sites_1900_1950[,c(1,3)] %>%
+unique_hist_1900_1950 <- hist_occ_sites_1900_1950[,c(1,2,3)] %>%
+  group_by(scientific_name, historical_site_code) %>%
+  distinct() %>%
   group_by(scientific_name) %>%
   summarise("relAbund1900" = sum(`1900-1950`)) 
 
@@ -154,7 +159,9 @@ relAbun1900 <- dirch_stats(dat) %>%
 ## calculating relative species abundances for the modern time period
 
 # we remove modern site_code and get only distinct rows
-unique_mod <- mod_occ_sites[,c(1,3)] %>%
+unique_mod <- mod_occ_sites[,c(1,3,5)] %>%
+  group_by(scientific_name, historical_site_code) %>%
+  distinct() %>%
   group_by(scientific_name) %>%
   summarise("relAbund2021" = sum(`2021`)) 
 
@@ -178,6 +185,7 @@ relAbun <- full_join(relAbun1850, relAbun1900, by = c("species")) %>%
 write.csv(relAbun, "results/species-relative-abundance.csv", row.names = F)
 ```
 
+
 ## Visualizing changes in relative abundance over time
 ```{r}
 ## This analysis is being done at the landscape-level
@@ -190,13 +198,15 @@ fig_1850v2021_rel <- ggplot(data=relAbun,aes(x=`2021`,y=`1850-1900`))  + geom_po
   labs(y = "1850-1900 Relative abundance", 
        x = "2021 Relative abundance") +
    geom_point(shape = 21, colour = "black", fill = "white", size = 2, stroke = 1)+
-   geom_smooth(method="lm", se=TRUE, fullrange=FALSE, level=0.95,linetype="solid") +  theme_bw() +
+   geom_smooth(method="lm", se=TRUE, fullrange=FALSE, level=0.95,linetype="solid")+
+  theme_bw() +
   theme(axis.text = element_text(family = "Century Gothic", size = 13),
         legend.title = element_text(family = "Century Gothic"),
     legend.text = element_text(family = "Century Gothic"),
     text = element_text(family = "Century Gothic", size = 25))
 
 ggsave(fig_1850v2021_rel, filename = "figs/fig_1850-1900vs2021_relAbun.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+dev.off()
 
 ## violinplot
 data_for_violinplot <- relAbun %>%
@@ -233,8 +243,7 @@ dev.off()
 ```{r}
 ## subset data for line plots
 relAbun_forLinePlot <- relAbun %>%
-  pivot_longer(-species, names_to = "timePeriod", values_to = "relAbun") %>%
-  filter(relAbun != 0) 
+  pivot_longer(-species, names_to = "timePeriod", values_to = "relAbun") %>% filter(relAbun != 0) 
 
 ## ensure that text does not overlap
 options(ggrepel.max.overlaps = Inf)
@@ -258,6 +267,7 @@ fig_relAbun_linePlot <- ggplot(relAbun_forLinePlot, aes(x=timePeriod, y = relAbu
          color = "none")
 
 ggsave(fig_relAbun_linePlot, filename = "figs/fig_relAbun_linePlot.png", width = 18, height = 15, device = png(), units = "in", dpi = 300)
+dev.off()
 ```
 
 ## Examining changes in relative abundance as a function of species habitat affiliation
@@ -347,6 +357,7 @@ fig_relAbun_mass <- ggplot(rel_abun_trait, aes(x= Mass, y=`Relative abundance`))
     text = element_text(family = "Century Gothic", size = 25))
 
 ggsave(fig_relAbun_mass, filename = "figs/fig_relAbun_bodyMass.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+dev.off()
 
 ## hand-wing index
 fig_relAbun_hwi <- ggplot(rel_abun_trait, aes(x= Hand.Wing.Index, y=`Relative abundance`)) +  
@@ -364,6 +375,7 @@ fig_relAbun_hwi <- ggplot(rel_abun_trait, aes(x= Hand.Wing.Index, y=`Relative ab
     text = element_text(family = "Century Gothic", size = 25))
 
 ggsave(fig_relAbun_hwi, filename = "figs/fig_relAbun_handWingIndex.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+dev.off()
 ```
 
 ## Repeating the above analysis at the site-level
@@ -507,33 +519,7 @@ fig_relAbun_siteLevel <- relSpAbund %>%
   guides(fill="none")
 
 ggsave(fig_relAbun_siteLevel, filename = "figs/fig_relAbun_siteLevel.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
-
-## examining species relative abundance and elevation
-
-names(relSpAbund) <- c("scientific_name","historical_site_code","year","relAbundance")
-
-relAbun_elev <- left_join(relSpAbund, sites, by=c("historical_site_code"="historical_site_code"))
-
-## visualization of relative abundance and elevation
-fig_relAbun_elev <- ggplot(relAbun_elev, aes(x= elev, y=relAbundance)) +  
-  geom_point(shape = 21, colour = "black", fill = "white", size = 2, stroke = 1)+
-   geom_smooth(method="lm", se=TRUE, fullrange=FALSE, level=0.95,linetype="solid") +  theme_bw() +
-    scale_y_log10() +
-  facet_wrap(~year) +
-  labs(x="\nElevation (in meters)", 
-       y="Relative abundance\n") +
-  theme(axis.text = element_text(family = "Century Gothic", size = 13),
-        legend.title = element_text(family = "Century Gothic"),
-    legend.text = element_text(family = "Century Gothic"),
-    text = element_text(family = "Century Gothic", size = 25))
-
-ggsave(fig_relAbun_elev, filename = "figs/fig_relAbun_elev.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
-
-## join relative abundance at site level with trait data
-relAbun_Hab <- left_join(relSpAbund, trait_dat, by="scientific_name") %>% 
-  left_join(., sites, by = "historical_site_code") %>%
-  filter(Habitat.type != "Aquatic") %>%
-  ungroup()
+dev.off()
 ```
 
 ## Running generalized linear mixed models
@@ -543,47 +529,67 @@ relSpAbund <- relSpAbund %>%
   mutate(relAbundance = case_when(relAbundance == 1 ~ 0.999,
                                   TRUE ~ relAbundance))
 
-glmm_overall <- glmmTMB(relAbundance ~ year + (1|historical_site_code) +(1|scientific_name),
+glmm_overall <- glmmTMB(relAbundance ~ year + (1|site) +(1|scientific_name),
                       data = relSpAbund, 
                       ziformula = ~1,
                       family = beta_family(link = "logit"))
 
 summary(glmm_overall)
 ```
-Family: beta  ( logit )
-Formula:          
-relAbundance ~ year + (1 | historical_site_code) + (1 | scientific_name)
+ Family: beta  ( logit )
+Formula:          relAbundance ~ year + (1 | site) + (1 | scientific_name)
 Zero inflation:                ~1
 Data: relSpAbund
 
      AIC      BIC   logLik deviance df.resid 
- -6138.7  -6101.8   3076.3  -6152.7     1431 
+ -6138.9  -6102.0   3076.4  -6152.9     1431 
 
 Random effects:
 
 Conditional model:
- Groups               Name        Variance Std.Dev.
- historical_site_code (Intercept) 0.11086  0.333   
- scientific_name      (Intercept) 0.03424  0.185   
-Number of obs: 1438, groups:  
-historical_site_code, 28; scientific_name, 189
+ Groups          Name        Variance Std.Dev.
+ site            (Intercept) 0.11083  0.3329  
+ scientific_name (Intercept) 0.03428  0.1851  
+Number of obs: 1438, groups:  site, 28; scientific_name, 189
 
 Dispersion parameter for beta family (): 24.2 
 
 Conditional model:
             Estimate Std. Error z value Pr(>|z|)    
-(Intercept) -2.84631    0.09978 -28.524  < 2e-16 ***
-year1900     0.53369    0.08813   6.056 1.40e-09 ***
-year2021    -0.34634    0.08896  -3.893 9.88e-05 ***
-
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+(Intercept) -2.84626    0.09978 -28.527  < 2e-16 ***
+year1900     0.53363    0.08812   6.055 1.40e-09 ***
+year2021    -0.34658    0.08894  -3.897 9.75e-05 ***
 
 Zero-inflation model:
             Estimate Std. Error z value Pr(>|z|)
-(Intercept)   -21.97    1554.15  -0.014    0.989
+(Intercept)    -22.4     1927.2  -0.012    0.991
 
+report::report(glmm_overall)
+
+We fitted a zero-inflated logistic mixed model (estimated using ML and
+nlminb optimizer) to predict relAbundance with year (formula: relAbundance ~ year). The model included site as random effects (formula: list(~1 |
+site, ~1 | scientific_name)). The model's total explanatory power is
+substantial (conditional R2 = 0.31) and the part related to the fixed
+effects alone (marginal R2) is of 0.13. The model's intercept,
+corresponding to year = 1850, is at -2.85 (95% CI [-3.04, -2.65], p <
+.001). Within this model:
+
+  - The effect of year [1900] is statistically significant and positive (beta
+= 0.53, 95% CI [0.36, 0.71], p < .001; Std. beta = 0.53, 95% CI [0.36,
+0.71])
+  - The effect of year [2021] is statistically significant and negative (beta
+= -0.35, 95% CI [-0.52, -0.17], p < .001; Std. beta = -0.35, 95% CI [-0.52,
+-0.17])
+
+Standardized parameters were obtained by fitting the model on a
+standardized version of the dataset. 95% Confidence Intervals (CIs) and
+p-values were computed using a Wald z-distribution approximation.
 
 ```{r}
+## join relative abundance at site level with trait data
+relAbun_Hab <- left_join(relSpAbund, trait_dat, by="scientific_name") %>%   filter(Habitat.type != "Aquatic") %>%
+  ungroup()
+
 ## habitat affiliation
 relAbun_Hab<- relAbun_Hab %>%
   mutate(relAbundance = case_when(relAbundance == 1 ~ 0.999,
@@ -592,7 +598,7 @@ relAbun_Hab<- relAbun_Hab %>%
 forest_glmm <- relAbun_Hab %>%
   filter(Habitat.type == "Forest")
 
-glmm_forest <- glmmTMB(relAbundance ~ year + (1|historical_site_code) +(1|scientific_name),
+glmm_forest <- glmmTMB(relAbundance ~ year + (1|site) +(1|scientific_name),
                       data = forest_glmm, 
                       ziformula = ~1,
                       family = beta_family(link = "logit"))
@@ -600,85 +606,72 @@ glmm_forest <- glmmTMB(relAbundance ~ year + (1|historical_site_code) +(1|scient
 summary(glmm_forest)
 ```
 Family: beta  ( logit )
-Formula:          
-relAbundance ~ year + (1 | historical_site_code) + (1 | scientific_name)
+Formula:          relAbundance ~ year + (1 | site) + (1 | scientific_name)
 Zero inflation:                ~1
 Data: forest_glmm
 
      AIC      BIC   logLik deviance df.resid 
- -3166.6  -3136.3   1590.3  -3180.6      554 
+ -1722.3  -1696.0    868.2  -1736.3      312 
 
 Random effects:
 
 Conditional model:
- Groups               Name        Variance Std.Dev.
- historical_site_code (Intercept) 0.22098  0.4701  
- scientific_name      (Intercept) 0.05486  0.2342  
-Number of obs: 561, groups:  
-historical_site_code, 28; scientific_name, 41
+ Groups          Name        Variance Std.Dev.
+ site            (Intercept) 0.21638  0.4652  
+ scientific_name (Intercept) 0.02483  0.1576  
+Number of obs: 319, groups:  site, 28; scientific_name, 41
 
-Dispersion parameter for beta family ():  120 
+Dispersion parameter for beta family ():  109 
 
 Conditional model:
             Estimate Std. Error z value Pr(>|z|)    
-(Intercept) -3.15392    0.11906 -26.491  < 2e-16 ***
-year1900     0.46965    0.07368   6.374 1.84e-10 ***
-year2021    -0.84798    0.07540 -11.247  < 2e-16 ***
-
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+(Intercept)  -3.1430     0.1293 -24.302  < 2e-16 ***
+year1900      0.5705     0.1033   5.522 3.34e-08 ***
+year2021     -0.7416     0.1055  -7.029 2.09e-12 ***
 
 Zero-inflation model:
             Estimate Std. Error z value Pr(>|z|)
-(Intercept)   -22.18    2760.70  -0.008    0.994
+(Intercept)   -22.25    3796.81  -0.006    0.995
+
+We fitted a zero-inflated logistic mixed model (estimated using ML and
+nlminb optimizer) to predict relAbundance with year (formula: relAbundance
+~ year). The model included site as random effects (formula: list(~1 |
+site, ~1 | scientific_name)). The model's total explanatory power is
+substantial (conditional R2 = 0.71) and the part related to the fixed
+effects alone (marginal R2) is of 0.38. The model's intercept,
+corresponding to year = 1850, is at -3.14 (95% CI [-3.40, -2.89], p <
+.001). Within this model:
+
+  - The effect of year [1900] is statistically significant and positive (beta
+= 0.57, 95% CI [0.37, 0.77], p < .001; Std. beta = 0.57, 95% CI [0.37,
+0.77])
+  - The effect of year [2021] is statistically significant and negative (beta
+= -0.74, 95% CI [-0.95, -0.53], p < .001; Std. beta = -0.74, 95% CI [-0.95,
+-0.53])
+
+Standardized parameters were obtained by fitting the model on a
+standardized version of the dataset. 95% Confidence Intervals (CIs) and
+p-values were computed using a Wald z-distribution approximation.
 
 ```{r}
 grassland_glmm <- relAbun_Hab %>%
   filter(Habitat.type == "Grassland")
 
-glmm_grassland <- glmmTMB(relAbundance ~ year + (1|historical_site_code) +(1|scientific_name),
+glmm_grassland <- glmmTMB(relAbundance ~ year + (1|site) +(1|scientific_name),
                       data = grassland_glmm, 
                       ziformula = ~1,
                       family = beta_family(link = "logit"))
 
 summary(glmm_grassland)
+# model did not converge
 ```
-Family: beta  ( logit )
-Formula:          
-relAbundance ~ year + (1 | historical_site_code) + (1 | scientific_name)
-Zero inflation:                ~1
-Data: grassland_glmm
 
-     AIC      BIC   logLik deviance df.resid 
-  -627.8   -606.2    320.9   -641.8      154 
-
-Random effects:
-
-Conditional model:
- Groups               Name        Variance Std.Dev.
- historical_site_code (Intercept) 1.7836   1.3355  
- scientific_name      (Intercept) 0.5294   0.7276  
-Number of obs: 161, groups:  
-historical_site_code, 24; scientific_name, 24
-
-Dispersion parameter for beta family (): 29.6 
-
-Conditional model:
-            Estimate Std. Error z value Pr(>|z|)    
-(Intercept)  -1.6477     0.4126  -3.993 6.51e-05 ***
-year1900     -1.0198     0.2841  -3.589 0.000331 ***
-year2021     -3.0342     0.4910  -6.180 6.40e-10 ***
-
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-Zero-inflation model:
-            Estimate Std. Error z value Pr(>|z|)
-(Intercept)    -22.4     5767.3  -0.004    0.997
 
 ```{r}
 wooded_glmm <- relAbun_Hab %>%
   filter(Habitat.type == "Wooded Habitat")
 
-glmm_wooded <- glmmTMB(relAbundance ~ year + (1|historical_site_code) +(1|scientific_name),
+glmm_wooded <- glmmTMB(relAbundance ~ year + (1|site) +(1|scientific_name),
                       data = wooded_glmm, 
                       ziformula = ~1,
                       family = beta_family(link = "logit"))
@@ -686,42 +679,58 @@ glmm_wooded <- glmmTMB(relAbundance ~ year + (1|historical_site_code) +(1|scient
 summary(glmm_wooded)
 ```
 Family: beta  ( logit )
-Formula:          
-relAbundance ~ year + (1 | historical_site_code) + (1 | scientific_name)
+Formula:          relAbundance ~ year + (1 | site) + (1 | scientific_name)
 Zero inflation:                ~1
 Data: wooded_glmm
 
      AIC      BIC   logLik deviance df.resid 
- -4574.6  -4540.3   2294.3  -4588.6      991 
+ -2443.1  -2412.5   1228.5  -2457.1      579 
 
 Random effects:
 
 Conditional model:
- Groups               Name        Variance Std.Dev.
- historical_site_code (Intercept) 0.1868   0.4322  
- scientific_name      (Intercept) 0.1037   0.3221  
-Number of obs: 998, groups:  
-historical_site_code, 28; scientific_name, 75
+ Groups          Name        Variance Std.Dev.
+ site            (Intercept) 0.14670  0.383   
+ scientific_name (Intercept) 0.04202  0.205   
+Number of obs: 586, groups:  site, 28; scientific_name, 75
 
-Dispersion parameter for beta family (): 34.9 
+Dispersion parameter for beta family (): 23.1 
 
 Conditional model:
             Estimate Std. Error z value Pr(>|z|)    
-(Intercept) -2.93976    0.12528 -23.466  < 2e-16 ***
-year1900     0.42879    0.09269   4.626 3.72e-06 ***
-year2021    -0.56421    0.10799  -5.225 1.75e-07 ***
-
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+(Intercept)  -2.7439     0.2868  -9.566   <2e-16 ***
+year1900      0.4009     0.2903   1.381    0.167    
+year2021     -0.5151     0.4843  -1.064    0.288    
 
 Zero-inflation model:
             Estimate Std. Error z value Pr(>|z|)
-(Intercept)    -22.2     2097.8  -0.011    0.992
+(Intercept)   -21.84    2280.08   -0.01    0.992
+
+We fitted a zero-inflated logistic mixed model (estimated using ML and
+nlminb optimizer) to predict relAbundance with year (formula: relAbundance
+~ year). The model included site as random effects (formula: list(~1 |
+site, ~1 | scientific_name)). The model's total explanatory power is
+substantial (conditional R2 = 0.36) and the part related to the fixed
+effects alone (marginal R2) is of 0.14. The model's intercept,
+corresponding to year = 1850, is at -2.74 (95% CI [-3.31, -2.18], p <
+.001). Within this model:
+
+  - The effect of year [1900] is statistically non-significant and positive
+(beta = 0.40, 95% CI [-0.17, 0.97], p = 0.167; Std. beta = 0.40, 95% CI
+[-0.17, 0.97])
+  - The effect of year [2021] is statistically non-significant and negative
+(beta = -0.52, 95% CI [-1.46, 0.43], p = 0.288; Std. beta = -0.52, 95% CI
+[-1.46, 0.43])
+
+Standardized parameters were obtained by fitting the model on a
+standardized version of the dataset. 95% Confidence Intervals (CIs) and
+p-values were computed using a Wald z-distribution approximation.
 
 ```{r}
 generalist_glmm <- relAbun_Hab %>%
   filter(Habitat.type == "Generalist")
 
-glmm_generalist <- glmmTMB(relAbundance ~ year + (1|historical_site_code) +(1|scientific_name),
+glmm_generalist <- glmmTMB(relAbundance ~ year + (1|site) +(1|scientific_name),
                       data = generalist_glmm, 
                       ziformula = ~1,
                       family = beta_family(link = "logit"))
@@ -730,73 +739,49 @@ summary(glmm_generalist)
 ```
 
 Family: beta  ( logit )
-Formula:          
-relAbundance ~ year + (1 | historical_site_code) + (1 | scientific_name)
+Formula:          relAbundance ~ year + (1 | site) + (1 | scientific_name)
 Zero inflation:                ~1
 Data: generalist_glmm
 
      AIC      BIC   logLik deviance df.resid 
- -3851.3  -3818.8   1932.6  -3865.3      750 
+ -2118.6  -2090.0   1066.3  -2132.6      436 
 
 Random effects:
 
 Conditional model:
- Groups               Name        Variance Std.Dev.
- historical_site_code (Intercept) 0.1356   0.3683  
- scientific_name      (Intercept) 0.1964   0.4432  
-Number of obs: 757, groups:  
-historical_site_code, 28; scientific_name, 47
+ Groups          Name        Variance Std.Dev.
+ site            (Intercept) 0.1284   0.3583  
+ scientific_name (Intercept) 0.1208   0.3476  
+Number of obs: 443, groups:  site, 28; scientific_name, 47
 
-Dispersion parameter for beta family (): 68.5 
+Dispersion parameter for beta family (): 61.3 
 
 Conditional model:
             Estimate Std. Error z value Pr(>|z|)    
-(Intercept) -3.61257    0.12888 -28.031   <2e-16 ***
-year1900     0.88942    0.08892  10.003   <2e-16 ***
-year2021     0.15838    0.08719   1.817   0.0693 .  
-
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+(Intercept)  -3.5810     0.1494 -23.966  < 2e-16 ***
+year1900      1.0140     0.1304   7.777 7.45e-15 ***
+year2021      0.1932     0.1256   1.538    0.124    
 
 Zero-inflation model:
             Estimate Std. Error z value Pr(>|z|)
-(Intercept)   -22.22    2424.67  -0.009    0.993
+(Intercept)   -22.22    3183.36  -0.007    0.994
 
-## Visualizing relative abundance across time periods as function of elevation and habitat type
-```{r}
-# run by habitat type for year 1850
-relAbunHab1850 <- relAbun_Hab %>%
-  filter(year == 1850)
+We fitted a zero-inflated logistic mixed model (estimated using ML and
+nlminb optimizer) to predict relAbundance with year (formula: relAbundance
+~ year). The model included site as random effects (formula: list(~1 |
+site, ~1 | scientific_name)). The model's total explanatory power is
+substantial (conditional R2 = 0.50) and the part related to the fixed
+effects alone (marginal R2) is of 0.14. The model's intercept,
+corresponding to year = 1850, is at -3.58 (95% CI [-3.87, -3.29], p <
+.001). Within this model:
 
-fig_relAbun_hab1850 <- ggplot(relAbunHab1850, aes(x=elev,y=relAbundance)) +  
-  geom_point(shape = 21, colour = "black", fill = "white", size = 2, stroke = 1)+
-   geom_smooth(method="lm", se=TRUE, fullrange=FALSE, level=0.95,linetype="solid") +  theme_bw() +
-    scale_y_log10() +
-  facet_wrap(~Habitat.type) +
-  labs(x="\nElevation (in meters)", 
-       y="Relative Abundance\n") +
-  theme(axis.text = element_text(family = "Century Gothic", size = 13),
-        legend.title = element_text(family = "Century Gothic"),
-    legend.text = element_text(family = "Century Gothic"),
-    text = element_text(family = "Century Gothic", size = 25))
+  - The effect of year [1900] is statistically significant and positive (beta
+= 1.01, 95% CI [0.76, 1.27], p < .001; Std. beta = 1.01, 95% CI [0.76,
+1.27])
+  - The effect of year [2021] is statistically non-significant and positive
+(beta = 0.19, 95% CI [-0.05, 0.44], p = 0.124; Std. beta = 0.19, 95% CI
+[-0.05, 0.44])
 
-ggsave(fig_relAbun_hab1850, filename = "figs/fig_relAbun_elev_habitat1850.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
-
-# run by habitat type for year 2021
-relAbunHab2021 <- relAbun_Hab %>%
-  filter(year == 2021)
-
-fig_relAbun_hab2021 <- ggplot(relAbunHab2021, aes(x=elev,y=relAbundance)) +  
-  geom_point(shape = 21, colour = "black", fill = "white", size = 2, stroke = 1)+
-   geom_smooth(method="lm", se=TRUE, fullrange=FALSE, level=0.95,linetype="solid") +  theme_bw() +
-  scale_y_log10() +
-  facet_wrap(~Habitat.type) +
-  labs(x="\nElevation (in meters)", 
-       y="Relative Abundance\n") +
-  theme(axis.text = element_text(family = "Century Gothic", size = 13),
-        legend.title = element_text(family = "Century Gothic"),
-    legend.text = element_text(family = "Century Gothic"),
-    text = element_text(family = "Century Gothic", size = 25))
-
-ggsave(fig_relAbun_hab2021, filename = "figs/fig_relAbun_elev_habitat2021.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
-```
-
+Standardized parameters were obtained by fitting the model on a
+standardized version of the dataset. 95% Confidence Intervals (CIs) and
+p-values were computed using a Wald z-distribution approximation.
