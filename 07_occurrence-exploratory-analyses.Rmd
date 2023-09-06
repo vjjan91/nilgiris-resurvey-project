@@ -17,7 +17,6 @@ library(RColorBrewer)
 library(extrafont)
 ```
 
-
 ### Load the historical occurrence data and explore patterns
 ```{r}
 hist_occ <- read.csv("data/historical-occurrence-data.csv")
