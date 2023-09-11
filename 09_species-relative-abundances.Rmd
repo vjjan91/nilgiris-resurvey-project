@@ -55,63 +55,60 @@ elev <- raster::extract(alt, sites)
 sites <- cbind(sites, elev)
 ```
 
-## For the historical occurrence data, we will choose data from three time periods: 1850-1900, 1900-1950 and 1950-2000. 
+## For the historical occurrence data, we will choose data from a single time periods: 1850-1900
 ```{r}
 ## read in historical occurrence data
 hist_occ <- read.csv("data/historical-occurrence-data.csv")
 
 ### pre-1900
-hist_occ_pre1900 <- hist_occ %>%
+hist_occ <- hist_occ %>%
   filter(year <= 1900)
 
 ### fix the count column
-hist_occ_pre1900 <-  hist_occ_pre1900 %>%
+hist_occ <-  hist_occ %>%
   mutate(histCount = case_when(individualCount == "X" ~ 1,
                                individualCount == "" ~ 1,
                                TRUE ~ as.numeric(individualCount)))
 
+## remove species with few observations
+histCount <- hist_occ %>%
+  group_by(scientific_name) %>%
+  count() 
+
+## filter species list with a minimum of four records
+histCount_minFour <- histCount %>%
+  filter(n >= 4 )
+
+## filter species to include only 68 species
+hist_occ <- hist_occ %>%
+  filter(scientific_name %in% histCount_minFour$scientific_name)
+
 # calculate total abundance of historical data at each site
-hist_occ_count_pre1900 <- hist_occ_pre1900 %>%
+hist_occ <- hist_occ %>%
   group_by(scientific_name, historical_site_code) %>%
   summarise("1850-1900" = sum(histCount)) 
 
 # left join the sites dataframe
-hist_occ_sites_pre1900 <- left_join(hist_occ_count_pre1900, sites, by=c("historical_site_code"="historical_site_code")) %>%
-  filter(!is.na(scientific_name)) %>%
-  replace(is.na(.), 0) 
-
-## 1900-1950
-hist_occ_1900_1950 <- hist_occ %>%
-  filter(year > 1900 & year <= 1950)
-
-### fix the count column
-hist_occ_1900_1950 <-  hist_occ_1900_1950 %>%
-  mutate(histCount = case_when(individualCount == "X" ~ 1,
-                               individualCount == "" ~ 1,
-                               TRUE ~ as.numeric(individualCount)))
-
-# calculate total abundance of historical data at each site
-hist_occ_count_1900_1950 <- hist_occ_1900_1950 %>%
-  group_by(scientific_name, historical_site_code) %>%
-  summarise("1900-1950" = sum(histCount)) 
-
-# left join the sites dataframe
-hist_occ_sites_1900_1950 <- left_join(hist_occ_count_1900_1950, sites, by=c("historical_site_code"="historical_site_code")) %>%
+hist_occ <- left_join(hist_occ, sites, by=c("historical_site_code"="historical_site_code")) %>%
   filter(!is.na(scientific_name)) %>%
   replace(is.na(.), 0) 
 
 ## read in modern occurrence data
 mod_occ <- read.csv("data/modern-occurrence-data.csv")
 
+## only include species that are present in the historical dataset
+mod_occ <- mod_occ %>%
+  filter(scientific_name %in% hist_occ$scientific_name)
+
 ## group by scientific name and modern site code
-modOcc_spp <- mod_occ %>%
+mod_occ <- mod_occ %>%
   filter(!is.na(historical_site_code)) %>%
   filter(!is.na(scientific_name)) %>%
   group_by(scientific_name, modern_site_code) %>%
   summarise("2021" = sum(number))
 
 ## left join the sites dataframe
-mod_occ_sites <-  left_join(modOcc_spp, sites, by=c("modern_site_code"="modern_site_code")) %>%
+mod_occ <-  left_join(mod_occ, sites, by=c("modern_site_code"="modern_site_code")) %>%
   filter(!is.na(scientific_name)) %>%
   replace(is.na(.), 0)
 ```
@@ -127,39 +124,23 @@ Here, we will functions from Gotelli et al. 2021 to calculate relative species a
 ## calculating relative species abundances for the time period 1850-1900
 
 # we remove modern site_code and get only distinct rows
-unique_hist_pre1900 <- hist_occ_sites_pre1900[,c(1,2,3)] %>%
+unique_hist <- hist_occ[,c(1,2,3)] %>%
   group_by(scientific_name, historical_site_code) %>%
   distinct() %>%
   group_by(scientific_name) %>%
   summarise("relAbund1850" = sum(`1850-1900`)) 
 
 # apply dirichlet distribution
-dat <- tibble::deframe(unique_hist_pre1900) ## choosing 1850-1900 data
+dat <- tibble::deframe(unique_hist) ## choosing 1850-1900 data
 
 relAbun1850 <- dirch_stats(dat) %>%
   dplyr::select(species, bayes_mean) %>%
   rename(., bayes_mean_1850 = bayes_mean)
 
-## calculating relative species abundances for the time period 1900-1950
-
-# we remove modern site_code and get only distinct rows
-unique_hist_1900_1950 <- hist_occ_sites_1900_1950[,c(1,2,3)] %>%
-  group_by(scientific_name, historical_site_code) %>%
-  distinct() %>%
-  group_by(scientific_name) %>%
-  summarise("relAbund1900" = sum(`1900-1950`)) 
-
-# apply dirichlet distribution
-dat <- tibble::deframe(unique_hist_1900_1950) ## choosing 1900-1950 data
-
-relAbun1900 <- dirch_stats(dat) %>%
-  dplyr::select(species, bayes_mean) %>%
-  rename(., bayes_mean_1900 = bayes_mean)
-
 ## calculating relative species abundances for the modern time period
 
 # we remove modern site_code and get only distinct rows
-unique_mod <- mod_occ_sites[,c(1,3,5)] %>%
+unique_mod <- mod_occ[,c(1,3,5)] %>%
   group_by(scientific_name, historical_site_code) %>%
   distinct() %>%
   group_by(scientific_name) %>%
@@ -173,13 +154,12 @@ relAbun2021 <- dirch_stats(dat) %>%
   rename(., bayes_mean_2021 = bayes_mean)
 
 ### join the relative abundance datasets together
-relAbun <- full_join(relAbun1850, relAbun1900, by = c("species")) %>%
-   full_join(., relAbun2021, by = c("species")) %>%
+relAbun <- full_join(relAbun1850, relAbun2021, by = c("species")) %>%
   replace(is.na(.), 0) %>%
   arrange(species) %>%
   rename(., `1850-1900` = "bayes_mean_1850") %>%
-  rename(., `1900-1950` = "bayes_mean_1900") %>%
-  rename(., `2021` = "bayes_mean_2021")
+  rename(., `2021` = "bayes_mean_2021") %>%
+  rename(., scientific_name = species)
 
 ## write to file
 write.csv(relAbun, "results/species-relative-abundance.csv", row.names = F)
@@ -210,7 +190,7 @@ dev.off()
 
 ## violinplot
 data_for_violinplot <- relAbun %>%
-  dplyr::select(-species) %>%
+  dplyr::select(-scientific_name) %>%
   pivot_longer(everything())
 
 fig_relAbun_over_time <- ggbetweenstats(
@@ -243,17 +223,17 @@ dev.off()
 ```{r}
 ## subset data for line plots
 relAbun_forLinePlot <- relAbun %>%
-  pivot_longer(-species, names_to = "timePeriod", values_to = "relAbun") %>% filter(relAbun != 0) 
+  pivot_longer(-scientific_name, names_to = "timePeriod", values_to = "relAbun") %>% filter(relAbun != 0) 
 
 ## ensure that text does not overlap
 options(ggrepel.max.overlaps = Inf)
 
 # fig
-fig_relAbun_linePlot <- ggplot(relAbun_forLinePlot, aes(x=timePeriod, y = relAbun,color = species, group = species)) +
+fig_relAbun_linePlot <- ggplot(relAbun_forLinePlot, aes(x=timePeriod, y = relAbun,color = scientific_name, group = scientific_name)) +
   geom_point() + 
   geom_line() +
   geom_text_repel(data=subset(relAbun_forLinePlot, timePeriod == "2021"),
-            aes(timePeriod,relAbun,label=species)) +
+            aes(timePeriod,relAbun,label=scientific_name)) +
   scale_y_log10() +
   xlab("Time period") +
   ylab("Relative abundance") +
@@ -310,7 +290,7 @@ trait_dat <- read.csv("data/species-trait-dat.csv")
 ## join rel abun and species trait
 ## pivot longer
 rel_abun_trait <- relAbun %>%
-  pivot_longer(-species, names_to = "Time Period", values_to = "Relative abundance") %>% left_join(., trait_dat, by=c("species"="scientific_name")) %>%
+  pivot_longer(-scientific_name, names_to = "Time Period", values_to = "Relative abundance") %>% left_join(., trait_dat, by=c("scientific_name"="scientific_name")) %>%
    filter(Habitat.type != "Aquatic") %>%
   filter(`Relative abundance` !=0) %>%
   ungroup()
@@ -381,86 +361,52 @@ dev.off()
 ## Repeating the above analysis at the site-level
 ```{r}
 # we remove modern site_code and get only distinct rows
-hist_pre1900 <- hist_occ_sites_pre1900[,c(1:3)] %>%
+hist_site_level <- hist_occ[,c(1:3)] %>%
   distinct(.)
 
-relSpAbund_1850_1900 <- c()
+relSpAbund_hist <- c()
 
-for(i in 1:length(unique(hist_pre1900$historical_site_code))) {
+for(i in 1:length(unique(hist_site_level$historical_site_code))) {
   
-  a <- hist_pre1900 %>%
-  filter(historical_site_code == unique(hist_pre1900$historical_site_code)[i])
+  a <- hist_site_level %>%
+  filter(historical_site_code == unique(hist_site_level$historical_site_code)[i])
 
   b <- tibble::deframe(a[,c(1,3)]) ## choosing 1850-1900 data
   
-  loc <- unique(hist_pre1900$historical_site_code)[i] # what's the site_code?
+  loc <- unique(hist_site_level$historical_site_code)[i] # what's the site_code?
   
-  relSpAbund_1850_1900[[i]] <- dirch_stats(b) %>%
+  relSpAbund_hist[[i]] <- dirch_stats(b) %>%
   dplyr::select(species, bayes_mean)
 
   old_varname <-  c('species','bayes_mean')
   new_varname <- c('scientific_name', paste(loc,"_","1850", sep = ""))
 
-  relSpAbund_1850_1900[[i]] <- relSpAbund_1850_1900[[i]] %>%
+  relSpAbund_hist[[i]] <- relSpAbund_hist[[i]] %>%
       data.table::setnames(old = old_varname, new = new_varname)
 
-  names(relSpAbund_1850_1900)[i] <- loc 
+  names(relSpAbund_hist)[i] <- loc 
 }
 
 # save object but full_join across lists
-relSpAbund_1850_1900 <- relSpAbund_1850_1900 %>%
-    reduce(.f=full_join)
-
-## repeating the above across other time periods
-##  time period 1900-1950
-
-# we remove modern site_code and get only distinct rows
-hist_1900_1950 <- hist_occ_sites_1900_1950[,c(1:3)] %>%
-  distinct(.)
-
-relSpAbund_1900_1950 <- c()
-
-for(i in 1:length(unique(hist_1900_1950$historical_site_code))) {
-  
-  a <- hist_1900_1950 %>%
-  filter(historical_site_code == unique(hist_1900_1950$historical_site_code)[i])
-
-  b <- tibble::deframe(a[,c(1,3)]) ## choosing 1900-1950 data
-  
-  loc <- unique(hist_1900_1950$historical_site_code)[i] # what's the site_code?
-  
-  relSpAbund_1900_1950[[i]] <- dirch_stats(b) %>%
-  dplyr::select(species, bayes_mean)
-
-  old_varname <-  c('species','bayes_mean')
-  new_varname <- c('scientific_name', paste(loc,"_","1900", sep = ""))
-
-  relSpAbund_1900_1950[[i]] <- relSpAbund_1900_1950[[i]] %>%
-      data.table::setnames(old = old_varname, new = new_varname)
-
-  names(relSpAbund_1900_1950)[i] <- loc 
-}
-
-# save object but full_join across lists
-relSpAbund_1900_1950 <- relSpAbund_1900_1950 %>%
+relSpAbund_hist <- relSpAbund_hist %>%
     reduce(.f=full_join)
 
 ##  time period 2021
-mod_2021 <- mod_occ_sites[,c(1,3,5)] %>%
+mod_site_level <- mod_occ[,c(1,3,5)] %>%
   group_by(scientific_name, historical_site_code) %>%
   mutate("2021" = sum(`2021`)) %>%
   distinct(.)
 
 relSpAbund_2021 <- c()
 
-for(i in 1:length(unique(mod_2021$historical_site_code))) {
+for(i in 1:length(unique(mod_site_level$historical_site_code))) {
   
-  a <- mod_2021 %>%
-  filter(historical_site_code == unique(mod_2021$historical_site_code)[i])
+  a <- mod_site_level %>%
+  filter(historical_site_code == unique(mod_site_level$historical_site_code)[i])
 
   b <- tibble::deframe(a[,c(1,2)]) ## choosing modern data
   
-  loc <- unique(mod_2021$historical_site_code)[i] # what's the site_code?
+  loc <- unique(mod_site_level$historical_site_code)[i] # what's the site_code?
   
   relSpAbund_2021[[i]] <- dirch_stats(b) %>%
   dplyr::select(species, bayes_mean)
@@ -479,8 +425,7 @@ relSpAbund_2021 <- relSpAbund_2021 %>%
     reduce(.f=full_join)
 
 ## join all the datasets together
-relSpAbund_by_site <- full_join(relSpAbund_1850_1900, relSpAbund_1900_1950, by = "scientific_name") %>%
-  full_join(., relSpAbund_2021, by = "scientific_name") %>%
+relSpAbund_by_site <- full_join(relSpAbund_hist, relSpAbund_2021, by = "scientific_name") %>%
   arrange(scientific_name) %>%
   replace(is.na(.), 0) 
 ```
@@ -542,48 +487,44 @@ Zero inflation:                ~1
 Data: relSpAbund
 
      AIC      BIC   logLik deviance df.resid 
- -6138.9  -6102.0   3076.4  -6152.9     1431 
+ -3522.7  -3493.9   1767.3  -3534.7      880 
 
 Random effects:
 
 Conditional model:
  Groups          Name        Variance Std.Dev.
- site            (Intercept) 0.11083  0.3329  
- scientific_name (Intercept) 0.03428  0.1851  
-Number of obs: 1438, groups:  site, 28; scientific_name, 189
+ site            (Intercept) 0.1749   0.4182  
+ scientific_name (Intercept) 0.1333   0.3651  
+Number of obs: 886, groups:  site, 28; scientific_name, 68
 
-Dispersion parameter for beta family (): 24.2 
+Dispersion parameter for beta family (): 27.9 
 
 Conditional model:
             Estimate Std. Error z value Pr(>|z|)    
-(Intercept) -2.84626    0.09978 -28.527  < 2e-16 ***
-year1900     0.53363    0.08812   6.055 1.40e-09 ***
-year2021    -0.34658    0.08894  -3.897 9.75e-05 ***
+(Intercept)  -2.3003     0.1281  -17.96  < 2e-16 ***
+year2021     -0.8554     0.1141   -7.50 6.39e-14 ***
 
 Zero-inflation model:
             Estimate Std. Error z value Pr(>|z|)
-(Intercept)    -22.4     1927.2  -0.012    0.991
+(Intercept)    -22.4     2455.3  -0.009    0.993
 
 report::report(glmm_overall)
 
 We fitted a zero-inflated logistic mixed model (estimated using ML and
-nlminb optimizer) to predict relAbundance with year (formula: relAbundance ~ year). The model included site as random effects (formula: list(~1 |
-site, ~1 | scientific_name)). The model's total explanatory power is
-substantial (conditional R2 = 0.31) and the part related to the fixed
-effects alone (marginal R2) is of 0.13. The model's intercept,
-corresponding to year = 1850, is at -2.85 (95% CI [-3.04, -2.65], p <
-.001). Within this model:
+nlminb optimizer) to predict relAbundance with year (formula: relAbundance ~
+year). The model included site as random effects (formula: list(~1 | site,
+~1 | scientific_name)). The model's total explanatory power is substantial
+(conditional R2 = 0.48) and the part related to the fixed effects alone
+(marginal R2) is of 0.14. The model's intercept, corresponding to year =
+1850, is at -2.30 (95% CI [-2.55, -2.05], p < .001). Within this model:
 
-  - The effect of year [1900] is statistically significant and positive (beta
-= 0.53, 95% CI [0.36, 0.71], p < .001; Std. beta = 0.53, 95% CI [0.36,
-0.71])
   - The effect of year [2021] is statistically significant and negative (beta
-= -0.35, 95% CI [-0.52, -0.17], p < .001; Std. beta = -0.35, 95% CI [-0.52,
--0.17])
+= -0.86, 95% CI [-1.08, -0.63], p < .001; Std. beta = -0.86, 95% CI [-1.08,
+-0.63])
 
-Standardized parameters were obtained by fitting the model on a
-standardized version of the dataset. 95% Confidence Intervals (CIs) and
-p-values were computed using a Wald z-distribution approximation.
+Standardized parameters were obtained by fitting the model on a standardized
+version of the dataset. 95% Confidence Intervals (CIs) and p-values were
+computed using a Wald z-distribution approximation.
 
 ```{r}
 ## join relative abundance at site level with trait data
@@ -611,53 +552,48 @@ Zero inflation:                ~1
 Data: forest_glmm
 
      AIC      BIC   logLik deviance df.resid 
- -1722.3  -1696.0    868.2  -1736.3      312 
+ -1025.5  -1005.7    518.8  -1037.5      196 
 
 Random effects:
 
 Conditional model:
  Groups          Name        Variance Std.Dev.
- site            (Intercept) 0.21638  0.4652  
- scientific_name (Intercept) 0.02483  0.1576  
-Number of obs: 319, groups:  site, 28; scientific_name, 41
+ site            (Intercept) 0.15537  0.3942  
+ scientific_name (Intercept) 0.03524  0.1877  
+Number of obs: 202, groups:  site, 27; scientific_name, 20
 
-Dispersion parameter for beta family ():  109 
+Dispersion parameter for beta family (): 90.9 
 
 Conditional model:
             Estimate Std. Error z value Pr(>|z|)    
-(Intercept)  -3.1430     0.1293 -24.302  < 2e-16 ***
-year1900      0.5705     0.1033   5.522 3.34e-08 ***
-year2021     -0.7416     0.1055  -7.029 2.09e-12 ***
+(Intercept)  -2.8924     0.1356 -21.335  < 2e-16 ***
+year2021     -0.7214     0.1281  -5.631 1.79e-08 ***
 
 Zero-inflation model:
             Estimate Std. Error z value Pr(>|z|)
-(Intercept)   -22.25    3796.81  -0.006    0.995
+(Intercept)   -22.06    4333.38  -0.005    0.996
 
 We fitted a zero-inflated logistic mixed model (estimated using ML and
-nlminb optimizer) to predict relAbundance with year (formula: relAbundance
-~ year). The model included site as random effects (formula: list(~1 |
-site, ~1 | scientific_name)). The model's total explanatory power is
-substantial (conditional R2 = 0.71) and the part related to the fixed
-effects alone (marginal R2) is of 0.38. The model's intercept,
-corresponding to year = 1850, is at -3.14 (95% CI [-3.40, -2.89], p <
-.001). Within this model:
+nlminb optimizer) to predict relAbundance with year (formula: relAbundance ~
+year). The model included site as random effects (formula: list(~1 | site,
+~1 | scientific_name)). The model's total explanatory power is substantial
+(conditional R2 = 0.54) and the part related to the fixed effects alone
+(marginal R2) is of 0.20. The model's intercept, corresponding to year =
+1850, is at -2.89 (95% CI [-3.16, -2.63], p < .001). Within this model:
 
-  - The effect of year [1900] is statistically significant and positive (beta
-= 0.57, 95% CI [0.37, 0.77], p < .001; Std. beta = 0.57, 95% CI [0.37,
-0.77])
   - The effect of year [2021] is statistically significant and negative (beta
-= -0.74, 95% CI [-0.95, -0.53], p < .001; Std. beta = -0.74, 95% CI [-0.95,
--0.53])
+= -0.72, 95% CI [-0.97, -0.47], p < .001; Std. beta = -0.72, 95% CI [-0.97,
+-0.47])
 
-Standardized parameters were obtained by fitting the model on a
-standardized version of the dataset. 95% Confidence Intervals (CIs) and
-p-values were computed using a Wald z-distribution approximation.
+Standardized parameters were obtained by fitting the model on a standardized
+version of the dataset. 95% Confidence Intervals (CIs) and p-values were
+computed using a Wald z-distribution approximation.
 
 ```{r}
 grassland_glmm <- relAbun_Hab %>%
   filter(Habitat.type == "Grassland")
 
-glmm_grassland <- glmmTMB(relAbundance ~ year +(1|scientific_name) ,
+glmm_grassland <- glmmTMB(relAbundance ~ year +(1|scientific_name) +(1|site),
                       data = grassland_glmm, 
                       ziformula = ~1,
                       family = beta_family(link = "logit"))
@@ -665,50 +601,48 @@ glmm_grassland <- glmmTMB(relAbundance ~ year +(1|scientific_name) ,
 summary(glmm_grassland)
 ```
 Family: beta  ( logit )
-Formula:          relAbundance ~ year + (1 | scientific_name)
+Formula:          relAbundance ~ year + (1 | scientific_name) + (1 | site)
 Zero inflation:                ~1
 Data: grassland_glmm
 
      AIC      BIC   logLik deviance df.resid 
-  -271.7   -257.1    141.8   -283.7       78 
+  -169.3   -159.3     90.6   -181.3       33 
 
 Random effects:
 
 Conditional model:
- Groups          Name        Variance  Std.Dev. 
- scientific_name (Intercept) 4.963e-16 2.228e-08
-Number of obs: 84, groups:  scientific_name, 24
+ Groups          Name        Variance Std.Dev.
+ scientific_name (Intercept) 0.02646  0.1627  
+ site            (Intercept) 4.14080  2.0349  
+Number of obs: 39, groups:  scientific_name, 7; site, 17
 
-Dispersion parameter for beta family (): 3.24 
+Dispersion parameter for beta family ():  143 
 
 Conditional model:
             Estimate Std. Error z value Pr(>|z|)    
-(Intercept)  -2.2075     0.2100 -10.511   <2e-16 ***
-year1900      0.5204     0.2841   1.831    0.067 .  
-year2021      0.0473     0.2626   0.180    0.857    
+(Intercept)  -2.6997     0.6686  -4.038 5.39e-05 ***
+year2021     -0.7973     0.6128  -1.301    0.193    
 
 Zero-inflation model:
             Estimate Std. Error z value Pr(>|z|)
-(Intercept)   -22.51    8451.26  -0.003    0.998
+(Intercept)   -22.24   10790.73  -0.002    0.998
 
 We fitted a zero-inflated logistic mixed model (estimated using ML and
-nlminb optimizer) to predict relAbundance with year (formula: relAbundance
-~ year). The model included scientific_name as random effect (formula: ~1 |
-scientific_name). The model's explanatory power related to the fixed
-effects alone (marginal R2) is 0.05. The model's intercept, corresponding
-to year = 1850, is at -2.21 (95% CI [-2.62, -1.80], p < .001). Within this
+nlminb optimizer) to predict relAbundance with year (formula: relAbundance ~
+year). The model included scientific_name as random effects (formula:
+list(~1 | scientific_name, ~1 | site)). The model's total explanatory power
+is substantial (conditional R2 = 0.96) and the part related to the fixed
+effects alone (marginal R2) is of 0.04. The model's intercept, corresponding
+to year = 1850, is at -2.70 (95% CI [-4.01, -1.39], p < .001). Within this
 model:
 
-  - The effect of year [1900] is statistically non-significant and positive
-(beta = 0.52, 95% CI [-0.04, 1.08], p = 0.067; Std. beta = 0.52, 95% CI
-[-0.04, 1.08])
-  - The effect of year [2021] is statistically non-significant and positive
-(beta = 0.05, 95% CI [-0.47, 0.56], p = 0.857; Std. beta = 0.05, 95% CI
-[-0.47, 0.56])
+  - The effect of year [2021] is statistically non-significant and negative
+(beta = -0.80, 95% CI [-2.00, 0.40], p = 0.193; Std. beta = -0.80, 95% CI
+[-2.00, 0.40])
 
-Standardized parameters were obtained by fitting the model on a
-standardized version of the dataset. 95% Confidence Intervals (CIs) and
-p-values were computed using a Wald z-distribution approximation.
+Standardized parameters were obtained by fitting the model on a standardized
+version of the dataset. 95% Confidence Intervals (CIs) and p-values were
+computed using a Wald z-distribution approximation.
 
 ```{r}
 wooded_glmm <- relAbun_Hab %>%
@@ -727,47 +661,42 @@ Zero inflation:                ~1
 Data: wooded_glmm
 
      AIC      BIC   logLik deviance df.resid 
- -2443.1  -2412.5   1228.5  -2457.1      579 
+ -1390.7  -1367.4    701.4  -1402.7      352 
 
 Random effects:
 
 Conditional model:
  Groups          Name        Variance Std.Dev.
- site            (Intercept) 0.14670  0.383   
- scientific_name (Intercept) 0.04202  0.205   
-Number of obs: 586, groups:  site, 28; scientific_name, 75
+ site            (Intercept) 0.1646   0.4057  
+ scientific_name (Intercept) 0.1060   0.3255  
+Number of obs: 358, groups:  site, 28; scientific_name, 25
 
-Dispersion parameter for beta family (): 23.1 
+Dispersion parameter for beta family (): 25.4 
 
 Conditional model:
             Estimate Std. Error z value Pr(>|z|)    
-(Intercept)  -2.7439     0.2868  -9.566   <2e-16 ***
-year1900      0.4009     0.2903   1.381    0.167    
-year2021     -0.5151     0.4843  -1.064    0.288    
+(Intercept)  -2.3874     0.1609 -14.835  < 2e-16 ***
+year2021     -0.8220     0.1658  -4.959  7.1e-07 ***
 
 Zero-inflation model:
             Estimate Std. Error z value Pr(>|z|)
-(Intercept)   -21.84    2280.08   -0.01    0.992
+(Intercept)   -22.26    3609.69  -0.006    0.995
 
 We fitted a zero-inflated logistic mixed model (estimated using ML and
-nlminb optimizer) to predict relAbundance with year (formula: relAbundance
-~ year). The model included site as random effects (formula: list(~1 |
-site, ~1 | scientific_name)). The model's total explanatory power is
-substantial (conditional R2 = 0.36) and the part related to the fixed
-effects alone (marginal R2) is of 0.14. The model's intercept,
-corresponding to year = 1850, is at -2.74 (95% CI [-3.31, -2.18], p <
-.001). Within this model:
+nlminb optimizer) to predict relAbundance with year (formula: relAbundance ~
+year). The model included site as random effects (formula: list(~1 | site,
+~1 | scientific_name)). The model's total explanatory power is substantial
+(conditional R2 = 0.44) and the part related to the fixed effects alone
+(marginal R2) is of 0.13. The model's intercept, corresponding to year =
+1850, is at -2.39 (95% CI [-2.70, -2.07], p < .001). Within this model:
 
-  - The effect of year [1900] is statistically non-significant and positive
-(beta = 0.40, 95% CI [-0.17, 0.97], p = 0.167; Std. beta = 0.40, 95% CI
-[-0.17, 0.97])
-  - The effect of year [2021] is statistically non-significant and negative
-(beta = -0.52, 95% CI [-1.46, 0.43], p = 0.288; Std. beta = -0.52, 95% CI
-[-1.46, 0.43])
+  - The effect of year [2021] is statistically significant and negative (beta
+= -0.82, 95% CI [-1.15, -0.50], p < .001; Std. beta = -0.82, 95% CI [-1.15,
+-0.50])
 
-Standardized parameters were obtained by fitting the model on a
-standardized version of the dataset. 95% Confidence Intervals (CIs) and
-p-values were computed using a Wald z-distribution approximation.
+Standardized parameters were obtained by fitting the model on a standardized
+version of the dataset. 95% Confidence Intervals (CIs) and p-values were
+computed using a Wald z-distribution approximation.
 
 ```{r}
 generalist_glmm <- relAbun_Hab %>%
@@ -787,44 +716,39 @@ Zero inflation:                ~1
 Data: generalist_glmm
 
      AIC      BIC   logLik deviance df.resid 
- -2118.6  -2090.0   1066.3  -2132.6      436 
+ -1372.8  -1350.9    692.4  -1384.8      281 
 
 Random effects:
 
 Conditional model:
  Groups          Name        Variance Std.Dev.
- site            (Intercept) 0.1284   0.3583  
- scientific_name (Intercept) 0.1208   0.3476  
-Number of obs: 443, groups:  site, 28; scientific_name, 47
+ site            (Intercept) 0.009688 0.09843 
+ scientific_name (Intercept) 0.229240 0.47879 
+Number of obs: 287, groups:  site, 28; scientific_name, 16
 
-Dispersion parameter for beta family (): 61.3 
+Dispersion parameter for beta family (): 82.7 
 
 Conditional model:
             Estimate Std. Error z value Pr(>|z|)    
-(Intercept)  -3.5810     0.1494 -23.966  < 2e-16 ***
-year1900      1.0140     0.1304   7.777 7.45e-15 ***
-year2021      0.1932     0.1256   1.538    0.124    
+(Intercept)  -3.8411     0.1695 -22.667  < 2e-16 ***
+year2021      0.6339     0.1168   5.429 5.67e-08 ***
 
 Zero-inflation model:
             Estimate Std. Error z value Pr(>|z|)
-(Intercept)   -22.22    3183.36  -0.007    0.994
+(Intercept)      -22       3534  -0.006    0.995
 
 We fitted a zero-inflated logistic mixed model (estimated using ML and
-nlminb optimizer) to predict relAbundance with year (formula: relAbundance
-~ year). The model included site as random effects (formula: list(~1 |
-site, ~1 | scientific_name)). The model's total explanatory power is
-substantial (conditional R2 = 0.50) and the part related to the fixed
-effects alone (marginal R2) is of 0.14. The model's intercept,
-corresponding to year = 1850, is at -3.58 (95% CI [-3.87, -3.29], p <
-.001). Within this model:
+nlminb optimizer) to predict relAbundance with year (formula: relAbundance ~
+year). The model included site as random effects (formula: list(~1 | site,
+~1 | scientific_name)). The model's total explanatory power is substantial
+(conditional R2 = 0.53) and the part related to the fixed effects alone
+(marginal R2) is of 0.09. The model's intercept, corresponding to year =
+1850, is at -3.84 (95% CI [-4.17, -3.51], p < .001). Within this model:
 
-  - The effect of year [1900] is statistically significant and positive (beta
-= 1.01, 95% CI [0.76, 1.27], p < .001; Std. beta = 1.01, 95% CI [0.76,
-1.27])
-  - The effect of year [2021] is statistically non-significant and positive
-(beta = 0.19, 95% CI [-0.05, 0.44], p = 0.124; Std. beta = 0.19, 95% CI
-[-0.05, 0.44])
+  - The effect of year [2021] is statistically significant and positive (beta
+= 0.63, 95% CI [0.41, 0.86], p < .001; Std. beta = 0.63, 95% CI [0.41,
+0.86])
 
-Standardized parameters were obtained by fitting the model on a
-standardized version of the dataset. 95% Confidence Intervals (CIs) and
-p-values were computed using a Wald z-distribution approximation.
+Standardized parameters were obtained by fitting the model on a standardized
+version of the dataset. 95% Confidence Intervals (CIs) and p-values were
+computed using a Wald z-distribution approximation.
