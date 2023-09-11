@@ -11,8 +11,9 @@ Scenario 1
 
 We plot the presence/absence of each species by elevation assuming that the data from multiple modern survey sites correspond to a single historical survey site. Due to lack of clarity on the exact location where species were historically collected from, multiple modern survey locations were chosen to correspond to a single historic survey site. In some cases, these modern survey sites span a range of elevations and hence the assumption here is that the elevational range for a species historically could span the range of elevations corresponding to the modern survey locations.  
 
-### Load necessary libraries
+For this script and further analyses, we choose a minimum number of four observations per species time-period for comparisons. This is being done to reduce the number of singletons in the analyses. A second crteria being applied is the removal of data from the time-period 1900-1950 and keeping the comparisons restricted to 1850-1900 vs. 2021.  
 
+### Load necessary libraries
 ```{r}
 library(dplyr)
 library(stringr)
@@ -25,6 +26,15 @@ library(raster)
 
 # function to scale a range of values between 0 and 1
 range01 <- function(x, ...){(x - min(x, ...)) / (max(x, ...) - min(x, ...))}
+
+## for plotting
+library(viridis)
+library(colorspace)
+library(tmap)
+library(scales)
+library(ggplot2)
+library(patchwork)
+library(mapview)
 ```
 
 ### Load list of resurvey locations
@@ -51,17 +61,35 @@ sites <- cbind(sites, elev)
 
 ### Load historical and modern occurrence data
 
-For the historical occurrence data, we will choose data from three time periods: 1850-1900, 1900-1950 and 1950-2000. 
+For the historical occurrence data, we will choose data from a single time period: 1850-1900. 
 ```{r}
 ## read in historical occurrence data
 hist_occ <- read.csv("data/historical-occurrence-data.csv")
 
-### pre-1900
-hist_occ_pre1900 <- hist_occ %>%
+## filter observations by date
+hist_occ <- hist_occ %>%
   filter(year <= 1900)
 
-## group by scientific name and historical site code and join the sites dataframe
-hist_occ_pre1900 <- hist_occ_pre1900 %>%
+## remove species with few observations
+histCount <- hist_occ %>%
+  group_by(scientific_name) %>%
+  count() 
+
+## A total of 147 species were reported in the historical data
+
+## Only 68 species had a minimum number of four records (random criteria being used for analyses)
+
+## filter species list with a minimum of four records
+histCount_minFour <- histCount %>%
+  filter(n >= 4 )
+
+## filter species to include only 68 species
+hist_occ <- hist_occ %>%
+  filter(scientific_name %in% histCount_minFour$scientific_name)
+
+## group by scientific name and historical site code
+## add an abundance column and a presence/absence column
+hist_pres_abs <- hist_occ %>%
   group_by(scientific_name, historical_site_code) %>%
   count() %>%
   rename(., "abundance1850" = n) %>%
@@ -69,49 +97,62 @@ hist_occ_pre1900 <- hist_occ_pre1900 %>%
   left_join(., sites, by=c("historical_site_code"="historical_site_code")) %>%
   filter(!is.na(scientific_name)) %>%
   replace(is.na(.), 0)
-  
-# repeat above for two more time-periods
-## 1900-1950
-hist_occ_1900_1950 <- hist_occ %>%
-  filter(year > 1900 & year <= 1950)
-
-## group by scientific name and historical site code and join the sites dataframe
-hist_occ_1900_1950 <- hist_occ_1900_1950 %>%
-  group_by(scientific_name, historical_site_code) %>%
-  count() %>%
-  rename(., "abundance1900" = n) %>%
-  mutate("Y1900" = case_when(abundance1900 >= 1 ~ 1,TRUE ~ 0)) %>%
-  left_join(., sites, by=c("historical_site_code"="historical_site_code")) %>%
-  filter(!is.na(scientific_name)) %>%
-  replace(is.na(.), 0)
 
 ## read in modern occurrence data
 mod_occ <- read.csv("data/modern-occurrence-data.csv")
+
+## count of modern data
+modCount <- mod_occ %>%
+  group_by(scientific_name) %>%
+  count() 
 
 ## group by scientific name and modern site code
 mod_occ <- mod_occ %>%
   filter(!is.na(historical_site_code)) %>%
   filter(!is.na(species_code)) %>%
   group_by(scientific_name, modern_site_code) %>%
-  summarise(modCount = sum(number))
+  summarise(abundance2021 = sum(number))
 
+## join the dataset with the sites object to include historical site code
 mod_occ <-  left_join(mod_occ, sites, by=c("modern_site_code"="modern_site_code")) %>% filter(!is.na(scientific_name)) %>%
-  replace(is.na(.), 0) %>%
-  mutate("Y2021" = case_when(modCount >= 1 ~ 1,TRUE ~ 0))
+  replace(is.na(.), 0)  %>%
+  mutate("Y2021" = case_when(abundance2021 >= 1 ~ 1,TRUE ~ 0))
+
+## recount the abundance data by grouping by the historical_site_code
+mod_occ <- mod_occ %>%
+  group_by(scientific_name, historical_site_code, elev) %>%
+  summarise(abundance2021 = sum(abundance2021))
+
+## only include species that are present in the historical dataset
+mod_pres_abs <- mod_occ %>%
+  filter(scientific_name %in% hist_pres_abs$scientific_name)
+
+## We notice above that six species are recorded in the historical dataset, but are not present in the modern survey.
+
+## These species include: 
+## "Amandava amandava"    
+## "Clamator jacobinus"   
+## "Cyornis pallidipes"  
+## "Galloperdix lunulata" 
+## "Harpactes fasciatus"  
+## "Perdicula asiatica" 
 ```
 
 ### Join the historical and modern count data
 ```{r}
 ## joining the historic and modern datasets
-## this dataframe can be used to examine land cover data later on
-hist_mod <- full_join(hist_occ_pre1900, hist_occ_1900_1950, by = c("scientific_name","modern_site_code","historical_site_code","modern_landCover_type","elev","site_name","geometry")) %>%
-   full_join(., mod_occ, by = c("scientific_name","modern_site_code","historical_site_code","modern_landCover_type","elev","site_name","geometry")) %>%
-  mutate_at(vars(Y2021), ~replace_na(., 0)) %>%
+hist_mod <- full_join(hist_pres_abs, mod_pres_abs, by =               c("scientific_name","modern_site_code","historical_site_code","modern_landCover_type","elev","site_name","geometry")) %>%
+  replace_na(list(abundance1850 = 0, 
+                  abundance2021 = 0,
+                  Y1850 = 0,
+                  Y2021= 0 )) %>%
   arrange(scientific_name) %>%
   ungroup()
 ```
 
 ### Comparing historical-modern counts by elevation
+
+We will create plots using presence-nondetection first
 ```{r}
 # run the loop to create a list of plots
 plots <- list()
@@ -121,7 +162,7 @@ for(i in 1:length(unique(hist_mod$scientific_name))) {
   # extract data species by species
   a <- unique(hist_mod$scientific_name)[i]
   data <- hist_mod[hist_mod$scientific_name==a,] %>%
-      pivot_longer(cols=c("Y1850", "Y1900", "Y2021"), 
+      pivot_longer(cols=c("Y1850", "Y2021"), 
                    names_to="histMod", values_to="PresAbs") %>%
     mutate("det_nonDet" = case_when(PresAbs == 1 ~ "Detection",
                                     PresAbs == 0 ~ "Non-detection")) %>%
