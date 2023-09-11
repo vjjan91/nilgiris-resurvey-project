@@ -83,12 +83,6 @@ elev <- raster::extract(alt, sites)
 sites <- cbind(sites, elev)
 ```
 
-## Load species persistence probabilities at site and landscape level
-```{r}
-spec_site_persProb <- read.csv( "results/species-persProb-siteLevel.csv")
-spec_persProb <- read.csv("results/species-persProb-landscapeLevel.csv")
-```
-
 ### Load species trait data
 ```{r}
 trait_dat <- read.csv("data/species-trait-dat.csv")
@@ -512,11 +506,13 @@ Y2021A <- Y2021 %>%
 # hypervolumes: Takes a long time to run.
 set.seed(3)
 Y1850_hyper_mi <- hypervolume::hypervolume_svm(Y1850A, name = "1850")
-saveRDS(Y1850_hyper_mi, "data/1850-hyperVolume-mi9.rds")
+saveRDS(Y1850_hyper_mi, "results/1850-hyperVolume-mi9.rds")
 
 set.seed(3)
 Y2021_hyper_mi <- hypervolume::hypervolume_svm(Y2021A, name = "2021")
-saveRDS(Y2021_hyper_mi, "data/2021-hyper-mi9.rds")
+saveRDS(Y2021_hyper_mi, "results/2021-hyperVolume-mi9.rds")
+
+# you can load the above save .rds files using readRDS
 
 # carry out hypervolume comparisons
 # 1850s vs 2021
