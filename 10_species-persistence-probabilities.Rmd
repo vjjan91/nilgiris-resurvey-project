@@ -38,9 +38,11 @@ hist_occ <- read.csv("data/historical-occurrence-data.csv")
 # We follow Lees et al. (2021) and Thompson et al. (2017) who assigned values of 0.95-0.99 for specimen based records/museum records and conservative values of 0.5-0.65 for journal data (often reporting observations/sightings and not specimens collected). Such probabilities are assigned to account for varying efforts that cannot be quantified from historical observations. 
 
 hist_occ <-  hist_occ %>%
-  mutate("pci_lower" = case_when(institutionCode == "JournalData" ~ 0.5,
+  mutate("pci_lower" = 
+           case_when(institutionCode == "JournalData" ~ 0.5,
                                  TRUE ~ 0.95)) %>%
-  mutate("pci_upper" = case_when(institutionCode == "JournalData" ~ 0.65,
+  mutate("pci_upper" = 
+           case_when(institutionCode == "JournalData" ~ 0.65,
                                  TRUE ~ 0.99))
 
 ### fix the count column
@@ -48,6 +50,19 @@ hist_occ <-  hist_occ %>%
   mutate(histCount = case_when(individualCount == "X" ~ 1,
                                individualCount == "" ~ 1,
                                TRUE ~ as.numeric(individualCount)))
+
+## remove species with few observations
+histCount <- hist_occ %>%
+  group_by(scientific_name) %>%
+  count() 
+
+## filter species list with a minimum of four records
+histCount_minFour <- histCount %>%
+  filter(n >= 4 )
+
+## filter species to include only 68 species
+hist_occ <- hist_occ %>%
+  filter(scientific_name %in% histCount_minFour$scientific_name)
 ```
 
 ## Load in modern occurrence data
@@ -65,6 +80,10 @@ mod_occ <- mod_occ %>%
 mod_occ <- mod_occ %>%
   mutate("pci_lower" =  0.95) %>%
   mutate("pci_upper" = 0.99)
+
+## only include species that are present in the historical dataset
+mod_occ <- mod_occ %>%
+  filter(scientific_name %in% hist_occ$scientific_name)
 ```
 
 ## Combine modern and historical occurrence data
@@ -111,9 +130,9 @@ probDat <- full_join(hist_probDat, mod_probDat)
 # p(i) = the probability that the taxon, or recent evidence of it, could have been reliably identified in the survey if it had been recorded.
 # p(r) = the probability that the taxon, or recent evidence of it, would have been recorded in the survey.
 
-eps.passive = c(0.01,	0.05)
-pi.passive = c(0.10,	0.65)
-pr.passive = c(0.40,	0.60)
+eps.passive = c(0.10,	0.95)
+pi.passive = c(0.10,	0.95)
+pr.passive = c(0.10,	0.95)
 pas.sur = c(eps.passive ,pi.passive,pr.passive)
 
 # please refer to Thompson et al. 2017 for more details/information
@@ -264,9 +283,9 @@ probDat <- full_join(hist_probDat, mod_probDat)
 # p(i) = the probability that the taxon, or recent evidence of it, could have been reliably identified in the survey if it had been recorded.
 # p(r) = the probability that the taxon, or recent evidence of it, would have been recorded in the survey.
 
-eps.passive = c(0.01,	0.05)
-pi.passive = c(0.10,	0.65)
-pr.passive = c(0.40,	0.60)
+eps.passive = c(0.10,	0.95)
+pi.passive = c(0.10,	0.95)
+pr.passive = c(0.10,	0.95)
 pas.sur = c(eps.passive ,pi.passive,pr.passive)
 
 # please refer to Thompson et al. 2017 for more details/information
