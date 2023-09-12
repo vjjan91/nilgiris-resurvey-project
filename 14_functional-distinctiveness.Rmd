@@ -48,12 +48,6 @@ elev <- raster::extract(alt, sites)
 sites <- cbind(sites, elev)
 ```
 
-## Load species persistence probabilities at site and landscape level
-```{r}
-spec_site_persProb <- read.csv( "results/species-persProb-siteLevel.csv")
-spec_persProb <- read.csv("results/species-persProb-landscapeLevel.csv")
-```
-
 ### Load species trait data
 ```{r}
 trait_dat <- read.csv("data/species-trait-dat.csv")
@@ -66,17 +60,36 @@ relAbun <- read.csv("results/species-relative-abundance.csv")
 
 ### Load historical and modern occurrence data
 
-For the historical occurrence data, we will choose data from three time periods: 1850-1900, 1900-1950 and 1950-2000. 
+For the historical occurrence data, we will choose data from one time period: 1850-1900
 ```{r}
 ## read in historical occurrence data
 hist_occ <- read.csv("data/historical-occurrence-data.csv")
 
 ### pre-1900
-hist_occ_pre1900 <- hist_occ %>%
+hist_occ <- hist_occ %>%
   filter(year <= 1900)
 
+### fix the count column
+hist_occ <-  hist_occ %>%
+  mutate(histCount = case_when(individualCount == "X" ~ 1,
+                               individualCount == "" ~ 1,
+                               TRUE ~ as.numeric(individualCount)))
+
+## remove species with few observations
+histCount <- hist_occ %>%
+  group_by(scientific_name) %>%
+  count() 
+
+## filter species list with a minimum of four records
+histCount_minFour <- histCount %>%
+  filter(n >= 4 )
+
+## filter species to include only 68 species
+hist_occ <- hist_occ %>%
+  filter(scientific_name %in% histCount_minFour$scientific_name)
+
 ## group by scientific name and historical site code and join the sites dataframe
-hist_occ_pre1900 <- hist_occ_pre1900 %>%
+hist_occ <- hist_occ %>%
   group_by(scientific_name, historical_site_code) %>%
   count() %>%
   rename(., "abundance1850" = n) %>%
@@ -85,37 +98,12 @@ hist_occ_pre1900 <- hist_occ_pre1900 %>%
   filter(!is.na(scientific_name)) %>%
   replace(is.na(.), 0)
   
-# repeat above for two more time-periods
-## 1900-1950
-hist_occ_1900_1950 <- hist_occ %>%
-  filter(year > 1900 & year <= 1950)
-
-## group by scientific name and historical site code and join the sites dataframe
-hist_occ_1900_1950 <- hist_occ_1900_1950 %>%
-  group_by(scientific_name, historical_site_code) %>%
-  count() %>%
-  rename(., "abundance1900" = n) %>%
-  mutate("Y1900" = case_when(abundance1900 >= 1 ~ 1,TRUE ~ 0)) %>%
-  left_join(., sites, by=c("historical_site_code"="historical_site_code")) %>%
-  filter(!is.na(scientific_name)) %>%
-  replace(is.na(.), 0)
-
-### 1950 - 2000
-hist_occ_1950_2000 <- hist_occ %>%
-  filter(year > 1950 & year <= 2000)
-
-## group by scientific name and historical site code and join the sites dataframe
-hist_occ_1950_2000 <- hist_occ_1950_2000 %>%
-  group_by(scientific_name, historical_site_code) %>%
-  count() %>%
-  rename(., "abundance1950" = n) %>%
-  mutate("Y1950" = case_when(abundance1950 >= 1 ~ 1,TRUE ~ 0)) %>%
-  left_join(., sites, by=c("historical_site_code"="historical_site_code")) %>%
-  filter(!is.na(scientific_name)) %>%
-  replace(is.na(.), 0)
-
 ## read in modern occurrence data
 mod_occ <- read.csv("data/modern-occurrence-data.csv")
+
+## only include species that are present in the historical dataset
+mod_occ <- mod_occ %>%
+  filter(scientific_name %in% hist_occ$scientific_name)
 
 ## group by scientific name and modern site code
 mod_occ <- mod_occ %>%
@@ -131,10 +119,7 @@ mod_occ <-  left_join(mod_occ, sites, by=c("modern_site_code"="modern_site_code"
 ## Join the historical and modern count data
 ```{r}
 ## joining the historic and modern datasets
-## this dataframe can be used to examine land cover data later on
-hist_mod <- full_join(hist_occ_pre1900, hist_occ_1900_1950, by = c("scientific_name","modern_site_code","historical_site_code","modern_landCover_type","elev","site_name","geometry")) %>%
-  full_join(., hist_occ_1950_2000, by = c("scientific_name","modern_site_code","historical_site_code","modern_landCover_type","elev","site_name","geometry")) %>%
-   full_join(., mod_occ, by = c("scientific_name","modern_site_code","historical_site_code","modern_landCover_type","elev","site_name","geometry")) %>%
+hist_mod <- full_join(hist_occ, mod_occ, by = c("scientific_name","modern_site_code","historical_site_code","modern_landCover_type","elev","site_name","geometry")) %>%
   replace(is.na(.), 0) %>%
   arrange(scientific_name) %>%
   ungroup()
@@ -142,79 +127,46 @@ hist_mod <- full_join(hist_occ_pre1900, hist_occ_1900_1950, by = c("scientific_n
 ## Let's use the above dataframe to get species level data for further analysis downstream
 ## We will ignore site codes
 pres_abs <- hist_mod %>%
-  dplyr::select(scientific_name, Y1850, Y1900, Y1950, Y2021) %>%
+  dplyr::select(scientific_name, Y1850, Y2021) %>%
   group_by(scientific_name) %>%
   summarise_all(sum) %>%
   mutate("Y1850" = case_when(Y1850 >= 1 ~ 1,TRUE ~ 0)) %>%
-  mutate("Y1900" = case_when(Y1900 >= 1 ~ 1,TRUE ~ 0)) %>%
-  mutate("Y1950" = case_when(Y1950 >= 1 ~ 1,TRUE ~ 0)) %>%
   mutate("Y2021" = case_when(Y2021 >= 1 ~ 1,TRUE ~ 0))
 ```
 
 ## prep data for functional distinctiveness calculations
 ```{r}
-## calculate change in species persistence prob over time:
-## change in persistence prob over time (site level)
-persProb_min <- spec_persProb %>%
-  dplyr::select(years,PXt,scientific_name) %>%
-  group_by(scientific_name) %>%
-  slice(which.min(years)) %>%
-  rename(., PXt_min = "PXt") %>%
-  ungroup()
+names(relAbun) <- c("scientific_name","1850-1900","2021")
 
-persProb_max <- spec_persProb %>%
-  dplyr::select(years,PXt,scientific_name) %>%
-  group_by(scientific_name) %>%
-  slice(which.max(years)) %>%
-  rename(., PXt_max = "PXt") %>%
-  ungroup()
-
-## join the two dataframes
-persProb_change <- full_join(persProb_min[,-1], persProb_max[,-1]) %>%
-  mutate("persProbChange" = PXt_min - PXt_max) %>%
-  ungroup()
-
-## join species pers prob, relative abundance data and pres-abs dataframe
-
-names(relAbun) <- c("scientific_name","1850-1900","1900-1950","2021")
-
-relAbun_persProb <- left_join(relAbun,pres_abs, by="scientific_name") %>%
-  mutate("relAbunChange" = `1850-1900` - `2021`) %>%
-  left_join(., persProb_change, by="scientific_name")
+relAbun <- relAbun %>%
+  mutate(relAbunChange = `1850-1900` - `2021`)
 
 ## create a matrix
-mat <- relAbun_persProb %>% 
-  pivot_wider(names_from =  scientific_name, values_from = persProbChange)
-mat[is.na(mat)] <- 0
-mat <- as.matrix(mat)
+mat <- as.matrix(relAbun)
 
 # subset previous dataframe for list of species that are not detected in 2021 and 1850
 # below is being done for the sake of plotting and visualization
 
-notDetected2021 <- relAbun_persProb %>%
+notDetected2021 <- pres_abs %>%
   filter(Y2021 == 0, Y1850 == 1) %>%
   mutate("Det/NonDet" = "Naive Extinctions")
 
-notDetected1850 <- relAbun_persProb %>%
+notDetected1850 <- pres_abs %>%
   filter(Y1850 == 0, Y2021 == 1) %>%
   mutate("Det/NonDet" = "Novel Colonizations")
 
-spDet <- bind_rows(notDetected1850, notDetected2021)
+shared <- pres_abs %>%
+  filter(Y1850 == 1, Y2021 == 1) %>%
+  mutate("Det/NonDet" = "Shared")
+
+spDet <- bind_rows(notDetected1850, notDetected2021, shared)
 
 # adding this back to the relAbun dataframe
-relAbun_persProb <-left_join(relAbun_persProb, spDet[,c(1,13)], by ="scientific_name") %>% replace(is.na(.), "Shared")
-
-## threshold changes in persistence probability for the sake of visualization
-## and add it back to the previous dataframe
-
-relAbun_persProb <- relAbun_persProb %>%
-    mutate("persProbThreshold" = case_when(persProbChange > 0 & persProbChange <= 0.2 ~ "Stable",
-           persProbChange > 0.2 & persProbChange <=0.4 ~ "Moderate Declines",
-           persProbChange > 0.4 ~ "Large Declines"))
+relAbun <-left_join(relAbun, spDet, by ="scientific_name") 
 
 ## moving on to examine the trait data
 # scale trait data
-traitScaled <- left_join(relAbun_persProb, trait_dat[,c(1,5,46:51,54:56)], by ="scientific_name") %>% 
+traitScaled <- left_join(relAbun, trait_dat[,c(1,5,46:51,54:56)], by ="scientific_name") %>% 
   mutate(beak_len_culmen_z = scale_z(Beak.Length_Culmen)) %>%
   mutate(beak_len_nares_z = scale_z(Beak.Length_Nares)) %>%
   mutate(beak_width_z = scale_z(Beak.Width)) %>%
@@ -253,8 +205,8 @@ Di_Sum <- di_df %>%
   summarise_at(vars(Di), funs(mean(., na.rm=TRUE)))
 
 Di_Sum <- Di_Sum[order(Di_Sum$Di),] %>% 
-  mutate(ID = c(1:187)) %>% 
-  left_join(relAbun_persProb, by = "scientific_name")
+  mutate(ID = c(1:68)) %>% 
+  left_join(relAbun, by = "scientific_name")
 
 # write to file
 write.csv(Di_Sum, "results/func-distinctiveness.csv", row.names = F)
@@ -264,9 +216,9 @@ write.csv(Di_Sum, "results/func-distinctiveness.csv", row.names = F)
 
 fig_funcDi_extCol <- ggplot(Di_Sum, aes(x=ID, y=Di, fill = `Det/NonDet`)) + 
   geom_bar(stat = "identity")+ 
-  scale_fill_manual(values=c("red", "cornflowerblue", "azure3"), breaks=c("Naive Extinctions","Novel Colonizations","Shared")) +
+  scale_fill_manual(values=c("red", "azure3", "cornflowerblue"), breaks=c("Naive Extinctions","Novel Colonizations","Shared")) +
   theme_bw() +
-  geom_text(aes(label = ifelse(`Det/NonDet` == "Naive Extinctions", scientific_name, ""), y = 0.5), position = position_dodge(width = 0.9), angle = 90, family = "Century Gothic", fontface = "italic")+
+  geom_text(aes(label = scientific_name, y = 0.5), position = position_dodge(width = 0.9), angle = 90, family = "Century Gothic", fontface = "italic")+
   labs(x = "", y = "Functional distinctiveness - Di") +
   theme(axis.title = element_text(family = "Century Gothic",
       size = 14, face = "bold"),
@@ -278,61 +230,54 @@ fig_funcDi_extCol <- ggplot(Di_Sum, aes(x=ID, y=Di, fill = `Det/NonDet`)) +
   guides(fill=guide_legend(title="Legend"))
 
 ggsave(fig_funcDi_extCol, filename = "figs/fig_funcDi_ext_col.png", width = 22, height = 10, device = png(), units = "in", dpi = 300)    
-
-## visualize change in pers prob and functional distinctiveness
-fig_funcDi_persProb <- ggplot(Di_Sum, aes(x=ID, y=Di, fill = persProbThreshold)) + 
-  geom_bar(stat = "identity")+ 
-  scale_fill_manual(values=c("red", "cornflowerblue", "azure3"), breaks=c("Large Declines","Moderate Declines","Stable")) +
-  theme_bw() +
-geom_text(aes(label = ifelse(persProbThreshold == "Large Declines", scientific_name, ""), y = 0.5), position = position_dodge(width = 0.9), angle = 90, family = "Century Gothic", fontface = "italic") +
-  labs(x = "", y = "Functional distinctiveness - Di") +
-  theme(axis.title = element_text(family = "Century Gothic",
-      size = 14, face = "bold"),
-        axis.text = element_text(family="Century Gothic",size = 14),
-      legend.title = element_text(family="Century Gothic",
-                                    size = 14, face = "bold"),
-        legend.key.size = unit(1,"cm"),
-        legend.text = element_text(family="Century Gothic",size = 14)) +
-  guides(fill=guide_legend(title=expression(Delta*"Persistence Probability")))
-
-ggsave(fig_funcDi_persProb, filename = "figs/fig_funcDi_persProbChange.png", width = 22, height = 10, device = png(), units = "in", dpi = 300) 
+dev.off()
 ```
 
-## generalized linear model to test for associations between functional distinctiveness and changes in persistence probability and relative abundance
+## generalized linear model to test for associations between functional distinctiveness and changes in relative abundance
 ```{r}
-
-glm_funcDi_persProb <- glm(persProbChange ~ Di, data = Di_Sum, family = gaussian(link="identity"))
-
-summary(glm_funcDi_persProb)
-plot_model(glm_funcDi_persProb, type="pred")
-report::report(glm_funcDi_persProb)
-
-# We fitted a linear model (estimated using ML) to predict persProbChange with Di (formula: persProbChange ~ Di). The model's explanatory power is very weak (R2 = 5.78e-03). The model's intercept, corresponding to Di = 0, is at 0.19 (95% CI [0.13, 0.24], t(185) = 6.14, p < .001). Within this model:
-
-#  - The effect of Di is statistically non-significant and positive (beta = 0.21, 95% CI [-0.19, 0.61], t(185) = 1.04, p = 0.300; Std. beta = 0.08, 95% CI [-0.07, 0.22])
-
-# Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation
-
 glm_funcDi_relAbun <- glm(relAbunChange ~ Di, data = Di_Sum, family = gaussian(link="identity"))
 
 summary(glm_funcDi_relAbun)
 plot_model(glm_funcDi_relAbun, type="pred")
 report::report(glm_funcDi_relAbun)
-
-# We fitted a linear model (estimated using ML) to predict relAbunChange with Di (formula: relAbunChange ~ Di). The model's explanatory power is very weak (R2 = 1.41e-03). The model's intercept, corresponding to Di = 0, is at 8.21e-04 (95% CI [-2.84e-03, 4.48e-03], t(185) = 0.44, p = 0.660). Within this model:
-
-#  - The effect of Di is statistically non-significant and negative (beta = -6.41e-03, 95% CI [-0.03, 0.02], t(185) = -0.51, p = 0.610; Std. beta = -0.04, 95% CI [-0.18, 0.11])
-
-# Standardized parameters were obtained by fitting the model on a standardized version of the dataset. 95% Confidence Intervals (CIs) and p-values were computed using the Wald approximation
 ```
+Call:
+glm(formula = relAbunChange ~ Di, family = gaussian(link = "identity"), 
+    data = Di_Sum)
 
-## boxplots of functional distinctiveness by persistence probability and det/non-detections
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)  
+(Intercept)  0.017577   0.007147   2.459   0.0165 *
+Di          -0.084283   0.031858  -2.646   0.0102 *
+
+(Dispersion parameter for gaussian family taken to be 0.0004718065)
+
+    Null deviance: 0.034441  on 67  degrees of freedom
+Residual deviance: 0.031139  on 66  degrees of freedom
+AIC: -323.86
+
+Number of Fisher Scoring iterations: 2
+
+We fitted a linear model (estimated using ML) to predict relAbunChange with
+Di (formula: relAbunChange ~ Di). The model's explanatory power is weak (R2
+= 0.10). The model's intercept, corresponding to Di = 0, is at 0.02 (95% CI
+[3.57e-03, 0.03], t(66) = 2.46, p = 0.014). Within this model:
+
+  - The effect of Di is statistically significant and negative (beta = -0.08,
+95% CI [-0.15, -0.02], t(66) = -2.65, p = 0.008; Std. beta = -0.31, 95% CI
+[-0.54, -0.08])
+
+Standardized parameters were obtained by fitting the model on a standardized
+version of the dataset. 95% Confidence Intervals (CIs) and p-values were
+computed using a Wald t-distribution approximation.
+
+## boxplots of functional distinctiveness by det/non-detections
 ```{r}
 fig_funcDi_extCol_boxPlot <- ggplot(Di_Sum, aes(x=`Det/NonDet`, y=Di, fill = `Det/NonDet`)) + 
   geom_boxplot(outlier.shape = NA)+ 
   geom_jitter(shape=16,position=position_jitter(0.2), colour = "black") +
-  scale_fill_manual(values=c("red", "cornflowerblue", "azure3"), breaks=c("Naive Extinctions","Novel Colonizations","Shared")) +
-  scale_x_discrete(labels = c("Naive Extinctions","Novel Colonizations","Shared"))+
+  scale_fill_manual(values=c("red", "cornflowerblue"), breaks=c("Naive Extinctions","Shared")) +
+  scale_x_discrete(labels = c("Naive Extinctions","Shared"))+
   theme_bw() +
   labs(x = "", y = "Functional distinctiveness - Di") +
   theme(axis.title = element_text(family = "Century Gothic",
@@ -345,24 +290,7 @@ fig_funcDi_extCol_boxPlot <- ggplot(Di_Sum, aes(x=`Det/NonDet`, y=Di, fill = `De
   guides(fill="none")
 
 ggsave(fig_funcDi_extCol_boxPlot, filename = "figs/fig_funcDi_extCol_boxPlot.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
-
-fig_funcDi_persProb_boxPlot <- ggplot(Di_Sum, aes(x=persProbThreshold, y=Di, fill = persProbThreshold)) + 
-  geom_boxplot(outlier.shape = NA)+ 
-  geom_jitter(shape=16,position=position_jitter(0.2), colour = "black") +
-  scale_fill_manual(values=c("red", "cornflowerblue", "azure3"), breaks=c("Large Declines","Moderate Declines","Stable"))+
-  scale_x_discrete(labels = c("Large Declines","Moderate Declines","Stable"))+
-  theme_bw() +
-  labs(x = "", y = "Functional distinctiveness - Di") +
-  theme(axis.title = element_text(family = "Century Gothic",
-      size = 14, face = "bold"),
-        axis.text = element_text(family="Century Gothic",size = 14),
-      legend.title = element_text(family="Century Gothic",
-                                    size = 14, face = "bold"),
-        legend.key.size = unit(1,"cm"),
-        legend.text = element_text(family="Century Gothic",size = 14)) +
-  guides(fill="none")
-
-ggsave(fig_funcDi_persProb_boxPlot, filename = "figs/fig_funcDi_persProb_boxPlot.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+dev.off()
 ```
 
 
