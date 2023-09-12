@@ -3,7 +3,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-# Functional space and hypervolume estimation
+# Functional space calculations
 
 In this script, we replicate analyses from Gomez et al. (2021) 
 ```{r}
@@ -90,17 +90,36 @@ trait_dat <- read.csv("data/species-trait-dat.csv")
 
 ### Load historical and modern occurrence data
 
-For the historical occurrence data, we will choose data from three time periods: 1850-1900, 1900-1950 and 1950-2000. 
+For the historical occurrence data, we will choose data from a single time periods: 1850-1900
 ```{r}
 ## read in historical occurrence data
 hist_occ <- read.csv("data/historical-occurrence-data.csv")
 
 ### pre-1900
-hist_occ_pre1900 <- hist_occ %>%
+hist_occ <- hist_occ %>%
   filter(year <= 1900)
 
+### fix the count column
+hist_occ <-  hist_occ %>%
+  mutate(histCount = case_when(individualCount == "X" ~ 1,
+                               individualCount == "" ~ 1,
+                               TRUE ~ as.numeric(individualCount)))
+
+## remove species with few observations
+histCount <- hist_occ %>%
+  group_by(scientific_name) %>%
+  count() 
+
+## filter species list with a minimum of four records
+histCount_minFour <- histCount %>%
+  filter(n >= 4 )
+
+## filter species to include only 68 species
+hist_occ <- hist_occ %>%
+  filter(scientific_name %in% histCount_minFour$scientific_name)
+
 ## group by scientific name and historical site code and join the sites dataframe
-hist_occ_pre1900 <- hist_occ_pre1900 %>%
+hist_occ <- hist_occ %>%
   group_by(scientific_name, historical_site_code) %>%
   count() %>%
   rename(., "abundance1850" = n) %>%
@@ -109,37 +128,12 @@ hist_occ_pre1900 <- hist_occ_pre1900 %>%
   filter(!is.na(scientific_name)) %>%
   replace(is.na(.), 0)
   
-# repeat above for two more time-periods
-## 1900-1950
-hist_occ_1900_1950 <- hist_occ %>%
-  filter(year > 1900 & year <= 1950)
-
-## group by scientific name and historical site code and join the sites dataframe
-hist_occ_1900_1950 <- hist_occ_1900_1950 %>%
-  group_by(scientific_name, historical_site_code) %>%
-  count() %>%
-  rename(., "abundance1900" = n) %>%
-  mutate("Y1900" = case_when(abundance1900 >= 1 ~ 1,TRUE ~ 0)) %>%
-  left_join(., sites, by=c("historical_site_code"="historical_site_code")) %>%
-  filter(!is.na(scientific_name)) %>%
-  replace(is.na(.), 0)
-
-### 1950 - 2000
-hist_occ_1950_2000 <- hist_occ %>%
-  filter(year > 1950 & year <= 2000)
-
-## group by scientific name and historical site code and join the sites dataframe
-hist_occ_1950_2000 <- hist_occ_1950_2000 %>%
-  group_by(scientific_name, historical_site_code) %>%
-  count() %>%
-  rename(., "abundance1950" = n) %>%
-  mutate("Y1950" = case_when(abundance1950 >= 1 ~ 1,TRUE ~ 0)) %>%
-  left_join(., sites, by=c("historical_site_code"="historical_site_code")) %>%
-  filter(!is.na(scientific_name)) %>%
-  replace(is.na(.), 0)
-
 ## read in modern occurrence data
 mod_occ <- read.csv("data/modern-occurrence-data.csv")
+
+## only include species that are present in the historical dataset
+mod_occ <- mod_occ %>%
+  filter(scientific_name %in% hist_occ$scientific_name)
 
 ## group by scientific name and modern site code
 mod_occ <- mod_occ %>%
@@ -155,24 +149,18 @@ mod_occ <-  left_join(mod_occ, sites, by=c("modern_site_code"="modern_site_code"
 ## Join the historical and modern count data
 ```{r}
 ## joining the historic and modern datasets
-## this dataframe can be used to examine land cover data later on
-hist_mod <- full_join(hist_occ_pre1900, hist_occ_1900_1950, by = c("scientific_name","modern_site_code","historical_site_code","modern_landCover_type","elev","site_name","geometry")) %>%
-  full_join(., hist_occ_1950_2000, by = c("scientific_name","modern_site_code","historical_site_code","modern_landCover_type","elev","site_name","geometry")) %>%
-   full_join(., mod_occ, by = c("scientific_name","modern_site_code","historical_site_code","modern_landCover_type","elev","site_name","geometry")) %>%
+hist_mod <- full_join(hist_occ, mod_occ, by = c("scientific_name","modern_site_code","historical_site_code","modern_landCover_type","elev","site_name","geometry")) %>%
   replace(is.na(.), 0) %>%
   arrange(scientific_name) %>%
   ungroup()
 
 ## Let's use the above dataframe to get species level data for further analysis downstream
 ## We will ignore site codes
-
 pres_abs <- hist_mod %>%
-  dplyr::select(scientific_name, Y1850, Y1900, Y1950, Y2021) %>%
+  dplyr::select(scientific_name, Y1850, Y2021) %>%
   group_by(scientific_name) %>%
   summarise_all(sum) %>%
   mutate("Y1850" = case_when(Y1850 >= 1 ~ 1,TRUE ~ 0)) %>%
-  mutate("Y1900" = case_when(Y1900 >= 1 ~ 1,TRUE ~ 0)) %>%
-  mutate("Y1950" = case_when(Y1950 >= 1 ~ 1,TRUE ~ 0)) %>%
   mutate("Y2021" = case_when(Y2021 >= 1 ~ 1,TRUE ~ 0))
 ```
 
@@ -200,7 +188,7 @@ traitScaled <- trait_pres_abs %>%
 
 # subset scaled measures
 traitScaled <- traitScaled %>% 
-  select(scientific_name, Y1850, Y1900, Y1950, Y2021, weight_z,
+  select(scientific_name, Y1850, Y2021, weight_z,
          beak_len_culmen_z, beak_len_nares_z, beak_width_z,
          beak_depth_z, tarsus_len_z, wing_len_z, hand_wing_index_z, tail_len_z)
  
@@ -258,20 +246,6 @@ Y1850 <- traitScaled %>%
          beak_depth_z, tarsus_len_z, wing_len_z, hand_wing_index_z, tail_len_z) %>% 
   left_join(scoresPCATotal, by = "scientific_name") 
 
-Y1900 <- traitScaled %>% 
-  filter(Y1900 == 1) %>% 
-  select(scientific_name, weight_z,
-         beak_len_culmen_z, beak_len_nares_z, beak_width_z,
-         beak_depth_z, tarsus_len_z, wing_len_z, hand_wing_index_z, tail_len_z) %>% 
-  left_join(scoresPCATotal, by = "scientific_name") 
-
-Y1950 <- traitScaled %>% 
-  filter(Y1950 == 1) %>% 
-  select(scientific_name, weight_z,
-         beak_len_culmen_z, beak_len_nares_z, beak_width_z,
-         beak_depth_z, tarsus_len_z, wing_len_z, hand_wing_index_z, tail_len_z) %>% 
-  left_join(scoresPCATotal, by = "scientific_name") 
-
 Y2021 <- traitScaled %>% 
   filter(Y2021 == 1) %>% 
   select(scientific_name, weight_z,
@@ -288,16 +262,6 @@ pc_raw_1850 <- Y1850 %>%
   dplyr::select(., scientific_name, Comp.1, Comp.2) %>% 
   tibble::column_to_rownames(var = "scientific_name")
 
-pc_raw_1900 <- Y1900 %>% 
-  # extract first two principal components
-  dplyr::select(., scientific_name, Comp.1, Comp.2) %>% 
-  tibble::column_to_rownames(var = "scientific_name")
-
-pc_raw_1950 <- Y1950 %>% 
-  # extract first two principal components
-  dplyr::select(., scientific_name, Comp.1, Comp.2) %>% 
-  tibble::column_to_rownames(var = "scientific_name")
-
 pc_raw_2021 <- Y2021 %>% 
   # extract first two principal components
   dplyr::select(., scientific_name, Comp.1, Comp.2) %>% 
@@ -305,8 +269,6 @@ pc_raw_2021 <- Y2021 %>%
 
 # optimal bandwidth estimation
 hpi_1850 <- Hpi(x = pc_raw_1850)
-hpi_1900 <- Hpi(x = pc_raw_1900)
-hpi_1950 <- Hpi(x = pc_raw_1950)
 hpi_2021 <- Hpi(x = pc_raw_2021)
 
 # kernel density estimation 1850  
@@ -323,34 +285,6 @@ cl_95_1850 <- cl(df = den_1850, prob = 0.95)
 # 0.99 probability kernel
 cl_99_1850 <- cl(df = den_1850, prob = 0.99)
 
-# kernel density estimation 1900   
-est_1900 <- kde(x = pc_raw_1900, H = hpi_1900, compute.cont = TRUE)  
-den_1900 <- list(est_1900$eval.points[[1]], est_1900$eval.points[[2]], est_1900$estimate)
-names(den_1900) <- c("x", "y", "z")
-dimnames(den_1900$z) <- list(den_1900$x, den_1900$y)
-dcc_1900 <- melt(den_1900$z)
-
-# 0.5 probability kernel
-cl_50_1900 <- cl(df = den_1900, prob = 0.50)
-# 0.95 probability kernel
-cl_95_1900 <- cl(df = den_1900, prob = 0.95)
-# 0.99 probability kernel
-cl_99_1900 <- cl(df = den_1900, prob = 0.99)
-
-# kernel density estimation 1950   
-est_1950 <- kde(x = pc_raw_1950, H = hpi_1950, compute.cont = TRUE)  
-den_1950 <- list(est_1950$eval.points[[1]], est_1950$eval.points[[2]], est_1950$estimate)
-names(den_1950) <- c("x", "y", "z")
-dimnames(den_1950$z) <- list(den_1950$x, den_1950$y)
-dcc_1950 <- melt(den_1950$z)
-
-# 0.5 probability kernel
-cl_50_1950 <- cl(df = den_1950, prob = 0.50)
-# 0.95 probability kernel
-cl_95_1950 <- cl(df = den_1950, prob = 0.95)
-# 0.99 probability kernel
-cl_99_1950 <- cl(df = den_1950, prob = 0.99)
-
 # kernel density estimation 2021  
 est_2021 <- kde(x = pc_raw_2021, H = hpi_2021, compute.cont = TRUE)  
 den_2021 <- list(est_2021$eval.points[[1]], est_2021$eval.points[[2]], est_2021$estimate)
@@ -366,12 +300,10 @@ cl_95_2021 <- cl(df = den_2021, prob = 0.95)
 cl_99_2021 <- cl(df = den_2021, prob = 0.99)
 
 # save principal component data
-write.csv(Y1850, file = "data/PCA_1850.csv", row.names = FALSE)
-write.csv(Y1900, file = "data/PCA_1900.csv", row.names = FALSE)
-write.csv(Y1950, file = "data/PCA_1950.csv", row.names = FALSE)
-write.csv(Y2021, file = "data/PCA_2021.csv", row.names = FALSE)
-write.csv(scoresPCATotal, file = "data/PCA-scores.csv")
-write.csv(loadingsPCATotal, file = "data/PCA-loadings.csv", row.names = FALSE)
+write.csv(Y1850, file = "results/PCA_1850.csv", row.names = FALSE)
+write.csv(Y2021, file = "results/PCA_2021.csv", row.names = FALSE)
+write.csv(scoresPCATotal, file = "results/PCA-scores.csv")
+write.csv(loadingsPCATotal, file = "results/PCA-loadings.csv", row.names = FALSE)
 ```
 
 
@@ -412,8 +344,8 @@ pca_plot_1850 <- ggplot(dcc_1850, aes(x = Var1, y = Var2)) +
   geom_segment(data = loadings_sc, aes(x = 0, y = 0, xend = -Comp.1, yend = -Comp.2), lty = 5, colour = "darkgrey") +
   # add arrow labels
   geom_text_repel(data = loadings_sc, aes(x = Comp.1, y = Comp.2, label = trait), size = 4, nudge_x = 11, hjust = 0.5, direction = "y", segment.size = 0.5,segment.color = "grey89") +
-  scale_x_continuous(limits = c(-5,10), expand = c(0,0)) +
-  scale_y_continuous(limits = c(-5,5), expand = c(0,0)) +
+  #scale_x_continuous(limits = c(-5,10), expand = c(0,0)) +
+  #scale_y_continuous(limits = c(-5,5), expand = c(0,0)) +
   # axis labels - see comp_var
   labs(x = "PC1 - Beak Morphology (67%)", y = "PC2 - Dispersal ability (16%)") +
   theme_classic() +
@@ -424,6 +356,7 @@ pca_plot_1850 <- ggplot(dcc_1850, aes(x = Var1, y = Var2)) +
     text = element_text(family = "Century Gothic", size =15))
 
 ggsave(pca_plot_1850, filename = "figs/fig_pcaPlot_1850.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+dev.off()
 
 # for plots (let's plot each species by it's habitat affiliation on the plot)
 wood2021 <- left_join(Y2021, trait_dat, by="scientific_name") %>%
@@ -458,8 +391,8 @@ pca_plot_2021 <- ggplot(dcc_2021, aes(x = Var1, y = Var2)) +
   geom_segment(data = loadings_sc, aes(x = 0, y = 0, xend = -Comp.1, yend = -Comp.2), lty = 5, colour = "darkgrey") +
   # add arrow labels
   geom_text_repel(data = loadings_sc, aes(x = Comp.1, y = Comp.2, label = trait), size = 4, nudge_x = 11, hjust = 0.5, direction = "y", segment.size = 0.5,segment.color = "grey89") +
-  scale_x_continuous(limits = c(-5,10), expand = c(0,0)) +
-  scale_y_continuous(limits = c(-5,5), expand = c(0,0)) +
+  #scale_x_continuous(limits = c(-5,10), expand = c(0,0)) +
+  #scale_y_continuous(limits = c(-5,5), expand = c(0,0)) +
   # axis labels - see comp_var
   labs(x = "PC1 - Beak Morphology (67%)", y = "PC2 - Dispersal ability (16%)") +
   theme_classic() +
@@ -470,6 +403,7 @@ pca_plot_2021 <- ggplot(dcc_2021, aes(x = Var1, y = Var2)) +
     text = element_text(family = "Century Gothic", size = 15))
 
 ggsave(pca_plot_2021, filename = "figs/fig_pcaPlot_2021.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+dev.off()
 ```
 
 ## Main text Figure 4
@@ -489,86 +423,4 @@ fig_pca_1850_2021 <-
 
 ggsave(fig_pca_1850_2021, filename = "figs/fig04.png", width=15, height=5,device = png(), units="in", dpi = 300); dev.off()
 ```
-
-## Calculation of hypervolumes
-```{r}
-# dataframes of trait data (PCA scores)
-#Y1850
-Y1850A <- Y1850 %>% 
-  select(scientific_name, Comp.1, Comp.2, Comp.3, Comp.4, Comp.5, Comp.6, Comp.7, Comp.8, Comp.9) %>% 
-  tibble::column_to_rownames(var = "scientific_name")
-
-#Y2021
-Y2021A <- Y2021 %>% 
-  select(scientific_name, Comp.1, Comp.2, Comp.3, Comp.4, Comp.5, Comp.6, Comp.7, Comp.8, Comp.9) %>% 
-  tibble::column_to_rownames(var = "scientific_name")
-
-# hypervolumes: Takes a long time to run.
-set.seed(3)
-Y1850_hyper_mi <- hypervolume::hypervolume_svm(Y1850A, name = "1850")
-saveRDS(Y1850_hyper_mi, "results/1850-hyperVolume-mi9.rds")
-
-set.seed(3)
-Y2021_hyper_mi <- hypervolume::hypervolume_svm(Y2021A, name = "2021")
-saveRDS(Y2021_hyper_mi, "results/2021-hyperVolume-mi9.rds")
-
-# you can load the above save .rds files using readRDS
-
-# carry out hypervolume comparisons
-# 1850s vs 2021
-set.seed(3)
-bm_set_mi_1850vs2021 <- hypervolume::hypervolume_set(Y1850_hyper_mi, Y2021_hyper_mi, check.memory = FALSE)
-
-# summarise volumes 1850 vs 2021
-sumVolume <- hypervolume::get_volume(bm_set_mi_1850vs2021)
-
-# Plot 3D hypervolumes 
-# 1850 vs 2021
-bm_set_mi_1850vs2021@HVList$HV1 <- NULL
-bm_set_mi_1850vs2021@HVList$HV2 <- NULL
-bm_set_mi_1850vs2021@HVList$Union <- NULL
-
-# trait names
-names <- c("Beak Morphology", "Dispersal ability","Tarsus length", "PC4", "PC5", "PC6", "PC7", "PC8", "PC9")
-
-colnames(bm_set_mi_1850vs2021@HVList$Intersection@RandomPoints) <- names
-colnames(bm_set_mi_1850vs2021@HVList$Unique_1@RandomPoints) <- names
-colnames(bm_set_mi_1850vs2021@HVList$Unique_2@RandomPoints) <- names
-
-# plot hypervolumes 
-hypervolume::plot.HypervolumeList(bm_set_mi_1850vs2021, show.3d = TRUE, plot.3d.axes.id = c(1,2,3), show.random = FALSE, show.data = TRUE, show.centroid = FALSE, show.density = TRUE, cex.random = 5, colors = c("azure3", "red","cornflowerblue"))
-```
-
-## Create fancy 3d plots of hypervolumes
-```{r}
-# Data frame for Plotly Hyper Volume Plot
-inter <- data.frame(bm_set_mi_1850vs2021@HVList$Intersection@RandomPoints)
-inter <- inter %>% 
-  mutate(section = "intersection")
-
-uni1 <- data.frame(bm_set_mi_1850vs2021@HVList$Unique_1@RandomPoints) 
-uni1 <- uni1 %>% 
-  mutate(section = "Unique 1850")
-
-uni2 <- data.frame(bm_set_mi_1850vs2021@HVList$Unique_2@RandomPoints)
-uni2 <- uni2 %>% 
-  mutate(section = "Unique 2021")
-
-HV <- rbind(inter, uni1, uni2)
-write.csv(HV,"data/hypervolume-data.csv", row.names=F)
-
-colnames(bm_set_mi_1850vs2021@HVList$Intersection@RandomPoints) <- names
-colnames(bm_set_mi_1850vs2021@HVList$Unique_1@RandomPoints) <- names
-colnames(bm_set_mi_1850vs2021@HVList$Unique_2@RandomPoints) <- names
-
-pal <- c("green","red", "cornflowerblue" )
-
-fig <- plot_ly(HV, x = ~Beak.Morphology, y = ~(-Dispersal.ability), z = ~(-Tarsus.length), type = 'scatter3d', mode = 'markers', color = ~section, colors = pal, marker = list(size = 3,opacity = 0.6, line = list(color = 'grey66', width = 2)))
-
-fig_hypervolume <- fig %>% layout(scene = list(xaxis = list(title = 'Beak morphology'),yaxis = list(title = 'Dispersal ability'),
-             zaxis = list(title = 'Tarsus length')))
-
-fig_hypervolume
-```
-
 
