@@ -60,17 +60,36 @@ trait_dat <- read.csv("data/species-trait-dat.csv")
 
 ### Load historical and modern occurrence data
 
-For the historical occurrence data, we will choose data from three time periods: 1850-1900, 1900-1950 and 1950-2000. 
+For the historical occurrence data, we will choose data from one time period: 1850-1900
 ```{r}
 ## read in historical occurrence data
 hist_occ <- read.csv("data/historical-occurrence-data.csv")
 
 ### pre-1900
-hist_occ_pre1900 <- hist_occ %>%
+hist_occ <- hist_occ %>%
   filter(year <= 1900)
 
+### fix the count column
+hist_occ <-  hist_occ %>%
+  mutate(histCount = case_when(individualCount == "X" ~ 1,
+                               individualCount == "" ~ 1,
+                               TRUE ~ as.numeric(individualCount)))
+
+## remove species with few observations
+histCount <- hist_occ %>%
+  group_by(scientific_name) %>%
+  count() 
+
+## filter species list with a minimum of four records
+histCount_minFour <- histCount %>%
+  filter(n >= 4 )
+
+## filter species to include only 68 species
+hist_occ <- hist_occ %>%
+  filter(scientific_name %in% histCount_minFour$scientific_name)
+
 ## group by scientific name and historical site code and join the sites dataframe
-hist_occ_pre1900 <- hist_occ_pre1900 %>%
+hist_occ <- hist_occ %>%
   group_by(scientific_name, historical_site_code) %>%
   count() %>%
   rename(., "abundance1850" = n) %>%
@@ -79,37 +98,12 @@ hist_occ_pre1900 <- hist_occ_pre1900 %>%
   filter(!is.na(scientific_name)) %>%
   replace(is.na(.), 0)
   
-# repeat above for two more time-periods
-## 1900-1950
-hist_occ_1900_1950 <- hist_occ %>%
-  filter(year > 1900 & year <= 1950)
-
-## group by scientific name and historical site code and join the sites dataframe
-hist_occ_1900_1950 <- hist_occ_1900_1950 %>%
-  group_by(scientific_name, historical_site_code) %>%
-  count() %>%
-  rename(., "abundance1900" = n) %>%
-  mutate("Y1900" = case_when(abundance1900 >= 1 ~ 1,TRUE ~ 0)) %>%
-  left_join(., sites, by=c("historical_site_code"="historical_site_code")) %>%
-  filter(!is.na(scientific_name)) %>%
-  replace(is.na(.), 0)
-
-### 1950 - 2000
-hist_occ_1950_2000 <- hist_occ %>%
-  filter(year > 1950 & year <= 2000)
-
-## group by scientific name and historical site code and join the sites dataframe
-hist_occ_1950_2000 <- hist_occ_1950_2000 %>%
-  group_by(scientific_name, historical_site_code) %>%
-  count() %>%
-  rename(., "abundance1950" = n) %>%
-  mutate("Y1950" = case_when(abundance1950 >= 1 ~ 1,TRUE ~ 0)) %>%
-  left_join(., sites, by=c("historical_site_code"="historical_site_code")) %>%
-  filter(!is.na(scientific_name)) %>%
-  replace(is.na(.), 0)
-
 ## read in modern occurrence data
 mod_occ <- read.csv("data/modern-occurrence-data.csv")
+
+## only include species that are present in the historical dataset
+mod_occ <- mod_occ %>%
+  filter(scientific_name %in% hist_occ$scientific_name)
 
 ## group by scientific name and modern site code
 mod_occ <- mod_occ %>%
@@ -125,24 +119,18 @@ mod_occ <-  left_join(mod_occ, sites, by=c("modern_site_code"="modern_site_code"
 ## Join the historical and modern count data
 ```{r}
 ## joining the historic and modern datasets
-## this dataframe can be used to examine land cover data later on
-hist_mod <- full_join(hist_occ_pre1900, hist_occ_1900_1950, by = c("scientific_name","modern_site_code","historical_site_code","modern_landCover_type","elev","site_name","geometry")) %>%
-  full_join(., hist_occ_1950_2000, by = c("scientific_name","modern_site_code","historical_site_code","modern_landCover_type","elev","site_name","geometry")) %>%
-   full_join(., mod_occ, by = c("scientific_name","modern_site_code","historical_site_code","modern_landCover_type","elev","site_name","geometry")) %>%
+hist_mod <- full_join(hist_occ, mod_occ, by = c("scientific_name","modern_site_code","historical_site_code","modern_landCover_type","elev","site_name","geometry")) %>%
   replace(is.na(.), 0) %>%
   arrange(scientific_name) %>%
   ungroup()
 
 ## Let's use the above dataframe to get species level data for further analysis downstream
 ## We will ignore site codes
-
 pres_abs <- hist_mod %>%
-  dplyr::select(scientific_name, Y1850, Y1900, Y1950, Y2021) %>%
+  dplyr::select(scientific_name, Y1850, Y2021) %>%
   group_by(scientific_name) %>%
   summarise_all(sum) %>%
   mutate("Y1850" = case_when(Y1850 >= 1 ~ 1,TRUE ~ 0)) %>%
-  mutate("Y1900" = case_when(Y1900 >= 1 ~ 1,TRUE ~ 0)) %>%
-  mutate("Y1950" = case_when(Y1950 >= 1 ~ 1,TRUE ~ 0)) %>%
   mutate("Y2021" = case_when(Y2021 >= 1 ~ 1,TRUE ~ 0))
 ```
 
@@ -179,12 +167,10 @@ traitScaled <- traitScaled[order(traitScaled$scientific_name),]
 
 # scaled abundance calculation
 species_scaled_abund <- hist_mod %>%
-  dplyr::select(scientific_name, abundance1850, abundance1900, abundance1950, modCount) %>%
+  dplyr::select(scientific_name, abundance1850, modCount) %>%
   group_by(scientific_name) %>%
   summarise_all(sum) %>%
   mutate("1850" = range01(abundance1850)) %>%
-  mutate("1900" = range01(abundance1900)) %>%
-  mutate("1950" = range01(abundance1950)) %>%
   mutate("2021" = range01(modCount)) %>%
   dplyr::select(scientific_name, `1850`, `2021`) %>%
   mutate(sumVar = rowSums(.[2:3])) %>%
@@ -209,7 +195,7 @@ mat <- species_scaled_abund[order(species_scaled_abund$scientific_name),] %>%
 
 fd_iNDICES <- dbFD(traitScaledMat, mat ,w.abun = TRUE, calc.FRic = TRUE, m = "max", stand.FRic = TRUE , calc.FDiv = TRUE,calc.CWM = FALSE, print.pco = FALSE, messages = TRUE)
 
-write.csv(as.data.frame(fd_iNDICES),"data/observed-func-div-values.csv")
+write.csv(as.data.frame(fd_iNDICES),"results/observed-func-div-values.csv")
 
 # Estimating Standard Effect Sizes with Null model (takes long time to run)
 
@@ -223,6 +209,7 @@ mat2 <- species_scaled_abund %>%
 # mat2 <- as.matrix(mat2)
 
 fdnullall <- NULL
+FD0 <- NULL
 
 for(i in 1:999){
   
@@ -256,25 +243,29 @@ Y1 <- subset(fdnullall, fdnullall$Year == "1850")
 Y2 <- subset(fdnullall, fdnullall$Year == "2021")
 
 ## FRic Pvalues
-ob1 <- nrow(Y1[Y1$FRic< 0.18, ]) + 1
-ob2 <- nrow(Y2[Y2$FRic< 0.28, ]) + 1
-P1850 <- ob1/(999+1)# P = 0.009
-P2021 <- ob2/(999+1)# P = 0.581
+ob1 <- nrow(Y1[Y1$FRic< 0.98, ]) + 1
+ob2 <- nrow(Y2[Y2$FRic< 0.83, ]) + 1
+P1850 <- ob1/(999+1)# P = 0.302
+P2021 <- ob2/(999+1)# P = 0.603
 
 ## FDis Pvalues
-ob1 <- nrow(Y1[Y1$FDis< 1.49, ]) + 1
-ob2 <- nrow(Y2[Y2$FDis< 1.75, ]) + 1
-P1850 <- ob1/(999+1)# P = 0.001
-P2021 <- ob2/(999+1)# P = 0.099
+ob1 <- nrow(Y1[Y1$FDis< 2.26, ]) + 1
+ob2 <- nrow(Y2[Y2$FDis< 2.93, ]) + 1
+P1850 <- ob1/(999+1)# P = 0.087
+P2021 <- ob2/(999+1)# P = 0.874
 
 # Boxplots Observed vs Null model
 # FRic
 fig_obs_v_exp_Fric <- ggplot(fdnullall, aes(x=as.factor(Year), y=FRic)) + 
   geom_boxplot(colour = "gray40", outlier.shape = NA)+ 
-  geom_jitter(shape=16, size = 0.1,position=position_jitter(0.1), colour = "gray60") + geom_segment(aes(x = 0.55, y = 0.1818924, xend = 1.45, yend = 0.1818924), color = "red", size = 2) +
- geom_segment(aes(x = 1.5, y = 0.2822567, xend = 2.45, yend = 0.2822567), color = "red", size = 2)+
-  geom_text(x=1, y=1, label="p = 0.009")+
-  geom_text(x=2, y=1, label="p = 0.581")+
+  geom_jitter(shape=16, size = 0.1,position=position_jitter(0.1), colour = "gray60") + geom_segment(aes(x = 0.55, y = 0.981477299
+, xend = 1.45, yend = 0.981477299
+), color = "red", size = 2) +
+ geom_segment(aes(x = 1.5, y = 0.839322419
+, xend = 2.45, yend = 0.839322419
+), color = "red", size = 2)+
+  geom_text(x=1, y=1, label="p = 0.302")+
+  geom_text(x=2, y=1, label="p = 0.603")+
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_rect(fill='white', colour = "black"),
@@ -284,15 +275,20 @@ fig_obs_v_exp_Fric <- ggplot(fdnullall, aes(x=as.factor(Year), y=FRic)) +
   labs(x = "", y = "Functional Richness")+ scale_x_discrete(labels = c("1850s", "2021"))
 
 ggsave(fig_obs_v_exp_Fric, filename = "figs/fig_observed_expected_funcRichness.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+dev.off()
 
 # FDis
 fig_obs_v_exp_FDis <- ggplot(fdnullall, aes(x=as.factor(Year), y=FDis)) + 
   geom_boxplot(colour = "gray40", outlier.shape = NA)+
   geom_jitter(shape=16, size = 0.1,position=position_jitter(0.1), colour = "gray60") +
-  geom_segment(aes(x = 0.55, y = 1.498572, xend = 1.45, yend = 1.498572), color = "red", size = 2)+
-  geom_segment(aes(x = 1.5, y = 1.756331, xend = 2.45, yend = 1.756331), color = "red", size = 2)+
-  geom_text(x=1, y=3.5, label="p = 0.001")+
-  geom_text(x=2, y=3.5, label="p = 0.099")+
+  geom_segment(aes(x = 0.55, y = 2.265327387
+, xend = 1.45, yend = 2.265327387
+), color = "red", size = 2)+
+  geom_segment(aes(x = 1.5, y = 2.935667411
+, xend = 2.45, yend = 2.935667411
+), color = "red", size = 2)+
+  geom_text(x=1, y=3.5, label="p = 0.087")+
+  geom_text(x=2, y=3.5, label="p = 0.874")+
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_rect(fill='white', colour = "black"),
@@ -302,7 +298,7 @@ fig_obs_v_exp_FDis <- ggplot(fdnullall, aes(x=as.factor(Year), y=FDis)) +
   labs(x = "", y = "Functional Dispersion")+ scale_x_discrete(labels = c("1850s", "2021"))
 
 ggsave(fig_obs_v_exp_FDis, filename = "figs/fig_observed_expected_funcDispersion.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
-
+dev.off()
 ```
 
 ## Estimate standard effect sizes
@@ -319,7 +315,9 @@ fd_SES <- fdnullall %>%
   summarise_at(vars(FRic, FDis), funs(sd(., na.rm=TRUE))) %>% 
   transmute(Year = Year, FR_SD = FRic, FDis_SD = FDis) %>% 
   left_join(fd_Mean, by = "Year") %>% 
-  mutate(FRic =c(0.1818924, 0.2822567), FEve = c(0.5104238, 0.3926145), FDiv = c(0.6463526, 0.6936936), FDis = c(1.498572, 1.756331)) %>% 
+  mutate(FRic =c(0.981477299, 0.839322419), FEve = c(0.533492135, 0.393004228), FDiv = c(0.686634956,0.738000497
+), FDis = c(2.265327387, 2.935667411
+)) %>% 
   mutate(SES_FRIc = ((FRic - FR_M)/FR_SD),SES_FDis = ((FDis - FDis_M)/FDis_SD))
 
 # Plots SES for FRic and FDis
@@ -336,6 +334,7 @@ fig_ses_funcRichness <- ggplot(fd_SES, aes(x=as.factor(Year), y=SES_FRIc)) +
   labs(x = "", y = "SES Functional Richness")+ scale_x_discrete(labels = c("1850s", "2021"))
 
 ggsave(fig_ses_funcRichness, filename = "figs/fig_ses_funcRichness.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+dev.off()
 
 fig_ses_funcDisp <- ggplot(fd_SES, aes(x=as.factor(Year), y=SES_FDis)) + 
   geom_boxplot(colour = "gray40", outlier.shape = NA) + 
@@ -352,5 +351,6 @@ fig_ses_funcDisp <- ggplot(fd_SES, aes(x=as.factor(Year), y=SES_FDis)) +
   labs(x = "", y = "SES Functional Dispersion")+ scale_x_discrete(labels = c("1850s", "2021"))
 
 ggsave(fig_ses_funcDisp, filename = "figs/fig_ses_funcDispersion.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+dev.off()
 ```
 
