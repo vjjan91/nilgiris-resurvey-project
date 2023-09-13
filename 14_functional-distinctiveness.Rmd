@@ -211,8 +211,24 @@ Di_Sum <- Di_Sum[order(Di_Sum$Di),] %>%
 # write to file
 write.csv(Di_Sum, "results/func-distinctiveness.csv", row.names = F)
 
+## compute functional uniqueness
+#Compute Uniqueness for each species
+ui_df <- uniqueness_stack(com_df = traitScaled,
+                          sp_col = "scientific_name",
+                          dist_matrix = dist_mat)
+
+head(ui_df)
+
+Ui_Sum <- ui_df %>% 
+  group_by(scientific_name) %>%
+  summarise_at(vars(Ui), funs(mean(., na.rm=TRUE)))
+
+Ui_Sum <- Ui_Sum[order(Ui_Sum$Ui),] %>% 
+  mutate(ID = c(1:68)) %>% 
+  left_join(relAbun, by = "scientific_name")
+
 # visualize/plots
-# first we will visualize naive extinctions and novel colonizations
+# first we will visualize functional distinctiveness
 
 fig_funcDi_extCol <- ggplot(Di_Sum, aes(x=ID, y=Di, fill = `Det/NonDet`)) + 
   geom_bar(stat = "identity")+ 
@@ -230,6 +246,25 @@ fig_funcDi_extCol <- ggplot(Di_Sum, aes(x=ID, y=Di, fill = `Det/NonDet`)) +
   guides(fill=guide_legend(title="Legend"))
 
 ggsave(fig_funcDi_extCol, filename = "figs/fig_funcDi_ext_col.png", width = 22, height = 10, device = png(), units = "in", dpi = 300)    
+dev.off()
+
+## functional uniqueness
+fig_funcUi_extCol <- ggplot(Ui_Sum, aes(x=ID, y=Ui, fill = `Det/NonDet`)) + 
+  geom_bar(stat = "identity")+ 
+  scale_fill_manual(values=c("red", "azure3", "cornflowerblue"), breaks=c("Naive Extinctions","Novel Colonizations","Shared")) +
+  theme_bw() +
+  geom_text(aes(label = scientific_name, y = 0.2), position = position_dodge(width = 0.9), angle = 90, family = "Century Gothic", fontface = "italic")+
+  labs(x = "", y = "Functional uniqueness - Ui") +
+  theme(axis.title = element_text(family = "Century Gothic",
+      size = 14, face = "bold"),
+        axis.text = element_text(family="Century Gothic",size = 14),
+      legend.title = element_text(family="Century Gothic",
+                                    size = 14, face = "bold"),
+        legend.key.size = unit(1,"cm"),
+        legend.text = element_text(family="Century Gothic",size = 14)) +
+  guides(fill=guide_legend(title="Legend"))
+
+ggsave(fig_funcUi_extCol, filename = "figs/fig_funcUi_ext_col.png", width = 22, height = 10, device = png(), units = "in", dpi = 300)    
 dev.off()
 ```
 
