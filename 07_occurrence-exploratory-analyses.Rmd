@@ -31,67 +31,23 @@ occ_year <- hist_occ %>%
 # Let us create a new column that bins year by time period. For the sake of exploratory analysis, we bin data into 50 year time periods (1850-1900, 1900-1950, 1950-2000, post2000)
 
 hist_occ <- hist_occ %>%
-  mutate(timePeriod = case_when(
-    year >= 1850 & year < 1900 ~ "1850-1900",
-    year >= 1900 & year < 1950 ~ "1900-1950",
-    year >= 1950 & year < 2000 ~ "1950-2000",
-    year >= 2000 ~ "post2000"
-  ))
-
-# count by timePeriod
-occ_timePeriod <- hist_occ %>%
-  group_by(timePeriod) %>%
-  count()
-
-# Majority of the data is from the period 1850-1900.
-fig_hist_timePeriod <- ggplot(occ_timePeriod, aes(x = timePeriod, y = n, fill = timePeriod)) +
-  geom_bar(stat = "identity", position = position_dodge(), fill = "#883107", alpha = 0.9) +
-  geom_text(aes(label = n, hjust = "middle", vjust = -0.5),
-    position = position_dodge(), angle = 0, size = 5
-  ) +
-  theme_bw() +
-  labs(
-    x = "\nTime Period",
-    y = "Count\n"
-  ) +
-  theme(
-    axis.title = element_text(
-      family = "Century Gothic",
-      size = 14, face = "bold"
-    ),
-    axis.text = element_text(family = "Century Gothic", size = 14),
-    legend.position = "none"
-  )
-
-ggsave(fig_hist_timePeriod, filename = "figs/fig_histCountBytimePeriod.png", width = 12, height = 7, device = png(), units = "in", dpi = 300)
-dev.off()
+  filter(year <= 1900)
 ```
 
-### Examining count of specimens by locality and time period
+### Examining count of specimens by locality
 ```{r}
-## given that sampling was limited post 1950, we exclude observations after 1950
-hist_occ <- hist_occ %>%
-  filter(timePeriod != "1950-2000") %>%
-  filter(timePeriod != "post2000")
-
 occ_locality <- hist_occ %>%
   group_by(historical_site_code) %>%
   count()
 
-# Top 5 locations are OTCM, CNRG, LWSL, KJPN and KLHT.
-loc_timePeriod <- hist_occ %>%
-  group_by(timePeriod, historical_site_code) %>%
-  count()
-
-fig_loc_timePeriod <- ggplot(loc_timePeriod, aes(x = historical_site_code, y = n, fill = historical_site_code)) +
+fig_loc_timePeriod <- ggplot(occ_locality, aes(x = historical_site_code, y = n, fill = historical_site_code)) +
   geom_bar(stat = "identity", position = position_dodge(), fill = "#883107", alpha = 0.9) +
   geom_text(aes(label = n, hjust = "middle", vjust = -0.5),
     position = position_dodge(), angle = 0, size = 5
   ) +
-  facet_wrap(~timePeriod) +
   theme_bw() +
   labs(
-    x = "\nTime Period & Locality",
+    x = "\nLocality",
     y = "Count\n"
   ) +
   theme(
@@ -104,32 +60,31 @@ fig_loc_timePeriod <- ggplot(loc_timePeriod, aes(x = historical_site_code, y = n
     legend.position = "none"
   )
 
-ggsave(fig_loc_timePeriod, filename = "figs/fig_histCount_loc_timePeriod.png", width = 12, height = 7, device = png(), units = "in", dpi = 300)
+ggsave(fig_loc_timePeriod, filename = "figs/fig_histCount_locality.png", width = 12, height = 7, device = png(), units = "in", dpi = 300)
 dev.off()
 ```
 
-### Examining species specific counts by timePeriod and locality
+### Examining species specific counts by locality
 ```{r}
-# also remove observations post 1950, given limited sampling
-spp_timePeriod <- hist_occ %>%
-  group_by(scientific_name, timePeriod) %>%
+## species count
+spp_count <- hist_occ %>%
+  group_by(scientific_name) %>%
   count() 
 
-unique(spp_timePeriod$scientific_name) # a total of 179 species recorded between 1850 to 1950
+unique(spp_count$scientific_name) # a total of 147 species recorded between 1850 to 1900
 
-# filter observations (identify how many species were not singletons, a min of 5)
-spp_minFiveObs <- spp_timePeriod %>%
-  filter(n > 5) # only 79 species had more than 5 observations across historical timeperiods
+# filter observations (identify how many species were not singletons, a min of 4)
+spp_minFourObs <- spp_count %>%
+  filter(n >= 4) # only 68 species had more than or equal to 4 observations in the historical dataset
 
-fig_spp_timePeriod <- ggplot(spp_timePeriod, aes(x = scientific_name, y = n, fill = scientific_name)) +
+fig_spp <- ggplot(spp_count, aes(x = scientific_name, y = n, fill = scientific_name)) +
   geom_bar(stat = "identity", position = position_dodge(), fill = "#883107", alpha = 0.9) +
   geom_text(aes(label = n, hjust = "middle", vjust = -0.5),
     position = position_dodge(), angle = 0, size = 5
   ) +
-  facet_wrap(~timePeriod) +
   theme_bw() +
   labs(
-    x = "\nTime Period & Species",
+    x = "\nSpecies",
     y = "Count\n"
   ) +
   theme(
@@ -142,26 +97,25 @@ fig_spp_timePeriod <- ggplot(spp_timePeriod, aes(x = scientific_name, y = n, fil
     legend.position = "none"
   )
 
-ggsave(fig_spp_timePeriod, filename = "figs/fig_histSpp_timePeriod.png", width = 50, height = 20, device = png(), units = "in", dpi = 300, limitsize = F)
+ggsave(fig_spp, filename = "figs/fig_histSpp.png", width = 50, height = 20, device = png(), units = "in", dpi = 300, limitsize = F)
 dev.off()
 
-# Examining both species by time period and locality
-# Plotting locations that had a min of 5 species observations per timePeriod
-
-spp_loc_timePeriod <- hist_occ %>%
-  group_by(scientific_name, timePeriod, historical_site_code) %>%
+# Examining species by locality
+# Plotting locations that had a min of 4 species observations 
+spp_loc <- hist_occ %>%
+  group_by(scientific_name, historical_site_code) %>%
   count() %>%
-  filter(n > 5)
+  filter(n >= 4)
 
-fig_spp_loc_timePeriod <- ggplot(spp_loc_timePeriod, aes(x = scientific_name, y = n, fill = scientific_name)) +
+fig_spp_loc <- ggplot(spp_loc, aes(x = scientific_name, y = n, fill = scientific_name)) +
   geom_bar(stat = "identity", position = position_dodge(), fill = "#883107", alpha = 0.9) +
   geom_text(aes(label = n, hjust = "middle", vjust = -0.5),
     position = position_dodge(), angle = 0, size = 5
   ) +
-  facet_wrap(~ timePeriod + historical_site_code) +
+  facet_wrap(~historical_site_code) +
   theme_bw() +
   labs(
-    x = "\nTime Period, Species & Locality",
+    x = "\nSpecies & Locality",
     y = "Count\n"
   ) +
   theme(
@@ -174,7 +128,7 @@ fig_spp_loc_timePeriod <- ggplot(spp_loc_timePeriod, aes(x = scientific_name, y 
     legend.position = "none"
   )
 
-ggsave(fig_spp_loc_timePeriod, filename = "figs/fig_histSpp_loc_timePeriod_min5.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+ggsave(fig_spp_loc, filename = "figs/fig_histSpp_locality_min4.png", width = 20, height = 12, device = png(), units = "in", dpi = 300)
 dev.off()
 ```
 
@@ -189,22 +143,22 @@ modOcc_spp <- mod_occ %>%
   group_by(species_code) %>%
   count() # 2301 observations of 102 bird species
 
-# how many species had more than 5 observations
-modOcc_minFiveObs <- modOcc_spp %>%
-  filter(n > 5) # 61 species had a minimum of five observations
+## only include species that are present in the historical dataset
+mod_occ <- mod_occ%>%
+  filter(scientific_name %in% hist_occ$scientific_name)
 
 # plot figure of species by locality
-modOcc_spp_loc <- mod_occ %>%
-  group_by(species_code, historical_site_code) %>%
+mod_occ_loc <- mod_occ %>%
+  group_by(scientific_name, historical_site_code) %>%
   count()
 
 # figure of species by locality
-fig_modSpp_loc <- ggplot(modOcc_spp_loc, aes(x = historical_site_code, y = n, fill = historical_site_code)) +
+fig_modSpp_loc <- ggplot(mod_occ_loc, aes(x = historical_site_code, y = n, fill = historical_site_code)) +
   geom_bar(stat = "identity", position = position_dodge(), fill = "#883107", alpha = 0.9) +
   geom_text(aes(label = n, hjust = "middle", vjust = -0.5),
     position = position_dodge(), angle = 0, size = 5
   ) +
-  facet_wrap(~species_code) +
+  facet_wrap(~scientific_name) +
   theme_bw() +
   labs(
     x = "\nSpecies and Locality",
@@ -225,37 +179,4 @@ dev.off()
 
 ## Some interesting patterns of certain species being more abundant/detected in certain sites over others.
 ```
-
-## Comparing historical and modern observations
-```{r}
-## identify species only recorded in 2021 and not detected/recorded in 1850-1950
-spp2021_not1850 <-  anti_join(mod_occ, hist_occ, by = "scientific_name")
-unique(spp2021_not1850$scientific_name)
-
-# 10 species were detected across resurvey sites in the modern resurvey that were not recorded/detected in the historical resurvey. These species include:
-# [1] "Ictinaetus malaiensis"     "Phylloscopus magnirostris" "Buceros bicornis"         
-# [4] "Accipiter badius"          "Psittacula krameri"        "Ficedula subrubra"        
-# [7] "Vanellus indicus"          "Coracina macei"            "Gymnoris xanthocollis"    
-# [10] "Columba livia" 
-
-# total count of the above 10 species
-count_mod2021only <- spp2021_not1850 %>%
-  group_by(scientific_name) %>%
-  count() # only two species had greater than 2 observations, rest were singletons
-
-## identify species only recorded between 1850-1950 and not detected/recorded in the modern survey
-spp1850_not2021 <-  anti_join(hist_occ, mod_occ, by = "scientific_name")
-unique(spp1850_not2021$scientific_name) # 87 species that were recorded across survey locations between 1850 to 1950, that were not recorded in the modern resurvey
-
-# total count of the above 87 species
-count_mod1850only <- spp1850_not2021 %>%
-  group_by(scientific_name) %>%
-  count() # only 43 species had > 2 observations each. 
-
-## write the above two.csvs
-write.csv(count_mod2021only,"results/species-recorded-only-in-2021.csv", row.names =F)
-write.csv(count_mod1850only,"results/species-recorded-only-in-1850to1950.csv", row.names =F)
-```
-
-
 
