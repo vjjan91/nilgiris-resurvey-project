@@ -118,11 +118,6 @@ mod_occ <-  left_join(mod_occ, sites, by=c("modern_site_code"="modern_site_code"
   replace(is.na(.), 0)  %>%
   mutate("Y2021" = case_when(abundance2021 >= 1 ~ 1,TRUE ~ 0))
 
-## recount the abundance data by grouping by the historical_site_code
-mod_occ <- mod_occ %>%
-  group_by(scientific_name, historical_site_code, elev) %>%
-  summarise(abundance2021 = sum(abundance2021))
-
 ## only include species that are present in the historical dataset
 mod_pres_abs <- mod_occ %>%
   filter(scientific_name %in% hist_pres_abs$scientific_name)
@@ -141,7 +136,8 @@ mod_pres_abs <- mod_occ %>%
 ### Join the historical and modern count data
 ```{r}
 ## joining the historic and modern datasets
-hist_mod <- full_join(hist_pres_abs, mod_pres_abs, by =               c("scientific_name","modern_site_code","historical_site_code","modern_landCover_type","elev","site_name","geometry")) %>%
+hist_mod <- full_join(hist_pres_abs, mod_pres_abs, by =               c("scientific_name","historical_site_code","modern_site_code","elev",
+  "site_name","modern_landCover_type","geometry")) %>%
   replace_na(list(abundance1850 = 0, 
                   abundance2021 = 0,
                   Y1850 = 0,
