@@ -36,10 +36,55 @@ hist_occ <- hist_occ %>%
 
 ### Examining count of specimens by locality
 ```{r}
+# ten unique historical site localities across which species were recorded
 occ_locality <- hist_occ %>%
   group_by(historical_site_code) %>%
   count()
 
+# Examining species by locality
+spp_loc <- hist_occ %>%
+  group_by(scientific_name, historical_site_code) %>%
+  count()
+
+# how many unique sites
+prop_count <- spp_loc %>%
+  group_by(scientific_name) %>%
+  summarise(uniqueSites = length(unique(historical_site_code)))
+
+# moving forward, we only choose species that occur across
+# a minimum of 30% of all sites
+prop_count <- prop_count %>%
+  filter(uniqueSites >=3)
+
+## The above filter leaves with a total of 49 species.
+
+## we further subset the above data to include only species that had a minimum species abundance data of over five
+
+## choosing only species that occurred across 30% of sites
+hist_occ <- hist_occ %>%
+  filter(scientific_name %in% prop_count$scientific_name)
+
+## further filtering species to only include species that had a minimum number of species records of five
+spp_count <- hist_occ %>%
+  group_by(scientific_name) %>%
+  count() %>%
+  filter(n >=5)
+
+unique(spp_count$scientific_name) # a total of 45 species recorded between 1850 to 1900 that occurred in atleast
+
+# adding an additional filter
+# we now have species that occurred in atleast 30% of sites and
+# had a minimum historical specimen abundance of five
+
+hist_occ <- hist_occ %>%
+  filter(scientific_name %in% spp_count$scientific_name)
+
+# testing
+unique(hist_occ$scientific_name)
+```
+
+## Visualizations of historical data
+```{r}
 fig_loc_timePeriod <- ggplot(occ_locality, aes(x = historical_site_code, y = n, fill = historical_site_code)) +
   geom_bar(stat = "identity", position = position_dodge(), fill = "#883107", alpha = 0.9) +
   geom_text(aes(label = n, hjust = "middle", vjust = -0.5),
@@ -66,18 +111,7 @@ dev.off()
 
 ### Examining species specific counts by locality
 ```{r}
-## species count
-spp_count <- hist_occ %>%
-  group_by(scientific_name) %>%
-  count() 
-
-unique(spp_count$scientific_name) # a total of 147 species recorded between 1850 to 1900
-
-# filter observations (identify how many species were not singletons, a min of 4)
-spp_minFourObs <- spp_count %>%
-  filter(n >= 4) # only 68 species had more than or equal to 4 observations in the historical dataset
-
-fig_spp <- ggplot(spp_count, aes(x = scientific_name, y = n, fill = scientific_name)) +
+fig_spp <- ggplot(spp_count, aes(x = reorder(scientific_name, -n), y = n, fill = scientific_name)) +
   geom_bar(stat = "identity", position = position_dodge(), fill = "#883107", alpha = 0.9) +
   geom_text(aes(label = n, hjust = "middle", vjust = -0.5),
     position = position_dodge(), angle = 0, size = 5
@@ -100,14 +134,12 @@ fig_spp <- ggplot(spp_count, aes(x = scientific_name, y = n, fill = scientific_n
 ggsave(fig_spp, filename = "figs/fig_histSpp.png", width = 50, height = 20, device = png(), units = "in", dpi = 300, limitsize = F)
 dev.off()
 
-# Examining species by locality
-# Plotting locations that had a min of 4 species observations 
+## Re-examining species by locality after filtering 
 spp_loc <- hist_occ %>%
   group_by(scientific_name, historical_site_code) %>%
-  count() %>%
-  filter(n >= 4)
+  count()
 
-fig_spp_loc <- ggplot(spp_loc, aes(x = scientific_name, y = n, fill = scientific_name)) +
+fig_spp_loc <- ggplot(spp_loc, aes(x = reorder(scientific_name,-n), y = n, fill = scientific_name)) +
   geom_bar(stat = "identity", position = position_dodge(), fill = "#883107", alpha = 0.9) +
   geom_text(aes(label = n, hjust = "middle", vjust = -0.5),
     position = position_dodge(), angle = 0, size = 5
@@ -128,7 +160,7 @@ fig_spp_loc <- ggplot(spp_loc, aes(x = scientific_name, y = n, fill = scientific
     legend.position = "none"
   )
 
-ggsave(fig_spp_loc, filename = "figs/fig_histSpp_locality_min4.png", width = 20, height = 12, device = png(), units = "in", dpi = 300)
+ggsave(fig_spp_loc, filename = "figs/fig_histSpp_locality.png", width = 20, height = 12, device = png(), units = "in", dpi = 300)
 dev.off()
 ```
 
@@ -153,7 +185,7 @@ mod_occ_loc <- mod_occ %>%
   count()
 
 # figure of species by locality
-fig_modSpp_loc <- ggplot(mod_occ_loc, aes(x = historical_site_code, y = n, fill = historical_site_code)) +
+fig_modSpp_loc <- ggplot(mod_occ_loc, aes(x = reorder(historical_site_code,-n), y = n, fill = historical_site_code)) +
   geom_bar(stat = "identity", position = position_dodge(), fill = "#883107", alpha = 0.9) +
   geom_text(aes(label = n, hjust = "middle", vjust = -0.5),
     position = position_dodge(), angle = 0, size = 5
@@ -178,5 +210,11 @@ ggsave(fig_modSpp_loc, filename = "figs/fig_modSpp_loc.png", width = 40, height 
 dev.off()
 
 ## Some interesting patterns of certain species being more abundant/detected in certain sites over others.
+```
+
+## write the subset data to file
+```{r}
+write.csv(hist_occ, "results/histSubset.csv", row.names = F)
+write.csv(mod_occ, "results/modSubset.csv", row.names = F)
 ```
 
