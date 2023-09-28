@@ -11,9 +11,7 @@ Scenario 1
 
 We plot the presence/absence of each species by elevation assuming that the data from multiple modern survey sites correspond to a single historical survey site. Due to lack of clarity on the exact location where species were historically collected from, multiple modern survey locations were chosen to correspond to a single historic survey site. In some cases, these modern survey sites span a range of elevations and hence the assumption here is that the elevational range for a species historically could span the range of elevations corresponding to the modern survey locations.  
 
-For this script and further analyses, we choose a minimum number of four observations per species time-period for comparisons. This is being done to reduce the number of singletons in the analyses. A second crteria being applied is the removal of data from the time-period 1900-1950 and keeping the comparisons restricted to 1850-1900 vs. 2021.  
-
-### Load necessary libraries
+## Load necessary libraries
 ```{r}
 library(dplyr)
 library(stringr)
@@ -59,33 +57,12 @@ elev <- raster::extract(alt, sites)
 sites <- cbind(sites, elev)
 ```
 
-### Load historical and modern occurrence data
+## Load historical and modern occurrence data
 
-For the historical occurrence data, we will choose data from a single time period: 1850-1900. 
+Load the subset data for downstream analysis
 ```{r}
 ## read in historical occurrence data
-hist_occ <- read.csv("data/historical-occurrence-data.csv")
-
-## filter observations by date
-hist_occ <- hist_occ %>%
-  filter(year <= 1900)
-
-## remove species with few observations
-histCount <- hist_occ %>%
-  group_by(scientific_name) %>%
-  count() 
-
-## A total of 147 species were reported in the historical data
-
-## Only 68 species had a minimum number of four records (random criteria being used for analyses)
-
-## filter species list with a minimum of four records
-histCount_minFour <- histCount %>%
-  filter(n >= 4 )
-
-## filter species to include only 68 species
-hist_occ <- hist_occ %>%
-  filter(scientific_name %in% histCount_minFour$scientific_name)
+hist_occ <- read.csv("results/histSubset.csv")
 
 ## group by scientific name and historical site code
 ## add an abundance column and a presence/absence column
@@ -99,12 +76,7 @@ hist_pres_abs <- hist_occ %>%
   replace(is.na(.), 0)
 
 ## read in modern occurrence data
-mod_occ <- read.csv("data/modern-occurrence-data.csv")
-
-## count of modern data
-modCount <- mod_occ %>%
-  group_by(scientific_name) %>%
-  count() 
+mod_occ <- read.csv("results/modSubset.csv")
 
 ## group by scientific name and modern site code
 mod_occ <- mod_occ %>%
@@ -114,23 +86,9 @@ mod_occ <- mod_occ %>%
   summarise(abundance2021 = sum(number))
 
 ## join the dataset with the sites object to include historical site code
-mod_occ <-  left_join(mod_occ, sites, by=c("modern_site_code"="modern_site_code")) %>% filter(!is.na(scientific_name)) %>%
+mod_pres_abs <-  left_join(mod_occ, sites, by=c("modern_site_code"="modern_site_code")) %>% filter(!is.na(scientific_name)) %>%
   replace(is.na(.), 0)  %>%
   mutate("Y2021" = case_when(abundance2021 >= 1 ~ 1,TRUE ~ 0))
-
-## only include species that are present in the historical dataset
-mod_pres_abs <- mod_occ %>%
-  filter(scientific_name %in% hist_pres_abs$scientific_name)
-
-## We notice above that six species are recorded in the historical dataset, but are not present in the modern survey.
-
-## These species include: 
-## "Amandava amandava"    
-## "Clamator jacobinus"   
-## "Cyornis pallidipes"  
-## "Galloperdix lunulata" 
-## "Harpactes fasciatus"  
-## "Perdicula asiatica" 
 ```
 
 ### Join the historical and modern count data
@@ -152,6 +110,11 @@ We will create plots using presence-nondetection first
 ```{r}
 # run the loop to create a list of plots
 plots <- list()
+
+# for the creation of a separate plot where we compare
+# data for each species across sites where they were detected in 1850
+hist_mod <- hist_mod %>%
+ filter(Y1850 == 1)
 
 for(i in 1:length(unique(hist_mod$scientific_name))) {
   
@@ -191,7 +154,7 @@ for(i in 1:length(unique(hist_mod$scientific_name))) {
 
 # plot and save as a single pdf
 cairo_pdf(
-  filename = "figs/elevation-historic-modern-occurrence.pdf",
+  filename = "figs/elevation-historical-modern-occurrence.pdf",
   onefile = TRUE
 )
 plots
