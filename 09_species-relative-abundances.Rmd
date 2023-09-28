@@ -30,10 +30,8 @@ library(ggstatsplot)
 library(paletteer)
 library(ggpubr)
 library(goeveg)
-library(broom.mixed)
-library(lmerTest)
-library(performance)
 library(sjPlot)
+library(patchwork)
 
 # source custom functions
 source("code/02_relative-species-abundance-functions.R")
@@ -61,38 +59,29 @@ elev <- raster::extract(alt, sites)
 sites <- cbind(sites, elev)
 ```
 
-## For the historical occurrence data, we will choose data from a single time periods: 1850-1900
+## For the historical occurrence data, we will choose data from a single time period: 1850-1900
 ```{r}
 ## read in historical occurrence data
-hist_occ <- read.csv("data/historical-occurrence-data.csv")
-
-### pre-1900
-hist_occ <- hist_occ %>%
-  filter(year <= 1900)
-
-### fix the count column
-hist_occ <-  hist_occ %>%
-  mutate(histCount = case_when(individualCount == "X" ~ 1,
-                               individualCount == "" ~ 1,
-                               TRUE ~ as.numeric(individualCount)))
+hist_occ <- read.csv("results/histSubset.csv")
 
 ## remove species with few observations
 histCount <- hist_occ %>%
   group_by(scientific_name) %>%
   count() 
 
-## filter species list with a minimum of four records
-histCount_minFour <- histCount %>%
-  filter(n >= 4 )
+## filter species list with a minimum of ten records
+histCount_minTen <- histCount %>%
+  filter(n >= 10 )
 
-## filter species to include only 68 species
+## filter species to include only 35 species
 hist_occ <- hist_occ %>%
-  filter(scientific_name %in% histCount_minFour$scientific_name)
+  filter(scientific_name %in% histCount_minTen$scientific_name)
 
 # calculate total abundance of historical data at each site
 hist_occ <- hist_occ %>%
   group_by(scientific_name, historical_site_code) %>%
-  summarise("1850-1900" = sum(histCount)) 
+  count() %>%
+  summarise("1850-1900" = sum(n)) 
 
 # left join the sites dataframe
 hist_occ <- left_join(hist_occ, sites, by=c("historical_site_code"="historical_site_code")) %>%
@@ -100,11 +89,7 @@ hist_occ <- left_join(hist_occ, sites, by=c("historical_site_code"="historical_s
   replace(is.na(.), 0) 
 
 ## read in modern occurrence data
-mod_occ <- read.csv("data/modern-occurrence-data.csv")
-
-## only include species that are present in the historical dataset
-mod_occ <- mod_occ %>%
-  filter(scientific_name %in% hist_occ$scientific_name)
+mod_occ <- read.csv("results/modSubset.csv")
 
 ## group by scientific name and modern site code
 mod_occ <- mod_occ %>%
@@ -206,7 +191,7 @@ fig_relAbun_over_time <- ggbetweenstats(
   xlab = "Time Period", 
   ylab = "Relative Abundance",
   title = "Relative abundance by time period",
-  plot.type = "boxviolin",
+  plot.type = "box",
   pairwise.comparisons = T) +
   scale_y_log10() +
   scale_color_manual(values = c("#9EB0FFFF", "#122C39FF","#D5857DFF")) +   theme(plot.title = element_text(family = "Century Gothic",
@@ -297,11 +282,11 @@ rel_abund_mod$year <- 2021
 
 # visualization
 rank_abund_dat <- full_join(rel_abund_hist, rel_abund_mod)
+rank_abund_dat$year <- as.factor(rank_abund_dat$year)
 
-fig_rankAbund <- ggplot(rank_abund_dat, aes(x = scientific_name, y = rel_abund, fill = rel_abund)) +
-  geom_bar(stat = "identity", position = position_dodge(), fill = "#883107", alpha = 0.9) +
-  ylim(0,0.14) + 
-  facet_wrap(~year, ncol = 1) +
+# historical
+fig_rankAbund <- ggplot(rank_abund_dat, aes(x = reorder(scientific_name,-rel_abund), y = rel_abund, fill = year)) + geom_bar(stat = "identity", position = "identity", alpha = 0.6) + scale_fill_manual(values = c("#2c7fb8","#e34a33")) +
+  ylim(0,0.2) + 
   theme_bw() +
   labs(
     x = "\nScientific name",
@@ -313,9 +298,10 @@ fig_rankAbund <- ggplot(rank_abund_dat, aes(x = scientific_name, y = rel_abund, 
       size = 14, face = "bold"
     ),
     axis.text = element_text(family = "Century Gothic", size = 12),
-    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
-    legend.position = "none"
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)
   )
+
+fig_rankAbund
 
 ggsave(fig_rankAbund, filename = "figs/fig_rankAbundance.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
 dev.off()
@@ -356,7 +342,7 @@ fig_relAbun_habitat <- grouped_ggbetweenstats(
   ylab = "Relative Abundance",
   p.adjust.method = "fdr",
   #title = "Relative abundance by habitat type",
-  plot.type = "boxviolin",
+  plot.type = "box",
   ggplot.component = list(ggplot2::scale_y_continuous(
     breaks = seq(0, 0.04, 0.005),
     limits = (c(0, 0.04))))) +
@@ -488,7 +474,7 @@ relSpAbund <- relSpAbund_by_site %>%
 ## write results to file
 write.csv(relSpAbund, "results/species-relative-abundance-siteLevel.csv", row.names = F)
 
-## Please note: for the sake of downstream analysis, we have renamed 1850-1900 as 1850, 1900-1950 as 1900. In other words, each year - except for 2021 represents a 50 year time period. 
+## Please note: for the sake of downstream analysis, we have renamed 1850-1900 as 1850. In other words, each year - except for 2021 represents a 50 year time period. 
 
 fig_relAbun_siteLevel <- relSpAbund %>%
   dplyr::select(-scientific_name) %>%
@@ -558,45 +544,45 @@ Zero inflation:                ~1
 Data: relSpAbund
 
      AIC      BIC   logLik deviance df.resid 
- -3522.7  -3493.9   1767.3  -3534.7      880 
+ -2078.5  -2052.2   1045.3  -2090.5      584 
 
 Random effects:
 
 Conditional model:
  Groups          Name        Variance Std.Dev.
- site            (Intercept) 0.1749   0.4182  
- scientific_name (Intercept) 0.1333   0.3651  
-Number of obs: 886, groups:  site, 28; scientific_name, 68
+ site            (Intercept) 0.1303   0.3610  
+ scientific_name (Intercept) 0.1234   0.3513  
+Number of obs: 590, groups:  site, 28; scientific_name, 35
 
-Dispersion parameter for beta family (): 27.9 
+Dispersion parameter for beta family (): 27.8 
 
 Conditional model:
             Estimate Std. Error z value Pr(>|z|)    
-(Intercept)  -2.3003     0.1281  -17.96  < 2e-16 ***
-year2021     -0.8554     0.1141   -7.50 6.39e-14 ***
+(Intercept)  -2.1801     0.1367 -15.946  < 2e-16 ***
+year2021     -0.5777     0.1164  -4.964  6.9e-07 ***
 
 Zero-inflation model:
             Estimate Std. Error z value Pr(>|z|)
-(Intercept)    -22.4     2455.3  -0.009    0.993
+(Intercept)   -22.49    3154.47  -0.007    0.994
 
 report::report(glmm_overall)
 
 We fitted a zero-inflated logistic mixed model (estimated using ML and
-nlminb optimizer) to predict relAbundance with year (formula: relAbundance ~
-year). The model included site as random effects (formula: list(~1 | site,
-~1 | scientific_name)). The model's total explanatory power is substantial
-(conditional R2 = 0.48) and the part related to the fixed effects alone
-(marginal R2) is of 0.14. The model's intercept, corresponding to year =
-1850, is at -2.30 (95% CI [-2.55, -2.05], p < .001). Within this model:
+nlminb optimizer) to predict relAbundance with year (formula: relAbundance
+~ year). The model included site as random effects (formula: list(~1 |
+site, ~1 | scientific_name)). The model's total explanatory power is
+substantial (conditional R2 = 0.45) and the part related to the fixed
+effects alone (marginal R2) is of 0.08. The model's intercept,
+corresponding to year = 1850, is at -2.18 (95% CI [-2.45, -1.91], p <
+.001). Within this model:
 
   - The effect of year [2021] is statistically significant and negative (beta
-= -0.86, 95% CI [-1.08, -0.63], p < .001; Std. beta = -0.86, 95% CI [-1.08,
--0.63])
+= -0.58, 95% CI [-0.81, -0.35], p < .001; Std. beta = -0.58, 95% CI [-0.81,
+-0.35])
 
-Standardized parameters were obtained by fitting the model on a standardized
-version of the dataset. 95% Confidence Intervals (CIs) and p-values were
-computed using a Wald z-distribution approximation.
-
+Standardized parameters were obtained by fitting the model on a
+standardized version of the dataset. 95% Confidence Intervals (CIs) and
+p-values were computed using a Wald z-distribution approximation.
 ```{r}
 ## join relative abundance at site level with trait data
 relAbun_Hab <- left_join(relSpAbund, trait_dat, by="scientific_name") %>%   filter(Habitat.type != "Aquatic") %>%
