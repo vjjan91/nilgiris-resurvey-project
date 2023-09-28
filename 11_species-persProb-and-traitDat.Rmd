@@ -144,38 +144,6 @@ dev.off()
 ## Summarizing persistence probabilities by species trait data
 
 Now that we have persistence probabilities over time, we can examine how they vary for species by site and at the landscape level over time for habitat generalists and specialists. 
-
-#### Let's first curate the species trait data
-```{r}
-## load state of India's birds data to get habitat affiliation
-species_codes <- read.csv("data/species-codes.csv")
-habitat_SoIB <- read.csv("data/SoIB-data.csv") # note: we used two files - one file from 2020 and an updated habitat specialization file from 2022 (see below)
-
-# join the two dataframes
-habitat_dat <- left_join(species_codes, habitat_SoIB, by=c("scientific_name"="scientific_name"))
-
-# write the above to data folder and recode habitat affiliation
-# write.csv(habitat_dat, "data/species-trait-dat.csv", row.names = F)
-
-# note: the classification of habitat type was taken from a working file of trait data for State of India's Birds report v2 (to be released in 2023). We used the following trait classifications:
-# Wooded habitat: If it preferred some level of wooded habitat but not particularly specialized on rainforest/forest habitat. An example in this case is the black and orange flycatcher. While it is commonly found in shola forest habitat, this species is also common in degraded wooded areas, including timber plantations. If a species preferred just scrub habitat alone, we lumped it under this category.
-# Forest: If a species was a forest specialist. 
-# Grassland: While State of India's birds uses a separate classification for grassland & grassland+scrub, here we combine the two and use a single classification for Grassland. Eg. Black drongo - which favors both grassland areas and scrub habitat. There are four species that are classified as using 'open habitat' which had been subsumed under grasslands in our study - this includes - blue-tailed bee-eater, black-winged kite, long-tailed shrike (eBird lists it as preferring open habitats) and western yellow wagtail. 
-# Generalist: If a spedcies is truly a generalist species and is not particularly occupying/specialized on any particular wooded/forested/grassland habitat.
-
-## load the species trait data (that includes habitat) and merge with the AVONET dataset
-## please note that it is being loaded after curating and adding a column for habitat type based on our understanding of species natural history
-hab_dat <- read.csv("data/species-habitat-dat.csv")
-avonet <- read.csv("data/AVONET-data.csv")
-
-# join the above two datasets
-trait_dat <- left_join(hab_dat, avonet[,c(1,10:20,29:31)], by=c("scientific_name"="Species2"))
-
-## Write the trait data to file
-## write.csv(trait_dat,"data/species-trait-dat.csv",row.names = F)
-```
-
-## Examining persistence probabilities at the site level in conjunction with species traits
 ```{r}
 ## read in trait data (if you have already run the above chunk)
 trait_dat <- read.csv("data/species-trait-dat.csv")
@@ -312,7 +280,6 @@ In this section, we will run mixed-effects models to test the effect of species 
 # create a dataframe to run the mixed effects models that join the trait data with the persistence probability datasets
 
 ## rerun below with a different persistence probability change dataframe 
-
 changeDat <- left_join(spec_site_persProb,trait_dat[,c(1,5,54,56)], by="scientific_name") %>% mutate(hand_wing_index_z = scale_z(Hand.Wing.Index)) %>%
   mutate(log_weight = log(Mass)) %>%
   mutate(weight_z = scale_z(log_weight)) %>%
@@ -328,7 +295,6 @@ glmm_habType <- glmmTMB(PXt ~ Habitat.type + (1|scientific_name) + (1|historical
                       family = beta_family(link = "logit"))
 summary(glmm_habType)
 
-# above model simply suggests that the persistence probability is negatively associated with grassland birds
 ```
 Family: beta  ( logit )
 Formula:          
@@ -336,32 +302,53 @@ PXt ~ Habitat.type + (1 | scientific_name) + (1 | historical_site_code)
 Zero inflation:       ~1
 Data: changeDat
 
-     AIC      BIC   logLik deviance df.resid 
--96814.4 -96740.6  48415.2 -96830.4    75418 
+      AIC       BIC    logLik  deviance  df.resid 
+-728788.8 -728715.0  364402.4 -728804.8     75418 
 
 Random effects:
 
 Conditional model:
  Groups               Name        Variance Std.Dev.
- scientific_name      (Intercept) 0.1099   0.3315  
- historical_site_code (Intercept) 0.1411   0.3756  
+ scientific_name      (Intercept) 0.1800   0.4243  
+ historical_site_code (Intercept) 0.4222   0.6498  
 Number of obs: 75426, groups:  
 scientific_name, 193; historical_site_code, 28
 
-Dispersion parameter for beta family (): 5.34 
+Dispersion parameter for beta family (): 0.943 
 
 Conditional model:
-                            Estimate Std. Error z value Pr(>|z|)    
-(Intercept)                 1.589825   0.088347  17.995   <2e-16 ***
-Habitat.typeGeneralist      0.063096   0.071764   0.879   0.3793    
-Habitat.typeGrassland      -0.214470   0.084560  -2.536   0.0112 *  
-Habitat.typeWooded Habitat -0.005742   0.064924  -0.088   0.9295    
-
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+                           Estimate Std. Error z value Pr(>|z|)    
+(Intercept)                -1.25887    0.14019  -8.980   <2e-16 ***
+Habitat.typeGeneralist      0.06227    0.09234   0.674   0.5001    
+Habitat.typeGrassland      -0.27839    0.10856  -2.564   0.0103 *  
+Habitat.typeWooded Habitat -0.03573    0.08342  -0.428   0.6685    
 
 Zero-inflation model:
             Estimate Std. Error z value Pr(>|z|)
-(Intercept)   -23.34     426.51  -0.055    0.956
+(Intercept)   -21.09     138.17  -0.153    0.879
+
+We fitted a zero-inflated logistic mixed model (estimated using ML and
+nlminb optimizer) to predict PXt with Habitat.type (formula: PXt ~
+Habitat.type). The model included scientific_name as random effects
+(formula: list(~1 | scientific_name, ~1 | historical_site_code)). The
+model's total explanatory power is substantial (conditional R2 = 0.42) and
+the part related to the fixed effects alone (marginal R2) is of 5.87e-03.
+The model's intercept, corresponding to Habitat.type = Forest, is at -1.26
+(95% CI [-1.53, -0.98], p < .001). Within this model:
+
+  - The effect of Habitat type [Generalist] is statistically non-significant
+and positive (beta = 0.06, 95% CI [-0.12, 0.24], p = 0.500; Std. beta =
+0.06, 95% CI [-0.12, 0.24])
+  - The effect of Habitat type [Grassland] is statistically significant and
+negative (beta = -0.28, 95% CI [-0.49, -0.07], p = 0.010; Std. beta =
+-0.28, 95% CI [-0.49, -0.07])
+  - The effect of Habitat type [Wooded Habitat] is statistically
+non-significant and negative (beta = -0.04, 95% CI [-0.20, 0.13], p =
+0.668; Std. beta = -0.04, 95% CI [-0.20, 0.13])
+
+Standardized parameters were obtained by fitting the model on a
+standardized version of the dataset. 95% Confidence Intervals (CIs) and
+p-values were computed using a Wald z-distribution approximation.
 
 ```{r}
 ## Running a model with body mass
@@ -369,8 +356,6 @@ glmm_bodyMass <- glmmTMB(PXt ~ weight_z + (1|scientific_name) + (1|historical_si
                       family = beta_family(link = "logit"))
 
 summary(glmm_bodyMass)
-
-# marginal negative association between body mass and persistence probability
 ```
 Family: beta  ( logit )
 Formula:          
@@ -378,38 +363,51 @@ PXt ~ weight_z + (1 | scientific_name) + (1 | historical_site_code)
 Zero inflation:       ~1
 Data: changeDat
 
-     AIC      BIC   logLik deviance df.resid 
--96812.2 -96756.8  48412.1 -96824.2    75420 
+      AIC       BIC    logLik  deviance  df.resid 
+-728785.3 -728729.9  364398.7 -728797.3     75420 
 
 Random effects:
 
 Conditional model:
  Groups               Name        Variance Std.Dev.
- scientific_name      (Intercept) 0.1127   0.3357  
- historical_site_code (Intercept) 0.1410   0.3755  
+ scientific_name      (Intercept) 0.1859   0.4311  
+ historical_site_code (Intercept) 0.4219   0.6495  
 Number of obs: 75426, groups:  
 scientific_name, 193; historical_site_code, 28
 
-Dispersion parameter for beta family (): 5.34 
+Dispersion parameter for beta family (): 0.943 
 
 Conditional model:
             Estimate Std. Error z value Pr(>|z|)    
-(Intercept)  1.58225    0.07548  20.962   <2e-16 ***
-weight_z    -0.04972    0.02186  -2.274    0.023 *  
-
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+(Intercept) -1.28735    0.12721 -10.120   <2e-16 ***
+weight_z    -0.04938    0.02829  -1.746   0.0809 .  
 
 Zero-inflation model:
             Estimate Std. Error z value Pr(>|z|)
-(Intercept)   -23.39     437.21  -0.054    0.957
+(Intercept)   -21.21     146.65  -0.145    0.885
+
+We fitted a zero-inflated logistic mixed model (estimated using ML and
+nlminb optimizer) to predict PXt with weight_z (formula: PXt ~ weight_z).
+The model included scientific_name as random effects (formula: list(~1 |
+scientific_name, ~1 | historical_site_code)). The model's total explanatory
+power is substantial (conditional R2 = 0.42) and the part related to the
+fixed effects alone (marginal R2) is of 1.66e-03. The model's intercept,
+corresponding to weight_z = 0, is at -1.29 (95% CI [-1.54, -1.04], p <
+.001). Within this model:
+
+  - The effect of weight z is statistically non-significant and negative
+(beta = -0.05, 95% CI [-0.10, 6.06e-03], p = 0.081; Std. beta = -0.05, 95%
+CI [-0.10, 6.07e-03])
+
+Standardized parameters were obtained by fitting the model on a
+standardized version of the dataset. 95% Confidence Intervals (CIs) and
+p-values were computed using a Wald z-distribution approximation.
 
 ```{r}
 # dispersal-ability
 glmm_hwi <- glmmTMB(PXt ~ hand_wing_index_z + (1|scientific_name) + (1|historical_site_code), data = changeDat, ziformula = ~1,
                       family = beta_family(link = "logit"))
 summary(glmm_hwi)
-
-# no significant association
 ```
  Family: beta  ( logit )
 Formula:          
@@ -417,27 +415,42 @@ PXt ~ hand_wing_index_z + (1 | scientific_name) + (1 | historical_site_code)
 Zero inflation:       ~1
 Data: changeDat
 
-     AIC      BIC   logLik deviance df.resid 
--96810.7 -96755.3  48411.4 -96822.7    75420 
+      AIC       BIC    logLik  deviance  df.resid 
+-728784.0 -728728.6  364398.0 -728796.0     75420 
 
 Random effects:
 
 Conditional model:
  Groups               Name        Variance Std.Dev.
- scientific_name      (Intercept) 0.1137   0.3372  
- historical_site_code (Intercept) 0.1410   0.3755  
+ scientific_name      (Intercept) 0.188    0.4336  
+ historical_site_code (Intercept) 0.422    0.6496  
 Number of obs: 75426, groups:  
 scientific_name, 193; historical_site_code, 28
 
-Dispersion parameter for beta family (): 5.34 
+Dispersion parameter for beta family (): 0.943 
 
 Conditional model:
                   Estimate Std. Error z value Pr(>|z|)    
-(Intercept)        1.58969    0.07587  20.954   <2e-16 ***
-hand_wing_index_z -0.04106    0.02142  -1.917   0.0552 .  
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+(Intercept)       -1.28166    0.12758 -10.046   <2e-16 ***
+hand_wing_index_z -0.03580    0.02772  -1.291    0.197    
 
 Zero-inflation model:
             Estimate Std. Error z value Pr(>|z|)
-(Intercept)   -23.22     401.77  -0.058    0.954
+(Intercept)    -21.4      161.8  -0.132    0.895
+
+We fitted a zero-inflated logistic mixed model (estimated using ML and
+nlminb optimizer) to predict PXt with hand_wing_index_z (formula: PXt ~
+hand_wing_index_z). The model included scientific_name as random effects
+(formula: list(~1 | scientific_name, ~1 | historical_site_code)). The
+model's total explanatory power is substantial (conditional R2 = 0.42) and
+the part related to the fixed effects alone (marginal R2) is of 8.74e-04.
+The model's intercept, corresponding to hand_wing_index_z = 0, is at -1.28
+(95% CI [-1.53, -1.03], p < .001). Within this model:
+
+  - The effect of hand wing index z is statistically non-significant and
+negative (beta = -0.04, 95% CI [-0.09, 0.02], p = 0.197; Std. beta = -0.04,
+95% CI [-0.09, 0.02])
+
+Standardized parameters were obtained by fitting the model on a
+standardized version of the dataset. 95% Confidence Intervals (CIs) and
+p-values were computed using a Wald z-distribution approximation.
