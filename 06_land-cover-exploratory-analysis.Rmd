@@ -171,7 +171,7 @@ The decision to use a vector or raster for further analysis depends on the quest
 # nil11848 raster
 # scale: 2000ft to 1 inch (1:24000; 12 metres resolution)
 vectnil1848 <- terra::vect(nil1848)
-emptyRast <- terra::rast(res = 12, xmin = 660771, xmax = 718316.3, ymin = 1240554, ymax = 1275492, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
+emptyRast <- terra::rast(res = 6, xmin = 660771, xmax = 718316.3, ymin = 1240554, ymax = 1275492, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
 rastnil1848 <- terra::rasterize(vectnil1848, emptyRast, "name")
 
 # Let's load the 1973, 1995 and 2017 series and rasterize them
@@ -207,7 +207,7 @@ names(areaRast2017) <- c("class", "areaInMeters", "sumArea")
 # resampling rasters to ensure they are all of the same spatial resolution and extent
 # We have to do this for the nil1848 raster
 
-resam1848 <- terra::resample(rastnil1848, rastnil1973, method = "near")
+resam1848 <- terra::resample(rastnil1848, rastnil2017, method = "near")
 sz1848 <- cellSize(resam1848, unit = "m")
 areaNil1848 <- zonal(sz1848, resam1848, sum)
 areaNil1848SqKm <- (areaNil1848$area / 1000000)
@@ -287,7 +287,10 @@ Making plots of the overall area of land cover types
 names(areaNil1848) <- c("class", "areaInMeters","sumArea")
 
 areaCalc <- purrr::reduce(list(
-  areaNil1848, areaNil1973, areaNil1995, areaNil2017
+  areaNil1848, 
+  areaNil1973, 
+  areaNil1995, 
+  areaNil2017
 ), dplyr::full_join, by = "class")
 
 names(areaCalc) <- c("class", "areaMt1848", "1848", "areaMt1973", "1973", "areaMt1995", "1995", "areaMt2017", "2017")
@@ -326,9 +329,7 @@ fig_area <- ggplot(areaCalc, aes(x = class,
     legend.position = "none")
 
 ggsave(fig_area,
-  filename = "figs/fig_totalArea_landCover.png", width = 15, height = 13,
-  device = png(), units = "in", dpi = 500
-)
+  filename = "figs/fig_totalArea_landCover.png", width = 15, height = 13, device = png(), units = "in", dpi = 600)
 dev.off()
 ```
 
