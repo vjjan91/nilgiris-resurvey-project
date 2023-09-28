@@ -60,33 +60,10 @@ relAbun <- read.csv("results/species-relative-abundance.csv")
 
 ### Load historical and modern occurrence data
 
-For the historical occurrence data, we will choose data from one time period: 1850-1900
+For the historical occurrence data, we will choose data from a single time periods: 1850-1900
 ```{r}
 ## read in historical occurrence data
-hist_occ <- read.csv("data/historical-occurrence-data.csv")
-
-### pre-1900
-hist_occ <- hist_occ %>%
-  filter(year <= 1900)
-
-### fix the count column
-hist_occ <-  hist_occ %>%
-  mutate(histCount = case_when(individualCount == "X" ~ 1,
-                               individualCount == "" ~ 1,
-                               TRUE ~ as.numeric(individualCount)))
-
-## remove species with few observations
-histCount <- hist_occ %>%
-  group_by(scientific_name) %>%
-  count() 
-
-## filter species list with a minimum of four records
-histCount_minFour <- histCount %>%
-  filter(n >= 4 )
-
-## filter species to include only 68 species
-hist_occ <- hist_occ %>%
-  filter(scientific_name %in% histCount_minFour$scientific_name)
+hist_occ <- read.csv("results/histSubset.csv")
 
 ## group by scientific name and historical site code and join the sites dataframe
 hist_occ <- hist_occ %>%
@@ -99,11 +76,7 @@ hist_occ <- hist_occ %>%
   replace(is.na(.), 0)
   
 ## read in modern occurrence data
-mod_occ <- read.csv("data/modern-occurrence-data.csv")
-
-## only include species that are present in the historical dataset
-mod_occ <- mod_occ %>%
-  filter(scientific_name %in% hist_occ$scientific_name)
+mod_occ <- read.csv("results/modSubset.csv")
 
 ## group by scientific name and modern site code
 mod_occ <- mod_occ %>%
@@ -205,7 +178,7 @@ Di_Sum <- di_df %>%
   summarise_at(vars(Di), funs(mean(., na.rm=TRUE)))
 
 Di_Sum <- Di_Sum[order(Di_Sum$Di),] %>% 
-  mutate(ID = c(1:68)) %>% 
+  mutate(ID = c(1:43)) %>% 
   left_join(relAbun, by = "scientific_name")
 
 # write to file
@@ -224,7 +197,7 @@ Ui_Sum <- ui_df %>%
   summarise_at(vars(Ui), funs(mean(., na.rm=TRUE)))
 
 Ui_Sum <- Ui_Sum[order(Ui_Sum$Ui),] %>% 
-  mutate(ID = c(1:68)) %>% 
+  mutate(ID = c(1:43)) %>% 
   left_join(relAbun, by = "scientific_name")
 
 # visualize/plots
@@ -234,7 +207,7 @@ fig_funcDi_extCol <- ggplot(Di_Sum, aes(x=ID, y=Di, fill = `Det/NonDet`)) +
   geom_bar(stat = "identity")+ 
   scale_fill_manual(values=c("red", "azure3", "cornflowerblue"), breaks=c("Naive Extinctions","Novel Colonizations","Shared")) +
   theme_bw() +
-  geom_text(aes(label = scientific_name, y = 0.5), position = position_dodge(width = 0.9), angle = 90, family = "Century Gothic", fontface = "italic")+
+  geom_text(aes(label = scientific_name, y = 0.3), position = position_dodge(width = 0.9), angle = 90, family = "Century Gothic", fontface = "italic")+
   labs(x = "", y = "Functional distinctiveness - Di") +
   theme(axis.title = element_text(family = "Century Gothic",
       size = 14, face = "bold"),
