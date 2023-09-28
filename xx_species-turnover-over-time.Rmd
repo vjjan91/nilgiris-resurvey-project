@@ -5,7 +5,7 @@ editor_options:
 
 ## Estimating species turnover across time periods
 
-We use temporal diversity metrics from Hallett et al. 2016 based on Collins et al. 2008 and Cleland et al. 2013. We use functions from the package codyn to calculate temporal diversity indices. Please see this link for a detailed vignette: <https://cran.r-project.org/web/packages/codyn/vignettes/Temporal_Diversity_Indices.html>
+We use temporal diversity metrics from Hallett et al. 2016 based on Collins et al. 2008 and Cleland et al. 2013. We use functions from the package codyn to calculate temporal diversity indices. Please see this link for a detailed vignette: https://cran.r-project.org/web/packages/codyn/vignettes/Temporal_Diversity_Indices.html
 
 ### Load necessary libraries
 
@@ -45,11 +45,11 @@ elev <- extract(alt, sites)
 sites <- cbind(sites, elev)
 ```
 
-For the historical occurrence data, we will choose data from three time periods: 1850-1900, 1900-1950 and 1950-2000.
+For the historical occurrence data, we will choose data from a single time period: 1850-1900.
 
 ```{r}
 ## read in historical occurrence data
-hist_occ <- read_csv("data/historical-occurrence-data.csv")
+hist_occ <- read.csv("results/histSubset.csv")
 
 ### prep data and bin by time periods
 hist_occ <- hist_occ %>%
