@@ -59,12 +59,10 @@ data/historical_data/
 data/results
 data/spatial/elevation
 data/spatial/Elevation
-data/spatial/hills_shapefile
-data/spatial/India
-data/spatial/India.zip
-
 data/output/*.tif
-data/spatial/*.tif
+
+# ignore the sentinel classification from 2018 (can be accessed online)
+data/spatial/2018-nilgiris/2018.tif
 
 # remove occurence data
 data/*-occurrence-data.csv
