@@ -5,11 +5,7 @@ editor_options:
 
 ## Historical-modern occurrence comparisons by elevation
 
-Here, we will compare historical and modern occurrence data and test for differences in presences/absences of species across time periods and sites by elevation. 
-
-Scenario 1  
-
-We plot the presence/absence of each species by elevation assuming that the data from multiple modern survey sites correspond to a single historical survey site. Due to lack of clarity on the exact location where species were historically collected from, multiple modern survey locations were chosen to correspond to a single historic survey site. In some cases, these modern survey sites span a range of elevations and hence the assumption here is that the elevational range for a species historically could span the range of elevations corresponding to the modern survey locations.  
+Here, we will compare historical and modern occurrence data by elevation. We plot the presence of each species by elevation assuming that the data from multiple modern survey sites correspond to a single historical survey site. Due to lack of clarity on the exact location where species were historically collected from, multiple modern survey locations were chosen to correspond to a single historic survey site. In some cases, these modern survey sites span a range of elevations and hence the assumption here is that the elevational range for a species historically could span the range of elevations corresponding to the modern survey locations. Note that we do not use the term  absences as they are not absences, and merely non-detections.  
 
 ## Load necessary libraries
 ```{r}
@@ -62,7 +58,11 @@ sites <- cbind(sites, elev)
 Load the subset data for downstream analysis
 ```{r}
 ## read in historical occurrence data
-hist_occ <- read.csv("results/histSubset.csv")
+hist_occ <- read.csv("data/historical-occurrence-data.csv")
+
+## filter data
+hist_occ <- hist_occ %>%
+  filter(year <= 1901)
 
 ## group by scientific name and historical site code
 ## add an abundance column and a presence/absence column
@@ -76,7 +76,7 @@ hist_pres_abs <- hist_occ %>%
   replace(is.na(.), 0)
 
 ## read in modern occurrence data
-mod_occ <- read.csv("results/modSubset.csv")
+mod_occ <- read.csv("data/modern-occurrence-data.csv")
 
 ## group by scientific name and modern site code
 mod_occ <- mod_occ %>%
@@ -106,7 +106,6 @@ hist_mod <- full_join(hist_pres_abs, mod_pres_abs, by =               c("scienti
 
 ### Comparing historical-modern counts by elevation
 
-We will create plots using presence-nondetection first
 ```{r}
 # run the loop to create a list of plots
 plots <- list()
