@@ -28,10 +28,9 @@ occ_year <- hist_occ %>%
 
 # The above count suggests that majority of the bird specimens were recorded in 1881, followed by some data from 1876.
 
-# Let us create a new column that bins year by time period. For the sake of exploratory analysis, we bin data into 50 year time periods (1850-1900, 1900-1950, 1950-2000, post2000)
-
+# For further downstream analysis, we ignore data from 1901 onwards
 hist_occ <- hist_occ %>%
-  filter(year <= 1900)
+  filter(year <= 1901)
 ```
 
 ### Examining count of specimens by locality
@@ -51,41 +50,17 @@ prop_count <- spp_loc %>%
   group_by(scientific_name) %>%
   summarise(uniqueSites = length(unique(historical_site_code)))
 
-# moving forward, we only choose species that occur across
-# a minimum of 30% of all sites
-prop_count <- prop_count %>%
-  filter(uniqueSites >=3)
-
-## The above filter leaves with a total of 49 species.
-
-## we further subset the above data to include only species that had a minimum species abundance data of over five
-
-## choosing only species that occurred across 30% of sites
-hist_occ <- hist_occ %>%
-  filter(scientific_name %in% prop_count$scientific_name)
-
-## further filtering species to only include species that had a minimum number of species records of five
+## count unique species list
 spp_count <- hist_occ %>%
   group_by(scientific_name) %>%
-  count() %>%
-  filter(n >=5)
+  count()
 
-unique(spp_count$scientific_name) # a total of 45 species recorded between 1850 to 1900 that occurred in atleast
-
-# adding an additional filter
-# we now have species that occurred in atleast 30% of sites and
-# had a minimum historical specimen abundance of five
-
-hist_occ <- hist_occ %>%
-  filter(scientific_name %in% spp_count$scientific_name)
-
-# testing
-unique(hist_occ$scientific_name)
+unique(spp_count$scientific_name) # a total of 148 species were collected/recorded between 1850 and 1901 across 12 unique historical localities identified
 ```
 
 ## Visualizations of historical data
 ```{r}
-fig_loc_timePeriod <- ggplot(occ_locality, aes(x = historical_site_code, y = n, fill = historical_site_code)) +
+fig_loc_timePeriod <- ggplot(occ_locality, aes(x = reorder(historical_site_code,-n), y = n, fill = historical_site_code)) +
   geom_bar(stat = "identity", position = position_dodge(), fill = "#883107", alpha = 0.9) +
   geom_text(aes(label = n, hjust = "middle", vjust = -0.5),
     position = position_dodge(), angle = 0, size = 5
@@ -109,7 +84,8 @@ ggsave(fig_loc_timePeriod, filename = "figs/fig_histCount_locality.png", width =
 dev.off()
 ```
 
-### Examining species specific counts by locality
+
+## Examining species specific counts by locality
 ```{r}
 fig_spp <- ggplot(spp_count, aes(x = reorder(scientific_name, -n), y = n, fill = scientific_name)) +
   geom_bar(stat = "identity", position = position_dodge(), fill = "#883107", alpha = 0.9) +
@@ -133,38 +109,9 @@ fig_spp <- ggplot(spp_count, aes(x = reorder(scientific_name, -n), y = n, fill =
 
 ggsave(fig_spp, filename = "figs/fig_histSpp.png", width = 50, height = 20, device = png(), units = "in", dpi = 300, limitsize = F)
 dev.off()
-
-## Re-examining species by locality after filtering 
-spp_loc <- hist_occ %>%
-  group_by(scientific_name, historical_site_code) %>%
-  count()
-
-fig_spp_loc <- ggplot(spp_loc, aes(x = reorder(scientific_name,-n), y = n, fill = scientific_name)) +
-  geom_bar(stat = "identity", position = position_dodge(), fill = "#883107", alpha = 0.9) +
-  geom_text(aes(label = n, hjust = "middle", vjust = -0.5),
-    position = position_dodge(), angle = 0, size = 5
-  ) +
-  facet_wrap(~historical_site_code) +
-  theme_bw() +
-  labs(
-    x = "\nSpecies & Locality",
-    y = "Count\n"
-  ) +
-  theme(
-    axis.title = element_text(
-      family = "Century Gothic",
-      size = 14, face = "bold"
-    ),
-    axis.text = element_text(family = "Century Gothic", size = 14),
-    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
-    legend.position = "none"
-  )
-
-ggsave(fig_spp_loc, filename = "figs/fig_histSpp_locality.png", width = 20, height = 12, device = png(), units = "in", dpi = 300)
-dev.off()
 ```
 
-### Load modern occurrence data and explore patterns
+## Load modern occurrence data and explore patterns
 ```{r}
 mod_occ <- read.csv("data/modern-occurrence-data.csv") %>%
   filter(!is.na(historical_site_code)) %>%
@@ -174,10 +121,6 @@ mod_occ <- read.csv("data/modern-occurrence-data.csv") %>%
 modOcc_spp <- mod_occ %>%
   group_by(species_code) %>%
   count() # 2301 observations of 102 bird species
-
-## only include species that are present in the historical dataset
-mod_occ <- mod_occ%>%
-  filter(scientific_name %in% hist_occ$scientific_name)
 
 # plot figure of species by locality
 mod_occ_loc <- mod_occ %>%
@@ -210,11 +153,5 @@ ggsave(fig_modSpp_loc, filename = "figs/fig_modSpp_loc.png", width = 40, height 
 dev.off()
 
 ## Some interesting patterns of certain species being more abundant/detected in certain sites over others.
-```
-
-## write the subset data to file
-```{r}
-write.csv(hist_occ, "results/histSubset.csv", row.names = F)
-write.csv(mod_occ, "results/modSubset.csv", row.names = F)
 ```
 
