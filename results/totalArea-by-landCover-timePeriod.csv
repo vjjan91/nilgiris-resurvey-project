@@ -1,46 +1,13 @@
 "class","Year","Area"
-"Shola Forest","1870",89.2284866344329
-"Shola Forest","1910",235.576083312781
-"Shola Forest","1973",164.898240305331
-"Shola Forest","1995",168.63015835976
-"Shola Forest","2017",171.443234537637
-"Shola Grassland","1870",976.602983260699
-"Shola Grassland","1910",320.485562283479
-"Shola Grassland","1973",264.336762434347
-"Shola Grassland","1995",164.810069123482
-"Shola Grassland","2017",89.025586137089
-"Agricultural Land","1870",3.92127599507406
-"Agricultural Land","1910",176.967249311155
-"Agricultural Land","1973",139.186064779331
-"Agricultural Land","1995",133.937571869879
-"Agricultural Land","2017",118.970506512534
-"Plantations (Tea & Timber)","1870",1.47844297039438
-"Plantations (Tea & Timber)","1910",16.3657664824636
-"Plantations (Tea & Timber)","1973",NA
-"Plantations (Tea & Timber)","1995",NA
-"Plantations (Tea & Timber)","2017",NA
-"Settlements","1870",7.10311295096369
-"Settlements","1910",12.9052735059987
-"Settlements","1973",24.6312649602181
-"Settlements","1995",41.4703575410673
-"Settlements","2017",53.8108840213324
-"Water bodies","1870",3.4632080837861
-"Water bodies","1910",3.10326723234294
-"Water bodies","1973",11.3296141964909
-"Water bodies","1995",17.5838435958845
-"Water bodies","2017",12.6599822282198
-"Unclassified Area","1870",NA
-"Unclassified Area","1910",316.452799520677
-"Unclassified Area","1973",NA
-"Unclassified Area","1995",NA
-"Unclassified Area","2017",NA
-"Tea Plantations","1870",NA
-"Tea Plantations","1910",NA
-"Tea Plantations","1973",336.017935730909
-"Tea Plantations","1995",364.101962630243
-"Tea Plantations","2017",365.098833133364
-"Timber Plantations","1870",NA
-"Timber Plantations","1910",NA
-"Timber Plantations","1973",141.4552195693
-"Timber Plantations","1995",191.32203852859
-"Timber Plantations","2017",270.84697507873
+"agriculture","1848",135.971344686974
+"agriculture","2018",95.5054781764526
+"plantations","1848",1.60722260733795
+"plantations","2018",424.753542048325
+"settlements","1848",3.90131179119873
+"settlements","2018",14.5234446909027
+"shola_forest","1848",113.006643009666
+"shola_forest","2018",358.497079211571
+"shola_grassland","1848",836.880826221107
+"shola_grassland","2018",182.174088577385
+"water_bodies","1848",2.60299958196259
+"water_bodies","2018",18.5167151936111
