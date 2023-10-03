@@ -313,9 +313,7 @@ area1848SqKm <- (area1848$area / 1000000)
 area1848 <- cbind(area1848, area1848SqKm)
 ```
 
-
 ### Barplots of land cover change
-
 
 ```{r}
 # Joining all dataframes to create a single one for plotting and visualization
