@@ -5,9 +5,9 @@ editor_options:
 
 # Species relative abundances over time
 
-We replicate analyses following Gotelli et al. 2021 (who provides a methodological approach to calculate relative species abundances using historical museum records) and Gómez et al. 2021 who assumed two scenarios while calculating extinctions and colonizations - "The first is based on the assumption that all surveys accurately describe the avifauna present and that any records of species not detected in prior surveys of San Antonio represent real colonizations. The second scenario is based on the assumption that all the novel species (i.e., those detected for the first time after the 1910s) were false absences."
+In this script, we calculate species relative abundances over time by replicating a novel approach proposed by Gotelli et al. 2021 (who provides a methodological approach to calculate relative species abundances using historical museum records).
 
-The second assumption is that the level of the analysis is at the 'historic-site' and not the 'modern-site' (which essentially corresponds to multiple unique modern survey sites for every 'historic-site'). While calculating relative abundances and for estimation of turnover and to ensure that the analysis is consistent, we sum abundances across the modern sites corresponding to each historic site.  
+The assumption is that the level of the analysis is at the 'historic-site' and not the 'modern-site' (which essentially corresponds to multiple unique modern survey sites for every 'historic-site'). 
 
 ## Load necessary libraries
 ```{r}
@@ -32,6 +32,8 @@ library(ggpubr)
 library(goeveg)
 library(sjPlot)
 library(patchwork)
+library(DHARMa)
+library(bbmle)
 
 # source custom functions
 source("code/02_relative-species-abundance-functions.R")
@@ -62,22 +64,13 @@ sites <- cbind(sites, elev)
 ## For the historical occurrence data, we will choose data from a single time period: 1850-1900
 ```{r}
 ## read in historical occurrence data
-hist_occ <- read.csv("results/histSubset.csv")
+hist_occ <- read.csv("data/historical-occurrence-data.csv")
 
-## remove species with few observations
-histCount <- hist_occ %>%
-  group_by(scientific_name) %>%
-  count() 
-
-## filter species list with a minimum of ten records
-histCount_minTen <- histCount %>%
-  filter(n >= 10 )
-
-## filter species to include only 35 species
+## filter data
 hist_occ <- hist_occ %>%
-  filter(scientific_name %in% histCount_minTen$scientific_name)
+  filter(year <= 1901)
 
-# calculate total abundance of historical data at each site
+# calculate total count of historical data at each site
 hist_occ <- hist_occ %>%
   group_by(scientific_name, historical_site_code) %>%
   count() %>%
@@ -89,7 +82,7 @@ hist_occ <- left_join(hist_occ, sites, by=c("historical_site_code"="historical_s
   replace(is.na(.), 0) 
 
 ## read in modern occurrence data
-mod_occ <- read.csv("results/modSubset.csv")
+mod_occ <- read.csv("data/modern-occurrence-data.csv")
 
 ## group by scientific name and modern site code
 mod_occ <- mod_occ %>%
@@ -106,7 +99,7 @@ mod_occ <-  left_join(mod_occ, sites, by=c("modern_site_code"="modern_site_code"
 
 ## Calculate dirichlet distributions of relative abundance
 
-Here, we will functions from Gotelli et al. 2021 to calculate relative species abundances between historic and modern periods. For the first level of analysis, we ignore information at the site-level and calculate overall relative abundance per time-period at the landscape level. 
+Here, we will functions from Gotelli et al. 2021 to calculate relative species abundances between historic and modern periods.  
 ```{r}
 # note: the level of the analysis is at the 'historic-site' and not the 'modern-site' (which essentially corresponds to two or three unique sites for every 'historic-site')
 # to ensure that the analysis is consistent, we sum abundances across the modern sites corresponding to each historic site
@@ -121,15 +114,6 @@ unique_hist <- hist_occ[,c(1,2,3)] %>%
   group_by(scientific_name) %>%
   summarise("relAbund1850" = sum(`1850-1900`)) 
 
-# apply dirichlet distribution
-dat <- tibble::deframe(unique_hist) ## choosing 1850-1900 data
-
-relAbun1850 <- dirch_stats(dat) %>%
-  dplyr::select(species, bayes_mean) %>%
-  rename(., bayes_mean_1850 = bayes_mean)
-
-## calculating relative species abundances for the modern time period
-
 # we remove modern site_code and get only distinct rows
 unique_mod <- mod_occ[,c(1,3,5)] %>%
   group_by(scientific_name, historical_site_code) %>%
@@ -137,8 +121,21 @@ unique_mod <- mod_occ[,c(1,3,5)] %>%
   group_by(scientific_name) %>%
   summarise("relAbund2021" = sum(`2021`)) 
 
-# apply dirichlet distribution
-dat <- tibble::deframe(unique_mod) ## choosing modern data
+hist_mod <- full_join(unique_hist, unique_mod) %>%
+  replace_na(list(relAbund1850 = 0, relAbund2021 = 0)) 
+
+## above dataframe suggests that there are 69 species that had historical records/observations, but were not detected in the modern resurvey
+## similarly, there are 23 species unique to the modern resurvey that were not recorded/collected in the historical time period
+
+# apply dirichlet distribution to the historical data
+dat <- tibble::deframe(hist_mod[,1:2]) ## choosing 1850-1900 data
+
+relAbun1850 <- dirch_stats(dat) %>%
+  dplyr::select(species, bayes_mean) %>%
+  rename(., bayes_mean_1850 = bayes_mean)
+
+# apply dirichlet distribution to the modern survey
+dat <- tibble::deframe(hist_mod[,c(1,3)]) ## choosing modern data
 
 relAbun2021 <- dirch_stats(dat) %>%
   dplyr::select(species, bayes_mean) %>%
@@ -146,7 +143,7 @@ relAbun2021 <- dirch_stats(dat) %>%
 
 ### join the relative abundance datasets together
 relAbun <- full_join(relAbun1850, relAbun2021, by = c("species")) %>%
-  replace(is.na(.), 0) %>%
+  #replace(is.na(.), 0) %>%
   arrange(species) %>%
   rename(., `1850-1900` = "bayes_mean_1850") %>%
   rename(., `2021` = "bayes_mean_2021") %>%
@@ -156,13 +153,10 @@ relAbun <- full_join(relAbun1850, relAbun2021, by = c("species")) %>%
 write.csv(relAbun, "results/species-relative-abundance.csv", row.names = F)
 ```
 
-
 ## Visualizing changes in relative abundance over time
-```{r}
-## This analysis is being done at the landscape-level
 
-## one:one comparisons of abundance between 1850-1900 and 2021 (all species and sites pooled)
-fig_1850v2021_rel <- ggplot(data=relAbun,aes(x=`2021`,y=`1850-1900`))  + geom_point() +
+```{r}
+fig_1850v2021_rel <- ggplot(data=relAbun,aes(x=`2021`,y=`1850-1900`)) +
    scale_y_log10() +
   geom_abline(slope=1, intercept=0,linetype="dashed") +
   scale_x_log10() +
@@ -170,6 +164,7 @@ fig_1850v2021_rel <- ggplot(data=relAbun,aes(x=`2021`,y=`1850-1900`))  + geom_po
        x = "2021 Relative abundance") +
    geom_point(shape = 21, colour = "black", fill = "white", size = 2, stroke = 1)+
    geom_smooth(method="lm", se=TRUE, fullrange=FALSE, level=0.95,linetype="solid")+
+  stat_regline_equation(aes(label = ..rr.label..)) +
   theme_bw() +
   theme(axis.text = element_text(family = "Century Gothic", size = 13),
         legend.title = element_text(family = "Century Gothic"),
@@ -178,14 +173,16 @@ fig_1850v2021_rel <- ggplot(data=relAbun,aes(x=`2021`,y=`1850-1900`))  + geom_po
 
 ggsave(fig_1850v2021_rel, filename = "figs/fig_1850-1900vs2021_relAbun.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
 dev.off()
+```
 
-## violinplot
-data_for_violinplot <- relAbun %>%
+## Boxplot visualization of overall relative abundance between timeperiods
+```{r}
+data_for_boxplot <- relAbun %>%
   dplyr::select(-scientific_name) %>%
   pivot_longer(everything())
 
 fig_relAbun_over_time <- ggbetweenstats(
-  data = data_for_violinplot,
+  data = data_for_boxplot,
   x = name,
   y = value,
   xlab = "Time Period", 
@@ -210,83 +207,61 @@ ggsave(fig_relAbun_over_time, filename = "figs/fig_relAbun_landscapeLevel.png", 
 dev.off()
 ```
 
-## Visualization as a line plot (for each species)
+## Examining changes in relative abundance as a function of species habitat affiliation
 ```{r}
-## subset data for line plots
-relAbun_forLinePlot <- relAbun %>%
-  pivot_longer(-scientific_name, names_to = "timePeriod", values_to = "relAbun") %>% filter(relAbun != 0) 
+## load in species trait dataset
+trait_dat <- read.csv("data/species-trait-dat.csv")
 
-## ensure that text does not overlap
-options(ggrepel.max.overlaps = Inf)
+# note: the classification of habitat type was created by comparing habitat affiliation data from the State of India's Birds report (v2; released in 2023). We used the following trait classifications:
+# Forest 
+# Grassland 
+# Wooded Habitat
+# Generalist
 
-# fig
-fig_relAbun_linePlot <- ggplot(relAbun_forLinePlot, aes(x=timePeriod, y = relAbun,color = scientific_name, group = scientific_name)) +
-  geom_point() + 
-  geom_line() +
-  geom_text_repel(data=subset(relAbun_forLinePlot, timePeriod == "2021"),
-            aes(timePeriod,relAbun,label=scientific_name)) +
-  scale_y_log10() +
-  xlab("Time period") +
-  ylab("Relative abundance") +
-  scale_color_scico_d(palette = "grayC", begin = 1, end = 1) +
-  theme_bw() +
-  theme(axis.text = element_text(family = "Century Gothic", size = 13),
-        legend.title = element_text(family = "Century Gothic"),
-    legend.text = element_text(family = "Century Gothic"),
-    text = element_text(family = "Century Gothic", size = 25)) +
-  guides(fill="none",
-         color = "none")
+# Our criteria for each of these classifications includes the following: # In the 1850s, the land cover change analysis revealed that the majority of the landscape was largely grasslands and forests. However in 2018, the landscape is largely a mosaic of human-modified land cover types - including wooded habitats (mostly comprising timber plantations and degraded forests), tea plantations, followed by forests and grasslands.
+# While the State of India's Birds provides a habitat classification/criteria based on contemporary use of habitats by a species, we classified species based on our resurveys and assuming that a species would either be in a forest, grassland, wooded habitat or a generalist species in the 1850s. 
+# An example in this case is the black and orange flycatcher. While it is commonly found in shola forest habitat, this species is also common in degraded wooded areas, including timber plantations. However, in the 1850s (due to limited presence of timber plantations compared to 2018), we assume that this is a forest specialist bird. 
+# Other examples include bird species that prefer open habitats, scrubland and dry grassland - such species have been lumped into the Grassland category as this was the closest habitat similar to the above habitat types in 1850s. Eg. Blue-tailed bee-eater, long-tailed shrike, black-winged kite. 
+# If a species is truly a generalist species and is not particularly occupying/specialized on any particular wooded/forested/grassland habitat, it was classified in the generalist category
+# Based on the above crtiera, 84 species were classified as forest birds, 33 species were classified as grassland birds, 31 species were classified as generalist species and 19 species were classified as wooded habitat species. 
 
-ggsave(fig_relAbun_linePlot, filename = "figs/fig_relAbun_linePlot.png", width = 18, height = 15, device = png(), units = "in", dpi = 300)
+## join rel abundance dataframe and species trait
+## pivot longer
+rel_abun_trait <- relAbun %>%
+  pivot_longer(-scientific_name, names_to = "time_period", values_to = "relative_abundance") %>% left_join(., trait_dat, by=c("scientific_name"="scientific_name")) %>%
+   filter(Habitat.type != "Wetland") %>% # remove wetland birds
+  ungroup()
+
+# visualization by habitat affiliation
+rel_abun_trait$Habitat.type <- factor(rel_abun_trait$Habitat.type, levels=c("Forest", "Grassland", "Generalist", "Wooded Habitat"))
+
+fig_relAbun_habitat <- grouped_ggbetweenstats(
+  data = rel_abun_trait,
+  x = time_period,
+  y = relative_abundance,
+  grouping.var = `Habitat.type`,
+  xlab = "Habitat.type", 
+  ylab = "Relative Abundance",
+  p.adjust.method = "fdr",
+  #title = "Relative abundance by habitat type",
+  plot.type = "box") +
+  #ggplot.component = list(ggplot2::scale_y_continuous(
+  #  breaks = seq(0, 0.04, 0.005),
+  #  limits = (c(0, 0.04))))) +
+  scale_fill_scico_d(palette = "roma") 
+
+ggsave(fig_relAbun_habitat, filename = "figs/fig_relAbun_habitat_landscapeLevel.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
 dev.off()
 ```
 
-## Rank abundance curves of relative abundance for two time periods  
-
+## Rank abundance plots of relative abundance by species trait across time periods  
 ```{r}
-## historical data
-rank_1850 <- relAbun[c(1,2)] %>%
-  pivot_wider(names_from = scientific_name,
-              values_from = `1850-1900`,
-              values_fill = list(`1850-1900`=0))
-
-rank_1850_mat <- as.matrix(rank_1850[, 1:ncol(rank_1850)])
-
-# dataframe for visualization of rank abundance for historical data
-freq <- sort(apply(rank_1850_mat > 0, 2, sum), decreasing = T)
-abund <- sort(apply(rank_1850_mat, 2, sum), decreasing = T)
-sum(abund)
-rel_abund_hist <- sort((abund/sum(abund)), decreasing = T)
-labels.abund <- names(rel_abund_hist)
-rel_abund_hist <- data.frame(names(rel_abund_hist),data.frame(rel_abund_hist))
-names(rel_abund_hist) <- c("scientific_name","rel_abund")
-rel_abund_hist$year <- 1850
-
-## repeat the above for modern occurrence
-rank_2021 <- relAbun[c(1,3)] %>%
-  pivot_wider(names_from = scientific_name,
-              values_from = `2021`,
-              values_fill = list(`2021`=0))
-
-rank_2021_mat <- as.matrix(rank_2021[, 1:ncol(rank_2021)])
-
-# dataframe for visualization of rank abundance for modern data
-freq <- sort(apply(rank_2021_mat > 0, 2, sum), decreasing = T)
-abund <- sort(apply(rank_2021_mat, 2, sum), decreasing = T)
-sum(abund)
-rel_abund_mod <- sort((abund/sum(abund)), decreasing = T)
-#labels.abund <- names(rel_abund_hist)
-rel_abund_mod <- data.frame(names(rel_abund_mod),data.frame(rel_abund_mod))
-names(rel_abund_mod) <- c("scientific_name","rel_abund")
-rel_abund_mod$year <- 2021
-
 # visualization
-rank_abund_dat <- full_join(rel_abund_hist, rel_abund_mod)
-rank_abund_dat$year <- as.factor(rank_abund_dat$year)
-
-# historical
-fig_rankAbund <- ggplot(rank_abund_dat, aes(x = reorder(scientific_name,-rel_abund), y = rel_abund, fill = year)) + geom_bar(stat = "identity", position = "identity", alpha = 0.6) + scale_fill_manual(values = c("#2c7fb8","#e34a33")) +
-  ylim(0,0.2) + 
+fig_rankAbund <- ggplot(rel_abun_trait, aes(x = reorder(scientific_name,relative_abundance), y = relative_abundance, fill = time_period)) +
+  #coord_flip()+
+  geom_bar(stat = "identity", position = "dodge", width = 0.5) + scale_fill_manual(values = c("#2c7fb8","#e34a33")) +
+  facet_wrap(~Habitat.type, ncol = 2, scales = "free")+
+  #ylim(0,0.2) + 
   theme_bw() +
   labs(
     x = "\nScientific name",
@@ -301,511 +276,338 @@ fig_rankAbund <- ggplot(rank_abund_dat, aes(x = reorder(scientific_name,-rel_abu
     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)
   )
 
-fig_rankAbund
+# Grassland birds are the biggest losers; generalist birds are the biggest winners while forest birds show mixed responses depending on the species
 
-ggsave(fig_rankAbund, filename = "figs/fig_rankAbundance.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+ggsave(fig_rankAbund, filename = "figs/fig_rankAbundance.png", width = 29, height = 14, device = png(), units = "in", dpi = 300)
 dev.off()
 ```
 
-## Examining changes in relative abundance as a function of species habitat affiliation
+## Are there significant decreases in relative abundance by time periods across habitat affiliations?
 
+We will run generalized linear mixed effect models with a beta family for all data first.
 ```{r}
-## load in species trait dataset
-trait_dat <- read.csv("data/species-trait-dat.csv")
-
-# note: the classification of habitat type was taken from a working file of trait data for State of India's Birds report v2 (to be released in 2023). We used the following trait classifications:
-# Wooded habitat: If it preferred some level of wooded habitat but not particularly specialized on rainforest/forest habitat. An example in this case is the black and orange flycatcher. While it is commonly found in shola forest habitat, this species is also common in degraded wooded areas, including timber plantations. If a species preferred just scrub habitat alone, we lumped it under this category.
-# Forest: If a species was a forest specialist. 
-# Grassland: While State of India's birds uses a separate classification for grassland & grassland+scrub, here we combine the two and use a single classification for Grassland. Eg. Black drongo - which favors both grassland areas and scrub habitat. There are four species that are classified as using 'open habitat' which had been subsumed under grasslands in our study - this includes - blue-tailed bee-eater, black-winged kite, long-tailed shrike (eBird lists it as preferring open habitats) and western yellow wagtail. 
-# Generalist: If a species is truly a generalist species and is not particularly occupying/specialized on any particular wooded/forested/grassland habitat.
-
-## join rel abun and species trait
-## pivot longer
-rel_abun_trait <- relAbun %>%
-  pivot_longer(-scientific_name, names_to = "Time Period", values_to = "Relative abundance") %>% left_join(., trait_dat, by=c("scientific_name"="scientific_name")) %>%
-   filter(Habitat.type != "Aquatic") %>%
-  filter(`Relative abundance` !=0) %>%
-  ungroup()
-  
-# visualization by habitat affiliation
-rel_abun_trait$Habitat.type <- factor(rel_abun_trait$Habitat.type, levels=c("Forest", "Grassland", "Generalist", "Wooded Habitat"))
-
-# log transformation of relative abundance to avoid negative values
-rel_abun_trait$log_relative_abundance <- log10(rel_abun_trait$`Relative abundance` + 1 - min(rel_abun_trait$`Relative abundance`))
-
-fig_relAbun_habitat <- grouped_ggbetweenstats(
-  data = rel_abun_trait,
-  x = `Time Period`,
-  y = log_relative_abundance,
-  grouping.var = `Habitat.type`,
-  xlab = "Habitat.type", 
-  ylab = "Relative Abundance",
-  p.adjust.method = "fdr",
-  #title = "Relative abundance by habitat type",
-  plot.type = "box",
-  ggplot.component = list(ggplot2::scale_y_continuous(
-    breaks = seq(0, 0.04, 0.005),
-    limits = (c(0, 0.04))))) +
-  scale_fill_scico_d(palette = "roma") 
-
-ggsave(fig_relAbun_habitat, filename = "figs/fig_relAbun_habitat_landscapeLevel.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
-dev.off()
-
-## examining relative species abundance and body mass
-## faceting by time period
-fig_relAbun_mass <- ggplot(rel_abun_trait, aes(x= Mass, y=`Relative abundance`)) +  geom_point(shape = 21, colour = "black", fill = "white", size = 2, stroke = 1)+
-   geom_smooth(method="lm", se=TRUE, fullrange=FALSE, level=0.95,linetype="solid") +  
-  theme_bw() +
-    scale_y_log10() +
-   stat_regline_equation(label.y = 0.100, aes(label = ..eq.label..)) +
-  stat_regline_equation(label.y = 0.500, aes(label = ..rr.label..)) +
-  scale_x_log10() +
-  facet_wrap(~`Time Period`) +
-  labs(x="\nlog (Body mass)", 
-       y="Relative abundance\n") +
-  theme(axis.text = element_text(family = "Century Gothic", size = 13),
-        legend.title = element_text(family = "Century Gothic"),
-    legend.text = element_text(family = "Century Gothic"),
-    text = element_text(family = "Century Gothic", size = 25))
-
-ggsave(fig_relAbun_mass, filename = "figs/fig_relAbun_bodyMass.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
-dev.off()
-
-## hand-wing index
-fig_relAbun_hwi <- ggplot(rel_abun_trait, aes(x= Hand.Wing.Index, y=`Relative abundance`)) +  
-  geom_point(shape = 21, colour = "black", fill = "white", size = 2, stroke = 1)+
-   geom_smooth(method="lm", se=TRUE, fullrange=FALSE, level=0.95,linetype="solid") +  theme_bw() +
-    scale_y_log10() +
-  stat_regline_equation(label.y = 0.100, aes(label = ..eq.label..)) +
-  stat_regline_equation(label.y = 0.500, aes(label = ..rr.label..)) +
-  facet_wrap(~`Time Period`) +
-  labs(x="\nHand-Wing Index", 
-       y="Relative abundance\n") +
-  theme(axis.text = element_text(family = "Century Gothic", size = 13),
-        legend.title = element_text(family = "Century Gothic"),
-    legend.text = element_text(family = "Century Gothic"),
-    text = element_text(family = "Century Gothic", size = 25))
-
-ggsave(fig_relAbun_hwi, filename = "figs/fig_relAbun_handWingIndex.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
-dev.off()
-```
-
-## Repeating the above analysis at the site-level
-```{r}
-# we remove modern site_code and get only distinct rows
-hist_site_level <- hist_occ[,c(1:3)] %>%
-  distinct(.)
-
-relSpAbund_hist <- c()
-
-for(i in 1:length(unique(hist_site_level$historical_site_code))) {
-  
-  a <- hist_site_level %>%
-  filter(historical_site_code == unique(hist_site_level$historical_site_code)[i])
-
-  b <- tibble::deframe(a[,c(1,3)]) ## choosing 1850-1900 data
-  
-  loc <- unique(hist_site_level$historical_site_code)[i] # what's the site_code?
-  
-  relSpAbund_hist[[i]] <- dirch_stats(b) %>%
-  dplyr::select(species, bayes_mean)
-
-  old_varname <-  c('species','bayes_mean')
-  new_varname <- c('scientific_name', paste(loc,"_","1850", sep = ""))
-
-  relSpAbund_hist[[i]] <- relSpAbund_hist[[i]] %>%
-      data.table::setnames(old = old_varname, new = new_varname)
-
-  names(relSpAbund_hist)[i] <- loc 
-}
-
-# save object but full_join across lists
-relSpAbund_hist <- relSpAbund_hist %>%
-    reduce(.f=full_join)
-
-##  time period 2021
-mod_site_level <- mod_occ[,c(1,3,5)] %>%
-  group_by(scientific_name, historical_site_code) %>%
-  mutate("2021" = sum(`2021`)) %>%
-  distinct(.)
-
-relSpAbund_2021 <- c()
-
-for(i in 1:length(unique(mod_site_level$historical_site_code))) {
-  
-  a <- mod_site_level %>%
-  filter(historical_site_code == unique(mod_site_level$historical_site_code)[i])
-
-  b <- tibble::deframe(a[,c(1,2)]) ## choosing modern data
-  
-  loc <- unique(mod_site_level$historical_site_code)[i] # what's the site_code?
-  
-  relSpAbund_2021[[i]] <- dirch_stats(b) %>%
-  dplyr::select(species, bayes_mean)
-
-  old_varname <-  c('species','bayes_mean')
-  new_varname <- c('scientific_name', paste(loc,"_","2021", sep = ""))
-
-  relSpAbund_2021[[i]] <- relSpAbund_2021[[i]] %>%
-      data.table::setnames(old = old_varname, new = new_varname)
-
-  names(relSpAbund_2021)[i] <- loc 
-}
-
-# save object but full_join across lists
-relSpAbund_2021 <- relSpAbund_2021 %>%
-    reduce(.f=full_join)
-
-## join all the datasets together
-relSpAbund_by_site <- full_join(relSpAbund_hist, relSpAbund_2021, by = "scientific_name") %>%
-  arrange(scientific_name) %>%
-  replace(is.na(.), 0) 
-```
-
-
-## Visualizing differences in relative abundance over time at the site level
-```{r}
-## preparing dataframe for visualization
-relSpAbund <- relSpAbund_by_site %>%
-  pivot_longer(!scientific_name, names_to = "site_year", values_to = "relAbundance") %>%
-  separate(site_year, into = c("site", "year"), sep = "_") %>%
-  filter(relAbundance != 0)
-
-## write results to file
-write.csv(relSpAbund, "results/species-relative-abundance-siteLevel.csv", row.names = F)
-
-## Please note: for the sake of downstream analysis, we have renamed 1850-1900 as 1850. In other words, each year - except for 2021 represents a 50 year time period. 
-
-fig_relAbun_siteLevel <- relSpAbund %>%
-  dplyr::select(-scientific_name) %>%
-  ggplot(aes(x=year, y = relAbundance,
-             fill = year)) +
-  geom_boxplot() +
-  scale_y_log10() +
-  facet_wrap(~site)+
-  xlab("Time period") +
-  ylab("Relative abundance") +
-  scale_fill_scico_d(palette = "batlow") +
-  theme_bw() +
-  theme(axis.title = element_text(family = "Century Gothic",
-      size = 14, face = "bold"),
-        axis.text = element_text(family="Century Gothic",size = 14),
-      legend.title = element_text(family="Century Gothic",
-                                    size = 14, face = "bold"),
-        legend.key.size = unit(1,"cm"),
-        legend.text = element_text(family="Century Gothic",size = 14)) +
-  guides(fill="none")
-
-ggsave(fig_relAbun_siteLevel, filename = "figs/fig_relAbun_siteLevel.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
-dev.off()
-```
-
-## Running generalized linear mixed models
-```{r}
-## overall
-relSpAbund <- relSpAbund %>%
-  mutate(relAbundance = case_when(relAbundance == 1 ~ 0.999,
-                                  TRUE ~ relAbundance))
-
-glmm_overall <- glmmTMB(relAbundance ~ year + (1|site) +(1|scientific_name),
-                      data = relSpAbund, 
-                      ziformula = ~1,
+# overall data
+glmm_overall <- glmmTMB(relative_abundance ~ time_period 
+                        +(1|scientific_name),
+                      data = rel_abun_trait, 
+                      #ziformula = ~1,
                       family = beta_family(link = "logit"))
-
 summary(glmm_overall)
 
-# visualize the random effects
-ranef(glmm_overall)
-str(ref <- ranef(glmm_overall))
+# Family: beta  ( logit )
+# Formula:          relative_abundance ~ time_period + (1 | scientific_name)
+# Data: rel_abun_trait
+# 
+#      AIC      BIC   logLik deviance df.resid 
+#  -2856.0  -2840.8   1432.0  -2864.0      330 
+# 
+# Random effects:
+# 
+# Conditional model:
+#  Groups          Name        Variance  Std.Dev. 
+#  scientific_name (Intercept) 3.649e-09 6.041e-05
+# Number of obs: 334, groups:  scientific_name, 167
+# 
+# Dispersion parameter for beta family (): 98.2 
+# 
+# Conditional model:
+#                 Estimate Std. Error z value Pr(>|z|)    
+# (Intercept)     -4.92920    0.08122  -60.69  < 2e-16 ***
+# time_period2021 -0.40259    0.09718   -4.14 3.43e-05 ***
 
-## as.data.frame() provides RE's and conditional standard deviations:
-str(dd <- as.data.frame(ref))
+report(glmm_overall)
 
-fig_ranef_relAbund <- ggplot(dd, aes(y=grp,x=condval)) +
-        geom_point() + facet_wrap(~term,scales="free_x") +
-        geom_errorbarh(aes(xmin=condval -2*condsd,
-                           xmax=condval +2*condsd), height=0) +
-  theme_bw() +
-  theme(axis.title = element_text(family = "Century Gothic",
-      size = 14, face = "bold"),
-        axis.text = element_text(family="Century Gothic",size = 14),
-      legend.title = element_text(family="Century Gothic",
-                                    size = 14, face = "bold"),
-        legend.key.size = unit(1,"cm"),
-        legend.text = element_text(family="Century Gothic",size = 14)) +
-  guides(fill="none")
+# We fitted a logistic mixed model (estimated using ML and nlminb optimizer)
+# to predict relative_abundance with time_period (formula: relative_abundance
+# ~ time_period). The model included scientific_name as random effect
+# (formula: ~1 | scientific_name). The model's explanatory power related to
+# the fixed effects alone (marginal R2) is 0.04. The model's intercept,
+# corresponding to time_period = 1850-1900, is at -4.93 (95% CI [-5.09,
+# -4.77], p < .001). Within this model:
+# 
+#   - The intercept is statistically significant and negative (beta = -0.40, 95%
+# CI [-0.59, -0.21], p < .001; Std. beta = -4.93, 95% CI [-5.09, -4.77])
+# 
+# Standardized parameters were obtained by fitting the model on a standardized
+# version of the dataset. 95% Confidence Intervals (CIs) and p-values were
+# computed using a Wald z-distribution approximation.
 
-ggsave(fig_ranef_relAbund, filename = "figs/fig_randomfEffects_relAbund.png", width = 15, height = 15, device = png(), units = "in", dpi = 300)
+# plot predicted model estimates
+set_theme(base = theme_bw(),
+          theme.font = "Century Gothic",
+          axis.title.size = 1.2,
+          axis.textsize = 1,
+          axis.textcolor = "black")
+
+fig_glmm_overall <- plot_model(glmm_overall, type = "pred",
+                               title = "Predicted values of relative abundance for all data") 
+
+ggsave(fig_glmm_overall$time_period, filename = "figs/fig_glmm_relAbundance_overall.png", width = 9, height = 6, device = png(), units = "in", dpi = 300)
 dev.off()
 ```
- Family: beta  ( logit )
-Formula:          relAbundance ~ year + (1 | site) + (1 | scientific_name)
-Zero inflation:                ~1
-Data: relSpAbund
 
-     AIC      BIC   logLik deviance df.resid 
- -2078.5  -2052.2   1045.3  -2090.5      584 
+## Forest birds
 
-Random effects:
-
-Conditional model:
- Groups          Name        Variance Std.Dev.
- site            (Intercept) 0.1303   0.3610  
- scientific_name (Intercept) 0.1234   0.3513  
-Number of obs: 590, groups:  site, 28; scientific_name, 35
-
-Dispersion parameter for beta family (): 27.8 
-
-Conditional model:
-            Estimate Std. Error z value Pr(>|z|)    
-(Intercept)  -2.1801     0.1367 -15.946  < 2e-16 ***
-year2021     -0.5777     0.1164  -4.964  6.9e-07 ***
-
-Zero-inflation model:
-            Estimate Std. Error z value Pr(>|z|)
-(Intercept)   -22.49    3154.47  -0.007    0.994
-
-report::report(glmm_overall)
-
-We fitted a zero-inflated logistic mixed model (estimated using ML and
-nlminb optimizer) to predict relAbundance with year (formula: relAbundance
-~ year). The model included site as random effects (formula: list(~1 |
-site, ~1 | scientific_name)). The model's total explanatory power is
-substantial (conditional R2 = 0.45) and the part related to the fixed
-effects alone (marginal R2) is of 0.08. The model's intercept,
-corresponding to year = 1850, is at -2.18 (95% CI [-2.45, -1.91], p <
-.001). Within this model:
-
-  - The effect of year [2021] is statistically significant and negative (beta
-= -0.58, 95% CI [-0.81, -0.35], p < .001; Std. beta = -0.58, 95% CI [-0.81,
--0.35])
-
-Standardized parameters were obtained by fitting the model on a
-standardized version of the dataset. 95% Confidence Intervals (CIs) and
-p-values were computed using a Wald z-distribution approximation.
 ```{r}
-## join relative abundance at site level with trait data
-relAbun_Hab <- left_join(relSpAbund, trait_dat, by="scientific_name") %>%   filter(Habitat.type != "Aquatic") %>%
-  ungroup()
-
-## habitat affiliation
-relAbun_Hab<- relAbun_Hab %>%
-  mutate(relAbundance = case_when(relAbundance == 1 ~ 0.999,
-                                  TRUE ~ relAbundance))
-
-forest_glmm <- relAbun_Hab %>%
+forest_birds <- rel_abun_trait %>%
   filter(Habitat.type == "Forest")
-
-glmm_forest <- glmmTMB(relAbundance ~ year + (1|site) +(1|scientific_name),
-                      data = forest_glmm, 
-                      ziformula = ~1,
-                      family = beta_family(link = "logit"))
   
+glmm_forest <- glmmTMB(relative_abundance ~ time_period 
+                        +(1|scientific_name),
+                      data = forest_birds, 
+                      #ziformula = ~1,
+                      family = beta_family(link = "logit"))
 summary(glmm_forest)
+
+# Family: beta  ( logit )
+# Formula:          relative_abundance ~ time_period + (1 | scientific_name)
+# Data: forest_birds
+# 
+#      AIC      BIC   logLik deviance df.resid 
+#  -1405.2  -1392.7    706.6  -1413.2      164 
+# 
+# Random effects:
+# 
+# Conditional model:
+#  Groups          Name        Variance Std.Dev.
+#  scientific_name (Intercept) 0.6166   0.7852  
+# Number of obs: 168, groups:  scientific_name, 84
+# 
+# Dispersion parameter for beta family ():  246 
+# 
+# Conditional model:
+#                 Estimate Std. Error z value Pr(>|z|)    
+# (Intercept)      -5.2531     0.1370  -38.35  < 2e-16 ***
+# time_period2021  -0.2886     0.1117   -2.58  0.00981 ** 
+
+report(glmm_forest)
+
+# We fitted a logistic mixed model (estimated using ML and nlminb optimizer)
+# to predict relative_abundance with time_period (formula: relative_abundance
+# ~ time_period). The model included scientific_name as random effect
+# (formula: ~1 | scientific_name). The model's total explanatory power is
+# substantial (conditional R2 = 0.50) and the part related to the fixed
+# effects alone (marginal R2) is of 0.02. The model's intercept, corresponding
+# to time_period = 1850-1900, is at -5.25 (95% CI [-5.52, -4.98], p < .001).
+# Within this model:
+# 
+#   - The intercept is statistically significant and negative (beta = -0.29, 95%
+# CI [-0.51, -0.07], p = 0.010; Std. beta = -5.25, 95% CI [-5.52, -4.98])
+# 
+# Standardized parameters were obtained by fitting the model on a standardized
+# version of the dataset. 95% Confidence Intervals (CIs) and p-values were
+# computed using a Wald z-distribution approximation.
+
+# plot predicted model estimates
+set_theme(base = theme_bw(),
+          theme.font = "Century Gothic",
+          axis.title.size = 1.2,
+          axis.textsize = 1,
+          axis.textcolor = "black")
+
+fig_glmm_forest <- plot_model(glmm_forest, type = "pred",
+                               title = "Predicted values of relative abundance for forest birds") 
+
+ggsave(fig_glmm_forest$time_period, filename = "figs/fig_glmm_relAbundance_forestBirds.png", width = 9, height = 6, device = png(), units = "in", dpi = 300)
+dev.off()
 ```
-Family: beta  ( logit )
-Formula:          relAbundance ~ year + (1 | site) + (1 | scientific_name)
-Zero inflation:                ~1
-Data: forest_glmm
 
-     AIC      BIC   logLik deviance df.resid 
- -1025.5  -1005.7    518.8  -1037.5      196 
-
-Random effects:
-
-Conditional model:
- Groups          Name        Variance Std.Dev.
- site            (Intercept) 0.15537  0.3942  
- scientific_name (Intercept) 0.03524  0.1877  
-Number of obs: 202, groups:  site, 27; scientific_name, 20
-
-Dispersion parameter for beta family (): 90.9 
-
-Conditional model:
-            Estimate Std. Error z value Pr(>|z|)    
-(Intercept)  -2.8924     0.1356 -21.335  < 2e-16 ***
-year2021     -0.7214     0.1281  -5.631 1.79e-08 ***
-
-Zero-inflation model:
-            Estimate Std. Error z value Pr(>|z|)
-(Intercept)   -22.06    4333.38  -0.005    0.996
-
-We fitted a zero-inflated logistic mixed model (estimated using ML and
-nlminb optimizer) to predict relAbundance with year (formula: relAbundance ~
-year). The model included site as random effects (formula: list(~1 | site,
-~1 | scientific_name)). The model's total explanatory power is substantial
-(conditional R2 = 0.54) and the part related to the fixed effects alone
-(marginal R2) is of 0.20. The model's intercept, corresponding to year =
-1850, is at -2.89 (95% CI [-3.16, -2.63], p < .001). Within this model:
-
-  - The effect of year [2021] is statistically significant and negative (beta
-= -0.72, 95% CI [-0.97, -0.47], p < .001; Std. beta = -0.72, 95% CI [-0.97,
--0.47])
-
-Standardized parameters were obtained by fitting the model on a standardized
-version of the dataset. 95% Confidence Intervals (CIs) and p-values were
-computed using a Wald z-distribution approximation.
-
+## Grassland birds
 ```{r}
-grassland_glmm <- relAbun_Hab %>%
+grassland_birds <- rel_abun_trait %>%
   filter(Habitat.type == "Grassland")
-
-glmm_grassland <- glmmTMB(relAbundance ~ year +(1|scientific_name) +(1|site),
-                      data = grassland_glmm, 
-                      ziformula = ~1,
+  
+glmm_grassland <- glmmTMB(relative_abundance ~ time_period 
+                        +(1|scientific_name),
+                      data = grassland_birds, 
+                      #ziformula = ~1,
                       family = beta_family(link = "logit"))
-
 summary(glmm_grassland)
+
+# Family: beta  ( logit )
+# Formula:          relative_abundance ~ time_period + (1 | scientific_name)
+# Data: grassland_birds
+# 
+#      AIC      BIC   logLik deviance df.resid 
+#   -613.5   -604.7    310.7   -621.5       62 
+# 
+# Random effects:
+# 
+# Conditional model:
+#  Groups          Name        Variance  Std.Dev. 
+#  scientific_name (Intercept) 1.619e-09 4.023e-05
+# Number of obs: 66, groups:  scientific_name, 33
+# 
+# Dispersion parameter for beta family ():  148 
+# 
+# Conditional model:
+#                 Estimate Std. Error z value Pr(>|z|)    
+# (Intercept)      -5.0835     0.1660 -30.622  < 2e-16 ***
+# time_period2021  -0.8234     0.2196  -3.749 0.000177 ***
+
+report(glmm_grassland)
+
+# We fitted a logistic mixed model (estimated using ML and nlminb optimizer)
+# to predict relative_abundance with time_period (formula: relative_abundance
+# ~ time_period). The model included scientific_name as random effect
+# (formula: ~1 | scientific_name). The model's explanatory power related to
+# the fixed effects alone (marginal R2) is 0.16. The model's intercept,
+# corresponding to time_period = 1850-1900, is at -5.08 (95% CI [-5.41,
+# -4.76], p < .001). Within this model:
+# 
+#   - The intercept is statistically significant and negative (beta = -0.82, 95%
+# CI [-1.25, -0.39], p < .001; Std. beta = -5.08, 95% CI [-5.41, -4.76])
+# 
+# Standardized parameters were obtained by fitting the model on a standardized
+# version of the dataset. 95% Confidence Intervals (CIs) and p-values were
+# computed using a Wald z-distribution approximation
+
+# plot predicted model estimates
+set_theme(base = theme_bw(),
+          theme.font = "Century Gothic",
+          axis.title.size = 1.2,
+          axis.textsize = 1,
+          axis.textcolor = "black")
+
+fig_glmm_grassland <- plot_model(glmm_grassland, type = "pred",
+                               title = "Predicted values of relative abundance for grassland birds") 
+
+ggsave(fig_glmm_grassland$time_period, filename = "figs/fig_glmm_relAbundance_grasslandBirds.png", width = 9, height = 6, device = png(), units = "in", dpi = 300)
+dev.off()
 ```
-Family: beta  ( logit )
-Formula:          relAbundance ~ year + (1 | scientific_name) + (1 | site)
-Zero inflation:                ~1
-Data: grassland_glmm
 
-     AIC      BIC   logLik deviance df.resid 
-  -169.3   -159.3     90.6   -181.3       33 
-
-Random effects:
-
-Conditional model:
- Groups          Name        Variance Std.Dev.
- scientific_name (Intercept) 0.02646  0.1627  
- site            (Intercept) 4.14080  2.0349  
-Number of obs: 39, groups:  scientific_name, 7; site, 17
-
-Dispersion parameter for beta family ():  143 
-
-Conditional model:
-            Estimate Std. Error z value Pr(>|z|)    
-(Intercept)  -2.6997     0.6686  -4.038 5.39e-05 ***
-year2021     -0.7973     0.6128  -1.301    0.193    
-
-Zero-inflation model:
-            Estimate Std. Error z value Pr(>|z|)
-(Intercept)   -22.24   10790.73  -0.002    0.998
-
-We fitted a zero-inflated logistic mixed model (estimated using ML and
-nlminb optimizer) to predict relAbundance with year (formula: relAbundance ~
-year). The model included scientific_name as random effects (formula:
-list(~1 | scientific_name, ~1 | site)). The model's total explanatory power
-is substantial (conditional R2 = 0.96) and the part related to the fixed
-effects alone (marginal R2) is of 0.04. The model's intercept, corresponding
-to year = 1850, is at -2.70 (95% CI [-4.01, -1.39], p < .001). Within this
-model:
-
-  - The effect of year [2021] is statistically non-significant and negative
-(beta = -0.80, 95% CI [-2.00, 0.40], p = 0.193; Std. beta = -0.80, 95% CI
-[-2.00, 0.40])
-
-Standardized parameters were obtained by fitting the model on a standardized
-version of the dataset. 95% Confidence Intervals (CIs) and p-values were
-computed using a Wald z-distribution approximation.
-
+## Wooded habitat birds
 ```{r}
-wooded_glmm <- relAbun_Hab %>%
+wooded_birds <- rel_abun_trait %>%
   filter(Habitat.type == "Wooded Habitat")
-
-glmm_wooded <- glmmTMB(relAbundance ~ year + (1|site) +(1|scientific_name),
-                      data = wooded_glmm, 
-                      ziformula = ~1,
+  
+glmm_wooded <- glmmTMB(relative_abundance ~ time_period 
+                        +(1|scientific_name),
+                      data = wooded_birds, 
+                      #ziformula = ~1,
                       family = beta_family(link = "logit"))
-
 summary(glmm_wooded)
+
+# Family: beta  ( logit )
+# Formula:          relative_abundance ~ time_period + (1 | scientific_name)
+# Data: wooded_birds
+# 
+#      AIC      BIC   logLik deviance df.resid 
+#   -352.2   -345.6    180.1   -360.2       34 
+# 
+# Random effects:
+# 
+# Conditional model:
+#  Groups          Name        Variance  Std.Dev. 
+#  scientific_name (Intercept) 2.071e-09 4.551e-05
+# Number of obs: 38, groups:  scientific_name, 19
+# 
+# Dispersion parameter for beta family ():  131 
+# 
+# Conditional model:
+#                 Estimate Std. Error z value Pr(>|z|)    
+# (Intercept)      -5.2236     0.2427 -21.526   <2e-16 ***
+# time_period2021  -0.5617     0.2928  -1.919    0.055 .  
+
+report(glmm_wooded)
+
+# We fitted a logistic mixed model (estimated using ML and nlminb optimizer)
+# to predict relative_abundance with time_period (formula: relative_abundance
+# ~ time_period). The model included scientific_name as random effect
+# (formula: ~1 | scientific_name). The model's explanatory power related to
+# the fixed effects alone (marginal R2) is 0.07. The model's intercept,
+# corresponding to time_period = 1850-1900, is at -5.22 (95% CI [-5.70,
+# -4.75], p < .001). Within this model:
+# 
+#   - The intercept is statistically non-significant and negative (beta = -0.56,
+# 95% CI [-1.14, 0.01], p = 0.055; Std. beta = -5.22, 95% CI [-5.70, -4.75])
+# 
+# Standardized parameters were obtained by fitting the model on a standardized
+# version of the dataset. 95% Confidence Intervals (CIs) and p-values were
+# computed using a Wald z-distribution approximation.
+
+# plot predicted model estimates
+set_theme(base = theme_bw(),
+          theme.font = "Century Gothic",
+          axis.title.size = 1.2,
+          axis.textsize = 1,
+          axis.textcolor = "black")
+
+fig_glmm_wooded <- plot_model(glmm_wooded, type = "pred",
+                               title = "Predicted values of relative abundance for Wooded habitat birds") 
+
+ggsave(fig_glmm_wooded$time_period, filename = "figs/fig_glmm_relAbundance_woodedBirds.png", width = 9, height = 6, device = png(), units = "in", dpi = 300)
+dev.off()
 ```
-Family: beta  ( logit )
-Formula:          relAbundance ~ year + (1 | site) + (1 | scientific_name)
-Zero inflation:                ~1
-Data: wooded_glmm
 
-     AIC      BIC   logLik deviance df.resid 
- -1390.7  -1367.4    701.4  -1402.7      352 
-
-Random effects:
-
-Conditional model:
- Groups          Name        Variance Std.Dev.
- site            (Intercept) 0.1646   0.4057  
- scientific_name (Intercept) 0.1060   0.3255  
-Number of obs: 358, groups:  site, 28; scientific_name, 25
-
-Dispersion parameter for beta family (): 25.4 
-
-Conditional model:
-            Estimate Std. Error z value Pr(>|z|)    
-(Intercept)  -2.3874     0.1609 -14.835  < 2e-16 ***
-year2021     -0.8220     0.1658  -4.959  7.1e-07 ***
-
-Zero-inflation model:
-            Estimate Std. Error z value Pr(>|z|)
-(Intercept)   -22.26    3609.69  -0.006    0.995
-
-We fitted a zero-inflated logistic mixed model (estimated using ML and
-nlminb optimizer) to predict relAbundance with year (formula: relAbundance ~
-year). The model included site as random effects (formula: list(~1 | site,
-~1 | scientific_name)). The model's total explanatory power is substantial
-(conditional R2 = 0.44) and the part related to the fixed effects alone
-(marginal R2) is of 0.13. The model's intercept, corresponding to year =
-1850, is at -2.39 (95% CI [-2.70, -2.07], p < .001). Within this model:
-
-  - The effect of year [2021] is statistically significant and negative (beta
-= -0.82, 95% CI [-1.15, -0.50], p < .001; Std. beta = -0.82, 95% CI [-1.15,
--0.50])
-
-Standardized parameters were obtained by fitting the model on a standardized
-version of the dataset. 95% Confidence Intervals (CIs) and p-values were
-computed using a Wald z-distribution approximation.
-
+## Generalist birds
 ```{r}
-generalist_glmm <- relAbun_Hab %>%
+generalist_birds <- rel_abun_trait %>%
   filter(Habitat.type == "Generalist")
-
-glmm_generalist <- glmmTMB(relAbundance ~ year + (1|site) +(1|scientific_name),
-                      data = generalist_glmm, 
-                      ziformula = ~1,
+  
+glmm_generalist <- glmmTMB(relative_abundance ~ time_period 
+                        +(1|scientific_name),
+                      data = generalist_birds, 
+                      #ziformula = ~1,
                       family = beta_family(link = "logit"))
-
 summary(glmm_generalist)
+
+# Family: beta  ( logit )
+# Formula:          relative_abundance ~ time_period + (1 | scientific_name)
+# Data: generalist_birds
+# 
+#      AIC      BIC   logLik deviance df.resid 
+#   -490.5   -482.0    249.3   -498.5       58 
+# 
+# Random effects:
+# 
+# Conditional model:
+#  Groups          Name        Variance  Std.Dev. 
+#  scientific_name (Intercept) 3.408e-09 5.837e-05
+# Number of obs: 62, groups:  scientific_name, 31
+# 
+# Dispersion parameter for beta family (): 75.7 
+# 
+# Conditional model:
+#                 Estimate Std. Error z value Pr(>|z|)    
+# (Intercept)     -4.84899    0.20012 -24.230   <2e-16 ***
+# time_period2021 -0.06487    0.22535  -0.288    0.773    
+
+report(glmm_generalist)
+
+# We fitted a logistic mixed model (estimated using ML and nlminb optimizer)
+# to predict relative_abundance with time_period (formula: relative_abundance
+# ~ time_period). The model included scientific_name as random effect
+# (formula: ~1 | scientific_name). The model's explanatory power related to
+# the fixed effects alone (marginal R2) is 1.07e-03. The model's intercept,
+# corresponding to time_period = 1850-1900, is at -4.85 (95% CI [-5.24,
+# -4.46], p < .001). Within this model:
+# 
+#   - The intercept is statistically non-significant and negative (beta = -0.06,
+# 95% CI [-0.51, 0.38], p = 0.773; Std. beta = -4.85, 95% CI [-5.24, -4.46])
+# 
+# Standardized parameters were obtained by fitting the model on a standardized
+# version of the dataset. 95% Confidence Intervals (CIs) and p-values were
+# computed using a Wald z-distribution approximation.
+
+# plot predicted model estimates
+set_theme(base = theme_bw(),
+          theme.font = "Century Gothic",
+          axis.title.size = 1.2,
+          axis.textsize = 1,
+          axis.textcolor = "black")
+
+fig_glmm_generalist <- plot_model(glmm_generalist, type = "pred",
+                               title = "Predicted values of relative abundance for Generalist birds") 
+
+ggsave(fig_glmm_generalist$time_period, filename = "figs/fig_glmm_relAbundance_generalistBirds.png", width = 9, height = 6, device = png(), units = "in", dpi = 300)
+dev.off()
 ```
 
-Family: beta  ( logit )
-Formula:          relAbundance ~ year + (1 | site) + (1 | scientific_name)
-Zero inflation:                ~1
-Data: generalist_glmm
+## Creating a combined figure for the above four models
+```{r}
+combined_plot <- wrap_plots(fig_glmm_forest$time_period, fig_glmm_grassland$time_period, fig_glmm_wooded$time_period, fig_glmm_generalist$time_period, ncol = 2)
 
-     AIC      BIC   logLik deviance df.resid 
- -1372.8  -1350.9    692.4  -1384.8      281 
-
-Random effects:
-
-Conditional model:
- Groups          Name        Variance Std.Dev.
- site            (Intercept) 0.009688 0.09843 
- scientific_name (Intercept) 0.229240 0.47879 
-Number of obs: 287, groups:  site, 28; scientific_name, 16
-
-Dispersion parameter for beta family (): 82.7 
-
-Conditional model:
-            Estimate Std. Error z value Pr(>|z|)    
-(Intercept)  -3.8411     0.1695 -22.667  < 2e-16 ***
-year2021      0.6339     0.1168   5.429 5.67e-08 ***
-
-Zero-inflation model:
-            Estimate Std. Error z value Pr(>|z|)
-(Intercept)      -22       3534  -0.006    0.995
-
-We fitted a zero-inflated logistic mixed model (estimated using ML and
-nlminb optimizer) to predict relAbundance with year (formula: relAbundance ~
-year). The model included site as random effects (formula: list(~1 | site,
-~1 | scientific_name)). The model's total explanatory power is substantial
-(conditional R2 = 0.53) and the part related to the fixed effects alone
-(marginal R2) is of 0.09. The model's intercept, corresponding to year =
-1850, is at -3.84 (95% CI [-4.17, -3.51], p < .001). Within this model:
-
-  - The effect of year [2021] is statistically significant and positive (beta
-= 0.63, 95% CI [0.41, 0.86], p < .001; Std. beta = 0.63, 95% CI [0.41,
-0.86])
-
-Standardized parameters were obtained by fitting the model on a standardized
-version of the dataset. 95% Confidence Intervals (CIs) and p-values were
-computed using a Wald z-distribution approximation.
+ggsave(combined_plot, filename = "figs/fig_glmm_relAbundance_combinedPlot.png", width = 12, height = 10, device = png(), units = "in", dpi = 300)
+dev.off()
+```
