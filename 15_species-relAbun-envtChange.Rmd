@@ -1,12 +1,11 @@
 ---
-output: html_document
 editor_options: 
   chunk_output_type: console
 ---
 
-# Species persistence probabilities and relative abundance as a function of environmental changes
+# Species relative abundance as a function of environmental changes
 
-In this script, we will model the effect of species persistence probabilities and relative abundance as a function of environmental changes at each of the sampling sites (environmental changes are calculated as differences in values of a predictor between modern vs. historical time period)
+In this script, we will model changes in relative abundance as a function of environmental changes at each of the sampling sites (environmental changes are calculated as differences in values of a predictor between modern vs. historical time period)
 
 In the first half of the script, we will prepare the environmental predictors at each of the sampling sites
 
@@ -31,26 +30,10 @@ scale_z <- function(x){
 }
 ```
 
-## Load land cover data from 1870 and 2017
+## Load processed land cover rasters
 ```{r}
-# load 1870 and 2017 shp
-lc_1870 <- st_read("data/spatial/1870.shp")
-lc_2017 <- st_read("data/spatial/2017.shp")
-
-# Prior to further analysis, the classes have to be renamed so that they match classifications done in 1870 and 2017
-# For the sake of further downstream analysis, we ensure that the proportion of land cover estimation is consistent with class names
-# We are unable to distinguish between Tea and Timber plantations in the 1870 map and hence, we club Timber and Tea plantations in 2017 as a single class (Plantations)
-
-# cleaning up the 1870 map
-lc_1870$class[lc_1870$class=="cultivated tracts"] <- "Agricultural Land"
-lc_1870$class[lc_1870$class=="plantations"] <- "Plantations (Tea & Timber)"
-lc_1870$class[lc_1870$class=="settlements"] <- "Settlements"
-lc_1870$class[lc_1870$class=="waterbodies"] <- "Water Bodies"
-
-# combining classes in the 2017 map
-lc_2017$class[lc_2017$class=="Timber Plantations"] <- "Plantations (Tea & Timber)"
-lc_2017$class[lc_2017$class=="Tea Plantations"] <- "Plantations (Tea & Timber)"
-lc_2017$class[lc_2017$class=="Water bodies"] <- "Water Bodies"
+lc_1848 <- terra::rast("results/processed-rasters/1848.tif")
+lc_2018 <- terra::rast("results/processed-rasters/2018reclassified.tif")
 ```
 
 ## Load modern resruvey locations
@@ -72,7 +55,51 @@ sites_sf = st_as_sf(
   st_buffer(250)
 ```
 
+## Extract land cover data across locations from the 1848 and the 2018 rasters
 ```{r}
+
+# steps:
+
+# polygonize/vectorize the raster
+# st_itnersection
+# st_area
+
+
+
+trial <- as.polygons(lc_1848)
+
+sz1848 <- cellSize(lc_1848, unit = "m")
+
+area1848 <- zonal(sz1848, lc_1848, sum)
+
+trial <- terra::extract(sz1848, vect(sites_sf))
+
+# get mean change within 250m buffer of resurvey locs
+climate_change_sites = lapply(
+  climate_change, function(ra) {
+    terra::extract(
+      ra, 
+      y = terra::vect(
+        sites_sf |> 
+          st_transform(4326)
+      ), fun = mean
+    )  
+  }
+)
+
+
+b <- st_intersection(st_as_sf(trial), sites_sf)
+c <- b %>%
+  mutate(area = as.numeric(st_area(b)))
+
+  area = as.numeric(st_area(df))
+    ) |> 
+    st_drop_geometry() |> 
+    group_by(modern_site_code, class) |> 
+    summarise(prop_lc = area / sum(area))
+
+
+
 # get intersection with 1870 and 2017 data
 lc_sites <- lapply(
   list(lc_1870, lc_2017), function(x) {
@@ -473,12 +500,10 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
 names(relAbun) <- c("scientific_name","historical_site_code","year","relAbundance")
 
 pivot_1850 <- relAbun %>%
-  filter(year != 1900) %>%
   filter(year != 2021) %>%
   pivot_wider(., names_from = "year", values_from = "relAbundance")
 
 pivot_2021 <- relAbun %>%
-  filter(year != 1900) %>%
   filter(year != 1850) %>%
   pivot_wider(., names_from = "year", values_from = "relAbundance")
 
@@ -518,7 +543,7 @@ clim_change_glmm <- clim_change_dat %>%
   summarise(across(everything(), mean))
 
 ## dataframe for glmm
-glmm_cc_change <- left_join(persProb_change, clim_change_glmm, by="historical_site_code") %>% as.data.frame()
+glmm_cc_change <- left_join(relAbun_wide, clim_change_glmm, by="historical_site_code") %>% as.data.frame()
 
 ## scale the climate data
 glmm_cc_change <- glmm_cc_change %>%
@@ -529,8 +554,7 @@ glmm_cc_change <- glmm_cc_change %>%
   as.data.frame()
 
 ## run the glmm
-glmm_cc <- glmer(persProbChange ~ t_mean_dry_2010_z + t_mean_rainy_2010_z +
-                   ppt_dry_2010_z + ppt_rainy_2010_z +
+glmm_cc <- glmer(relAbunChange ~ t_mean_dry_2010_z + t_mean_rainy_2010_z +                   ppt_dry_2010_z + ppt_rainy_2010_z +
                           (1|scientific_name) + (1|historical_site_code), 
                         data = glmm_cc_change, family = gaussian(link="identity"))
 
