@@ -287,50 +287,31 @@ dev.off()
 We will run generalized linear mixed effect models with a beta family for all data first.
 ```{r}
 # overall data
-glmm_overall <- glmmTMB(relative_abundance ~ time_period 
-                        +(1|scientific_name),
-                      data = rel_abun_trait, 
-                      #ziformula = ~1,
-                      family = beta_family(link = "logit"))
-summary(glmm_overall)
+beta_overall <- betareg(relative_abundance~ time_period,data = rel_abun_trait)
+summary(beta_overall)
 
-# Family: beta  ( logit )
-# Formula:          relative_abundance ~ time_period + (1 | scientific_name)
-# Data: rel_abun_trait
+# Call:
+# betareg(formula = relative_abundance ~ time_period, data = rel_abun_trait)
 # 
-#      AIC      BIC   logLik deviance df.resid 
-#  -2856.0  -2840.8   1432.0  -2864.0      330 
+# Standardized weighted residuals 2:
+#     Min      1Q  Median      3Q     Max 
+# -0.8698 -0.6919 -0.2006  0.5147  1.9458 
 # 
-# Random effects:
-# 
-# Conditional model:
-#  Groups          Name        Variance  Std.Dev. 
-#  scientific_name (Intercept) 3.649e-09 6.041e-05
-# Number of obs: 334, groups:  scientific_name, 167
-# 
-# Dispersion parameter for beta family (): 98.2 
-# 
-# Conditional model:
+# Coefficients (mean model with logit link):
 #                 Estimate Std. Error z value Pr(>|z|)    
-# (Intercept)     -4.92920    0.08122  -60.69  < 2e-16 ***
-# time_period2021 -0.40259    0.09718   -4.14 3.43e-05 ***
-
-report(glmm_overall)
-
-# We fitted a logistic mixed model (estimated using ML and nlminb optimizer)
-# to predict relative_abundance with time_period (formula: relative_abundance
-# ~ time_period). The model included scientific_name as random effect
-# (formula: ~1 | scientific_name). The model's explanatory power related to
-# the fixed effects alone (marginal R2) is 0.04. The model's intercept,
-# corresponding to time_period = 1850-1900, is at -4.93 (95% CI [-5.09,
-# -4.77], p < .001). Within this model:
+# (Intercept)     -4.92920    0.08122 -60.688  < 2e-16 ***
+# time_period2021 -0.40259    0.09718  -4.143 3.43e-05 ***
 # 
-#   - The intercept is statistically significant and negative (beta = -0.40, 95%
-# CI [-0.59, -0.21], p < .001; Std. beta = -4.93, 95% CI [-5.09, -4.77])
+# Phi coefficients (precision model with identity link):
+#       Estimate Std. Error z value Pr(>|z|)    
+# (phi)   98.245      9.462   10.38   <2e-16 ***
+# ---
+# Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
 # 
-# Standardized parameters were obtained by fitting the model on a standardized
-# version of the dataset. 95% Confidence Intervals (CIs) and p-values were
-# computed using a Wald z-distribution approximation.
+# Type of estimator: ML (maximum likelihood)
+# Log-likelihood:  1432 on 3 Df
+# Pseudo R-squared: 0.08818
+# Number of iterations: 41 (BFGS) + 2 (Fisher scoring) 
 
 # plot predicted model estimates
 set_theme(base = theme_bw(),
@@ -339,10 +320,10 @@ set_theme(base = theme_bw(),
           axis.textsize = 1,
           axis.textcolor = "black")
 
-fig_glmm_overall <- plot_model(glmm_overall, type = "pred",
+fig_beta_overall <- plot_model(beta_overall, type = "pred",
                                title = "Predicted values of relative abundance for all data") 
 
-ggsave(fig_glmm_overall$time_period, filename = "figs/fig_glmm_relAbundance_overall.png", width = 9, height = 6, device = png(), units = "in", dpi = 300)
+ggsave(fig_beta_overall$time_period, filename = "figs/fig_beta_relAbundance_overall.png", width = 9, height = 6, device = png(), units = "in", dpi = 300)
 dev.off()
 ```
 
@@ -352,51 +333,31 @@ dev.off()
 forest_birds <- rel_abun_trait %>%
   filter(Habitat.type == "Forest")
   
-glmm_forest <- glmmTMB(relative_abundance ~ time_period 
-                        +(1|scientific_name),
-                      data = forest_birds, 
-                      #ziformula = ~1,
-                      family = beta_family(link = "logit"))
-summary(glmm_forest)
+beta_forest <- betareg(relative_abundance ~ time_period, data = forest_birds)
+summary(beta_forest)
 
-# Family: beta  ( logit )
-# Formula:          relative_abundance ~ time_period + (1 | scientific_name)
-# Data: forest_birds
+# Call:
+# betareg(formula = relative_abundance ~ time_period, data = forest_birds)
 # 
-#      AIC      BIC   logLik deviance df.resid 
-#  -1405.2  -1392.7    706.6  -1413.2      164 
+# Standardized weighted residuals 2:
+#     Min      1Q  Median      3Q     Max 
+# -0.9519 -0.5657 -0.1311  0.6069  1.5709 
 # 
-# Random effects:
-# 
-# Conditional model:
-#  Groups          Name        Variance Std.Dev.
-#  scientific_name (Intercept) 0.6166   0.7852  
-# Number of obs: 168, groups:  scientific_name, 84
-# 
-# Dispersion parameter for beta family ():  246 
-# 
-# Conditional model:
+# Coefficients (mean model with logit link):
 #                 Estimate Std. Error z value Pr(>|z|)    
-# (Intercept)      -5.2531     0.1370  -38.35  < 2e-16 ***
-# time_period2021  -0.2886     0.1117   -2.58  0.00981 ** 
-
-report(glmm_forest)
-
-# We fitted a logistic mixed model (estimated using ML and nlminb optimizer)
-# to predict relative_abundance with time_period (formula: relative_abundance
-# ~ time_period). The model included scientific_name as random effect
-# (formula: ~1 | scientific_name). The model's total explanatory power is
-# substantial (conditional R2 = 0.50) and the part related to the fixed
-# effects alone (marginal R2) is of 0.02. The model's intercept, corresponding
-# to time_period = 1850-1900, is at -5.25 (95% CI [-5.52, -4.98], p < .001).
-# Within this model:
+# (Intercept)      -4.8828     0.1123 -43.492   <2e-16 ***
+# time_period2021  -0.3388     0.1351  -2.508   0.0122 *  
 # 
-#   - The intercept is statistically significant and negative (beta = -0.29, 95%
-# CI [-0.51, -0.07], p = 0.010; Std. beta = -5.25, 95% CI [-5.52, -4.98])
+# Phi coefficients (precision model with identity link):
+#       Estimate Std. Error z value Pr(>|z|)    
+# (phi)    97.80      13.06    7.49 6.88e-14 ***
+# ---
+# Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
 # 
-# Standardized parameters were obtained by fitting the model on a standardized
-# version of the dataset. 95% Confidence Intervals (CIs) and p-values were
-# computed using a Wald z-distribution approximation.
+# Type of estimator: ML (maximum likelihood)
+# Log-likelihood: 699.8 on 3 Df
+# Pseudo R-squared: 0.05724
+# Number of iterations: 43 (BFGS) + 2 (Fisher scoring) 
 
 # plot predicted model estimates
 set_theme(base = theme_bw(),
@@ -405,10 +366,10 @@ set_theme(base = theme_bw(),
           axis.textsize = 1,
           axis.textcolor = "black")
 
-fig_glmm_forest <- plot_model(glmm_forest, type = "pred",
+fig_beta_forest <- plot_model(beta_forest, type = "pred",
                                title = "Predicted values of relative abundance for forest birds") 
 
-ggsave(fig_glmm_forest$time_period, filename = "figs/fig_glmm_relAbundance_forestBirds.png", width = 9, height = 6, device = png(), units = "in", dpi = 300)
+ggsave(fig_beta_forest$time_period, filename = "figs/fig_beta_relAbundance_forestBirds.png", width = 9, height = 6, device = png(), units = "in", dpi = 300)
 dev.off()
 ```
 
@@ -417,50 +378,31 @@ dev.off()
 grassland_birds <- rel_abun_trait %>%
   filter(Habitat.type == "Grassland")
   
-glmm_grassland <- glmmTMB(relative_abundance ~ time_period 
-                        +(1|scientific_name),
-                      data = grassland_birds, 
-                      #ziformula = ~1,
-                      family = beta_family(link = "logit"))
-summary(glmm_grassland)
+beta_grassland <- betareg(relative_abundance ~ time_period, data = grassland_birds)
+summary(beta_grassland)
 
-# Family: beta  ( logit )
-# Formula:          relative_abundance ~ time_period + (1 | scientific_name)
-# Data: grassland_birds
+# Call:
+# betareg(formula = relative_abundance ~ time_period, data = grassland_birds)
 # 
-#      AIC      BIC   logLik deviance df.resid 
-#   -613.5   -604.7    310.7   -621.5       62 
+# Standardized weighted residuals 2:
+#     Min      1Q  Median      3Q     Max 
+# -1.1063 -0.2969 -0.2897  0.3200  1.8909 
 # 
-# Random effects:
-# 
-# Conditional model:
-#  Groups          Name        Variance  Std.Dev. 
-#  scientific_name (Intercept) 1.619e-09 4.023e-05
-# Number of obs: 66, groups:  scientific_name, 33
-# 
-# Dispersion parameter for beta family ():  148 
-# 
-# Conditional model:
+# Coefficients (mean model with logit link):
 #                 Estimate Std. Error z value Pr(>|z|)    
 # (Intercept)      -5.0835     0.1660 -30.622  < 2e-16 ***
 # time_period2021  -0.8234     0.2196  -3.749 0.000177 ***
-
-report(glmm_grassland)
-
-# We fitted a logistic mixed model (estimated using ML and nlminb optimizer)
-# to predict relative_abundance with time_period (formula: relative_abundance
-# ~ time_period). The model included scientific_name as random effect
-# (formula: ~1 | scientific_name). The model's explanatory power related to
-# the fixed effects alone (marginal R2) is 0.16. The model's intercept,
-# corresponding to time_period = 1850-1900, is at -5.08 (95% CI [-5.41,
-# -4.76], p < .001). Within this model:
 # 
-#   - The intercept is statistically significant and negative (beta = -0.82, 95%
-# CI [-1.25, -0.39], p < .001; Std. beta = -5.08, 95% CI [-5.41, -4.76])
+# Phi coefficients (precision model with identity link):
+#       Estimate Std. Error z value Pr(>|z|)    
+# (phi)   148.38      32.01   4.635 3.56e-06 ***
+# ---
+# Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
 # 
-# Standardized parameters were obtained by fitting the model on a standardized
-# version of the dataset. 95% Confidence Intervals (CIs) and p-values were
-# computed using a Wald z-distribution approximation
+# Type of estimator: ML (maximum likelihood)
+# Log-likelihood: 310.7 on 3 Df
+# Pseudo R-squared: 0.3722
+# Number of iterations: 291 (BFGS) + 3 (Fisher scoring) 
 
 # plot predicted model estimates
 set_theme(base = theme_bw(),
@@ -469,10 +411,10 @@ set_theme(base = theme_bw(),
           axis.textsize = 1,
           axis.textcolor = "black")
 
-fig_glmm_grassland <- plot_model(glmm_grassland, type = "pred",
+fig_beta_grassland <- plot_model(beta_grassland, type = "pred",
                                title = "Predicted values of relative abundance for grassland birds") 
 
-ggsave(fig_glmm_grassland$time_period, filename = "figs/fig_glmm_relAbundance_grasslandBirds.png", width = 9, height = 6, device = png(), units = "in", dpi = 300)
+ggsave(fig_beta_grassland$time_period, filename = "figs/fig_beta_relAbundance_grasslandBirds.png", width = 9, height = 6, device = png(), units = "in", dpi = 300)
 dev.off()
 ```
 
@@ -481,50 +423,31 @@ dev.off()
 wooded_birds <- rel_abun_trait %>%
   filter(Habitat.type == "Wooded Habitat")
   
-glmm_wooded <- glmmTMB(relative_abundance ~ time_period 
-                        +(1|scientific_name),
-                      data = wooded_birds, 
-                      #ziformula = ~1,
-                      family = beta_family(link = "logit"))
-summary(glmm_wooded)
+beta_wooded <- betareg(relative_abundance ~ time_period, data = wooded_birds)
+summary(beta_wooded)
 
-# Family: beta  ( logit )
-# Formula:          relative_abundance ~ time_period + (1 | scientific_name)
-# Data: wooded_birds
+# Call:
+# betareg(formula = relative_abundance ~ time_period, data = wooded_birds)
 # 
-#      AIC      BIC   logLik deviance df.resid 
-#   -352.2   -345.6    180.1   -360.2       34 
+# Standardized weighted residuals 2:
+#     Min      1Q  Median      3Q     Max 
+# -0.6992 -0.3389 -0.2692  0.1913  1.8403 
 # 
-# Random effects:
-# 
-# Conditional model:
-#  Groups          Name        Variance  Std.Dev. 
-#  scientific_name (Intercept) 2.071e-09 4.551e-05
-# Number of obs: 38, groups:  scientific_name, 19
-# 
-# Dispersion parameter for beta family ():  131 
-# 
-# Conditional model:
+# Coefficients (mean model with logit link):
 #                 Estimate Std. Error z value Pr(>|z|)    
 # (Intercept)      -5.2236     0.2427 -21.526   <2e-16 ***
 # time_period2021  -0.5617     0.2928  -1.919    0.055 .  
-
-report(glmm_wooded)
-
-# We fitted a logistic mixed model (estimated using ML and nlminb optimizer)
-# to predict relative_abundance with time_period (formula: relative_abundance
-# ~ time_period). The model included scientific_name as random effect
-# (formula: ~1 | scientific_name). The model's explanatory power related to
-# the fixed effects alone (marginal R2) is 0.07. The model's intercept,
-# corresponding to time_period = 1850-1900, is at -5.22 (95% CI [-5.70,
-# -4.75], p < .001). Within this model:
 # 
-#   - The intercept is statistically non-significant and negative (beta = -0.56,
-# 95% CI [-1.14, 0.01], p = 0.055; Std. beta = -5.22, 95% CI [-5.70, -4.75])
+# Phi coefficients (precision model with identity link):
+#       Estimate Std. Error z value Pr(>|z|)    
+# (phi)   131.36      38.35   3.425 0.000614 ***
+# ---
+# Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
 # 
-# Standardized parameters were obtained by fitting the model on a standardized
-# version of the dataset. 95% Confidence Intervals (CIs) and p-values were
-# computed using a Wald z-distribution approximation.
+# Type of estimator: ML (maximum likelihood)
+# Log-likelihood: 180.1 on 3 Df
+# Pseudo R-squared: 0.2343
+# Number of iterations: 704 (BFGS) + 3 (Fisher scoring) 
 
 # plot predicted model estimates
 set_theme(base = theme_bw(),
@@ -533,10 +456,10 @@ set_theme(base = theme_bw(),
           axis.textsize = 1,
           axis.textcolor = "black")
 
-fig_glmm_wooded <- plot_model(glmm_wooded, type = "pred",
+fig_beta_wooded <- plot_model(beta_wooded, type = "pred",
                                title = "Predicted values of relative abundance for Wooded habitat birds") 
 
-ggsave(fig_glmm_wooded$time_period, filename = "figs/fig_glmm_relAbundance_woodedBirds.png", width = 9, height = 6, device = png(), units = "in", dpi = 300)
+ggsave(fig_beta_wooded$time_period, filename = "figs/fig_beta_relAbundance_woodedBirds.png", width = 9, height = 6, device = png(), units = "in", dpi = 300)
 dev.off()
 ```
 
@@ -545,50 +468,31 @@ dev.off()
 generalist_birds <- rel_abun_trait %>%
   filter(Habitat.type == "Generalist")
   
-glmm_generalist <- glmmTMB(relative_abundance ~ time_period 
-                        +(1|scientific_name),
-                      data = generalist_birds, 
-                      #ziformula = ~1,
-                      family = beta_family(link = "logit"))
-summary(glmm_generalist)
+beta_generalist <- betareg(relative_abundance ~ time_period, data = generalist_birds)
+summary(beta_generalist)
 
-# Family: beta  ( logit )
-# Formula:          relative_abundance ~ time_period + (1 | scientific_name)
-# Data: generalist_birds
+# Call:
+# betareg(formula = relative_abundance ~ time_period, data = generalist_birds)
 # 
-#      AIC      BIC   logLik deviance df.resid 
-#   -490.5   -482.0    249.3   -498.5       58 
+# Standardized weighted residuals 2:
+#     Min      1Q  Median      3Q     Max 
+# -1.1324 -0.5444 -0.0707  0.5649  1.9286 
 # 
-# Random effects:
-# 
-# Conditional model:
-#  Groups          Name        Variance  Std.Dev. 
-#  scientific_name (Intercept) 3.408e-09 5.837e-05
-# Number of obs: 62, groups:  scientific_name, 31
-# 
-# Dispersion parameter for beta family (): 75.7 
-# 
-# Conditional model:
+# Coefficients (mean model with logit link):
 #                 Estimate Std. Error z value Pr(>|z|)    
 # (Intercept)     -4.84899    0.20012 -24.230   <2e-16 ***
 # time_period2021 -0.06487    0.22535  -0.288    0.773    
-
-report(glmm_generalist)
-
-# We fitted a logistic mixed model (estimated using ML and nlminb optimizer)
-# to predict relative_abundance with time_period (formula: relative_abundance
-# ~ time_period). The model included scientific_name as random effect
-# (formula: ~1 | scientific_name). The model's explanatory power related to
-# the fixed effects alone (marginal R2) is 1.07e-03. The model's intercept,
-# corresponding to time_period = 1850-1900, is at -4.85 (95% CI [-5.24,
-# -4.46], p < .001). Within this model:
 # 
-#   - The intercept is statistically non-significant and negative (beta = -0.06,
-# 95% CI [-0.51, 0.38], p = 0.773; Std. beta = -4.85, 95% CI [-5.24, -4.46])
+# Phi coefficients (precision model with identity link):
+#       Estimate Std. Error z value Pr(>|z|)    
+# (phi)    75.67      16.91   4.474 7.68e-06 ***
+# ---
+# Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
 # 
-# Standardized parameters were obtained by fitting the model on a standardized
-# version of the dataset. 95% Confidence Intervals (CIs) and p-values were
-# computed using a Wald z-distribution approximation.
+# Type of estimator: ML (maximum likelihood)
+# Log-likelihood: 249.3 on 3 Df
+# Pseudo R-squared: 0.002385
+# Number of iterations: 72 (BFGS) + 2 (Fisher scoring)   
 
 # plot predicted model estimates
 set_theme(base = theme_bw(),
@@ -597,17 +501,17 @@ set_theme(base = theme_bw(),
           axis.textsize = 1,
           axis.textcolor = "black")
 
-fig_glmm_generalist <- plot_model(glmm_generalist, type = "pred",
+fig_beta_generalist <- plot_model(beta_generalist, type = "pred",
                                title = "Predicted values of relative abundance for Generalist birds") 
 
-ggsave(fig_glmm_generalist$time_period, filename = "figs/fig_glmm_relAbundance_generalistBirds.png", width = 9, height = 6, device = png(), units = "in", dpi = 300)
+ggsave(fig_beta_generalist$time_period, filename = "figs/fig_beta_relAbundance_generalistBirds.png", width = 9, height = 6, device = png(), units = "in", dpi = 300)
 dev.off()
 ```
 
 ## Creating a combined figure for the above four models
 ```{r}
-combined_plot <- wrap_plots(fig_glmm_forest$time_period, fig_glmm_grassland$time_period, fig_glmm_wooded$time_period, fig_glmm_generalist$time_period, ncol = 2)
+combined_plot <- wrap_plots(fig_beta_forest$time_period, fig_beta_grassland$time_period, fig_beta_wooded$time_period, fig_beta_generalist$time_period, ncol = 2)
 
-ggsave(combined_plot, filename = "figs/fig_glmm_relAbundance_combinedPlot.png", width = 12, height = 10, device = png(), units = "in", dpi = 300)
+ggsave(combined_plot, filename = "figs/fig_beta_relAbundance_combinedPlot.png", width = 12, height = 10, device = png(), units = "in", dpi = 300)
 dev.off()
 ```
