@@ -1,0 +1,321 @@
+---
+editor_options: 
+  chunk_output_type: console
+---
+
+
+
+## Examining changes in relative abundance as a function of species habitat affiliation
+
+- species relative abundance vs. trait
+- rank abundance vs. trait
+- beta regressions - trait/rel abundance
+
+
+```{r}
+## load in species trait dataset
+trait_dat <- read.csv("data/species-trait-dat.csv")
+
+# note: the classification of habitat type was created by comparing habitat affiliation data from the State of India's Birds report (v2; released in 2023). We used the following trait classifications:
+# Forest 
+# Grassland 
+# Wooded Habitat
+# Generalist
+
+# Our criteria for each of these classifications includes the following: # In the 1850s, the land cover change analysis revealed that the majority of the landscape was largely grasslands and forests. However in 2018, the landscape is largely a mosaic of human-modified land cover types - including wooded habitats (mostly comprising timber plantations and degraded forests), tea plantations, followed by forests and grasslands.
+# While the State of India's Birds provides a habitat classification/criteria based on contemporary use of habitats by a species, we classified species based on our resurveys and assuming that a species would either be in a forest, grassland, wooded habitat or a generalist species in the 1850s. 
+# An example in this case is the black and orange flycatcher. While it is commonly found in shola forest habitat, this species is also common in degraded wooded areas, including timber plantations. However, in the 1850s (due to limited presence of timber plantations compared to 2018), we assume that this is a forest specialist bird. 
+# Other examples include bird species that prefer open habitats, scrubland and dry grassland - such species have been lumped into the Grassland category as this was the closest habitat similar to the above habitat types in 1850s. Eg. Blue-tailed bee-eater, long-tailed shrike, black-winged kite. 
+# If a species is truly a generalist species and is not particularly occupying/specialized on any particular wooded/forested/grassland habitat, it was classified in the generalist category
+# Based on the above crtiera, 84 species were classified as forest birds, 33 species were classified as grassland birds, 31 species were classified as generalist species and 19 species were classified as wooded habitat species. 
+
+## join rel abundance dataframe and species trait
+## pivot longer
+rel_abun_trait <- relAbun %>%
+  pivot_longer(-scientific_name, names_to = "time_period", values_to = "relative_abundance") %>% left_join(., trait_dat, by=c("scientific_name"="scientific_name")) %>%
+   filter(Habitat.type != "Wetland") %>% # remove wetland birds
+  ungroup()
+
+# visualization by habitat affiliation
+rel_abun_trait$Habitat.type <- factor(rel_abun_trait$Habitat.type, levels=c("Forest", "Grassland", "Generalist", "Wooded Habitat"))
+
+fig_relAbun_habitat <- grouped_ggbetweenstats(
+  data = rel_abun_trait,
+  x = time_period,
+  y = relative_abundance,
+  grouping.var = `Habitat.type`,
+  xlab = "Habitat.type", 
+  ylab = "Relative Abundance",
+  p.adjust.method = "fdr",
+  #title = "Relative abundance by habitat type",
+  plot.type = "box") +
+  #ggplot.component = list(ggplot2::scale_y_continuous(
+  #  breaks = seq(0, 0.04, 0.005),
+  #  limits = (c(0, 0.04))))) +
+  scale_fill_scico_d(palette = "roma") 
+
+ggsave(fig_relAbun_habitat, filename = "figs/fig_relAbun_habitat_landscapeLevel.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+dev.off()
+```
+
+## Rank abundance plots of relative abundance by species trait across time periods  
+```{r}
+# visualization
+fig_rankAbund <- ggplot(rel_abun_trait, aes(x = reorder(scientific_name,relative_abundance), y = relative_abundance, fill = time_period)) +
+  #coord_flip()+
+  geom_bar(stat = "identity", position = "dodge", width = 0.5) + scale_fill_manual(values = c("#2c7fb8","#e34a33")) +
+  facet_wrap(~Habitat.type, ncol = 2, scales = "free")+
+  #ylim(0,0.2) + 
+  theme_bw() +
+  labs(
+    x = "\nScientific name",
+    y = "Relative abundance\n"
+  ) +
+  theme(
+    axis.title = element_text(
+      family = "Century Gothic",
+      size = 14, face = "bold"
+    ),
+    axis.text = element_text(family = "Century Gothic", size = 12),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)
+  )
+
+# Grassland birds are the biggest losers; generalist birds are the biggest winners while forest birds show mixed responses depending on the species
+
+ggsave(fig_rankAbund, filename = "figs/fig_rankAbundance.png", width = 29, height = 14, device = png(), units = "in", dpi = 300)
+dev.off()
+```
+
+## Are there significant decreases in relative abundance by time periods across habitat affiliations?
+
+We will run generalized linear mixed effect models with a beta family for all data first.
+```{r}
+# overall data
+beta_overall <- betareg(relative_abundance~ time_period,data = rel_abun_trait)
+summary(beta_overall)
+
+# Call:
+# betareg(formula = relative_abundance ~ time_period, data = rel_abun_trait)
+# 
+# Standardized weighted residuals 2:
+#     Min      1Q  Median      3Q     Max 
+# -0.8698 -0.6919 -0.2006  0.5147  1.9458 
+# 
+# Coefficients (mean model with logit link):
+#                 Estimate Std. Error z value Pr(>|z|)    
+# (Intercept)     -4.92920    0.08122 -60.688  < 2e-16 ***
+# time_period2021 -0.40259    0.09718  -4.143 3.43e-05 ***
+# 
+# Phi coefficients (precision model with identity link):
+#       Estimate Std. Error z value Pr(>|z|)    
+# (phi)   98.245      9.462   10.38   <2e-16 ***
+# ---
+# Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+# 
+# Type of estimator: ML (maximum likelihood)
+# Log-likelihood:  1432 on 3 Df
+# Pseudo R-squared: 0.08818
+# Number of iterations: 41 (BFGS) + 2 (Fisher scoring) 
+
+# plot predicted model estimates
+set_theme(base = theme_bw(),
+          theme.font = "Century Gothic",
+          axis.title.size = 1.2,
+          axis.textsize = 1,
+          axis.textcolor = "black")
+
+fig_beta_overall <- plot_model(beta_overall, type = "pred",
+                               title = "Predicted values of relative abundance for all data") 
+
+ggsave(fig_beta_overall$time_period, filename = "figs/fig_beta_relAbundance_overall.png", width = 9, height = 6, device = png(), units = "in", dpi = 300)
+dev.off()
+```
+
+## Forest birds
+
+```{r}
+forest_birds <- rel_abun_trait %>%
+  filter(Habitat.type == "Forest")
+  
+beta_forest <- betareg(relative_abundance ~ time_period, data = forest_birds)
+summary(beta_forest)
+
+# Call:
+# betareg(formula = relative_abundance ~ time_period, data = forest_birds)
+# 
+# Standardized weighted residuals 2:
+#     Min      1Q  Median      3Q     Max 
+# -0.9519 -0.5657 -0.1311  0.6069  1.5709 
+# 
+# Coefficients (mean model with logit link):
+#                 Estimate Std. Error z value Pr(>|z|)    
+# (Intercept)      -4.8828     0.1123 -43.492   <2e-16 ***
+# time_period2021  -0.3388     0.1351  -2.508   0.0122 *  
+# 
+# Phi coefficients (precision model with identity link):
+#       Estimate Std. Error z value Pr(>|z|)    
+# (phi)    97.80      13.06    7.49 6.88e-14 ***
+# ---
+# Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+# 
+# Type of estimator: ML (maximum likelihood)
+# Log-likelihood: 699.8 on 3 Df
+# Pseudo R-squared: 0.05724
+# Number of iterations: 43 (BFGS) + 2 (Fisher scoring) 
+
+# plot predicted model estimates
+set_theme(base = theme_bw(),
+          theme.font = "Century Gothic",
+          axis.title.size = 1.2,
+          axis.textsize = 1,
+          axis.textcolor = "black")
+
+fig_beta_forest <- plot_model(beta_forest, type = "pred",
+                               title = "Predicted values of relative abundance for forest birds") 
+
+ggsave(fig_beta_forest$time_period, filename = "figs/fig_beta_relAbundance_forestBirds.png", width = 9, height = 6, device = png(), units = "in", dpi = 300)
+dev.off()
+```
+
+## Grassland birds
+```{r}
+grassland_birds <- rel_abun_trait %>%
+  filter(Habitat.type == "Grassland")
+  
+beta_grassland <- betareg(relative_abundance ~ time_period, data = grassland_birds)
+summary(beta_grassland)
+
+# Call:
+# betareg(formula = relative_abundance ~ time_period, data = grassland_birds)
+# 
+# Standardized weighted residuals 2:
+#     Min      1Q  Median      3Q     Max 
+# -1.1063 -0.2969 -0.2897  0.3200  1.8909 
+# 
+# Coefficients (mean model with logit link):
+#                 Estimate Std. Error z value Pr(>|z|)    
+# (Intercept)      -5.0835     0.1660 -30.622  < 2e-16 ***
+# time_period2021  -0.8234     0.2196  -3.749 0.000177 ***
+# 
+# Phi coefficients (precision model with identity link):
+#       Estimate Std. Error z value Pr(>|z|)    
+# (phi)   148.38      32.01   4.635 3.56e-06 ***
+# ---
+# Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+# 
+# Type of estimator: ML (maximum likelihood)
+# Log-likelihood: 310.7 on 3 Df
+# Pseudo R-squared: 0.3722
+# Number of iterations: 291 (BFGS) + 3 (Fisher scoring) 
+
+# plot predicted model estimates
+set_theme(base = theme_bw(),
+          theme.font = "Century Gothic",
+          axis.title.size = 1.2,
+          axis.textsize = 1,
+          axis.textcolor = "black")
+
+fig_beta_grassland <- plot_model(beta_grassland, type = "pred",
+                               title = "Predicted values of relative abundance for grassland birds") 
+
+ggsave(fig_beta_grassland$time_period, filename = "figs/fig_beta_relAbundance_grasslandBirds.png", width = 9, height = 6, device = png(), units = "in", dpi = 300)
+dev.off()
+```
+
+## Wooded habitat birds
+```{r}
+wooded_birds <- rel_abun_trait %>%
+  filter(Habitat.type == "Wooded Habitat")
+  
+beta_wooded <- betareg(relative_abundance ~ time_period, data = wooded_birds)
+summary(beta_wooded)
+
+# Call:
+# betareg(formula = relative_abundance ~ time_period, data = wooded_birds)
+# 
+# Standardized weighted residuals 2:
+#     Min      1Q  Median      3Q     Max 
+# -0.6992 -0.3389 -0.2692  0.1913  1.8403 
+# 
+# Coefficients (mean model with logit link):
+#                 Estimate Std. Error z value Pr(>|z|)    
+# (Intercept)      -5.2236     0.2427 -21.526   <2e-16 ***
+# time_period2021  -0.5617     0.2928  -1.919    0.055 .  
+# 
+# Phi coefficients (precision model with identity link):
+#       Estimate Std. Error z value Pr(>|z|)    
+# (phi)   131.36      38.35   3.425 0.000614 ***
+# ---
+# Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+# 
+# Type of estimator: ML (maximum likelihood)
+# Log-likelihood: 180.1 on 3 Df
+# Pseudo R-squared: 0.2343
+# Number of iterations: 704 (BFGS) + 3 (Fisher scoring) 
+
+# plot predicted model estimates
+set_theme(base = theme_bw(),
+          theme.font = "Century Gothic",
+          axis.title.size = 1.2,
+          axis.textsize = 1,
+          axis.textcolor = "black")
+
+fig_beta_wooded <- plot_model(beta_wooded, type = "pred",
+                               title = "Predicted values of relative abundance for Wooded habitat birds") 
+
+ggsave(fig_beta_wooded$time_period, filename = "figs/fig_beta_relAbundance_woodedBirds.png", width = 9, height = 6, device = png(), units = "in", dpi = 300)
+dev.off()
+```
+
+## Generalist birds
+```{r}
+generalist_birds <- rel_abun_trait %>%
+  filter(Habitat.type == "Generalist")
+  
+beta_generalist <- betareg(relative_abundance ~ time_period, data = generalist_birds)
+summary(beta_generalist)
+
+# Call:
+# betareg(formula = relative_abundance ~ time_period, data = generalist_birds)
+# 
+# Standardized weighted residuals 2:
+#     Min      1Q  Median      3Q     Max 
+# -1.1324 -0.5444 -0.0707  0.5649  1.9286 
+# 
+# Coefficients (mean model with logit link):
+#                 Estimate Std. Error z value Pr(>|z|)    
+# (Intercept)     -4.84899    0.20012 -24.230   <2e-16 ***
+# time_period2021 -0.06487    0.22535  -0.288    0.773    
+# 
+# Phi coefficients (precision model with identity link):
+#       Estimate Std. Error z value Pr(>|z|)    
+# (phi)    75.67      16.91   4.474 7.68e-06 ***
+# ---
+# Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+# 
+# Type of estimator: ML (maximum likelihood)
+# Log-likelihood: 249.3 on 3 Df
+# Pseudo R-squared: 0.002385
+# Number of iterations: 72 (BFGS) + 2 (Fisher scoring)   
+
+# plot predicted model estimates
+set_theme(base = theme_bw(),
+          theme.font = "Century Gothic",
+          axis.title.size = 1.2,
+          axis.textsize = 1,
+          axis.textcolor = "black")
+
+fig_beta_generalist <- plot_model(beta_generalist, type = "pred",
+                               title = "Predicted values of relative abundance for Generalist birds") 
+
+ggsave(fig_beta_generalist$time_period, filename = "figs/fig_beta_relAbundance_generalistBirds.png", width = 9, height = 6, device = png(), units = "in", dpi = 300)
+dev.off()
+```
+
+## Creating a combined figure for the above four models
+```{r}
+combined_plot <- wrap_plots(fig_beta_forest$time_period, fig_beta_grassland$time_period, fig_beta_wooded$time_period, fig_beta_generalist$time_period, ncol = 2)
+
+ggsave(combined_plot, filename = "figs/fig_beta_relAbundance_combinedPlot.png", width = 12, height = 10, device = png(), units = "in", dpi = 300)
+dev.off()
+```
