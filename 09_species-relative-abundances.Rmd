@@ -32,8 +32,6 @@ library(ggpubr)
 library(goeveg)
 library(sjPlot)
 library(patchwork)
-library(DHARMa)
-library(bbmle)
 
 # source custom functions
 source("code/02_relative-species-abundance-functions.R")
