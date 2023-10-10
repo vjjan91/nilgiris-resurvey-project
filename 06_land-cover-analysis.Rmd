@@ -9,7 +9,6 @@ bibliography: references.bib
 In this script, we will process land cover polygons and rasters for multiple time periods (1848 and 2018) across the Nilgiri hills of the Western Ghats biodiversity hotspot. For the year 1848, a survey map (created by Captain John Ouchterlony) was obtained from the British Library and the Tamil Nadu State Archive and was manually digitized to arrive at multiple land cover classes (for more information on the process of digitization, please read the accompanying manuscript and use the README section in the GitHub repository). For the year 2018, we relied on satellite imagery from Sentinel-2 (the imagery was classified using Google Earth Engine and more information on the classification can be obtained below).
 
 ### Load necessary libraries
-
 ```{r}
 library(sf)
 library(raster)
@@ -21,15 +20,6 @@ library(mapview)
 library(landscapemetrics)
 library(scico)
 library(extrafont)
-```
-
-### Load the Nilgiris contour
-
-This is the contour to which all other shapefiles will be clipped to and is essentially a 1400 m contour. We use this contour as the digitized map from 1848 essentially corresponds to areas above 1400 metres in elevation.
-
-```{r}
-# load the 1400m contour
-contourNil <- st_read("data/spatial/contour-1400m-nilgiris.shp")
 ```
 
 ### Processing digitized shapefiles from the 1848 map
@@ -116,7 +106,6 @@ nil1848 <- nil1848 %>%
 
 # crop the 1848 shapefiles to within the 1400m contour only
 nil1848 <- st_buffer(nil1848, dist = 0)
-nil1848 <- st_intersection(nil1848, contourNil)
 nil1848 <- nil1848[,-c(3:5)]
 
 # Create a common boundary for clipping files from another time period (2017)(see below)
@@ -131,7 +120,7 @@ The 1848 digitized shapefiles are rasterized for comparison with the 2018 sentin
 # scale: 1000ft to 1 inch (1:12000; 6 metres resolution)
 # This link was used for reference to convert from map scale to raster pixel resolution: https://www.esri.com/arcgis-blog/products/product/imagery/on-map-scale-and-raster-resolution/
 vect1848 <- terra::vect(nil1848)
-emptyRast <- terra::rast(res = 6, xmin = 660771, xmax = 718316.3, ymin = 1240554, ymax = 1275492, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
+emptyRast <- terra::rast(res = 6, xmin = 660555.3, xmax = 719135.5, ymin = 1240050, ymax = 1277597, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
 rast1848 <- terra::rasterize(vect1848, emptyRast, "name")
 ```
 
@@ -152,7 +141,7 @@ rast2018 <- crop(rast2018, rast1848)
 
 ## extents still do not match for masking
 ## force set extents
-ext(rast2018) <- c(660771, 718317, 1240554, 1275492)
+ext(rast2018) <- c(660555.3, 719133.3, 1240050, 1277598)
 
 ## We have one other issue to tackle before we mask
 ## The nrow and ncols do not match because of differences in spatial res
@@ -168,7 +157,7 @@ rast2018 <- mask(rast2018, rast1848)
 ## convert the raster to a categorical raster
 rast2018 <- as.factor(rast2018)
 
-## set land cover class names to the 1848 raster
+## set land cover class names to the 2018 raster
 ## note: this was done carefully by examining the values associated
 ## with each number from classification process (done in GEE)
 
