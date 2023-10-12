@@ -24,7 +24,7 @@ library(lme4)
 library(DHARMa)
 library(ggpubr)
 library(bbmle)
-library(mgcv)
+library(betareg)
 
 # function to z-transform data
 scale_z <- function(x){
@@ -199,8 +199,7 @@ pivot_2021 <- relAbun %>%
 # calculate difference between modern and historical time periods
 # positive value implies gain in relative abundance in 2021 compared to 1850, while negative value implies loss in relative abundance in 2021 compared to 1850
 relAbun_wide <- full_join(pivot_1850, pivot_2021, by=c("scientific_name","historical_site_code")) %>%
-  mutate("relAbunChange" = `2021` - `1850`) %>%
-  mutate("abunIndex" = log10(`2021`/`1850`))
+  mutate("relAbunChange" = `2021` - `1850`)
 
 ## prepare the land cover data
 ## calculating mean change at the level of the historical site code
@@ -209,22 +208,11 @@ lc_meanChange <- lc_change_dat %>%
   group_by(historical_site_code, name) %>%
   summarise(lc_change = mean(lc_change)) 
 
-# scale values of land cover change
-# lc_scaledChange <- lc_meanChange %>%
-#  group_by(name) %>%
-#  mutate(lc_scaled = scale_z(lc_change))
-
 ## make land cover data wider
 lc_glmm <- lc_meanChange %>%
   pivot_wider(id_cols = historical_site_code, 
               names_from = name, 
               values_from = lc_change)
-
-## prepare climate change data
-clim_change_glmm <- clim_change_dat %>%
-  dplyr::select(historical_site_code, t_mean_dry_2010, t_mean_rainy_2010, ppt_dry_2010, ppt_rainy_2010) %>%
-  group_by(historical_site_code) %>%
-  summarise(across(everything(), mean))
 
 ## join all three dataframes together
 ## note that due to gaps in the historical land cover map, we have to forego two unique historical survey locations (TSTE and WTCM)
@@ -232,7 +220,14 @@ clim_change_glmm <- clim_change_dat %>%
 ## dataframe for glmm
 glmm_data <- left_join(lc_glmm, relAbun_wide,
                        by = "historical_site_code") %>%
-  left_join(., clim_change_glmm, by = "historical_site_code") %>% as.data.frame()
+  left_join(., clim_change_glmm, by = "historical_site_code") %>%
+  as.data.frame()
+
+## prepare climate change data
+clim_change_glmm <- clim_change_dat %>%
+  dplyr::select(historical_site_code, t_mean_dry_2010, t_mean_rainy_2010, ppt_dry_2010, ppt_rainy_2010) %>%
+  group_by(historical_site_code) %>%
+  summarise(across(everything(), mean))
 
 ## scale the climate data
 glmm_data <- glmm_data %>%
@@ -254,49 +249,49 @@ pairs.panels(for_corr)
 # for future analyses, we will only include t_mean_dry2010 and ppt_mean_dry2010
 ```
 
-## Running models with all data
-```{r}
-overall_lc<- glmmTMB(relAbunChange ~ shola_forest + shola_grassland +
-                 settlements + agriculture + plantations + water_bodies+
-                   t_mean_dry_2010_z + ppt_dry_2010_z +
-                 (1|scientific_name),
-               data = glmm_data,
-               family = gaussian())
-
-summary(overall_lc)
-
-overall_clim <- glmmTMB(relAbunChange ~ t_mean_dry_2010_z + 
-                        ppt_dry_2010_z + (1|scientific_name),
-                        data =glmm_data,
-                        family = gaussian())
-summary(overall_clim)
-```
-
-
-## Run the mixed-effects models, but incorporate species habitat affiliation
+## Running generalized linear mixed effect models for specific habitat affiliations
 ```{r}
 glmm_habitat <- left_join(glmm_data, trait_dat, by = "scientific_name") 
 
-## run the glmm
 ## grassland birds
 glmm_grassland <-  glmm_habitat %>%
   filter(Habitat.type == "Grassland")
 
-grass_mod <- glm(abunIndex ~ shola_forest + shola_grassland +
-                 settlements + agriculture + plantations,
-               data = glmm_grassland)
+glmm_grassland <- glmm_grassland %>% 
+  mutate(abundIndex = log10(`2021`/`1850`))
+
+m1 <- glmmTMB(abundIndex ~ 
+                shola_grassland  +t_mean_dry_2010_z +
+                ppt_dry_2010_z + 
+                (1|historical_site_code) +(1|scientific_name),
+               data = glmm_grassland,
+            ziformula = ~1)
+summary(m1)
+
+## forest birds
+glmm_forest <- glmm_habitat %>%
+  filter(Habitat.type == "Forest")
+
+m2 <- glmmTMB(relAbunChange ~  shola_forest + t_mean_dry_2010_z +
+                ppt_dry_2010_z + (1|scientific_name) +
+                (1|historical_site_code),
+               data = glmm_forest)
+            #ziformula = ~1)
+summary(m2)
 
 
-g2 <- update(grass_mod, .~. -plantations)
-g3 <- update(g2, .~. -shola_grassland)
-g4 <- update(g3, .~. -settlements)
-g5 <- update(g4, .~. -shola_forest)
 
-summary(grass_mod)
-summary(g2)
-summary(g3)
-summary(g4)
-summary(g5)
+
+m2 <- update(m1, .~. -plantations)
+m3 <- update(m2, .~. -shola_grassland)
+m4 <- update(m3, .~. -settlements)
+m5 <- update(m4, .~. -shola_forest)
+
+summary(m1)
+summary(m2)
+summary(m3)
+summary(m4)
+summary(m5)
 
 plot_model(g4)
 
