@@ -210,10 +210,6 @@ We now recalculate species relative abundances at the site-level, which will be 
 ## we remove modern site_code and get only distinct rows
 hist_site_level <- hist_occ[,c(1:3)] %>%
   distinct(.)
-
-
-    count(scientific_name, as.factor(historical_site_code),
-        .drop = FALSE)
   
 ##  modern resurvey
 ## analysis is being done at the level of the historical site code
