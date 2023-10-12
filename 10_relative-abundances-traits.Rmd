@@ -87,7 +87,81 @@ ggsave(fig_relAbun_habitat, filename = "figs/fig_relAbun_habitat_landscapeLevel.
 dev.off()
 ```
 
-## Rank abundance plots of relative abundance by species trait across time periods  
+## Visualizing relative abundance change by species trait across time periods
+
+```{r}
+## grassland birds
+grassland <- rel_abun_trait %>%
+  filter(Habitat.type == "Grassland") %>%
+  dplyr::select(scientific_name, time_period, relative_abundance) %>%
+  pivot_wider(., names_from = time_period, values_from = relative_abundance)
+
+fig_grassland_1850v2021 <- ggplot(data=grassland,aes(x=`2021`,y=`1850-1900`)) +
+   scale_y_log10() +
+  geom_abline(slope=1, intercept=0,linetype="dashed") +
+  scale_x_log10() +
+  labs(y = "1850-1900 Relative abundance", 
+       x = "2021 Relative abundance") +
+   geom_point(shape = 21, colour = "black", fill = "white", size = 2, stroke = 1)+
+   geom_text_repel(aes(label = scientific_name),family = "Century Gothic", fontface = "italic")+
+  theme_bw() +
+  theme(axis.text = element_text(family = "Century Gothic", size = 13),
+        legend.title = element_text(family = "Century Gothic"),
+    legend.text = element_text(family = "Century Gothic"),
+    text = element_text(family = "Century Gothic", size = 25))
+
+ggsave(fig_grassland_1850v2021, filename = "figs/fig_grassland_historic_vs_modern_relAbun.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+dev.off()
+
+## forest birds
+forest <- rel_abun_trait %>%
+  filter(Habitat.type == "Forest") %>%
+  dplyr::select(scientific_name, time_period, relative_abundance) %>%
+  pivot_wider(., names_from = time_period, values_from = relative_abundance)
+
+fig_forest_1850v2021 <- ggplot(data=forest,
+                               aes(x=`2021`,y=`1850-1900`)) +
+   scale_y_log10() +
+  geom_abline(slope=1, intercept=0,linetype="dashed") +
+  scale_x_log10() +
+  labs(y = "1850-1900 Relative abundance", 
+       x = "2021 Relative abundance") +
+   geom_point(shape = 21, colour = "black", fill = "white", size = 2, stroke = 1)+
+   geom_text_repel(aes(label = scientific_name),family = "Century Gothic", fontface = "italic")+
+  theme_bw() +
+  theme(axis.text = element_text(family = "Century Gothic", size = 13),
+        legend.title = element_text(family = "Century Gothic"),
+    legend.text = element_text(family = "Century Gothic"),
+    text = element_text(family = "Century Gothic", size = 25))
+
+ggsave(fig_forest_1850v2021, filename = "figs/fig_forest_historic_vs_modern_relAbun.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+dev.off()
+
+## generalist birds
+generalist <- rel_abun_trait %>%
+  filter(Habitat.type == "Generalist") %>%
+  dplyr::select(scientific_name, time_period, relative_abundance) %>%
+  pivot_wider(., names_from = time_period, values_from = relative_abundance)
+
+fig_generalist_1850v2021 <- ggplot(data=generalist,aes(x=`2021`,y=`1850-1900`)) +
+   scale_y_log10() +
+  geom_abline(slope=1, intercept=0,linetype="dashed") +
+  scale_x_log10() +
+  labs(y = "1850-1900 Relative abundance", 
+       x = "2021 Relative abundance") +
+   geom_point(shape = 21, colour = "black", fill = "white", size = 2, stroke = 1)+
+   geom_text_repel(aes(label = scientific_name),family = "Century Gothic", fontface = "italic")+
+  theme_bw() +
+  theme(axis.text = element_text(family = "Century Gothic", size = 13),
+        legend.title = element_text(family = "Century Gothic"),
+    legend.text = element_text(family = "Century Gothic"),
+    text = element_text(family = "Century Gothic", size = 25))
+
+ggsave(fig_generalist_1850v2021, filename = "figs/fig_generalist_historic_vs_modern_relAbun.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+dev.off()
+```
+
+## Rank abundance plots of relative abundance by species trait across time periods 
 ```{r}
 # forest birds separately (due to large number of species)
 forest_rank <- rel_abun_trait %>%
