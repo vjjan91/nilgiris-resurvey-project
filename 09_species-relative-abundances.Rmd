@@ -190,7 +190,8 @@ fig_relAbun_over_time <- ggbetweenstats(
       size = 18, face = "bold"),
     axis.title = element_text(family = "Century Gothic",
       size = 16, face = "bold"),
-        axis.text = element_text(family="Century Gothic",size = 14),
+        axis.text = element_text(family="Century Gothic",
+                                 size = 14),
       plot.subtitle = element_text(
       family = "Century Gothic", 
       size = 14, 
