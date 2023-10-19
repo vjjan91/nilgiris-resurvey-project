@@ -4,7 +4,7 @@ editor_options:
 bibliography: references.bib
 ---
 
-## Processing land cover data
+# Land cover classification and change detection
 
 In this script, we will process land cover polygons and rasters for multiple time periods (1848 and 2018) across the Nilgiri hills of the Western Ghats biodiversity hotspot. For the year 1848, a survey map (created by Captain John Ouchterlony) was obtained from the British Library and the Tamil Nadu State Archive and was manually digitized to arrive at multiple land cover classes (for more information on the process of digitization, please read the accompanying manuscript and use the README section in the GitHub repository). For the year 2018, we relied on satellite imagery from Sentinel-2 (the imagery was classified using Google Earth Engine and more information on the classification can be obtained below).
 
@@ -108,7 +108,7 @@ nil1848 <- nil1848 %>%
 nil1848 <- st_buffer(nil1848, dist = 0)
 nil1848 <- nil1848[,-c(3:5)]
 
-# Create a common boundary for clipping files from another time period (2017)(see below)
+# Create a common boundary for clipping files from another time period (2018)(see below)
 all1848 <- st_buffer(st_union(nil1848), dist = 0)
 ```
 
@@ -386,3 +386,12 @@ fig_percent_area <- ggplot(percentArea, aes(x = class, y = percentArea, fill = c
 ggsave(fig_percent_area, filename = "figs/fig_percentArea_landCover.png", width = 14, height = 13, device = png(), units = "in", dpi = 500)
 dev.off()
 ```
+
+f) What are areas that haven't changed at all over time? (1= 1, 2= 2 and so on)
+
+g) Still need to run an actual change detection analysis
+
+h) Elevational change in grassland habitat over time - like visualizae a 3d topographic model of the landscape and how grassland habitats have shifted or changed over time?
+
+i) Overlap elevation DEM over the Ouchterlony map to provide readers a sense of accuracy/correctness of the map? (Separate couple of hours to extract relevant information from archival sources about Ouchterlony & the map). 
+
