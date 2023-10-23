@@ -367,20 +367,145 @@ legend("bottom",
 dev.off()
 ```
 
+## Creating smaller regions of interest for comparison
 
+While comparing a time series of landscape change shows how different land cover types have expanded or contracted over time, the broader regions of interest are slightly different across time periods. Here, I subset rasters by cropping smaller extents, prior to visualization.
+```{r}
+## south-western quadrant
+sw1848 <- crop(rast1848, c(666000,675000,
+                        1240050,1255000))
+sw1910 <- crop(rast1910, c(666000,675000,
+                        1240050,1255000))
+sw1973 <- crop(rast1973_reclassified, c(666000,675000,
+                        1240050,1255000))
+sw1995 <- crop(rast1995_reclassified, c(666000,675000,
+                        1240050,1255000))
+sw2018 <- crop(rast2018, c(666000,675000,
+                        1240050,1255000))
 
-To do:
+## saving a high resolution visualization
+png(filename = "figs/fig_landCover_timeSeries_southWesternRegion.png",
+    width = 15, height = 10, units = "in", res = 300)
 
-a)  add 1910 map also add 1973, 1995
+par(mfrow = c(2,3))
+plot(sw1848, col = c('#be4fc4', # agriculture, violetish
+  '#b0a69d', # settlements, grayish
+  '#04a310', # shola forests, lighter green
+  '#cbb315', # shola grasslands, yellowish
+  '#2035df'  # waterbodies, royal blue
+),main = "1848", legend = FALSE)
+plot(sw1910, col = c(
+  '#b0a69d', # settlements, grayish
+  '#04a310', # shola forests, lighter green
+  '#cbb315', # shola grasslands, yellowish
+  '#2035df'  # waterbodies, royal blue
+), main = "1910", legend = FALSE)
+plot(sw1973, col = c('#be4fc4', # agriculture, violetish
+  '#04a310', # shola forests, lighter green
+  '#cbb315', # shola grasslands, yellowish
+  '#c17111', # plantations, brownish
+  '#2035df'  # waterbodies, royal blue
+), main = "1973",legend = FALSE)
+plot(sw1995, col = colors1973reclass, main = "1995",legend = FALSE)
+plot(sw2018, col=colors2018reclass, main = "2018", 
+     legend=FALSE)
 
-b)  identify multiple specific locations/areas/quadrants that can be compared over time (divide area into four)
+# add custom legend
+par(mar = c(0, 0, 0, 0), 
+     new = TRUE)
+plot(0, 0, type = 'l', bty = 'n', xaxt = 'n', yaxt = 'n')
+legend("bottom",
+       legend=landcover_reclass$name,
+       fill=colors1973reclass, 
+       cex = 0.8, 
+       title="land cover classes",
+       ncol = 2)
+dev.off()
 
-c)  create a ggplot time series map - to show increase of forests?
+# western quadrant
+w1848 <- crop(rast1848, c(665000,680000,
+                        1255000,1265000))
+w1910 <- crop(rast1910, c(665000,680000,
+                        1255000,1265000))
+w1973 <- crop(rast1973_reclassified, c(665000,680000,
+                        1255000,1265000))
+w1995 <- crop(rast1995_reclassified, c(665000,680000,
+                        1255000,1265000))
+w2018 <- crop(rast2018, c(665000,680000,
+                        1255000,1265000))
 
-d)  create ggplot time series map to show decrease of grasslands? (similar to above)
+## saving a high resolution visualization
+png(filename = "figs/fig_landCover_timeSeries_westernRegion.png",
+    width = 15, height = 10, units = "in", res = 300)
 
+par(mfrow = c(2,3))
+plot(w1848, col = c('#be4fc4', # agriculture, violetish
+  '#04a310', # shola forests, lighter green
+  '#cbb315' # shola grasslands, yellowish
+),main = "1848", legend = FALSE)
+plot(w1910, col = c(
+  '#be4fc4',
+  '#b0a69d', # settlements, grayish
+  '#04a310', # shola forests, lighter green
+  '#cbb315', # shola grasslands, yellowish
+  '#2035df'  # waterbodies, royal blue
+), main = "1910", legend = FALSE)
+plot(w1973, col = colors1973reclass, main = "1973",legend = FALSE)
+plot(w1995, col = colors1973reclass, main = "1995",legend = FALSE)
+plot(w2018, col=colors2018reclass, main = "2018", 
+     legend=FALSE)
 
+# add custom legend
+par(mar = c(0, 0, 0, 0), 
+     new = TRUE)
+plot(0, 0, type = 'l', bty = 'n', xaxt = 'n', yaxt = 'n')
+legend("bottom",
+       legend=landcover_reclass$name,
+       fill=colors1973reclass, 
+       cex = 0.8, 
+       title="land cover classes",
+       ncol = 2)
+dev.off()
+```
 
-More ideas from Laurel:
+## Comparisons only above 1400 meters in elevation 
 
+Here, we use the 1973/1995 raster as masks to restrict region of comparisons to only above 1400 meters in elevation
+```{r}
+# creating high elevation rasters/regions of interest
+rast1848high <- mask(rast2018, rast1973_reclassified)
+rast1910high <- mask(rast1910, rast1973_reclassified)
+rast2018high <- mask(rast2018, rast1973_reclassified)
+
+## saving a high resolution visualization
+png(filename = "figs/fig_landCover_timeSeries_above1400meters.png",
+    width = 15, height = 10, units = "in", res = 300)
+
+par(mfrow = c(2,3))
+plot(rast1848high, col = colors1848, 
+     main = "1848", legend = FALSE)
+plot(rast1910high, col = c(
+  '#be4fc4',
+  '#c17111', # plantations, brownish
+  '#b0a69d', # settlements, grayish
+  '#04a310', # shola forests, lighter green
+  '#cbb315', # shola grasslands, yellowish
+  '#2035df'  # waterbodies, royal blue
+), main = "1910", legend = FALSE)
+plot(rast1973_reclassified, col = colors1973reclass, main = "1973",legend = FALSE)
+plot(rast1995_reclassified, col = colors1973reclass, main = "1995",legend = FALSE)
+plot(rast2018high, col=colors2018reclass, main = "2018", legend=FALSE)
+
+# add custom legend
+par(mar = c(0, 0, 0, 0), 
+     new = TRUE)
+plot(0, 0, type = 'l', bty = 'n', xaxt = 'n', yaxt = 'n')
+legend("bottom",
+       legend=landcover_reclass$name,
+       fill=colors1973reclass, 
+       cex = 0.8, 
+       title="land cover classes",
+       ncol = 2)
+dev.off()
+```
 
