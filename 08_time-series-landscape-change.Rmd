@@ -170,9 +170,9 @@ names(nil1995) <- c("id","area","geometry","name")
 ## Rasterization of the 1973 and 1995 data
 ```{r}
 # rasterize
-# the scale of the map is 1:63360 ~30 m pixel size for rasterization
+# the scale of Landsat MSS is at 60 m
 vect1973 <- terra::vect(nil1973)
-emptyRast <- terra::rast(res = 30, xmin = 517079.8, xmax = 794369.8, ymin = 922564.6, ymax = 1500035, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
+emptyRast <- terra::rast(res = 60, xmin = 517079.8, xmax = 794369.8, ymin = 922564.6, ymax = 1500035, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
 rast1973 <- terra::rasterize(vect1973, emptyRast, "name")
 
 ## crop and mask to the 1848 raster
@@ -206,6 +206,7 @@ landcover_class <- data.frame(ID = c(0,2:7),
 levels(rast1973) <- landcover_class
 
 # repeating process for 1995 data
+# note that the spatial resolution of Landsat TM is at 30 m spatial resolution
 vect1995 <- terra::vect(nil1995)
 emptyRast <- terra::rast(res = 30, xmin = 517079.8, xmax = 794369.8, ymin = 922564.6, ymax = 1500035, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
 rast1995 <- terra::rasterize(vect1995, emptyRast, "name")
@@ -216,6 +217,9 @@ rast1995 <- crop(rast1995, rast1848)
 ## extents still do not match for masking
 ## force set extents
 ext(rast1995) <- c(660555.3, 719133.3, 1240050, 1277598)
+
+# resample raster from 1995 to match resolution of 1973 raster
+rast1995 <- resample(rast1995, rast1973, method = "near")
 
 ## masking the 1995 raster with the 1848 raster
 rast1995 <- mask(rast1995, rast1848)
@@ -406,7 +410,12 @@ plot(sw1973, col = c('#be4fc4', # agriculture, violetish
   '#c17111', # plantations, brownish
   '#2035df'  # waterbodies, royal blue
 ), main = "1973",legend = FALSE)
-plot(sw1995, col = colors1973reclass, main = "1995",legend = FALSE)
+plot(sw1995, col = c('#be4fc4', # agriculture, violetish
+  '#04a310', # shola forests, lighter green
+  '#cbb315', # shola grasslands, yellowish
+  '#c17111', # plantations, brownish
+  '#2035df'  # waterbodies, royal blue
+), main = "1995",legend = FALSE)
 plot(sw2018, col=colors2018reclass, main = "2018", 
      legend=FALSE)
 
@@ -473,7 +482,7 @@ dev.off()
 Here, we use the 1973/1995 raster as masks to restrict region of comparisons to only above 1400 meters in elevation
 ```{r}
 # creating high elevation rasters/regions of interest
-rast1848high <- mask(rast2018, rast1973_reclassified)
+rast1848high <- mask(rast1848, rast1973_reclassified)
 rast1910high <- mask(rast1910, rast1973_reclassified)
 rast2018high <- mask(rast2018, rast1973_reclassified)
 
@@ -484,14 +493,8 @@ png(filename = "figs/fig_landCover_timeSeries_above1400meters.png",
 par(mfrow = c(2,3))
 plot(rast1848high, col = colors1848, 
      main = "1848", legend = FALSE)
-plot(rast1910high, col = c(
-  '#be4fc4',
-  '#c17111', # plantations, brownish
-  '#b0a69d', # settlements, grayish
-  '#04a310', # shola forests, lighter green
-  '#cbb315', # shola grasslands, yellowish
-  '#2035df'  # waterbodies, royal blue
-), main = "1910", legend = FALSE)
+plot(rast1910high, col = colors1848, 
+     main = "1910", legend = FALSE)
 plot(rast1973_reclassified, col = colors1973reclass, main = "1973",legend = FALSE)
 plot(rast1995_reclassified, col = colors1973reclass, main = "1995",legend = FALSE)
 plot(rast2018high, col=colors2018reclass, main = "2018", legend=FALSE)
