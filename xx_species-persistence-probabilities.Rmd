@@ -26,7 +26,7 @@ source("code/03_persistence-probability-functions.R")
 ### Load in historical occurrence data
 ```{r}
 ## read in historical occurrence data
-hist_occ <- read.csv("data/historical-occurrence-data.csv")
+hist_occ <- read.csv("results/histSubset.csv")
 
 # We add in two columns to the above dataframe:
 
@@ -42,37 +42,19 @@ hist_occ <-  hist_occ %>%
            case_when(institutionCode == "JournalData" ~ 0.5,
                                  TRUE ~ 0.95)) %>%
   mutate("pci_upper" = 
-           case_when(institutionCode == "JournalData" ~ 0.65,
-                                 TRUE ~ 0.99))
+           case_when(institutionCode == "JournalData" ~ 0.65, TRUE ~ 0.99))
 
 ### fix the count column
 hist_occ <-  hist_occ %>%
   mutate(histCount = case_when(individualCount == "X" ~ 1,
                                individualCount == "" ~ 1,
                                TRUE ~ as.numeric(individualCount)))
-
-## remove species with few observations
-histCount <- hist_occ %>%
-  group_by(scientific_name) %>%
-  count() 
-
-## filter species list with a minimum of four records
-histCount_minFour <- histCount %>%
-  filter(n >= 4 )
-
-## filter species to include only 68 species
-hist_occ <- hist_occ %>%
-  filter(scientific_name %in% histCount_minFour$scientific_name)
 ```
 
 ## Load in modern occurrence data
 ```{r}
 ## read in modern occurrence data
-mod_occ <- read.csv("data/modern-occurrence-data.csv")
-
-## remove sites without historical_site_code
-mod_occ <- mod_occ %>%
-  filter(!is.na(historical_site_code))
+mod_occ <- read.csv("results/modSubset.csv")
 
 ## add the pci_lower and pci_upper values
 ## here, we do not make a distinction between heard, seen and flyover observations and assign a pci_lower of 0.95 and a pci_upper of 0.99
@@ -80,10 +62,6 @@ mod_occ <- mod_occ %>%
 mod_occ <- mod_occ %>%
   mutate("pci_lower" =  0.95) %>%
   mutate("pci_upper" = 0.99)
-
-## only include species that are present in the historical dataset
-mod_occ <- mod_occ %>%
-  filter(scientific_name %in% hist_occ$scientific_name)
 ```
 
 ## Combine modern and historical occurrence data
@@ -92,8 +70,7 @@ Choose the columns necessary for further calculations of probabilities of persis
 ```{r}
 ## historical data
 hist_probDat <-  hist_occ %>%
-  dplyr::select(scientific_name, year, historical_site_code, pci_lower,
-         pci_upper, histCount) %>%
+  dplyr::select(scientific_name, year, historical_site_code, pci_lower,pci_upper, histCount) %>%
   group_by(scientific_name, year, historical_site_code) %>%
   mutate(histCount = sum(histCount)) %>%
   rename(., abundance = "histCount") %>%
@@ -104,8 +81,7 @@ hist_probDat <-  hist_occ %>%
 mod_probDat <- mod_occ %>%
   mutate(year = 2021) %>% # change year to 2021 for ease of modeling
   rename(., abundance = "number") %>%
-  dplyr::select(scientific_name, year, historical_site_code, pci_lower,
-         pci_upper, abundance) %>%
+  dplyr::select(scientific_name, year, historical_site_code, pci_lower, pci_upper, abundance) %>%
   group_by(scientific_name, year, historical_site_code) %>%
   mutate(abundance = sum(abundance)) %>%
   distinct(.) %>%

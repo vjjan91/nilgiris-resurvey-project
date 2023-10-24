@@ -5,7 +5,7 @@ editor_options:
 
 # Exploratory analysis of occurrence data
 
-This script carries out exploratory analysis of historical and modern occurrence data from the Nilgiri hills. In this script, we plot the total count of specimens by time period and the number of specimens per species by time period.   
+This script carries out exploratory analysis of historical and modern occurrence data from the Nilgiri hills.   
 
 ### Load necessary libraries
 ```{r}
@@ -18,12 +18,41 @@ library(extrafont)
 ```
 
 ### Load the historical occurrence data and explore patterns
+
+The historical occurrence data is a combination of data from museum specimens and those observations made in published literature/journals (titled journal data). 
 ```{r}
 hist_occ <- read.csv("data/historical-occurrence-data.csv")
 
+# after exploring the data, we will apply the following filters on the dataset
+
+# a: include only data until 1950
+filt_hist <- hist_occ %>%
+  filter(year <= 1950)
+
+# b: remove localities with limited amount of data
+# here we exclude localities that had less than 10 cumulative observations/records between 1850-1950
+# localities to remove include: 
+# BGOT, EMVL, KNSL, KUKL, LVDL, RNMD, TMTE
+filt_hist <- filt_hist %>%
+  filter(!historical_site_code %in% c("BGOT","EMVL",
+                                      "KNSL",
+                                      "KUKL","LVDL",
+                                   "RNMD","TMTE"))
+
+# c: remove specific species
+
+
 # count of data by year
-occ_year <- hist_occ %>%
-  group_by(year) %>%
+occ_year <- filt_hist %>%
+  group_by(year, historical_site_code) %>%
+  count()
+
+spp_count <- trial %>%
+  group_by(scientific_name) %>%
+  count()
+
+collector <- hist_occ %>%
+  group_by(collectedBy, year) %>%
   count()
 
 # The above count suggests that majority of the bird specimens were recorded in 1881, followed by some data from 1876.
@@ -115,7 +144,8 @@ dev.off()
 ```{r}
 mod_occ <- read.csv("data/modern-occurrence-data.csv") %>%
   filter(!is.na(historical_site_code)) %>%
-  filter(!is.na(species_code))
+  filter(!is.na(species_code)) %>%
+  filter(scientific_name %in% spp_count$scientific_name)
 
 # total observations of species in the modern surveys
 modOcc_spp <- mod_occ %>%
