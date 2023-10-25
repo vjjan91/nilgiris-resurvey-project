@@ -59,42 +59,65 @@ elev <- raster::extract(alt, sites)
 sites <- cbind(sites, elev)
 ```
 
-## For the historical occurrence data, we will choose data from a single time period: 1850-1900
+## For the historical occurrence data, we will choose data from two time periods: 1850-1900 & 1900-1950.
 ```{r}
 ## read in historical occurrence data
 hist_occ <- read.csv("data/historical-occurrence-data.csv")
 
-## filter data
+## applying filters:
+# a: include only data until 1950
 hist_occ <- hist_occ %>%
-  filter(year <= 1950) %>%
-  filter(!historical_site_code %in% c("BGOT","EMVL",
-                                      "KNSL",
-                                      "KUKL","LVDL",
-                                   "RNMD","TMTE"))
+  filter(year <= 1950)
 
+# remove localities with limited amount of data
+# here we exclude localities that had less than 10 cumulative observations/records between 1850-1950
+# localities to remove include: 
+# BGOT, EMVL, KNSL, KUKL, LVDL, RNMD, TMTE
+hist_occ <- hist_occ %>%
+  filter(!historical_site_code %in% c("BGOT","EMVL",
+                                      "KNSL","KUKL",
+                                      "LVDL","RNMD","TMTE"))
+
+### pre-1900
+hist_occ_pre1900 <- hist_occ %>%
+  filter(year <= 1900)
 
 # calculate total count of historical data at each site
-hist_occ <- hist_occ %>%
+hist_occ_pre1900 <- hist_occ_pre1900 %>%
   group_by(scientific_name, historical_site_code) %>%
   count() %>%
   summarise("1850-1900" = sum(n)) 
 
 # left join the sites dataframe
-hist_occ <- left_join(hist_occ, sites, by=c("historical_site_code"="historical_site_code")) %>%
+hist_occ_pre1900 <- left_join(hist_occ_pre1900, sites, by=c("historical_site_code"="historical_site_code")) %>%
   filter(!is.na(scientific_name)) %>%
   replace(is.na(.), 0) 
 
-## read in modern occurrence data
-mod_occ <- read.csv("data/modern-occurrence-data.csv")
+## 1900-1950 data
+hist_occ_1900_1950 <- hist_occ %>%
+  filter(year > 1900 & year <= 1950)
+
+# calculate total count of historical data at each site
+hist_occ_1900_1950 <-  hist_occ_1900_1950 %>%
+  group_by(scientific_name, historical_site_code) %>%
+  count() %>%
+  summarise("1900-1950" = sum(n)) 
+
+# left join the sites dataframe
+hist_occ_1900_1950 <- left_join(hist_occ_1900_1950, sites, by=c("historical_site_code"="historical_site_code")) %>%
+  filter(!is.na(scientific_name)) %>%
+  replace(is.na(.), 0)
+```
+
+## Load the modern occurrence data
+```{r}
+mod_occ <- read.csv("data/modern-occurrence-data.csv") %>%
+  filter(!is.na(species_code)) %>%
+  filter(historical_site_code %in% hist_occ$historical_site_code) 
 
 ## group by scientific name and modern site code
 mod_occ <- mod_occ %>%
-  filter(!is.na(historical_site_code)) %>%
   filter(!is.na(scientific_name)) %>%
-  filter(!historical_site_code %in% c("BGOT","EMVL",
-                                      "KNSL",
-                                      "KUKL","LVDL",
-                                   "RNMD","TMTE")) %>%
   group_by(scientific_name, modern_site_code) %>%
   summarise("2021" = sum(number))
 
@@ -112,14 +135,19 @@ Here, we will functions from Gotelli et al. 2021 to calculate relative species a
 # to ensure that the analysis is consistent, we sum abundances across the modern sites corresponding to each historic site
 # However, our analysis calculates relative species abundances for the give time period rather than by site + time-period
 
-## calculating relative species abundances for the time period 1850-1900
-
 # we remove modern site_code and get only distinct rows
-unique_hist <- hist_occ[,c(1,2,3)] %>%
+unique_hist_pre1900 <- hist_occ_pre1900[,c(1,2,3)] %>%
   group_by(scientific_name, historical_site_code) %>%
   distinct() %>%
   group_by(scientific_name) %>%
   summarise("relAbund1850" = sum(`1850-1900`)) 
+
+# we remove modern site_code and get only distinct rows
+unique_hist_1900_1950 <- hist_occ_1900_1950[,c(1,2,3)] %>%
+  group_by(scientific_name, historical_site_code) %>%
+  distinct() %>%
+  group_by(scientific_name) %>%
+  summarise("relAbund1900" = sum(`1900-1950`)) 
 
 # we remove modern site_code and get only distinct rows
 unique_mod <- mod_occ[,c(1,3,5)] %>%
@@ -128,31 +156,41 @@ unique_mod <- mod_occ[,c(1,3,5)] %>%
   group_by(scientific_name) %>%
   summarise("relAbund2021" = sum(`2021`)) 
 
-hist_mod <- full_join(unique_hist, unique_mod) %>%
-  replace_na(list(relAbund1850 = 0, relAbund2021 = 0)) 
-
-## above dataframe suggests that there are 69 species that had historical records/observations, but were not detected in the modern resurvey
-## similarly, there are 23 species unique to the modern resurvey that were not recorded/collected in the historical time period
+hist_mod <- full_join(unique_hist_pre1900, 
+                      unique_hist_1900_1950) %>%
+            full_join(., unique_mod) %>%
+  replace_na(list(relAbund1850 = 0, 
+                  relAbund1900 = 0,
+                  relAbund2021 = 0)) 
 
 # apply dirichlet distribution to the historical data
-dat <- tibble::deframe(hist_mod[,1:2]) ## choosing 1850-1900 data
+# choosing 1850-1900 data first
+dat <- tibble::deframe(hist_mod[,1:2])
 
 relAbun1850 <- dirch_stats(dat) %>%
   dplyr::select(species, bayes_mean) %>%
   rename(., bayes_mean_1850 = bayes_mean)
 
+# choosing 1900-1950 data
+dat <- tibble::deframe(hist_mod[,c(1,3)])
+
+relAbun1900 <- dirch_stats(dat) %>%
+  dplyr::select(species, bayes_mean) %>%
+  rename(., bayes_mean_1900 = bayes_mean)
+
 # apply dirichlet distribution to the modern survey
-dat <- tibble::deframe(hist_mod[,c(1,3)]) ## choosing modern data
+dat <- tibble::deframe(hist_mod[,c(1,4)]) ## choosing modern data
 
 relAbun2021 <- dirch_stats(dat) %>%
   dplyr::select(species, bayes_mean) %>%
   rename(., bayes_mean_2021 = bayes_mean)
 
 ### join the relative abundance datasets together
-relAbun <- full_join(relAbun1850, relAbun2021, by = c("species")) %>%
-  #replace(is.na(.), 0) %>%
+relAbun <- full_join(relAbun1850, relAbun1900) %>%
+  full_join(., relAbun2021) %>%
   arrange(species) %>%
   rename(., `1850-1900` = "bayes_mean_1850") %>%
+  rename(., `1900-1950` = "bayes_mean_1900") %>% 
   rename(., `2021` = "bayes_mean_2021") %>%
   rename(., scientific_name = species)
 ```
@@ -160,6 +198,7 @@ relAbun <- full_join(relAbun1850, relAbun2021, by = c("species")) %>%
 ## Visualizing changes in relative abundance over time
 
 ```{r}
+# regressing 1850s data vs. 2021
 fig_1850v2021_rel <- ggplot(data=relAbun,aes(x=`2021`,y=`1850-1900`)) +
    scale_y_log10() +
   geom_abline(slope=1, intercept=0,linetype="dashed") +
@@ -177,9 +216,48 @@ fig_1850v2021_rel <- ggplot(data=relAbun,aes(x=`2021`,y=`1850-1900`)) +
 
 ggsave(fig_1850v2021_rel, filename = "figs/fig_1850-1900vs2021_relAbun.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
 dev.off()
+
+# regressing 1900-1950 data vs. 2021
+fig_1900v2021_rel <- ggplot(data=relAbun,aes(x=`2021`,y=`1900-1950`)) +
+   scale_y_log10() +
+  geom_abline(slope=1, intercept=0,linetype="dashed") +
+  scale_x_log10() +
+  labs(y = "1900-1950 Relative abundance", 
+       x = "2021 Relative abundance") +
+   geom_point(shape = 21, colour = "black", fill = "white", size = 2, stroke = 1)+
+   geom_smooth(method="lm", se=TRUE, fullrange=FALSE, level=0.95,linetype="solid")+
+  stat_regline_equation(aes(label = ..rr.label..)) +
+  theme_bw() +
+  theme(axis.text = element_text(family = "Century Gothic", 
+                                 size = 13),
+        legend.title = element_text(family = "Century Gothic"),
+    legend.text = element_text(family = "Century Gothic"),
+    text = element_text(family = "Century Gothic", size = 25))
+
+ggsave(fig_1900v2021_rel, filename = "figs/fig_1900-1950vs2021_relAbun.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+dev.off()
+
+# regressing 1850-1900 data against 1900-1950 data
+fig_1850v1900_rel <- ggplot(data=relAbun,aes(x=`1900-1950`,y=`1850-1900`)) +
+   scale_y_log10() +
+  geom_abline(slope=1, intercept=0,linetype="dashed") +
+  scale_x_log10() +
+  labs(y = "1850-1900 Relative abundance", 
+       x = "1900-1950 Relative abundance") +
+   geom_point(shape = 21, colour = "black", fill = "white", size = 2, stroke = 1)+
+   geom_smooth(method="lm", se=TRUE, fullrange=FALSE, level=0.95,linetype="solid")+
+  stat_regline_equation(aes(label = ..rr.label..)) +
+  theme_bw() +
+  theme(axis.text = element_text(family = "Century Gothic", size = 13),
+        legend.title = element_text(family = "Century Gothic"),
+    legend.text = element_text(family = "Century Gothic"),
+    text = element_text(family = "Century Gothic", size = 25))
+
+ggsave(fig_1850v1900_rel, filename = "figs/fig_1850-1900vs1900-1950_relAbun.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+dev.off()
 ```
 
-## Boxplot visualization of overall relative abundance between timeperiods
+## Boxplot visualization of overall relative abundance across timeperiods
 ```{r}
 data_for_boxplot <- relAbun %>%
   dplyr::select(-scientific_name) %>%
@@ -195,7 +273,8 @@ fig_relAbun_over_time <- ggbetweenstats(
   plot.type = "box",
   pairwise.comparisons = T) +
   scale_y_log10() +
-  scale_color_manual(values = c("#9EB0FFFF", "#122C39FF","#D5857DFF")) +   theme(plot.title = element_text(family = "Century Gothic",
+  scale_color_manual(values = c("#9EB0FFFF", "#122C39FF","#D5857DFF")) +   
+  theme(plot.title = element_text(family = "Century Gothic",
       size = 18, face = "bold"),
     axis.title = element_text(family = "Century Gothic",
       size = 16, face = "bold"),
@@ -216,11 +295,16 @@ dev.off()
 
 We now recalculate species relative abundances at the site-level, which will be used for downstream comparisons with change in land cover and climate at a given site. 
 ```{r}
-# historical data
-## we remove modern site_code and get only distinct rows
-hist_site_level <- hist_occ[,c(1:3)] %>%
+# 1850-1900 data
+# we remove modern site_code and get only distinct rows
+hist_pre1900 <- hist_occ_pre1900[,c(1:3)] %>%
   distinct(.)
-  
+
+# 1900-1950 data
+# we remove modern site_code and get only distinct rows
+hist_1900_1950 <- hist_occ_1900_1950[,c(1:3)] %>%
+  distinct(.)
+
 ##  modern resurvey
 ## analysis is being done at the level of the historical site code
 mod_site_level <- mod_occ[,c(1,3,5)] %>%
@@ -229,14 +313,18 @@ mod_site_level <- mod_occ[,c(1,3,5)] %>%
   distinct(.)
 
 ## join data frames together
-site_level_relAbun <- full_join(hist_site_level,
-                                mod_site_level) %>%
-  replace_na(list(`1850-1900` = 0, `2021` = 0)) %>% 
+site_level_relAbun <- full_join(hist_pre1900,
+                                hist_1900_1950) %>%
+  full_join(., mod_site_level) %>%
+  replace_na(list(`1850-1900` = 0, 
+                  `1900-1950` = 0,
+                  `2021` = 0)) %>% 
   ungroup() %>%
-  complete(scientific_name, historical_site_code, fill = list(`1850-1900` = 0, `2021` = 0))
+  complete(scientific_name, historical_site_code, fill = list(`1850-1900` = 0, 
+     `1900-1950` = 0,                                                     `2021` = 0))
 
-## site-level historical relative abundance
-relSpAbund_hist <- c()
+## site-level relative abundance for 1850-1900 data
+relSpAbund_1850_1900 <- c()
 
 for(i in 1:length(unique(site_level_relAbun$historical_site_code))) {
   
@@ -250,20 +338,51 @@ for(i in 1:length(unique(site_level_relAbun$historical_site_code))) {
   loc <- unique(site_level_relAbun$historical_site_code)[i] # what's the site_code?
   
   ## historical relative abundance
-  relSpAbund_hist[[i]] <- dirch_stats(b) %>%
+  relSpAbund_1850_1900[[i]] <- dirch_stats(b) %>%
   dplyr::select(species, bayes_mean)
 
   old_varname <-  c('species','bayes_mean')
   new_varname <- c('scientific_name', paste(loc,"_","1850", sep = ""))
 
-  relSpAbund_hist[[i]] <- relSpAbund_hist[[i]] %>%
+  relSpAbund_1850_1900[[i]] <- relSpAbund_1850_1900[[i]] %>%
       data.table::setnames(old = old_varname, new = new_varname)
 
-  names(relSpAbund_hist)[i] <- loc
+  names(relSpAbund_1850_1900)[i] <- loc
 }
 
 # save object but full_join across lists
-relSpAbund_hist <- relSpAbund_hist %>%
+relSpAbund_1850_1900 <- relSpAbund_1850_1900 %>%
+    reduce(.f=full_join)
+
+## site-level relative abundance for 1900-1950 data
+relSpAbund_1900_1950 <- c()
+
+for(i in 1:length(unique(site_level_relAbun$historical_site_code))) {
+  
+  # for every unique historical site
+  a <- site_level_relAbun %>%
+  filter(historical_site_code == unique(site_level_relAbun$historical_site_code)[i])
+  
+  # subset historical data
+  b <- tibble::deframe(a[,c(1,4)]) ## choosing 1900-1950 data
+  
+  loc <- unique(site_level_relAbun$historical_site_code)[i] # what's the site_code?
+  
+  ## historical relative abundance
+  relSpAbund_1900_1950[[i]] <- dirch_stats(b) %>%
+  dplyr::select(species, bayes_mean)
+
+  old_varname <-  c('species','bayes_mean')
+  new_varname <- c('scientific_name', paste(loc,"_","1900", sep = ""))
+
+  relSpAbund_1900_1950[[i]] <- relSpAbund_1900_1950[[i]] %>%
+      data.table::setnames(old = old_varname, new = new_varname)
+
+  names(relSpAbund_1900_1950)[i] <- loc
+}
+
+# save object but full_join across lists
+relSpAbund_1900_1950 <- relSpAbund_1900_1950 %>%
     reduce(.f=full_join)
 
 # modern resurvey relative abundance - site level
@@ -274,7 +393,7 @@ for(i in 1:length(unique(site_level_relAbun$historical_site_code))) {
   a <- site_level_relAbun %>%
   filter(historical_site_code == unique(site_level_relAbun$historical_site_code)[i])
 
-  b <- tibble::deframe(a[,c(1,4)]) ## choosing modern data
+  b <- tibble::deframe(a[,c(1,5)]) ## choosing modern data
   
   loc <- unique(site_level_relAbun$historical_site_code)[i] # what's the site_code?
   
@@ -295,7 +414,9 @@ relSpAbund_2021 <- relSpAbund_2021 %>%
     reduce(.f=full_join)
 
 ## join all the datasets together
-relSpAbund_by_site <- full_join(relSpAbund_hist, relSpAbund_2021, by = "scientific_name") %>%
+relSpAbund_by_site <- full_join(relSpAbund_1850_1900,
+                                relSpAbund_1900_1950) %>%
+  full_join(., relSpAbund_2021) %>%
   arrange(scientific_name) 
 ```
 
