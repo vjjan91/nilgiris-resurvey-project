@@ -5,7 +5,7 @@ editor_options:
 
 ## Examining changes in relative abundance over time as a function of species habitat affiliation  
 
-In this script, we will examine how relative abundance varies as a function of habitat affiliation across time periods for bird communities. We will plot species rank abundances of relative abundance to estimate how values of relative abundance has shifted for each species. In addition, we will linear mixed models to test for significance in relative abundance changes over time. 
+In this script, we will examine how relative abundance varies as a function of habitat affiliation across time periods for bird communities. We will plot species rank abundances of relative abundance to estimate how values of relative abundance has shifted for each species. In addition, we will run beta regressions to test for significance in relative abundance changes over time. 
 
 ## Load necessary libraries
 ```{r}
@@ -35,7 +35,7 @@ library(patchwork)
 ## Load data on species relative abundances
 ```{r}
 relAbun <- read.csv("results/species-relative-abundance.csv")
-names(relAbun) <- c("scientific_name","1850-1900","2021")
+names(relAbun) <- c("scientific_name","1850-1900","1900-1950","2021")
 ```
 
 ## Load species trait data  
@@ -43,7 +43,9 @@ names(relAbun) <- c("scientific_name","1850-1900","2021")
 ## load in species trait dataset
 trait_dat <- read.csv("data/species-trait-dat.csv")
 
-# note: the classification of habitat type was created by comparing habitat affiliation data from the State of India's Birds report (v2; released in 2023). We used the following trait classifications:
+# note: the classification of habitat type was created by comparing habitat affiliation data from the State of India's Birds report (v2; released in 2023). 
+# this classification was also vetted independently by two reviewers.
+# We used the following trait classifications:
 # Forest 
 # Grassland 
 # Generalist
@@ -51,7 +53,7 @@ trait_dat <- read.csv("data/species-trait-dat.csv")
 # Our criteria for each of these classifications includes the following: 
 # In the 1850s, the land cover change analysis revealed that the majority of the landscape was largely grasslands and forests. However in 2018, the landscape is largely a mosaic of human-modified land cover types - including wooded habitats (mostly comprising timber plantations and degraded forests), tea plantations, followed by forests and grasslands.
 # While the State of India's Birds provides a habitat classification/criteria based on contemporary use of habitats by a species, we classified species based on our resurveys and assuming that a species would either be in a forest affiliated bird species, grassland species or a generalist species in the 1850s. 
-# An example in this case is the black and orange flycatcher. While it is commonly found in shola forest habitat, this species is also common in degraded wooded areas, including timber plantations today. However, historically, in the 1850s (due to limited presence of timber plantations compared to 2018), we assume that this is a forest specialist bird as no other wooded habitats apart from forests existed (predominantly) in the 1850s (See 06_land-cover-analysis.Rmd)
+# An example in this case is the black and orange flycatcher. While it is commonly found in shola forest habitat, this species is also common in degraded wooded areas, including timber plantations today. However, historically, in the 1850s (due to limited presence of timber plantations compared to 2018), we assume that this is a forest specialist bird as no other wooded habitats apart from forests existed (predominantly) in the 1850s (See 06_land-cover-classification.Rmd)
 # Other examples include bird species that prefer open habitats, scrubland and dry grassland - such species have been lumped into the Grassland category as this was the closest habitat similar to the above habitat types in 1850s. Eg. Blue-tailed bee-eater, long-tailed shrike, black-winged kite. 
 # If a species is truly a generalist species and is not particularly occupying/specialized on any particular  forested/grassland habitat, it was classified in the generalist category
 
@@ -67,7 +69,7 @@ spCount <- rel_abun_trait[,c(1,7)] %>%
   group_by(Habitat.type) %>%
   count()
 
-# Based on the above criteria, 102 species were classified as forest birds, 34 species were classified as grassland birds, 31 species were classified as generalist species.  
+# Based on the above criteria, 109 species were classified as forest birds, 37 species were classified as grassland birds, 40 species were classified as generalist species.  
 
 # visualization by habitat affiliation
 rel_abun_trait$Habitat.type <- factor(rel_abun_trait$Habitat.type, levels=c("Forest", "Grassland", "Generalist"))
@@ -87,15 +89,17 @@ ggsave(fig_relAbun_habitat, filename = "figs/fig_relAbun_habitat_landscapeLevel.
 dev.off()
 ```
 
-## Visualizing relative abundance change by species trait across time periods
+## Visualizing relative abundance change by species across time periods for grassland bird species 
+
+Based on the above statistical analyses, we found that the mean relative abundance of grassland bird species were significantly lower in 2021 compared to the previous two historical time periods. Here, we assess how relative abundance varies by species between the historical and modern time period. 
 
 ```{r}
 ## grassland birds
 grassland <- rel_abun_trait %>%
   filter(Habitat.type == "Grassland") %>%
-  dplyr::select(scientific_name, time_period, relative_abundance) %>%
-  pivot_wider(., names_from = time_period, values_from = relative_abundance)
+  dplyr::select(scientific_name, time_period, relative_abundance) %>% pivot_wider(., names_from = time_period, values_from = relative_abundance)
 
+# 1850-1900 vs. 2021
 fig_grassland_1850v2021 <- ggplot(data=grassland,aes(x=`2021`,y=`1850-1900`)) +
    scale_y_log10() +
   geom_abline(slope=1, intercept=0,linetype="dashed") +
@@ -110,21 +114,15 @@ fig_grassland_1850v2021 <- ggplot(data=grassland,aes(x=`2021`,y=`1850-1900`)) +
     legend.text = element_text(family = "Century Gothic"),
     text = element_text(family = "Century Gothic", size = 25))
 
-ggsave(fig_grassland_1850v2021, filename = "figs/fig_grassland_historic_vs_modern_relAbun.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+ggsave(fig_grassland_1850v2021, filename = "figs/fig_grassland_1850-1900_vs_2021_relAbun.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
 dev.off()
 
-## forest birds
-forest <- rel_abun_trait %>%
-  filter(Habitat.type == "Forest") %>%
-  dplyr::select(scientific_name, time_period, relative_abundance) %>%
-  pivot_wider(., names_from = time_period, values_from = relative_abundance)
-
-fig_forest_1850v2021 <- ggplot(data=forest,
-                               aes(x=`2021`,y=`1850-1900`)) +
+# 1900-1950 vs. 2021
+fig_grassland_1900v2021 <- ggplot(data=grassland,aes(x=`2021`,y=`1900-1950`)) +
    scale_y_log10() +
   geom_abline(slope=1, intercept=0,linetype="dashed") +
   scale_x_log10() +
-  labs(y = "1850-1900 Relative abundance", 
+  labs(y = "1900-1950 Relative abundance", 
        x = "2021 Relative abundance") +
    geom_point(shape = 21, colour = "black", fill = "white", size = 2, stroke = 1)+
    geom_text_repel(aes(label = scientific_name),family = "Century Gothic", fontface = "italic")+
@@ -134,30 +132,7 @@ fig_forest_1850v2021 <- ggplot(data=forest,
     legend.text = element_text(family = "Century Gothic"),
     text = element_text(family = "Century Gothic", size = 25))
 
-ggsave(fig_forest_1850v2021, filename = "figs/fig_forest_historic_vs_modern_relAbun.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
-dev.off()
-
-## generalist birds
-generalist <- rel_abun_trait %>%
-  filter(Habitat.type == "Generalist") %>%
-  dplyr::select(scientific_name, time_period, relative_abundance) %>%
-  pivot_wider(., names_from = time_period, values_from = relative_abundance)
-
-fig_generalist_1850v2021 <- ggplot(data=generalist,aes(x=`2021`,y=`1850-1900`)) +
-   scale_y_log10() +
-  geom_abline(slope=1, intercept=0,linetype="dashed") +
-  scale_x_log10() +
-  labs(y = "1850-1900 Relative abundance", 
-       x = "2021 Relative abundance") +
-   geom_point(shape = 21, colour = "black", fill = "white", size = 2, stroke = 1)+
-   geom_text_repel(aes(label = scientific_name),family = "Century Gothic", fontface = "italic")+
-  theme_bw() +
-  theme(axis.text = element_text(family = "Century Gothic", size = 13),
-        legend.title = element_text(family = "Century Gothic"),
-    legend.text = element_text(family = "Century Gothic"),
-    text = element_text(family = "Century Gothic", size = 25))
-
-ggsave(fig_generalist_1850v2021, filename = "figs/fig_generalist_historic_vs_modern_relAbun.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+ggsave(fig_grassland_1900v2021, filename = "figs/fig_grassland_1900-1950_vs_2021_relAbun.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
 dev.off()
 ```
 
@@ -168,7 +143,7 @@ forest_rank <- rel_abun_trait %>%
   filter(Habitat.type == "Forest")
 
 fig_rankAbund_forest <- ggplot(forest_rank, aes(x = reorder(scientific_name,relative_abundance), y = relative_abundance, fill = time_period)) +
-  geom_bar(stat = "identity", position = "dodge", width = 0.5) + scale_fill_manual(values = c("#2c7fb8","#e34a33")) +
+  geom_bar(stat = "identity", position = "dodge", width = 0.5) + scale_fill_manual(values = c("#2c7fb8",'#025a05',"#e34a33")) +
   theme_bw() +
   facet_wrap(~Habitat.type, scales = "free")+
   labs(
@@ -191,7 +166,7 @@ grass_gen_rank <- rel_abun_trait %>%
   filter(Habitat.type != "Forest")
 
 fig_rankAbund_grass_gen <- ggplot(grass_gen_rank, aes(x = reorder(scientific_name,relative_abundance), y = relative_abundance, fill = time_period)) +
-  geom_bar(stat = "identity", position = "dodge", width = 0.5) + scale_fill_manual(values = c("#2c7fb8","#e34a33")) +
+  geom_bar(stat = "identity", position = "dodge", width = 0.5) + scale_fill_manual(values = c("#2c7fb8",'#025a05',"#e34a33")) +
   facet_wrap(~Habitat.type, scales = "free", ncol = 2)+
   theme_bw() +
   labs(
@@ -211,7 +186,7 @@ fig_rankAbund_grass_gen <- ggplot(grass_gen_rank, aes(x = reorder(scientific_nam
 ## combined plot
 fig_rankAbund <- wrap_plots(fig_rankAbund_forest, fig_rankAbund_grass_gen, nrow = 2)
 
-ggsave(fig_rankAbund, filename = "figs/fig_rankAbundance.png", width = 29, height = 14, device = png(), units = "in", dpi = 300)
+ggsave(fig_rankAbund, filename = "figs/fig_rankAbundance.png", width = 32, height = 17, device = png(), units = "in", dpi = 300)
 dev.off()
 
 # Grassland birds are the biggest losers; generalist birds are the biggest winners while forest birds show mixed responses depending on the species
@@ -229,23 +204,24 @@ summary(beta_overall)
 # 
 # Standardized weighted residuals 2:
 #     Min      1Q  Median      3Q     Max 
-# -0.8647 -0.6918 -0.1994  0.5158  1.9459 
+# -0.8381 -0.6038 -0.1070  0.4182  2.2098 
 # 
 # Coefficients (mean model with logit link):
-#                 Estimate Std. Error z value Pr(>|z|)    
-# (Intercept)     -4.92900    0.08121 -60.693  < 2e-16 ***
-# time_period2021 -0.40302    0.09718  -4.147 3.36e-05 ***
+#                      Estimate Std. Error z value Pr(>|z|)    
+# (Intercept)          -5.16876    0.06866 -75.281  < 2e-16 ***
+# time_period1900-1950  0.12013    0.08464   1.419 0.155796    
+# time_period2021      -0.32022    0.08889  -3.603 0.000315 ***
 # 
 # Phi coefficients (precision model with identity link):
 #       Estimate Std. Error z value Pr(>|z|)    
-# (phi)   98.260      9.463   10.38   <2e-16 ***
+# (phi)   141.64      10.01   14.15   <2e-16 ***
 # ---
 # Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
 # 
 # Type of estimator: ML (maximum likelihood)
-# Log-likelihood:  1432 on 3 Df
-# Pseudo R-squared: 0.08835
-# Number of iterations: 41 (BFGS) + 2 (Fisher scoring) 
+# Log-likelihood:  2392 on 4 Df
+# Pseudo R-squared: 0.08638
+# Number of iterations: 50 (BFGS) + 2 (Fisher scoring) 
 
 # plot predicted model estimates
 set_theme(base = theme_bw(),
@@ -274,23 +250,24 @@ summary(beta_forest)
 # 
 # Standardized weighted residuals 2:
 #     Min      1Q  Median      3Q     Max 
-# -0.9166 -0.5603 -0.2287  0.5683  1.7841 
+# -0.9117 -0.6905 -0.1717  0.5054  2.0205 
 # 
 # Coefficients (mean model with logit link):
-#                 Estimate Std. Error z value Pr(>|z|)    
-# (Intercept)      -4.9156     0.1024  -47.99  < 2e-16 ***
-# time_period2021  -0.3863     0.1234   -3.13  0.00175 ** 
+#                      Estimate Std. Error z value Pr(>|z|)    
+# (Intercept)           -5.0782     0.0893 -56.867   <2e-16 ***
+# time_period1900-1950   0.1275     0.1102   1.157   0.2475    
+# time_period2021       -0.2916     0.1155  -2.524   0.0116 *  
 # 
 # Phi coefficients (precision model with identity link):
 #       Estimate Std. Error z value Pr(>|z|)    
-# (phi)   100.20      12.23   8.191 2.59e-16 ***
+# (phi)   130.89      12.02   10.89   <2e-16 ***
 # ---
 # Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
 # 
 # Type of estimator: ML (maximum likelihood)
-# Log-likelihood: 865.4 on 3 Df
-# Pseudo R-squared: 0.07783
-# Number of iterations: 102 (BFGS) + 2 (Fisher scoring) 
+# Log-likelihood:  1366 on 4 Df
+# Pseudo R-squared: 0.07178
+# Number of iterations: 37 (BFGS) + 2 (Fisher scoring)
 
 # plot predicted model estimates
 set_theme(base = theme_bw(),
@@ -319,23 +296,24 @@ summary(beta_grassland)
 # 
 # Standardized weighted residuals 2:
 #     Min      1Q  Median      3Q     Max 
-# -1.0202 -0.3332 -0.2609  0.2869  1.9024 
+# -0.9714 -0.4222 -0.1338  0.1335  2.4312 
 # 
 # Coefficients (mean model with logit link):
-#                 Estimate Std. Error z value Pr(>|z|)    
-# (Intercept)      -5.1345     0.1654 -31.046  < 2e-16 ***
-# time_period2021  -0.8111     0.2169  -3.739 0.000185 ***
+#                      Estimate Std. Error z value Pr(>|z|)    
+# (Intercept)          -5.49814    0.13781 -39.896  < 2e-16 ***
+# time_period1900-1950  0.03226    0.17656   0.183 0.855015    
+# time_period2021      -0.75583    0.19669  -3.843 0.000122 ***
 # 
 # Phi coefficients (precision model with identity link):
 #       Estimate Std. Error z value Pr(>|z|)    
-# (phi)   152.05      32.46   4.685  2.8e-06 ***
+# (phi)   268.05      41.75    6.42 1.36e-10 ***
 # ---
 # Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
 # 
 # Type of estimator: ML (maximum likelihood)
-# Log-likelihood: 323.8 on 3 Df
-# Pseudo R-squared: 0.3753
-# Number of iterations: 473 (BFGS) + 3 (Fisher scoring) 
+# Log-likelihood: 533.9 on 4 Df
+# Pseudo R-squared: 0.3991
+# Number of iterations: 312 (BFGS) + 3 (Fisher scoring) 
 
 # plot predicted model estimates
 set_theme(base = theme_bw(),
@@ -363,23 +341,24 @@ summary(beta_generalist)
 # 
 # Standardized weighted residuals 2:
 #     Min      1Q  Median      3Q     Max 
-# -1.1503 -0.6526 -0.0696  0.5572  1.9334 
+# -0.9547 -0.5420 -0.1356  0.5140  2.2899 
 # 
 # Coefficients (mean model with logit link):
-#                 Estimate Std. Error z value Pr(>|z|)    
-# (Intercept)     -4.85870    0.20066 -24.213   <2e-16 ***
-# time_period2021 -0.04663    0.22533  -0.207    0.836    
+#                      Estimate Std. Error z value Pr(>|z|)    
+# (Intercept)           -5.2193     0.1542 -33.848   <2e-16 ***
+# time_period1900-1950   0.1776     0.1869   0.950    0.342    
+# time_period2021       -0.0355     0.1910  -0.186    0.853    
 # 
 # Phi coefficients (precision model with identity link):
 #       Estimate Std. Error z value Pr(>|z|)    
-# (phi)    75.73      16.93   4.474 7.68e-06 ***
+# (phi)   130.83      19.97   6.553 5.65e-11 ***
 # ---
 # Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
 # 
 # Type of estimator: ML (maximum likelihood)
-# Log-likelihood: 249.3 on 3 Df
-# Pseudo R-squared: 0.001244
-# Number of iterations: 67 (BFGS) + 3 (Fisher scoring) 
+# Log-likelihood: 505.8 on 4 Df
+# Pseudo R-squared: 0.02132
+# Number of iterations: 122 (BFGS) + 3 (Fisher scoring) 
 
 # plot predicted model estimates
 set_theme(base = theme_bw(),
@@ -394,7 +373,7 @@ ggsave(fig_beta_generalist$time_period, filename = "figs/fig_beta_relAbundance_g
 dev.off()
 ```
 
-## Creating a combined figure for the above four models
+## Creating a combined figure for the above three models
 ```{r}
 combined_plot <- wrap_plots(fig_beta_forest$time_period, fig_beta_grassland$time_period,fig_beta_generalist$time_period, ncol = 2)
 
