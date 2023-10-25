@@ -19,55 +19,53 @@ library(extrafont)
 
 ### Load the historical occurrence data and explore patterns
 
-The historical occurrence data is a combination of data from museum specimens and those observations made in published literature/journals (titled journal data). 
+The historical occurrence data is a combination of data from museum specimens and those observations made in published literature/journals (titled journal data). We apply the following key filters on this dataset prior to carrying out further exploratory analyses: a) we subset historical data to only include specimen information until the year 1950 and b) we excluded historical sampling locations that had very few records (total specimen data < 10).
 ```{r}
 hist_occ <- read.csv("data/historical-occurrence-data.csv")
 
 # after exploring the data, we will apply the following filters on the dataset
 
 # a: include only data until 1950
-filt_hist <- hist_occ %>%
+hist_occ <- hist_occ %>%
   filter(year <= 1950)
 
 # b: remove localities with limited amount of data
 # here we exclude localities that had less than 10 cumulative observations/records between 1850-1950
 # localities to remove include: 
 # BGOT, EMVL, KNSL, KUKL, LVDL, RNMD, TMTE
-filt_hist <- filt_hist %>%
+hist_occ <- hist_occ %>%
   filter(!historical_site_code %in% c("BGOT","EMVL",
-                                      "KNSL",
-                                      "KUKL","LVDL",
-                                   "RNMD","TMTE"))
-
-# c: remove specific species
-
+                                      "KNSL","KUKL",
+                                      "LVDL","RNMD","TMTE"))
 
 # count of data by year
-occ_year <- filt_hist %>%
-  group_by(year, historical_site_code) %>%
-  count()
-
-spp_count <- trial %>%
-  group_by(scientific_name) %>%
-  count()
-
-collector <- hist_occ %>%
-  group_by(collectedBy, year) %>%
+occ_year <- hist_occ %>%
+  group_by(year) %>%
   count()
 
 # The above count suggests that majority of the bird specimens were recorded in 1881, followed by some data from 1876.
 
-# For further downstream analysis, we ignore data from 1901 onwards
-hist_occ <- hist_occ %>%
-  filter(year <= 1901)
+# total species count across historical data
+spp_count <- hist_occ %>%
+  group_by(scientific_name) %>%
+  count()
+
+# a total of 177 species of which 67 species had a total specimen count of ~5 individuals between 1850-1950. 
+
+collector <- hist_occ %>%
+  group_by(collectedBy) %>%
+  count()
+
+# 37 unique collectors/ornithologists who collected museum specimens in this time period, with the maximum number of records by William Davison, followed by R G Wardlaw-Ramsay. 
 ```
 
-### Examining count of specimens by locality
+### Examining historical data by locality
 ```{r}
-# ten unique historical site localities across which species were recorded
+# fourteen unique historical site localities across which species were recorded
 occ_locality <- hist_occ %>%
   group_by(historical_site_code) %>%
   count()
+## OTCM had the highest number of specimens (~674) while KKTG had the lowest number (~13).
 
 # Examining species by locality
 spp_loc <- hist_occ %>%
@@ -78,13 +76,6 @@ spp_loc <- hist_occ %>%
 prop_count <- spp_loc %>%
   group_by(scientific_name) %>%
   summarise(uniqueSites = length(unique(historical_site_code)))
-
-## count unique species list
-spp_count <- hist_occ %>%
-  group_by(scientific_name) %>%
-  count()
-
-unique(spp_count$scientific_name) # a total of 148 species were collected/recorded between 1850 and 1901 across 12 unique historical localities identified
 ```
 
 ## Visualizations of historical data
@@ -112,7 +103,6 @@ fig_loc_timePeriod <- ggplot(occ_locality, aes(x = reorder(historical_site_code,
 ggsave(fig_loc_timePeriod, filename = "figs/fig_histCount_locality.png", width = 12, height = 7, device = png(), units = "in", dpi = 300)
 dev.off()
 ```
-
 
 ## Examining species specific counts by locality
 ```{r}
@@ -143,14 +133,13 @@ dev.off()
 ## Load modern occurrence data and explore patterns
 ```{r}
 mod_occ <- read.csv("data/modern-occurrence-data.csv") %>%
-  filter(!is.na(historical_site_code)) %>%
   filter(!is.na(species_code)) %>%
-  filter(scientific_name %in% spp_count$scientific_name)
+  filter(historical_site_code %in% hist_occ$historical_site_code) 
 
 # total observations of species in the modern surveys
 modOcc_spp <- mod_occ %>%
   group_by(species_code) %>%
-  count() # 2301 observations of 102 bird species
+  count() # 96 bird species
 
 # plot figure of species by locality
 mod_occ_loc <- mod_occ %>%
@@ -179,7 +168,7 @@ fig_modSpp_loc <- ggplot(mod_occ_loc, aes(x = reorder(historical_site_code,-n), 
     legend.position = "none"
   )
 
-ggsave(fig_modSpp_loc, filename = "figs/fig_modSpp_loc.png", width = 40, height = 10, device = png(), units = "in", dpi = 300)
+ggsave(fig_modSpp_loc, filename = "figs/fig_modSpp_loc.png", width = 40, height = 17, device = png(), units = "in", dpi = 300)
 dev.off()
 
 ## Some interesting patterns of certain species being more abundant/detected in certain sites over others.
