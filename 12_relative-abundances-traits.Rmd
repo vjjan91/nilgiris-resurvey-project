@@ -158,14 +158,16 @@ fig_rankAbund_forest <- ggplot(forest_rank, aes(x = reorder(scientific_name,rela
     axis.text = element_text(family = "Century Gothic", 
                              size = 12),
     axis.text.x = element_text(angle = 90, vjust = 0.5, 
-                               hjust = 1),
-    legend.position = "none")
+                               hjust = 1))
 
-# grassland and generalist birds
-grass_gen_rank <- rel_abun_trait %>%
-  filter(Habitat.type != "Forest")
+ggsave(fig_rankAbund_forest, filename = "figs/fig_rankAbundance_forestBirds.png", width = 32, height = 10, device = png(), units = "in", dpi = 300)
+dev.off()
 
-fig_rankAbund_grass_gen <- ggplot(grass_gen_rank, aes(x = reorder(scientific_name,relative_abundance), y = relative_abundance, fill = time_period)) +
+# grassland birds
+grass_rank <- rel_abun_trait %>%
+  filter(Habitat.type == "Grassland")
+
+fig_rankAbund_grass <- ggplot(grass_rank, aes(x = reorder(scientific_name,relative_abundance), y = relative_abundance, fill = time_period)) +
   geom_bar(stat = "identity", position = "dodge", width = 0.5) + scale_fill_manual(values = c("#2c7fb8",'#025a05',"#e34a33")) +
   facet_wrap(~Habitat.type, scales = "free", ncol = 2)+
   theme_bw() +
@@ -183,10 +185,41 @@ fig_rankAbund_grass_gen <- ggplot(grass_gen_rank, aes(x = reorder(scientific_nam
     axis.text.x = element_text(angle = 90, vjust = 0.5, 
                                hjust = 1)) 
 
-## combined plot
-fig_rankAbund <- wrap_plots(fig_rankAbund_forest, fig_rankAbund_grass_gen, nrow = 2)
+ggsave(fig_rankAbund_grass, filename = "figs/fig_rankAbundance_grassland.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+dev.off()
 
-ggsave(fig_rankAbund, filename = "figs/fig_rankAbundance.png", width = 32, height = 17, device = png(), units = "in", dpi = 300)
+# generalist birds
+gen_rank <- rel_abun_trait %>%
+  filter(Habitat.type == "Generalist")
+
+fig_rankAbund_gen <- ggplot(gen_rank, aes(x = reorder(scientific_name,relative_abundance), y = relative_abundance, fill = time_period)) +
+  geom_bar(stat = "identity", position = "dodge", width = 0.5) + scale_fill_manual(values = c("#2c7fb8",'#025a05',"#e34a33")) +
+  facet_wrap(~Habitat.type, scales = "free", ncol = 2)+
+  theme_bw() +
+  labs(
+    x = "\nScientific name",
+    y = "Relative abundance\n"
+  ) +
+  theme(
+    axis.title = element_text(
+      family = "Century Gothic",
+      size = 14, face = "bold"
+    ),
+    axis.text = element_text(family = "Century Gothic", 
+                             size = 12),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, 
+                               hjust = 1)) 
+
+ggsave(fig_rankAbund_gen, filename = "figs/fig_rankAbundance_generalist.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+dev.off()
+
+## combined plot
+p1 <- fig_rankAbund_forest + theme(legend.position = "none")
+p2 <- fig_rankAbund_grass + theme(legend.position = "none")
+
+fig_rankAbund <- p1 / (p2 | fig_rankAbund_gen)
+
+ggsave(fig_rankAbund, filename = "figs/fig_rankAbundance.png", width = 33, height = 17, device = png(), units = "in", dpi = 300)
 dev.off()
 
 # Grassland birds are the biggest losers; generalist birds are the biggest winners while forest birds show mixed responses depending on the species
