@@ -285,9 +285,7 @@ terra::writeRaster(rast2018, "results/processed-rasters/2018.tif")
 terra::writeRaster(rast2018_reclassified, "results/processed-rasters/2018reclassified.tif")
 ```
 
-
 ### Area-wise comparisons of land cover change
-
 ```{r}
 # area-wise calculations for the 2018 raster (the below objects will be used to compare overall areas, alongside the 1848 map)
 sz2018 <- cellSize(rast2018_reclassified, unit = "m")
@@ -303,7 +301,6 @@ area1848 <- cbind(area1848, area1848SqKm)
 ```
 
 ### Barplots of land cover change
-
 ```{r}
 # Joining all dataframes to create a single one for plotting and visualization
 names(area1848) <- c("class", "areaInMeters","sumArea")
@@ -317,7 +314,7 @@ areaCalc <- purrr::reduce(list(
 names(areaCalc) <- c("class", "areaMt1848", "1848", "areaMt2018", "2018")
 
 areaCalc <- areaCalc %>%
-  select("class", "1848", "2018") %>%
+  dplyr::select("class", "1848", "2018") %>%
   pivot_longer(!class, names_to = "Year", values_to = "Area")
 
 write.csv(areaCalc, "results/totalArea-by-landCover-timePeriod.csv", row.names = F)
@@ -387,9 +384,6 @@ ggsave(fig_percent_area, filename = "figs/fig_percentArea_landCover.png", width 
 dev.off()
 ```
 
-f) What are areas that haven't changed at all over time? (1= 1, 2= 2 and so on)
-
-g) Still need to run an actual change detection analysis
 
 h) Elevational change in grassland habitat over time - like visualizae a 3d topographic model of the landscape and how grassland habitats have shifted or changed over time?
 
