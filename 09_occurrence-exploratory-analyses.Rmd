@@ -29,14 +29,20 @@ hist_occ <- read.csv("data/historical-occurrence-data.csv")
 hist_occ <- hist_occ %>%
   filter(year <= 1950)
 
-# b: remove localities with limited amount of data
-# here we exclude localities that had less than 10 cumulative observations/records between 1850-1950
-# localities to remove include: 
-# BGOT, EMVL, KNSL, KUKL, LVDL, RNMD, TMTE
+# b: a second filter includes only those species that had a minimum count of atleast three specimens and occurred across atleast two unique historical survey locations
+
+# total species count across historical data
+spp_count <- hist_occ %>%
+  group_by(scientific_name) %>%
+  count() # total of 179 species
+
+sppMinThree <- spp_count %>%
+  filter(n >= 3) # total of 92 species
+# please note, we include ~four species that were collected from a single historical location Apus melba, Apus melba, Brachypodius priocephalus, Phylloscopus tytleri, Picus chlorolophus
+
+# filter historical data
 hist_occ <- hist_occ %>%
-  filter(!historical_site_code %in% c("BGOT","EMVL",
-                                      "KNSL","KUKL",
-                                      "LVDL","RNMD","TMTE"))
+  filter(scientific_name %in% sppMinThree$scientific_name)
 
 # count of data by year
 occ_year <- hist_occ %>%
@@ -44,13 +50,6 @@ occ_year <- hist_occ %>%
   count()
 
 # The above count suggests that majority of the bird specimens were recorded in 1881, followed by some data from 1876.
-
-# total species count across historical data
-spp_count <- hist_occ %>%
-  group_by(scientific_name) %>%
-  count()
-
-# a total of 177 species of which 67 species had a total specimen count of ~5 individuals between 1850-1950. 
 
 collector <- hist_occ %>%
   group_by(collectedBy) %>%
@@ -61,11 +60,12 @@ collector <- hist_occ %>%
 
 ### Examining historical data by locality
 ```{r}
-# fourteen unique historical site localities across which species were recorded
+# Twenty unique historical site localities across which species were recorded
 occ_locality <- hist_occ %>%
   group_by(historical_site_code) %>%
   count()
-## OTCM had the highest number of specimens (~674) while KKTG had the lowest number (~13).
+
+## OTCM had the highest number of specimens (~674) while RNMD had the lowest (1 specimen)
 
 # Examining species by locality
 spp_loc <- hist_occ %>%
@@ -132,14 +132,16 @@ dev.off()
 
 ## Load modern occurrence data and explore patterns
 ```{r}
+# note, we are only including those species that were reported in the historical data
+# this is mainly done to avoid artificial increases in abundance in the modern time period
 mod_occ <- read.csv("data/modern-occurrence-data.csv") %>%
-  filter(!is.na(species_code)) %>%
-  filter(historical_site_code %in% hist_occ$historical_site_code) 
+  filter(!is.na(species_code)) %>% filter(scientific_name %in% hist_occ$scientific_name) %>%
+  filter(historical_site_code %in% hist_occ$historical_site_code)
 
 # total observations of species in the modern surveys
 modOcc_spp <- mod_occ %>%
-  group_by(species_code) %>%
-  count() # 96 bird species
+  group_by(scientific_name) %>%
+  count() # 71 bird species that were common to modern & historical
 
 # plot figure of species by locality
 mod_occ_loc <- mod_occ %>%
