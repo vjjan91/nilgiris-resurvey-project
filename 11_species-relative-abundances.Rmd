@@ -69,14 +69,20 @@ hist_occ <- read.csv("data/historical-occurrence-data.csv")
 hist_occ <- hist_occ %>%
   filter(year <= 1950)
 
-# remove localities with limited amount of data
-# here we exclude localities that had less than 10 cumulative observations/records between 1850-1950
-# localities to remove include: 
-# BGOT, EMVL, KNSL, KUKL, LVDL, RNMD, TMTE
+# b: a second filter includes only those species that had a minimum count of atleast three specimens and occurred across atleast two unique historical survey locations
+
+# total species count across historical data
+spp_count <- hist_occ %>%
+  group_by(scientific_name) %>%
+  count() # total of 179 species
+
+sppMinThree <- spp_count %>%
+  filter(n >= 3) # total of 92 species
+# please note, we include ~four species that were collected from a single historical location Apus melba, Apus melba, Brachypodius priocephalus, Phylloscopus tytleri, Picus chlorolophus
+
+# filter historical data
 hist_occ <- hist_occ %>%
-  filter(!historical_site_code %in% c("BGOT","EMVL",
-                                      "KNSL","KUKL",
-                                      "LVDL","RNMD","TMTE"))
+  filter(scientific_name %in% sppMinThree$scientific_name)
 
 ### pre-1900
 hist_occ_pre1900 <- hist_occ %>%
@@ -110,9 +116,11 @@ hist_occ_1900_1950 <- left_join(hist_occ_1900_1950, sites, by=c("historical_site
 ```
 
 ## Load the modern occurrence data
+
+For the modern occurrence data, we only keep species that were recorded historically to avoid artificial increases in relative abundance due to the method of collection. 
 ```{r}
 mod_occ <- read.csv("data/modern-occurrence-data.csv") %>%
-  filter(!is.na(species_code)) %>%
+  filter(!is.na(species_code)) %>% filter(scientific_name %in% hist_occ$scientific_name) %>%
   filter(historical_site_code %in% hist_occ$historical_site_code) 
 
 ## group by scientific name and modern site code
@@ -195,16 +203,63 @@ relAbun <- full_join(relAbun1850, relAbun1900) %>%
   rename(., scientific_name = species)
 ```
 
-## Visualizing changes in relative abundance over time
+## Calibrating historical data to modern survey data for relative abundance calculations
 
 ```{r}
+# calculate total count of historical data at each site
+# here we pool all historical data
+hist_occ_tot <- hist_occ%>%
+  group_by(scientific_name, historical_site_code) %>%
+  count() %>%
+  summarise("historical" = sum(n)) 
+
+# left join the sites dataframe
+hist_occ_tot <- left_join(hist_occ_tot, sites, by=c("historical_site_code"="historical_site_code")) %>%
+  filter(!is.na(scientific_name)) %>%
+  replace(is.na(.), 0) 
+
+# we remove modern site_code and get only distinct rows
+unique_hist <- hist_occ_tot[,c(1,2,3)] %>%
+  group_by(scientific_name, historical_site_code) %>%
+  distinct() %>%
+  group_by(scientific_name) %>%
+  summarise("relAbundHist" = sum(historical)) 
+
+# join historical and modern dataframes
+hist_mod <- full_join(unique_hist, unique_mod)%>%
+  replace_na(list(relAbundHist = 0,
+                  relAbund2021 = 0)) 
+
+# apply dirichlet distribution to the historical data
+# choosing 1850-1900 data first
+dat <- tibble::deframe(hist_mod[,1:2])
+
+relAbunHist <- dirch_stats(dat) %>%
+  dplyr::select(species, bayes_mean) %>%
+  rename(., bayes_mean_hist = bayes_mean)
+
+# apply dirichlet distribution to the modern survey
+dat <- tibble::deframe(hist_mod[,c(1,3)]) ## choosing modern data
+
+relAbun2021 <- dirch_stats(dat) %>%
+  dplyr::select(species, bayes_mean) %>%
+  rename(., bayes_mean_2021 = bayes_mean)
+
+# for calibration
+### join the relative abundance datasets together
+relAbunCalib <- full_join(relAbunHist, relAbun2021) %>%
+  arrange(species) %>%
+  rename(., "historical" = "bayes_mean_hist") %>%
+  rename(., "modern" = "bayes_mean_2021") %>%
+  rename(., scientific_name = species)
+
 # regressing 1850s data vs. 2021
-fig_1850v2021_rel <- ggplot(data=relAbun,aes(x=`2021`,y=`1850-1900`)) +
+fig_hist_v_mod_rel <- ggplot(data=relAbunCalib,aes(x=modern,y=historical)) +
    scale_y_log10() +
   geom_abline(slope=1, intercept=0,linetype="dashed") +
   scale_x_log10() +
-  labs(y = "1850-1900 Relative abundance", 
-       x = "2021 Relative abundance") +
+  labs(y = "Historical Relative abundance", 
+       x = "Modern Relative abundance") +
    geom_point(shape = 21, colour = "black", fill = "white", size = 2, stroke = 1)+
    geom_smooth(method="lm", se=TRUE, fullrange=FALSE, level=0.95,linetype="solid")+
   stat_regline_equation(aes(label = ..rr.label..)) +
@@ -214,46 +269,7 @@ fig_1850v2021_rel <- ggplot(data=relAbun,aes(x=`2021`,y=`1850-1900`)) +
     legend.text = element_text(family = "Century Gothic"),
     text = element_text(family = "Century Gothic", size = 25))
 
-ggsave(fig_1850v2021_rel, filename = "figs/fig_1850-1900vs2021_relAbun.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
-dev.off()
-
-# regressing 1900-1950 data vs. 2021
-fig_1900v2021_rel <- ggplot(data=relAbun,aes(x=`2021`,y=`1900-1950`)) +
-   scale_y_log10() +
-  geom_abline(slope=1, intercept=0,linetype="dashed") +
-  scale_x_log10() +
-  labs(y = "1900-1950 Relative abundance", 
-       x = "2021 Relative abundance") +
-   geom_point(shape = 21, colour = "black", fill = "white", size = 2, stroke = 1)+
-   geom_smooth(method="lm", se=TRUE, fullrange=FALSE, level=0.95,linetype="solid")+
-  stat_regline_equation(aes(label = ..rr.label..)) +
-  theme_bw() +
-  theme(axis.text = element_text(family = "Century Gothic", 
-                                 size = 13),
-        legend.title = element_text(family = "Century Gothic"),
-    legend.text = element_text(family = "Century Gothic"),
-    text = element_text(family = "Century Gothic", size = 25))
-
-ggsave(fig_1900v2021_rel, filename = "figs/fig_1900-1950vs2021_relAbun.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
-dev.off()
-
-# regressing 1850-1900 data against 1900-1950 data
-fig_1850v1900_rel <- ggplot(data=relAbun,aes(x=`1900-1950`,y=`1850-1900`)) +
-   scale_y_log10() +
-  geom_abline(slope=1, intercept=0,linetype="dashed") +
-  scale_x_log10() +
-  labs(y = "1850-1900 Relative abundance", 
-       x = "1900-1950 Relative abundance") +
-   geom_point(shape = 21, colour = "black", fill = "white", size = 2, stroke = 1)+
-   geom_smooth(method="lm", se=TRUE, fullrange=FALSE, level=0.95,linetype="solid")+
-  stat_regline_equation(aes(label = ..rr.label..)) +
-  theme_bw() +
-  theme(axis.text = element_text(family = "Century Gothic", size = 13),
-        legend.title = element_text(family = "Century Gothic"),
-    legend.text = element_text(family = "Century Gothic"),
-    text = element_text(family = "Century Gothic", size = 25))
-
-ggsave(fig_1850v1900_rel, filename = "figs/fig_1850-1900vs1900-1950_relAbun.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
+ggsave(fig_hist_v_mod_rel, filename = "figs/fig_historical_vs_modern_relAbun.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
 dev.off()
 ```
 
