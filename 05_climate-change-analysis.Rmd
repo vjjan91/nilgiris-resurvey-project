@@ -342,7 +342,7 @@ clim_terrain_sites <- mutate(
     data,
     function(df) {
       gam(
-        value ~ year + alt + slope + aspect +
+        value ~ year + alt + slope + aspect + season +
           s(historical_site_code, bs = "re") +
           s(modern_landCover_type, bs = "re"),
         data = df
