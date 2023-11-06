@@ -20,7 +20,6 @@ library(mapview)
 library(landscapemetrics)
 library(scico)
 library(extrafont)
-library(tmap)
 ```
 
 ## Load processed land cover rasters
@@ -121,7 +120,7 @@ rast1910 <- as.factor(rast1910)
 
 ## create a dataframe with names of classes and their corresponding values
 landcover_reclass <- data.frame(ID = 0:5,
-                              name = c("agriculture",                                     "plantations",
+                              name = c("agriculture",                                                        "plantations",
                                   "settlements",
                                   "shola_forest",
                                   "shola_grassland",
@@ -170,9 +169,8 @@ names(nil1995) <- c("id","area","geometry","name")
 ## Rasterization of the 1973 and 1995 data
 ```{r}
 # rasterize
-# the scale of Landsat MSS is at 60 m
 vect1973 <- terra::vect(nil1973)
-emptyRast <- terra::rast(res = 60, xmin = 517079.8, xmax = 794369.8, ymin = 922564.6, ymax = 1500035, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
+emptyRast <- terra::rast(res = 30, xmin = 517079.8, xmax = 794369.8, ymin = 922564.6, ymax = 1500035, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
 rast1973 <- terra::rasterize(vect1973, emptyRast, "name")
 
 ## crop and mask to the 1848 raster
@@ -411,6 +409,7 @@ plot(sw1973, col = c('#be4fc4', # agriculture, violetish
   '#2035df'  # waterbodies, royal blue
 ), main = "1973",legend = FALSE)
 plot(sw1995, col = c('#be4fc4', # agriculture, violetish
+                     '#b0a69d', # settlements, grayish
   '#04a310', # shola forests, lighter green
   '#cbb315', # shola grasslands, yellowish
   '#c17111', # plantations, brownish
