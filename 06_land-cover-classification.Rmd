@@ -6,7 +6,7 @@ bibliography: references.bib
 
 # Land cover classification and change detection
 
-In this script, we will process land cover polygons and rasters for multiple time periods (1848 and 2018) across the Nilgiri hills of the Western Ghats biodiversity hotspot. For the year 1848, a survey map (created by Captain John Ouchterlony) was obtained from the British Library and the Tamil Nadu State Archive and was manually digitized to arrive at multiple land cover classes (for more information on the process of digitization, please read the accompanying manuscript and use the README section in the GitHub repository). For the year 2018, we relied on satellite imagery from Sentinel-2 (the imagery was classified using Google Earth Engine and more information on the classification can be obtained below).
+In this script, we will process land cover polygons and rasters for multiple time periods (1848 and 2018) across the Nilgiri hills of the Western Ghats biodiversity hotspot. For the year 1848, a survey map (created by Captain John Ouchterlony) was obtained from the British Library and the Tamil Nadu State Archive and was manually digitized to arrive at multiple land cover classes (for more information on the process of digitization, please read the accompanying manuscript and use the READMe section in the GitHub repository). For the year 2018, we relied on satellite imagery from Sentinel-2 (the imagery was classified using Google Earth Engine and more information on the classification can be obtained below).
 
 ### Load necessary libraries
 ```{r}
@@ -20,12 +20,12 @@ library(mapview)
 library(landscapemetrics)
 library(scico)
 library(extrafont)
+library(exactextractr)
 ```
 
 ### Processing digitized shapefiles from the 1848 map
 
 We will be loading shapefiles that were digitized by Amrutha Rajan for the 1848 historical map.
-
 ```{r}
 # list all shapefiles in the directory
 nil1848 <- list.files("data/spatial/1848-nilgiris/", full.names = T, recursive = T, pattern=".shp$")
@@ -126,33 +126,12 @@ rast1848 <- terra::rasterize(vect1848, emptyRast, "name")
 
 ### Load the 2018 satellite image
 
-The 2018 satellite image was obtained from Sentinel-2. Cloud-free days (<20% cloud cover) were chosen from the year 2018 and a composite was created. We then utilized groundtruthing points from [@arasumani2019] and used a Random Forests classifier (accuracy of 93% was obtained on test data) to obtain a classified image with seven land cover classes (similar to the 1848 map). For more details on the classification, please visit this link: https://code.earthengine.google.com/67af644b05ac8030d3f863cbf30ba8a1
+The 2018 satellite image was obtained from Sentinel-2. Cloud-free days (1% cloud cover) were chosen from March 2018 and a composite was created. We then utilized groundtruthing points from [@arasumani2019] and used a Random Forests classifier (n = 1000 trees; Kappa statistic = 93.9%, overall accuracy of 94.8% was obtained on test data) to obtain a classified image with seven land cover classes (similar to the 1848 map). For more details on the classification, please visit this link: 
 
 ```{r}
 ## load the raster
 rast2018 <- terra::rast("data/spatial/2018-nilgiris/2018.tif")
-
-## we need to mask the raster with the 1848 raster
-## we use terra::mask as there are empty/no_data values in 1848
-
-## prior to masking, we need to crop and reset extents 
-## note, we are resetting the extent to match the 1848 raster
-rast2018 <- crop(rast2018, rast1848)
-
-## extents still do not match for masking
-## force set extents
-ext(rast2018) <- c(660555.3, 719133.3, 1240050, 1277598)
-
-## We have one other issue to tackle before we mask
-## The nrow and ncols do not match because of differences in spatial res
-
-## resample the 1848 raster to the 2018 raster to match spatial res
-## The 1848 raster is at 6 m resolution
-## The 2018 raster is at 10 m resolution
-rast1848 <- resample(rast1848, rast2018, method = "near")
-
-## masking the 2018 raster with the 1848 raster
-rast2018 <- mask(rast2018, rast1848)
+values(rast2018)[values(rast2018) <= 0] <- NA
 
 ## convert the raster to a categorical raster
 rast2018 <- as.factor(rast2018)
@@ -163,7 +142,7 @@ rast2018 <- as.factor(rast2018)
 
 ## create a dataframe with names of classes and their corresponding values
 landcover_class <- data.frame(ID = 1:7,
-                              name = c("agriculture",
+                              name = c( "agriculture",
                                            "shola_forest",
                                            "shola_grassland",
                                            "timber_plantations",
@@ -172,6 +151,12 @@ landcover_class <- data.frame(ID = 1:7,
                                            "water_bodies"))
 levels(rast2018) <- landcover_class
 
+## resample the 1848 raster to the 2018 raster to match spatial res
+## The 1848 raster is at 6 m resolution
+## The 2018 raster is at 10 m resolution
+rast1848 <- resample(rast1848, rast2018, method = "near")
+
+# visualization of the two rasters
 colors2018 <- c(
   '#be4fc4', # agriculture, violetish
   '#04a310', # shola forests, lighter green
@@ -183,7 +168,6 @@ colors2018 <- c(
 )
 
 ## side-by-side visualization
-
 colors1848 <- c(
   '#be4fc4', # agriculture, violetish
   '#c17111', # plantations, brownish
@@ -384,8 +368,99 @@ ggsave(fig_percent_area, filename = "figs/fig_percentArea_landCover.png", width 
 dev.off()
 ```
 
+## Validating the 2018 Sentinel-2 classification
 
-h) Elevational change in grassland habitat over time - like visualizae a 3d topographic model of the landscape and how grassland habitats have shifted or changed over time?
+In the above classification, we see an increase in forest cover of ~ 70 sq.km between 1848 and 2018. However, is this classification accurate? Can we compare these estimates to an existing land cover classification from 2017?
+```{r}
+nil2017 <- st_read("data/spatial/2017-nilgiris/2017.shp")
+nil2017 <- st_intersection(nil2017, all1848)
 
-i) Overlap elevation DEM over the Ouchterlony map to provide readers a sense of accuracy/correctness of the map? (Separate couple of hours to extract relevant information from archival sources about Ouchterlony & the map). 
+# Let's add class name to nil1995 shapefile
+nil2017 <- nil2017 %>%
+  mutate(name = case_when(
+    gridcode == 1 ~ "shola_grassland",
+    gridcode == 2 ~ "shola_forest",
+    gridcode == 3 ~ "timber_plantations",
+    gridcode == 4 ~ "tea_plantations",
+    gridcode == 6 ~ "settlements",
+    gridcode == 7 ~ "agriculture",
+    gridcode == 8 ~ "water_bodies"
+  ))
+
+# remove older column
+nil2017 <- nil2017[,-3]
+
+# renaming for ease of visualization
+names(nil2017) <- c("id","area","geometry","name")
+
+## note that the spatial resolution of Landsat is at 30 m spatial resolution
+vect2017 <- terra::vect(nil2017)
+emptyRast <- terra::rast(res = 30, xmin = 660750, xmax = 718329, ymin = 1240554, ymax = 1275510, crs = "+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs")
+rast2017 <- terra::rasterize(vect2017, emptyRast, "name")
+
+# resample the 2018 raster to 30m
+rast2018 <- resample(rast2018, rast2017, method = "near")
+
+# mask the 2018 raster with the 2017 one since the 2017 raster was only for area above 1400m
+rast2018 <- mask(rast2018, rast2017)
+
+# visualizing the two classifications
+colors2017 <- c(
+  '#be4fc4', # agriculture, violetish
+  '#b0a69d', # settlements, grayish
+  '#04a310', # shola forests, lighter green
+  '#cbb315', # shola grasslands, yellowish
+  '#025a05', # tea plantations, dark greenish
+  '#c17111', # timber plantations, brownish
+  '#2035df'  # waterbodies, royal blue
+)
+
+## saving a high resolution visualization
+png(filename = "figs/fig_landCover_2018_vs_2017.png", 
+    width = 12, height = 7, units = "in", res = 300)
+
+par(mfrow = c(1,2))
+plot(rast2018, col = colors2018, main = "2018 Sentinel classification",
+     legend = FALSE)
+plot(rast2017, col=colors2017, main = "2017 Landsat classification", legend=FALSE)
+
+# add custom legend
+par(mar = c(0, 0, 0, 0), 
+     new = TRUE)
+plot(0, 0, type = 'l', bty = 'n', xaxt = 'n', yaxt = 'n')
+legend("bottom",
+       legend=landcover_class$name, fill=colors2018, 
+       cex = 0.8, 
+       title="land cover classes",
+       ncol = 2)
+dev.off()
+
+## area-wise calculations
+sz2018 <- cellSize(rast2018, unit = "m")
+area2018 <- zonal(sz2018, rast2018, sum)
+area2018SqKm <- (area2018$area / 1000000)
+area2018 <- cbind(area2018, area2018SqKm)
+
+sz2017 <- cellSize(rast2017, unit = "m")
+area2017 <- zonal(sz2017, rast2017, sum)
+area2017SqKm <- (area2017$area / 1000000)
+area2017 <- cbind(area2017, area2017SqKm)
+
+# Joining all dataframes to create a single one for plotting and visualization
+names(area2017) <- c("class", "areaInMeters","sumArea")
+names(area2018) <- c("class", "areaInMeters","sumArea")
+
+areaCalc <- purrr::reduce(list(
+  area2017, 
+  area2018
+), dplyr::full_join, by = "class")
+
+names(areaCalc) <- c("class", "areaMt2017", "2017", "areaMt2018", "2018")
+
+areaCalc <- areaCalc %>%
+  dplyr::select("class", "2017", "2018") %>%
+  pivot_longer(!class, names_to = "Year", values_to = "Area")
+
+write.csv(areaCalc, "results/totalArea-by-landCover-2018-vs-2017.csv", row.names = F)
+```
 
