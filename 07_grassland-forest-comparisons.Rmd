@@ -117,7 +117,8 @@ dev.off()
 In the above visualizations, we observed that forests have expanded across areas that were formerly grasslands. We ask if these expansions vary as a function of elevation. In other words, are forests expanding upslope?
 ```{r}
 # add elevation raster
-alt <- rast("data/spatial/elevation/alt") # this layer is not added to github as a result of its large size and can be downloaded from SRTM (Farr et al. (2007))
+# adding a higher resolution DEM from ALOS
+alt <- rast("data/spatial/elevation/alos-elevation-30m.tif") # this layer is not added to github as a result of its large size and can be downloaded from SRTM (Farr et al. (2007))
 
 # use shapefile to crop the elevation raster
 outline <- st_transform(vect1848, 4326)
