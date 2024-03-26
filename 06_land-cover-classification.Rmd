@@ -272,10 +272,16 @@ terra::writeRaster(rast2018_reclassified, "results/processed-rasters/2018reclass
 ### Area-wise comparisons of land cover change
 ```{r}
 # area-wise calculations for the 2018 raster (the below objects will be used to compare overall areas, alongside the 1848 map)
-sz2018 <- cellSize(rast2018_reclassified, unit = "m")
-area2018 <- zonal(sz2018, rast2018_reclassified, sum)
+sz2018 <- cellSize(rast2018, unit = "m")
+area2018 <- zonal(sz2018, rast2018, sum)
 area2018SqKm <- (area2018$area / 1000000)
 area2018 <- cbind(area2018, area2018SqKm)
+
+# area-wise calculations for the 2018 reclassified raster (the below objects will be used to compare overall areas, alongside the 1848 map)
+sz2018_reclass <- cellSize(rast2018_reclassified, unit = "m")
+area2018_reclass <- zonal(sz2018_reclass, rast2018_reclassified, sum)
+area2018SqKm_reclass <- (area2018_reclass$area / 1000000)
+area2018_reclass <- cbind(area2018_reclass, area2018SqKm_reclass)
 
 # area-wise calculations for the 1848 raster (the below objects will be used to compare overall areas, alongside the 2018 sentinel satellite image)
 sz1848 <- cellSize(rast1848, unit = "m")
@@ -287,6 +293,7 @@ area1848 <- cbind(area1848, area1848SqKm)
 ### Barplots of land cover change
 ```{r}
 # Joining all dataframes to create a single one for plotting and visualization
+
 names(area1848) <- c("class", "areaInMeters","sumArea")
 names(area2018) <- c("class", "areaInMeters","sumArea")
 
@@ -301,6 +308,9 @@ areaCalc <- areaCalc %>%
   dplyr::select("class", "1848", "2018") %>%
   pivot_longer(!class, names_to = "Year", values_to = "Area")
 
+# since the 1848 map had timber and tea plantations subsumed and the 2018 had it separated, we will manually edit the same
+areaCalc <- areaCalc %>% drop_na()
+
 write.csv(areaCalc, "results/totalArea-by-landCover-timePeriod.csv", row.names = F)
 
 # make plot
@@ -308,13 +318,14 @@ fig_area <- ggplot(areaCalc, aes(x = class,
                                  y = Area, fill = class)) + 
   geom_bar(stat = "identity", 
            position = position_dodge()) + 
-  scale_fill_manual(values = c('#b35806', '#d73027','#762a83',
-                   '#1b7837', '#7fbf7b','#4575b4'))+
+  scale_fill_manual(values = c('#be4fc4', '#d73027',  '#b0a69d',
+                               '#04a310','#cbb315', '#025a05',
+                                '#c17111', '#2035df' ))+
     geom_text(aes(label = round(Area), hjust = "middle", 
                 vjust = -0.5), family = "Century Gothic",
     position = position_dodge(), angle = 0, 
     size = 5) +
-  facet_wrap(~Year) +
+  facet_wrap(~Year, scales ="free") +
   theme_bw() +
   labs(
     x = "\nLand cover type",
