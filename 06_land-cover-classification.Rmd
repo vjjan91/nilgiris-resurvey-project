@@ -356,10 +356,11 @@ percentArea <- areaCalc %>%
 # plot figure
 fig_percent_area <- ggplot(percentArea, aes(x = class, y = percentArea, fill = class)) +
   geom_bar(stat = "identity", position = position_dodge()) +
-  scale_fill_manual(values = c('#b35806', '#d73027','#762a83',
-                   '#1b7837', '#7fbf7b','#4575b4')) +
+   scale_fill_manual(values = c('#be4fc4', '#d73027',  '#b0a69d',
+                               '#04a310','#cbb315', '#025a05',
+                                '#c17111', '#2035df' ))+
   geom_text(aes(label = round(percentArea, digits = 1), hjust = "middle", vjust = -0.5), position = position_dodge(), family = "Century Gothic", angle = 0, size = 5) +
-  facet_wrap(~Year) +
+  facet_wrap(~Year, scales = "free") +
   theme_bw() +
   labs(
     x = "\nLand cover type",
