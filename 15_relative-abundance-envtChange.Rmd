@@ -25,6 +25,8 @@ library(DHARMa)
 library(ggpubr)
 library(bbmle)
 library(betareg)
+library(extrafont)
+library(ggeffects)
 
 # function to z-transform data
 scale_z <- function(x){
@@ -46,7 +48,7 @@ sites <- distinct(sites, modern_site_code, historical_site_code, longitude, lati
 sites <- sites[-c(1:50),]
 ```
 
-## Create spatial data within a 250m buffer for each site
+## Create spatial data within a 250m buffer for each site (trying 1000m)
 ```{r}
 # make spatial data from sites, with a 250m buffer
 sites_sf = st_as_sf(
@@ -54,7 +56,7 @@ sites_sf = st_as_sf(
   crs = 4326
 ) |> 
   st_transform(32643) |> 
-  st_buffer(250)
+  st_buffer(500)
 ```
 
 ## Extract land cover data across locations from the 1848 and the 2018 rasters
@@ -94,7 +96,7 @@ lc_sites <- Map(
 
 ## Calculate change in land cover between time periods
 
-For this calculation, we use a simple formulation which essentially replicates the calculation of NDVI = (value in time period Y - value in time period X)/(value in time period Y + value in time period X). This gives us a value ranging between -1 to 1, with higher negative values implying loss in time period Y and positive values imply gain in time period Y
+For this calculation, we use a simple formulation which essentially replicates the calculation of NDVI = (value in time period Y - value in time period X)/(value in time period Y + value in time period X). This gives us a value ranging between -1 to 1, with higher negative values implying loss in time period Y and positive values imply gain in time period Y. We also simply calculated the difference in total area of that land cover type between two time periods.
 ```{r}
 # get lc change sites
 lc_change_dat <- lc_sites |> 
@@ -110,7 +112,8 @@ lc_change_dat <- lc_sites |>
   ) %>%
   left_join(., sites_sf, by="modern_site_code") %>%
   replace(is.na(.), 0) %>%
-  mutate("lc_change" = (year_2018 - year_1848)/(year_2018 + year_1848)) #  -negative values implies loss and + positive values implies gain
+  mutate("lc_percent_change" = (year_2018 - year_1848)/(year_2018 + year_1848)) %>%#  -negative values implies loss and + positive values implies gain
+  mutate("lc_area_change" = (year_2018 - year_1848))
 
 # save as is for further processing
 write_csv(
@@ -189,45 +192,46 @@ We will first prepare the dataframes necessary for running linear mixed models.
 names(relAbun) <- c("scientific_name","historical_site_code","year","relAbundance")
 
 pivot_1850 <- relAbun %>%
-  filter(year != 2021) %>%
+  filter(year == 1850) %>%
   pivot_wider(., names_from = "year", values_from = "relAbundance")
 
 pivot_2021 <- relAbun %>%
-  filter(year != 1850) %>%
+  filter(year == 2021) %>%
   pivot_wider(., names_from = "year", values_from = "relAbundance")
 
 # calculate difference between modern and historical time periods
 # positive value implies gain in relative abundance in 2021 compared to 1850, while negative value implies loss in relative abundance in 2021 compared to 1850
+
 relAbun_wide <- full_join(pivot_1850, pivot_2021, by=c("scientific_name","historical_site_code")) %>%
   mutate("relAbunChange" = `2021` - `1850`)
 
 ## prepare the land cover data
 ## calculating mean change at the level of the historical site code
 ## prior to this calculation, we observed a gain in forest cover across most of the resurvey locations except for OTCM1 (loss = -0.79)
+
 lc_meanChange <- lc_change_dat %>%
   group_by(historical_site_code, name) %>%
-  summarise(lc_change = mean(lc_change)) 
+  summarise(lc_percent_change = mean(lc_percent_change)) 
 
 ## make land cover data wider
 lc_glmm <- lc_meanChange %>%
   pivot_wider(id_cols = historical_site_code, 
               names_from = name, 
-              values_from = lc_change)
+              values_from = lc_percent_change)
 
 ## join all three dataframes together
-## note that due to gaps in the historical land cover map, we have to forego two unique historical survey locations (TSTE and WTCM)
-
-## dataframe for glmm
-glmm_data <- left_join(lc_glmm, relAbun_wide,
-                       by = "historical_site_code") %>%
-  left_join(., clim_change_glmm, by = "historical_site_code") %>%
-  as.data.frame()
-
 ## prepare climate change data
 clim_change_glmm <- clim_change_dat %>%
   dplyr::select(historical_site_code, t_mean_dry_2010, t_mean_rainy_2010, ppt_dry_2010, ppt_rainy_2010) %>%
   group_by(historical_site_code) %>%
   summarise(across(everything(), mean))
+
+## dataframe for glmm
+glmm_data <- left_join(relAbun_wide,lc_glmm,
+                       by = "historical_site_code") %>%
+  left_join(., clim_change_glmm, by = "historical_site_code") %>%
+  as.data.frame() %>%
+  replace(is.na(.), 0)
 
 ## scale the climate data
 glmm_data <- glmm_data %>%
@@ -240,7 +244,7 @@ glmm_data <- glmm_data %>%
 ## Test for correlations between covariates
 ```{r}
 library(psych)
-for_corr <- glmm_data[,c(2:7,16:19)] %>%
+for_corr <- glmm_data[,c(6:11,16:19)] %>%
   distinct()
 
 pairs.panels(for_corr)
@@ -257,76 +261,14 @@ glmm_habitat <- left_join(glmm_data, trait_dat, by = "scientific_name")
 glmm_grassland <-  glmm_habitat %>%
   filter(Habitat.type == "Grassland")
 
-glmm_grassland <- glmm_grassland %>% 
-  mutate(abundIndex = log10(`2021`/`1850`))
+m1 <- glmmTMB(relAbunChange ~ shola_grassland + settlements + shola_forest + water_bodies + agriculture+ shola_grassland +
+                (1|scientific_name),
+               data = glmm_grassland)
 
-m1 <- glmmTMB(abundIndex ~ 
-                shola_grassland  +t_mean_dry_2010_z +
-                ppt_dry_2010_z + 
-                (1|historical_site_code) +(1|scientific_name),
-               data = glmm_grassland,
-            ziformula = ~1)
-summary(m1)
-
-## forest birds
-glmm_forest <- glmm_habitat %>%
-  filter(Habitat.type == "Forest")
-
-m2 <- glmmTMB(relAbunChange ~  shola_forest + t_mean_dry_2010_z +
-                ppt_dry_2010_z + (1|scientific_name) +
-                (1|historical_site_code),
-               data = glmm_forest)
-            #ziformula = ~1)
-summary(m2)
-
-
-
-
-m2 <- update(m1, .~. -plantations)
-m3 <- update(m2, .~. -shola_grassland)
-m4 <- update(m3, .~. -settlements)
-m5 <- update(m4, .~. -shola_forest)
-
-summary(m1)
-summary(m2)
-summary(m3)
-summary(m4)
-summary(m5)
-
-plot_model(g4)
-
-stepAIC(grass_mod, g2, g3, g4, g5)
-
-grass_null <- lmer(relAbunChange ~.,
-                    data = glmm_grassland)
-
-
-fig_relAbun_grass <- ggplot(data=glmm_grassland,aes(x=settlements,y=relAbunChange)) +
-   #scale_y_log10() +
-  #geom_abline(slope=1, intercept=0,linetype="dashed") +
-  #scale_x_log10() +
-  labs(y = "Change in relative abundance", 
-       x = "% change in grassland habitat") +
-   geom_point(shape = 21, colour = "black", fill = "white", size = 2, stroke = 1)+
-   geom_smooth(method="lm", se=TRUE, fullrange=FALSE, level=0.95,linetype="solid")+
-  stat_regline_equation(aes(label = ..rr.label..)) +
-  theme_bw() +
-  theme(axis.text = element_text(family = "Century Gothic", size = 13),
-        legend.title = element_text(family = "Century Gothic"),
-    legend.text = element_text(family = "Century Gothic"),
-    text = element_text(family = "Century Gothic", size = 25))
-
-fig_relAbun_grass
-
-ggsave(fig_1850v2021_rel, filename = "figs/fig_1850-1900vs2021_relAbun.png", width = 15, height = 10, device = png(), units = "in", dpi = 300)
-dev.off()
-
-
-
-
+summary(m1) 
 
 grass_clim <- glmmTMB(relAbunChange ~ t_mean_dry_2010_z + 
-                        ppt_dry_2010_z + (1|scientific_name),
+                         (1|scientific_name),
                       data = glmm_grassland,
                       family = gaussian())
 
@@ -336,9 +278,7 @@ summary(grass_clim)
 glmm_forest <-  glmm_habitat %>%
   filter(Habitat.type == "Forest")
 
-forest_lc <- glmmTMB(relAbunChange ~ shola_forest + 
-                            shola_grassland + settlements 
-                          + agriculture + plantations+
+forest_lc <- glmmTMB(relAbunChange ~ shola_forest + settlements + agriculture + shola_grassland +
                  (1|scientific_name),
                data = glmm_forest,
                family = gaussian())
@@ -349,8 +289,8 @@ forest_clim <- glmmTMB(relAbunChange ~ t_mean_dry_2010_z +
                       data = glmm_forest,
                       family = gaussian())
 
-summary(forest_lc)
-summary(forest_clim)
+summary(forest_lc) # marginal negative effect of grasslands
+summary(forest_clim) # no significance
 
 ## generalist birds
 glmm_generalist <-  glmm_habitat %>%
@@ -358,7 +298,7 @@ glmm_generalist <-  glmm_habitat %>%
 
 generalist_lc <- glmmTMB(relAbunChange ~ shola_forest + 
                             shola_grassland + settlements 
-                          + agriculture + plantations+
+                          + agriculture +
                  (1|scientific_name),
                data = glmm_generalist,
                family = gaussian())
@@ -369,7 +309,7 @@ generalist_clim <- glmmTMB(relAbunChange ~ t_mean_dry_2010_z +
                       data = glmm_generalist,
                       family = gaussian())
 
-summary(generalist_lc)
+summary(generalist_lc) # positive association with increasing grasslands?
 summary(generalist_clim)
 
 ```
