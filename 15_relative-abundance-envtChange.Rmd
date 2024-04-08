@@ -49,9 +49,9 @@ sites <- distinct(sites, modern_site_code, historical_site_code, longitude, lati
 sites <- sites[-c(1:50),]
 ```
 
-## Create spatial data within a 250m buffer for each site (trying 1000m)
+## Create spatial data within a 500m buffer around each site
 ```{r}
-# make spatial data from sites, with a 250m buffer
+# make spatial data from sites, with a 500m buffer
 sites_sf = st_as_sf(
   sites, coords = c("longitude", "latitude"),
   crs = 4326
@@ -93,18 +93,27 @@ lc_sites <- Map(
   }
 ) |> 
   bind_rows()
+
+# calculate proportion of land cover
+lc_sites <- lc_sites %>%
+  group_by(modern_site_code, year) %>%
+  mutate(site_total = sum(total_area))
+
+lc_sites <- lc_sites %>%
+  group_by(modern_site_code, name, year) %>%
+  mutate(lcProp = total_area/site_total)
 ```
 
-## Calculate change in land cover between time periods
+## Calculate change in proportions of land cover between time periods
 
-For this calculation, we use a simple formulation which essentially replicates the calculation of NDVI = (value in time period Y - value in time period X)/(value in time period Y + value in time period X). This gives us a value ranging between -1 to 1, with higher negative values implying loss in time period Y and positive values imply gain in time period Y. We also simply calculated the difference in total area of that land cover type between two time periods.
+For this calculation, we essentially subtract the proportion of each land cover between time periods to obtain the change
 ```{r}
 # get lc change sites
 lc_change_dat <- lc_sites |> 
   pivot_wider(
     id_cols = c("modern_site_code", "name"),
     names_from = c("year"),
-    values_from = "total_area",
+    values_from = "lcProp",
     values_fn = mean
   ) |> 
   rename(
@@ -113,8 +122,7 @@ lc_change_dat <- lc_sites |>
   ) %>%
   left_join(., sites_sf, by="modern_site_code") %>%
   replace(is.na(.), 0) %>%
-  mutate("lc_percent_change" = (year_2018 - year_1848)/(year_2018 + year_1848)) %>%#  -negative values implies loss and + positive values implies gain
-  mutate("lc_area_change" = (year_2018 - year_1848))
+  mutate("lc_prop_change" = (year_2018 - year_1848))
 
 # save as is for further processing
 write_csv(
@@ -208,17 +216,16 @@ relAbun_wide <- full_join(pivot_1850, pivot_2021, by=c("scientific_name","histor
 
 ## prepare the land cover data
 ## calculating mean change at the level of the historical site code
-## prior to this calculation, we observed a gain in forest cover across most of the resurvey locations except for OTCM1 (loss = -0.79)
 
 lc_meanChange <- lc_change_dat %>%
   group_by(historical_site_code, name) %>%
-  summarise(lc_percent_change = mean(lc_percent_change)) 
+  summarise(lc_prop_change = mean(lc_prop_change)) 
 
 ## make land cover data wider
 lc_glmm <- lc_meanChange %>%
   pivot_wider(id_cols = historical_site_code, 
               names_from = name, 
-              values_from = lc_percent_change)
+              values_from = lc_prop_change)
 
 ## join all three dataframes together
 ## prepare climate change data
@@ -262,43 +269,46 @@ glmm_habitat <- left_join(glmm_data, trait_dat, by = "scientific_name")
 glmm_grassland <-  glmm_habitat %>%
   filter(Habitat.type == "Grassland")
 
-m1 <- glmmTMB(relAbunChange ~ shola_grassland + settlements + shola_forest + water_bodies + agriculture + (1|scientific_name),
+# excluded water_bodies from this model because there is no specific biological reasoning for inclusion of that land cover
+m1 <- glmmTMB(relAbunChange ~ shola_grassland + settlements + 
+                plantations + shola_forest + 
+                agriculture + (1|scientific_name),
               ziformula = ~0,
               family=gaussian(),
                data = glmm_grassland)
 
 summary(m1)
+plot_model(m1, type = "std")
+plot(ggpredict(m1))
 
 # Family: gaussian  ( identity )
-# Formula:          relAbunChange ~ shola_grassland + settlements + shola_forest +  
-#     water_bodies + agriculture + (1 | scientific_name)
+# Formula:          relAbunChange ~ shola_grassland + settlements + plantations +  
+#     shola_forest + agriculture + (1 | scientific_name)
 # Data: glmm_grassland
 # 
 #      AIC      BIC   logLik deviance df.resid 
-#  -1565.4  -1538.3    790.7  -1581.4      212 
+#  -1594.6  -1567.5    805.3  -1610.6      212 
 # 
 # Random effects:
 # 
 # Conditional model:
 #  Groups          Name        Variance  Std.Dev.
-#  scientific_name (Intercept) 2.499e-06 0.001581
-#  Residual                    4.254e-05 0.006522
+#  scientific_name (Intercept) 2.777e-06 0.001666
+#  Residual                    3.699e-05 0.006082
 # Number of obs: 220, groups:  scientific_name, 11
 # 
-# Dispersion estimate for gaussian family (sigma^2): 4.25e-05 
+# Dispersion estimate for gaussian family (sigma^2): 3.7e-05 
 # 
 # Conditional model:
-#                   Estimate Std. Error z value Pr(>|z|)    
-# (Intercept)     -0.0166732  0.0048069  -3.469 0.000523 ***
-# shola_grassland -0.0089736  0.0042003  -2.136 0.032647 *  
-# settlements      0.0005654  0.0014657   0.386 0.699660    
-# shola_forest     0.0043892  0.0020064   2.188 0.028702 *  
-# water_bodies     0.0026814  0.0012272   2.185 0.028891 *  
-# agriculture      0.0007097  0.0009270   0.766 0.443890    
+#                  Estimate Std. Error z value Pr(>|z|)    
+# (Intercept)     -0.007257   0.002966  -2.447 0.014407 *  
+# shola_grassland -0.183936   0.047157  -3.901 9.60e-05 ***
+# settlements     -0.193420   0.044060  -4.390 1.13e-05 ***
+# plantations     -0.181943   0.046889  -3.880 0.000104 ***
+# shola_forest    -0.176350   0.045897  -3.842 0.000122 ***
+# agriculture     -0.183488   0.045470  -4.035 5.45e-05 ***
 # ---
 # Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-plot_model(m1, type = "std")
 
 grass_clim <- glmmTMB(relAbunChange ~ t_mean_dry_2010_z +
                          (1|scientific_name),
@@ -337,21 +347,50 @@ plot_model(grass_clim, type = "std")
 glmm_forest <-  glmm_habitat %>%
   filter(Habitat.type == "Forest")
 
-forest_lc <- glmmTMB(relAbunChange ~ shola_forest + settlements + agriculture + shola_grassland + water_bodies + 
+forest_lc <- glmmTMB(relAbunChange ~ shola_forest + settlements + agriculture + shola_grassland + plantations + 
                  (1|scientific_name),
                data = glmm_forest,
                family = gaussian())
 
+summary(forest_lc)
+plot_model(forest_lc, type = "std")
+plot(ggpredict(forest_lc))
 
-forest_clim <- glmmTMB(relAbunChange ~ t_mean_dry_2010_z + 
-                        ppt_dry_2010_z + (1|scientific_name),
+# Family: gaussian  ( identity )
+# Formula:          
+# relAbunChange ~ shola_forest + settlements + agriculture + shola_grassland +  
+#     plantations + (1 | scientific_name)
+# Data: glmm_forest
+# 
+#      AIC      BIC   logLik deviance df.resid 
+#  -7408.6  -7367.8   3712.3  -7424.6     1192 
+# 
+# Random effects:
+# 
+# Conditional model:
+#  Groups          Name        Variance  Std.Dev.
+#  scientific_name (Intercept) 0.0000683 0.008264
+#  Residual                    0.0001055 0.010271
+# Number of obs: 1200, groups:  scientific_name, 60
+# 
+# Dispersion estimate for gaussian family (sigma^2): 0.000106 
+# 
+# Conditional model:
+#                   Estimate Std. Error z value Pr(>|z|)  
+# (Intercept)     -0.0001258  0.0023677  -0.053   0.9576  
+# shola_forest     0.0834370  0.0331885   2.514   0.0119 *
+# settlements      0.0742442  0.0318597   2.330   0.0198 *
+# agriculture      0.0790708  0.0328792   2.405   0.0162 *
+# shola_grassland  0.0823694  0.0340991   2.416   0.0157 *
+# plantations      0.0816160  0.0339054   2.407   0.0161 *
+# ---
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+forest_clim <- glmmTMB(relAbunChange ~ t_mean_dry_2010_z + (1|scientific_name),
                       data = glmm_forest,
                       family = gaussian())
 
-summary(forest_lc) # marginal negative effect of grasslands
 summary(forest_clim) # no significance
-
-plot_model(forest_lc, type = "std")
 
 ## generalist birds
 glmm_generalist <-  glmm_habitat %>%
@@ -359,21 +398,51 @@ glmm_generalist <-  glmm_habitat %>%
 
 generalist_lc <- glmmTMB(relAbunChange ~ shola_forest + 
                             shola_grassland + settlements 
-                          + agriculture +
+                          + agriculture + plantations + 
                  (1|scientific_name),
                data = glmm_generalist,
                family = gaussian())
 
+summary(generalist_lc) # positive association with increasing grasslands?
+plot_model(generalist_lc, type = "std")
+plot(ggpredict(generalist_lc))
+
+# Family: gaussian  ( identity )
+# Formula:          relAbunChange ~ shola_forest + shola_grassland + settlements +  
+#     agriculture + plantations + (1 | scientific_name)
+# Data: glmm_generalist
+# 
+#      AIC      BIC   logLik deviance df.resid 
+#  -2372.3  -2340.0   1194.2  -2388.3      412 
+# 
+# Random effects:
+# 
+# Conditional model:
+#  Groups          Name        Variance  Std.Dev.
+#  scientific_name (Intercept) 0.0002147 0.01465 
+#  Residual                    0.0001686 0.01298 
+# Number of obs: 420, groups:  scientific_name, 21
+# 
+# Dispersion estimate for gaussian family (sigma^2): 0.000169 
+# 
+# Conditional model:
+#                  Estimate Std. Error z value Pr(>|z|)  
+# (Intercept)      0.004161   0.005533   0.752   0.4521  
+# shola_forest    -0.146017   0.070912  -2.059   0.0395 *
+# shola_grassland -0.138994   0.072858  -1.908   0.0564 .
+# settlements     -0.110810   0.068073  -1.628   0.1036  
+# agriculture     -0.129803   0.070251  -1.848   0.0646 .
+# plantations     -0.137885   0.072444  -1.903   0.0570 .
+# ---
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 generalist_clim <- glmmTMB(relAbunChange ~ t_mean_dry_2010_z + 
-                        ppt_dry_2010_z + (1|scientific_name),
+                        (1|scientific_name),
                       data = glmm_generalist,
                       family = gaussian())
 
-summary(generalist_lc) # positive association with increasing grasslands?
-summary(generalist_clim)
 
-plot_model(generalist_lc, type = "std")
+summary(generalist_clim) # non-significant
 ```
 
 
