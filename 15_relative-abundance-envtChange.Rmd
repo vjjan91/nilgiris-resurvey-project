@@ -267,7 +267,37 @@ m1 <- glmmTMB(relAbunChange ~ shola_grassland + settlements + shola_forest + wat
               family=gaussian(),
                data = glmm_grassland)
 
-summary(m1) 
+summary(m1)
+
+# Family: gaussian  ( identity )
+# Formula:          relAbunChange ~ shola_grassland + settlements + shola_forest +  
+#     water_bodies + agriculture + (1 | scientific_name)
+# Data: glmm_grassland
+# 
+#      AIC      BIC   logLik deviance df.resid 
+#  -1565.4  -1538.3    790.7  -1581.4      212 
+# 
+# Random effects:
+# 
+# Conditional model:
+#  Groups          Name        Variance  Std.Dev.
+#  scientific_name (Intercept) 2.499e-06 0.001581
+#  Residual                    4.254e-05 0.006522
+# Number of obs: 220, groups:  scientific_name, 11
+# 
+# Dispersion estimate for gaussian family (sigma^2): 4.25e-05 
+# 
+# Conditional model:
+#                   Estimate Std. Error z value Pr(>|z|)    
+# (Intercept)     -0.0166732  0.0048069  -3.469 0.000523 ***
+# shola_grassland -0.0089736  0.0042003  -2.136 0.032647 *  
+# settlements      0.0005654  0.0014657   0.386 0.699660    
+# shola_forest     0.0043892  0.0020064   2.188 0.028702 *  
+# water_bodies     0.0026814  0.0012272   2.185 0.028891 *  
+# agriculture      0.0007097  0.0009270   0.766 0.443890    
+# ---
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
 plot_model(m1, type = "std")
 
 grass_clim <- glmmTMB(relAbunChange ~ t_mean_dry_2010_z +
@@ -276,6 +306,31 @@ grass_clim <- glmmTMB(relAbunChange ~ t_mean_dry_2010_z +
                       family = gaussian())
 
 summary(grass_clim)
+
+#  Family: gaussian  ( identity )
+# Formula:          relAbunChange ~ t_mean_dry_2010_z + (1 | scientific_name)
+# Data: glmm_grassland
+# 
+#      AIC      BIC   logLik deviance df.resid 
+#  -1569.8  -1556.2    788.9  -1577.8      216 
+# 
+# Random effects:
+# 
+# Conditional model:
+#  Groups          Name        Variance  Std.Dev.
+#  scientific_name (Intercept) 2.462e-06 0.001569
+#  Residual                    4.329e-05 0.006579
+# Number of obs: 220, groups:  scientific_name, 11
+# 
+# Dispersion estimate for gaussian family (sigma^2): 4.33e-05 
+# 
+# Conditional model:
+#                     Estimate Std. Error z value Pr(>|z|)    
+# (Intercept)       -0.0060539  0.0006485  -9.335  < 2e-16 ***
+# t_mean_dry_2010_z -0.0011852  0.0004437  -2.671  0.00756 ** 
+# ---
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
 plot_model(grass_clim, type = "std")
 
 ## forest birds
