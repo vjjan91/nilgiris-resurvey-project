@@ -27,6 +27,7 @@ library(bbmle)
 library(betareg)
 library(extrafont)
 library(ggeffects)
+library(sjPlot)
 
 # function to z-transform data
 scale_z <- function(x){
@@ -261,24 +262,27 @@ glmm_habitat <- left_join(glmm_data, trait_dat, by = "scientific_name")
 glmm_grassland <-  glmm_habitat %>%
   filter(Habitat.type == "Grassland")
 
-m1 <- glmmTMB(relAbunChange ~ shola_grassland + settlements + shola_forest + water_bodies + agriculture+ shola_grassland +
-                (1|scientific_name),
+m1 <- glmmTMB(relAbunChange ~ shola_grassland + settlements + shola_forest + water_bodies + agriculture + (1|scientific_name),
+              ziformula = ~0,
+              family=gaussian(),
                data = glmm_grassland)
 
 summary(m1) 
+plot_model(m1, type = "std")
 
-grass_clim <- glmmTMB(relAbunChange ~ t_mean_dry_2010_z + 
+grass_clim <- glmmTMB(relAbunChange ~ t_mean_dry_2010_z +
                          (1|scientific_name),
                       data = glmm_grassland,
                       family = gaussian())
 
 summary(grass_clim)
+plot_model(grass_clim, type = "std")
 
 ## forest birds
 glmm_forest <-  glmm_habitat %>%
   filter(Habitat.type == "Forest")
 
-forest_lc <- glmmTMB(relAbunChange ~ shola_forest + settlements + agriculture + shola_grassland +
+forest_lc <- glmmTMB(relAbunChange ~ shola_forest + settlements + agriculture + shola_grassland + water_bodies + 
                  (1|scientific_name),
                data = glmm_forest,
                family = gaussian())
@@ -291,6 +295,8 @@ forest_clim <- glmmTMB(relAbunChange ~ t_mean_dry_2010_z +
 
 summary(forest_lc) # marginal negative effect of grasslands
 summary(forest_clim) # no significance
+
+plot_model(forest_lc, type = "std")
 
 ## generalist birds
 glmm_generalist <-  glmm_habitat %>%
@@ -312,6 +318,7 @@ generalist_clim <- glmmTMB(relAbunChange ~ t_mean_dry_2010_z +
 summary(generalist_lc) # positive association with increasing grasslands?
 summary(generalist_clim)
 
+plot_model(generalist_lc, type = "std")
 ```
 
 
