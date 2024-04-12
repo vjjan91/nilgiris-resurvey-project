@@ -244,7 +244,6 @@ glmm_data <- left_join(relAbun_wide,lc_glmm,
 
 ## scale the climate data
 glmm_data <- glmm_data %>%
-  mutate(relAbunChange_z = rescale(relAbunChange)) %>%
   mutate(water_bodies_z = rescale(water_bodies)) %>%
   mutate(plantations_z = rescale(plantations)) %>%
   mutate(agriculture_z = rescale(agriculture)) %>%
