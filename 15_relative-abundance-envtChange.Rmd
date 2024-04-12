@@ -28,6 +28,7 @@ library(betareg)
 library(extrafont)
 library(ggeffects)
 library(sjPlot)
+library(emmeans)
 library(scales)
 
 # function to z-transform data
@@ -277,7 +278,8 @@ glmm_grassland <-  glmm_habitat %>%
   filter(Habitat.type == "Grassland")
 
 # excluded water_bodies from this model because there is no specific biological reasoning for inclusion of that land cover
-m1 <- glmmTMB(relAbunChange ~ shola_grassland + plantations + settlements + agriculture + shola_forest +
+m1 <- glmmTMB(relAbunChange ~ shola_grassland_z + plantations_z + 
+                settlements_z + agriculture_z + shola_forest_z +
                 (1|scientific_name),
               family=gaussian(),
                data = glmm_grassland)
