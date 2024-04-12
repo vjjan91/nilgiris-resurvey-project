@@ -28,6 +28,7 @@ library(betareg)
 library(extrafont)
 library(ggeffects)
 library(sjPlot)
+library(scales)
 
 # function to z-transform data
 scale_z <- function(x){
@@ -212,7 +213,7 @@ pivot_2021 <- relAbun %>%
 # positive value implies gain in relative abundance in 2021 compared to 1850, while negative value implies loss in relative abundance in 2021 compared to 1850
 
 relAbun_wide <- full_join(pivot_1850, pivot_2021, by=c("scientific_name","historical_site_code")) %>%
-  mutate("relAbunChange" = `2021` - `1850`)
+  mutate("relAbunChange" = (`2021` - `1850`))
 
 ## prepare the land cover data
 ## calculating mean change at the level of the historical site code
@@ -243,16 +244,23 @@ glmm_data <- left_join(relAbun_wide,lc_glmm,
 
 ## scale the climate data
 glmm_data <- glmm_data %>%
-  mutate(t_mean_dry_2010_z = scale_z(t_mean_dry_2010)) %>%
-  mutate(t_mean_rainy_2010_z = scale_z(t_mean_rainy_2010)) %>%
-  mutate(ppt_dry_2010_z = scale_z(ppt_dry_2010)) %>%
-  mutate(ppt_rainy_2010_z = scale_z(ppt_rainy_2010)) 
+  mutate(relAbunChange_z = rescale(relAbunChange)) %>%
+  mutate(water_bodies_z = rescale(water_bodies)) %>%
+  mutate(plantations_z = rescale(plantations)) %>%
+  mutate(agriculture_z = rescale(agriculture)) %>%
+  mutate(settlements_z = rescale(settlements)) %>%
+  mutate(shola_forest_z = rescale(shola_forest)) %>%
+  mutate(shola_grassland_z = rescale(shola_grassland)) %>%
+  mutate(t_mean_dry_2010_z = rescale(t_mean_dry_2010)) %>%
+  mutate(t_mean_rainy_2010_z = rescale(t_mean_rainy_2010)) %>%
+  mutate(ppt_dry_2010_z = rescale(ppt_dry_2010)) %>%
+  mutate(ppt_rainy_2010_z = rescale(ppt_rainy_2010)) 
 ```
 
 ## Test for correlations between covariates
 ```{r}
 library(psych)
-for_corr <- glmm_data[,c(6:11,16:19)] %>%
+for_corr <- glmm_data[,c(16:26)] %>%
   distinct()
 
 pairs.panels(for_corr)
@@ -270,10 +278,8 @@ glmm_grassland <-  glmm_habitat %>%
   filter(Habitat.type == "Grassland")
 
 # excluded water_bodies from this model because there is no specific biological reasoning for inclusion of that land cover
-m1 <- glmmTMB(relAbunChange ~ shola_grassland + settlements + 
-                plantations + shola_forest + 
-                agriculture + (1|scientific_name),
-              ziformula = ~0,
+m1 <- glmmTMB(relAbunChange ~ shola_grassland + plantations + agriculture + settlements + shola_forest + 
+                (1|scientific_name),
               family=gaussian(),
                data = glmm_grassland)
 
@@ -341,7 +347,7 @@ summary(grass_clim)
 # ---
 # Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-plot_model(grass_clim, type = "std")
+plot_model(grass_clim, type = "re")
 
 ## forest birds
 glmm_forest <-  glmm_habitat %>%
