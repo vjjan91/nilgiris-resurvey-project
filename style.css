@@ -1,0 +1,50 @@
+/* Header font */
+  @import url('https://fonts.googleapis.com/css2?family=Petrona:ital,wght@0,300;1,300&display=swap');
+
+/* Mono font */
+  @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
+
+/*Body font */
+  @import url('https://fonts.googleapis.com/css2?family=Red+Hat+Text:ital,wght@0,300..700;1,300..700&display=swap');
+
+/*Nav bar font */
+  @import url('https://fonts.googleapis.com/css2?family=Red+Hat+Text:ital,wght@0,300..700;1,300..700&display=swap');
+
+/*css for Google Scholar Icon */
+  @import url('https://cdn.rawgit.com/jpswalsh/academicons/master/css/academicons.min.css');
+
+/*------------- Body and header text---------------- */
+
+.book.font-family-1 {
+  font-family: 'Red Hat Text', sans-serif;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Petrona', sans-serif;
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.book .book-body .page-wrapper .page-inner section.normal h1 {
+    font-size: 25px;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal h2 {
+    font-size: 20px;
+}
+
+.title {
+  font-family: 'Petrona', sans-serif;
+  font-size: 40px;
+  color: rgba(0, 0, 0, 0.8);
+ }
+
+.code.r {
+  font-family: 'Source Code Pro', monospace;
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.pre {
+  font-family: 'Source Code Pro', monospace;
+  color: rgba(0, 0, 0, 0.8);
+}
+
