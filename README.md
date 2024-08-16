@@ -1,6 +1,12 @@
-# Western Ghats Resurvey Project
+## *Colonial-era landscape changes has led to grassland bird species declines over the last century*  
 
-This repository contains code and analyses to understand how a century of climate and landscape changes have impacted bird communities of the Nilgiri hills of the Western Ghats biodiversity hotspot.  
+<!-- badges: start -->
+
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active) <!-- badges: end -->  
+
+This repository contains code and analyses to understand how a century of landscape and climatic changes have impacted bird communities of the Nilgiri hills of the Western Ghats biodiversity hotspot.  
+
+### [Readable version](https://vjjan91.github.io/nilgiris-resurvey-project/)
 
 
 
