@@ -5,30 +5,24 @@ editor_options:
 
 # Validating semi-spatial GAMs for climate
 
-## Prepare weather and spatial data
-
+## Load libraries
 ```{r}
-# for data
 library(tidyverse)
 library(sf)
 library(readxl)
-
-# for gam
 library(mgcv)
-
-# for rasters
 library(terra)
 ```
 
-### Load data prepared for the GAM, and the stack predictor raster.
+## Load data prepared for the GAM, and the stack predictor raster.
 
 ```{r}
 # read data
-data <- read_csv("data/output/data_for_gam.csv")
-stack <- terra::rast("data/output/raster_gam_stack.tif")
+data <- read_csv("results/climate/data_for_gam.csv")
+stack <- terra::rast("results/climate/raster_gam_stack.tif")
 ```
 
-### Prepare data covariates and raster.
+###Prepare data covariates and raster.
 
 ```{r}
 # prepare data for gam fitting
@@ -49,7 +43,7 @@ data <- mutate(
 values(stack[["coast"]]) <- values(stack[["coast"]]) / 1000
 ```
 
-### Pivot longer to separate by variable.
+## Pivot longer to separate by variable.
 
 ```{r}
 # pivot longer
@@ -64,7 +58,7 @@ data <- dplyr::select(data, !month)
 data <- filter(data, between(year, 1970, 2010))
 ```
 
-### Split the data by variable.
+## Split the data by variable.
 
 ```{r}
 data <- nest(
@@ -112,10 +106,10 @@ data <- mutate(
 ### Save model data.
 
 ```{r}
-save(data, file = "data/output/model_gam_climate.Rds")
+save(data, file = "results/climate/model_gam_climate.Rds")
 ```
 
-### Predict over static environment
+## Predict over static environment
 
 Get predictions
 
@@ -128,11 +122,11 @@ model_pred <- map(
 )
 
 model_pred <- Reduce(model_pred, f = c)
-terra::writeRaster(model_pred, "data/output/data_gam_pred.tif")
+terra::writeRaster(model_pred, "results/climate/data_gam_pred.tif")
 ```
 
 ```{r}
-model_pred <- terra::rast("data/output/data_gam_pred.tif")
+model_pred <- terra::rast("results/climate/data_gam_pred.tif")
 ```
 
 ### Average predictions over 1970 -- 2010.
@@ -157,12 +151,12 @@ gam_pred_avg <- data_pred$mean_pred
 gam_pred_avg <- Reduce(f = c, gam_pred_avg)
 
 # save averaged predictions
-terra::writeRaster(gam_pred_avg, filename = "data/output/gam_pred_valid_avg.tif")
+terra::writeRaster(gam_pred_avg, filename = "results/climate/gam_pred_valid_avg.tif")
 ```
 
 ```{r}
 # load saved pred
-gam_pred_avg <- terra::rast("data/output/gam_pred_valid_avg.tif")
+gam_pred_avg <- terra::rast("results/climate/gam_pred_valid_avg.tif")
 
 # write data for linking
 data_pred |>
@@ -178,7 +172,7 @@ data_pred |>
   ) |>
   # save to file
   write_csv(
-    file = "data/output/gam_model_formulas.csv"
+    file = "results/climate/gam_model_formulas.csv"
   )
 ```
 
