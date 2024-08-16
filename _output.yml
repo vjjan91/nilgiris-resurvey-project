@@ -1,0 +1,23 @@
+bookdown::gitbook:
+  css: style.css
+  monofont: Source Code Pro
+  config:
+    toc:
+      collapse: section
+      after: null
+    edit:
+      link: https://github.com/vjjan91/nilgiris-resurvey-project/edit/master/%s
+      text: "Edit"
+    sharing: no
+
+bookdown::pdf_document2:
+  keep_tex: true
+  fontsize: 10pt
+  toc-depth: 1
+  papersize: a4
+  latex_engine: xelatex
+  highlight: haddock
+  includes:
+    in_header: latex/preamble.tex
+    # before_body: before-body.tex
+    # after_body: latex/after_body.tex
