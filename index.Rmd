@@ -1,0 +1,48 @@
+--- 
+knit: "bookdown::render_book"
+title: "_Colonial-era landscape changes has led to grassland bird species declines over the last century_"
+author:
+    - Vijay Ramesh
+    - VA Akshay
+    - Pratik Rajan Gupte
+    - Amrutha Rajan
+    - Chandrasekar Das
+    - Priyanka Hari Haran
+    - Ian Lockwood
+    - Ashwini Mohan
+    - Morgan W Tingley
+    - VV Robin
+    - Ruth S DeFries
+date: "Last compiled on `r format(Sys.time(), '%d %B, %Y')`"
+site: bookdown::bookdown_site
+output: 
+  bookdown::gitbook:
+    fig_caption: yes
+  bookdown::pdf_document2:
+    documentclass: scrreprt
+    toc-depth: 1
+    secnumdepth: 2
+    geometry: "left=4cm, right=3cm, top=2.5cm, bottom=2.5cm"
+biblio-style: apalike
+link-citations: yes
+github-repo: vjjan91/nilgiris-resurvey-project
+---
+
+# Introduction  
+
+This is the readable version that showcases how historical landscape and climatic changes have led to grassland bird species declines over the last century
+
+## Attribution  
+
+Please contact the following in case of interest in the project.  
+
+- Vijay Ramesh (repo maintainer)
+    - Postdoctoral Research Associate, Cornell Lab of Ornithology  
+
+## Data access  
+
+The data used in this work will be archived on Zenodo.  
+
+## Data processing  
+
+The data processing for this project is described in the following sections. Navigate through them using the links in the sidebar.      
