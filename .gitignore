@@ -2,8 +2,11 @@
 .Rhistory
 .Rapp.history
 
-# No .csv files
-#*.csv
+# Ignore large data files
+data/elevation
+data/climate/chelsa
+
+
 #*.shp
 #*.shx
 #*.cpg
