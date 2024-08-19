@@ -3,11 +3,11 @@ editor_options:
   chunk_output_type: console
 ---
 
-## Analyzing temperature and precipitation change over time
+# Analyzing temperature and precipitation change over time
 
 In this script, we will process the reconstructed climate data and analyze trends in climate over time
 
-### Load necessary libraries
+## Load necessary libraries
 
 ```{r}
 library(terra)
@@ -33,11 +33,11 @@ library(mgcv)
 
 ```{r}
 # load nilgiris
-hills <- st_read("data/spatial/hills_shapefile/Nil_Ana_Pal.shp")
+hills <- st_read("data/landcover/Nil_Ana_Pal.shp")
 
 # get reconstructions
 climate_reconstructed <- list.files(
-  "data/climate",
+  "results/climate",
   pattern = "raster_reconstructed",
   full.names = T
 ) |>
@@ -54,7 +54,7 @@ climate_change <- lapply(climate_reconstructed, function(le) {
 })
 ```
 
-Plot change in climate as percentages.
+## Plot change in climate as percentages.
 
 ```{r}
 ppt_dry_change <- tm_shape(climate_change[[1]]) +
@@ -82,6 +82,7 @@ tmap_save(
 )
 ```
 
+![Decadal changes in dry season precipitation over the last century](figs/fig_ppt_dry_change.png)
 
 ```{r}
 ppt_wet_change <- tm_shape(climate_change[[2]]) +
@@ -109,6 +110,8 @@ tmap_save(
 )
 ```
 
+![Decadal changes in rainy season precipitation over the last century](figs/fig_ppt_wet_change.png)
+
 ```{r}
 temp_dry_change <- tm_shape(climate_change[[3]]) +
   tm_raster(
@@ -134,6 +137,7 @@ tmap_save(
 )
 ```
 
+![Decadal change in dry season temperatures over the last century](figs/fig_temp_dry_change.png)
 
 ```{r}
 temp_wet_change <- tm_shape(climate_change[[4]]) +
@@ -160,7 +164,9 @@ tmap_save(
 )
 ```
 
-### Load list of resurvey locations/historical sites of occurrence
+![Decadal change in wet season temperatures over the last century](figs/fig_temp_wet_change.png)
+
+## Load list of resurvey locations/historical sites of occurrence
 
 ```{r}
 # load list of resurvey locations and add elevation as a variable
@@ -186,14 +192,14 @@ sites <- st_as_sf(sites, coords = c("longitude", "latitude")) %>%
   st_transform(32643)
 
 # add an outline of the nilgiris shapefile (contains areas below 1400 m)
-nil <- st_read("data/spatial/hills-shapefile/Nil_Ana_Pal.shp")
+nil <- st_read("data/landcover/Nil_Ana_Pal.shp")
 nil <- nil[2, ]
 nil <- st_transform(nil, 32643)
 buffer <- st_buffer(nil, 3e4) %>%
   st_transform(4326)
 
 # add the elevation raster
-alt <- rast("data/spatial/Elevation/alt/")
+alt <- rast("data/elevation/alt/")
 
 # this layer is not added to github as a result of its large size and can be downloaded from SRTM (Farr et al. (2007))
 alt.hills <- terra::crop(alt, as(buffer, "Spatial"))
@@ -208,7 +214,7 @@ rm(alt.hills)
 gc()
 ```
 
-### Load the climate rasters
+## Load the climate rasters
 
 Note that there are four rasters: temperature and precipitation for both dry season and rainy season respectively. The dry season refers to the months of December to May while the rainy season refers to the months of June to November. Each raster corresponds to mean monthly value across a single decade (1870-1890 and so on). In other words, ppt_dry_1870 would refer to the mean monthly precipitation between December to May for the time-period 1870 to 1880.  
 
@@ -236,7 +242,7 @@ terrain_nilgiris <- terra::project(elevData, crs(sites))
 terrain_sites <- terra::extract(terrain_nilgiris, as(sites, "SpatVector"))
 ```
 
-### Combine site climate and terrain data
+## Combine site climate and terrain data
 
 ```{r}
 # merge all extracted climate data at sites
@@ -284,7 +290,7 @@ clim_terrain_sites <- mutate(
 )
 ```
 
-Plot all reconstructed climate over time, colouring by elevation and grouping by site. Each line represents one modern site code.
+## Plot all reconstructed climate over time colouring by elevation and grouping by site. Each line represents one modern site code.
 
 ```{r}
 ggplot(
@@ -315,6 +321,8 @@ ggsave(
   dpi = 150
 )
 ```
+
+![Reconstructed climate as a function of elevation across the last century](figs/fig_clim_reconst_site_elev.png)
 
 ## Test for climate change over time
 
@@ -354,237 +362,3 @@ clim_terrain_sites <- mutate(
 map(clim_terrain_sites$model_fit, summary)
 ```
 
----
-
-To be removed?:
-<!-- ### Exploring the climate data -->
-
-```{r}
-# ## Subset the data
-# ## split by rainy and dry months for both temperature and precipitation
-# temp_dry <- cbind(sites[,1:6],sites[,grepl("t_mean_dry",names(sites))])
-# temp_rainy <- cbind(sites[,1:6],sites[,grepl("t_mean_rainy",names(sites))])
-# precip_dry <- cbind(sites[,1:6],sites[,grepl("ppt_dry",names(sites))])
-# precip_rainy <- cbind(sites[,1:6],sites[,grepl("ppt_rainy",names(sites))])
-#
-# # removed last column manually to avoid duplicates of geometry column
-# temp_dry <- temp_dry[,-23]
-# temp_rainy <- temp_rainy[,-23]
-# precip_dry <- precip_dry[,-23]
-# precip_rainy <- precip_rainy[,-23]
-#
-# # rename the year columns
-# names(temp_dry)[7:21] <- gsub(pattern = ".*y_", replacement = "", x = names(temp_dry)[7:21])
-# names(temp_rainy)[7:21] <- gsub(pattern = ".*y_", replacement = "", x = names(temp_rainy)[7:21])
-# names(precip_dry)[7:21] <- gsub(pattern = ".*y_", replacement = "", x = names(precip_dry)[7:21])
-# names(precip_rainy)[7:21] <- gsub(pattern = ".*y_", replacement = "", x = names(precip_rainy)[7:21])
-#
-# ## Let's explore temperature in the dry season first
-# temp_dry <-  temp_dry %>%
-#   pivot_longer(cols = c("1870":"2010"), names_to = "temp", values_to = "meanTemp")
-#
-# # plot and facet by site
-# fig_temp_dry <- ggplot(temp_dry, aes(x = temp, y = meanTemp)) +
-#      geom_point() +
-#   facet_wrap(~modern_site_code)+
-#   theme_bw() +
-#   labs(
-#     x = "\nMean Monthly Temperature (1870 - 2018)",
-#     y = "Temperature (in celsius)\n"
-#   ) +
-#   theme(
-#     plot.title = element_text(family = "Century Gothic", face="bold.italic"),
-#     axis.title = element_text(
-#       family = "Century Gothic",
-#       size = 14, face = "bold"
-#     ),
-#     axis.text = element_text(family = "Century Gothic", size = 13),
-#     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 0.5),
-#     legend.title = element_text(family = "Century Gothic"),
-#     legend.text = element_text(family = "Century Gothic")) +
-#     guides(size= "none")
-#
-# ggsave(fig_temp_dry, filename = "figs/fig_temp_dry_by_site.png", width = 19, height = 10, device = png(), units = "in", dpi = 300)
-# dev.off()
-#
-# ## Temperature in the rainy season
-# temp_rainy <-  temp_rainy %>%
-#   pivot_longer(cols = c("1870":"2010"), names_to = "temp", values_to = "meanTemp")
-#
-# fig_temp_rainy <- ggplot(temp_rainy, aes(x = temp, y = meanTemp)) +
-#      geom_point() +
-#   facet_wrap(~modern_site_code)+
-#   theme_bw() +
-#   labs(
-#     x = "\nMean Monthly Temperature (1870 - 2018)",
-#     y = "Temperature (in celsius)\n"
-#   ) +
-#   theme(
-#     plot.title = element_text(family = "Century Gothic", face="bold.italic"),
-#     axis.title = element_text(
-#       family = "Century Gothic",
-#       size = 14, face = "bold"
-#     ),
-#     axis.text = element_text(family = "Century Gothic", size = 13),
-#     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 0.5),
-#     legend.title = element_text(family = "Century Gothic"),
-#     legend.text = element_text(family = "Century Gothic")) +
-#     guides(size= "none")
-#
-# ggsave(fig_temp_rainy, filename = "figs/fig_temp_rainy_by_site.png", width = 19, height = 10, device = png(), units = "in", dpi = 300)
-# dev.off()
-#
-# ## Precipitation in the dry season
-# precip_dry <-  precip_dry %>%
-#   pivot_longer(cols = c("1870":"2010"), names_to = "ppt", values_to = "meanPpt")
-#
-# # plot and facet by site
-# fig_precip_dry <- ggplot(precip_dry, aes(x = ppt, y = meanPpt)) +
-#      geom_point() +
-#   facet_wrap(~modern_site_code)+
-#   theme_bw() +
-#   labs(
-#     x = "\nMean Monthly Precipitation (1870 - 2018)",
-#     y = "Precipitation (in mm)\n"
-#   ) +
-#   theme(
-#     plot.title = element_text(family = "Century Gothic", face="bold.italic"),
-#     axis.title = element_text(
-#       family = "Century Gothic",
-#       size = 14, face = "bold"
-#     ),
-#     axis.text = element_text(family = "Century Gothic", size = 13),
-#     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 0.5),
-#     legend.title = element_text(family = "Century Gothic"),
-#     legend.text = element_text(family = "Century Gothic")) +
-#     guides(size= "none")
-#
-# ggsave(fig_precip_dry, filename = "figs/fig_precip_dry_by_site.png", width = 19, height = 10, device = png(), units = "in", dpi = 300)
-# dev.off()
-#
-# ## Precipitation in the rainy season
-# precip_rainy <-  precip_rainy %>%
-#   pivot_longer(cols = c("1870":"2010"), names_to = "ppt", values_to = "meanPpt")
-#
-# # plot and facet by site
-# fig_precip_rainy <- ggplot(precip_rainy, aes(x = ppt, y = meanPpt)) +
-#      geom_point() +
-#   facet_wrap(~modern_site_code)+
-#   theme_bw() +
-#   labs(
-#     x = "\nMean Monthly Precipitation (1870 - 2018)",
-#     y = "Precipitation (in mm)\n"
-#   ) +
-#   theme(
-#     plot.title = element_text(family = "Century Gothic", face="bold.italic"),
-#     axis.title = element_text(
-#       family = "Century Gothic",
-#       size = 14, face = "bold"
-#     ),
-#     axis.text = element_text(family = "Century Gothic", size = 13),
-#     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 0.5),
-#     legend.title = element_text(family = "Century Gothic"),
-#     legend.text = element_text(family = "Century Gothic")) +
-#     guides(size= "none")
-#
-# ggsave(fig_precip_rainy, filename = "figs/fig_precip_rainy_by_site.png", width = 19, height = 10, device = png(), units = "in", dpi = 300)
-# dev.off()
-```
-
-<!-- ### Visualizing climatic data by elevation -->
-
-```{r}
-# ## temperature
-# fig_temp_dry_elev <- ggplot(temp_dry, aes(x = meanTemp, y = alt)) +
-#      geom_point() +
-#   facet_wrap(~temp)+
-#   theme_bw() +
-#   labs(
-#     x = "\nMean Monthly Temperature (in celcius)",
-#     y = "Elevation (in meters)\n"
-#   ) +
-#   theme(
-#     plot.title = element_text(family = "Century Gothic", face="bold.italic"),
-#     axis.title = element_text(
-#       family = "Century Gothic",
-#       size = 14, face = "bold"
-#     ),
-#     axis.text = element_text(family = "Century Gothic", size = 13),
-#     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 0.5),
-#     legend.title = element_text(family = "Century Gothic"),
-#     legend.text = element_text(family = "Century Gothic")) +
-#     guides(size= "none")
-#
-# ggsave(fig_temp_dry_elev, filename = "figs/fig_temp_dry_by_elev.png", width = 19, height = 10, device = png(), units = "in", dpi = 300)
-# dev.off()
-#
-# fig_temp_rainy_elev <- ggplot(temp_rainy, aes(x = meanTemp, y = alt)) +
-#      geom_point() +
-#   facet_wrap(~temp)+
-#   theme_bw() +
-#   labs(
-#     x = "\nMean Monthly Temperature (in celcius)",
-#     y = "Elevation (in meters)\n"
-#   ) +
-#   theme(
-#     plot.title = element_text(family = "Century Gothic", face="bold.italic"),
-#     axis.title = element_text(
-#       family = "Century Gothic",
-#       size = 14, face = "bold"
-#     ),
-#     axis.text = element_text(family = "Century Gothic", size = 13),
-#     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 0.5),
-#     legend.title = element_text(family = "Century Gothic"),
-#     legend.text = element_text(family = "Century Gothic")) +
-#     guides(size= "none")
-#
-# ggsave(fig_temp_rainy_elev, filename = "figs/fig_temp_rainy_by_elev.png", width = 19, height = 10, device = png(), units = "in", dpi = 300)
-# dev.off()
-#
-# ## Precipitation
-# fig_precip_dry_elev <- ggplot(precip_dry, aes(x = meanPpt, y = alt)) +
-#      geom_point() +
-#   facet_wrap(~ppt)+
-#   theme_bw() +
-#   labs(
-#     x = "\nMean Monthly Precipitation (in mm)",
-#     y = "Elevation (in meters)\n"
-#   ) +
-#   theme(
-#     plot.title = element_text(family = "Century Gothic", face="bold.italic"),
-#     axis.title = element_text(
-#       family = "Century Gothic",
-#       size = 14, face = "bold"
-#     ),
-#     axis.text = element_text(family = "Century Gothic", size = 13),
-#     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 0.5),
-#     legend.title = element_text(family = "Century Gothic"),
-#     legend.text = element_text(family = "Century Gothic")) +
-#     guides(size= "none")
-#
-# ggsave(fig_precip_dry_elev, filename = "figs/fig_precip_dry_by_elev.png", width = 19, height = 10, device = png(), units = "in", dpi = 300)
-# dev.off()
-#
-# fig_precip_rainy_elev <- ggplot(precip_rainy, aes(x = meanPpt, y = alt)) +
-#      geom_point() +
-#   facet_wrap(~ppt)+
-#   theme_bw() +
-#   labs(
-#     x = "\nMean Monthly Precipitation (in mm)",
-#     y = "Elevation (in meters)\n"
-#   ) +
-#   theme(
-#     plot.title = element_text(family = "Century Gothic", face="bold.italic"),
-#     axis.title = element_text(
-#       family = "Century Gothic",
-#       size = 14, face = "bold"
-#     ),
-#     axis.text = element_text(family = "Century Gothic", size = 13),
-#     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 0.5),
-#     legend.title = element_text(family = "Century Gothic"),
-#     legend.text = element_text(family = "Century Gothic")) +
-#     guides(size= "none")
-#
-# ggsave(fig_precip_rainy_elev, filename = "figs/fig_precip_rainy_by_elev.png", width = 19, height = 10, device = png(), units = "in", dpi = 300)
-# dev.off()
-```
