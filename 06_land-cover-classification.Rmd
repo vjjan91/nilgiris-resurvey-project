@@ -8,7 +8,7 @@ bibliography: references.bib
 
 In this script, we will process land cover polygons and rasters for multiple time periods (1848 and 2018) across the Nilgiri hills of the Western Ghats biodiversity hotspot. For the year 1848, a survey map (created by Captain John Ouchterlony) was obtained from the British Library and the Tamil Nadu State Archive and was manually digitized to arrive at multiple land cover classes (for more information on the process of digitization, please read the accompanying manuscript and use the READMe section in the GitHub repository). For the year 2018, we relied on satellite imagery from Sentinel-2 (the imagery was classified using Google Earth Engine and more information on the classification can be obtained below).
 
-### Load necessary libraries
+## Load necessary libraries
 ```{r}
 library(sf)
 library(raster)
@@ -23,12 +23,12 @@ library(extrafont)
 library(exactextractr)
 ```
 
-### Processing digitized shapefiles from the 1848 map
+## Processing digitized shapefiles from the 1848 map
 
 We will be loading shapefiles that were digitized by Amrutha Rajan for the 1848 historical map.
 ```{r}
 # list all shapefiles in the directory
-nil1848 <- list.files("data/spatial/1848-nilgiris/", full.names = T, recursive = T, pattern=".shp$")
+nil1848 <- list.files("data/landcover/1848-nilgiris/", full.names = T, recursive = T, pattern=".shp$")
 
 # create vector files
 ag1848 <- st_read(nil1848[1]) # type: multipolygon; 6 empty geometries
@@ -112,7 +112,7 @@ nil1848 <- nil1848[,-c(3:5)]
 all1848 <- st_buffer(st_union(nil1848), dist = 0)
 ```
 
-### Rasterization of the 1848 shapefiles
+## Rasterization of the 1848 shapefiles
 
 The 1848 digitized shapefiles are rasterized for comparison with the 2018 sentinel satellite imagery.
 ```{r}
@@ -124,13 +124,13 @@ emptyRast <- terra::rast(res = 6, xmin = 660555.3, xmax = 719135.5, ymin = 12400
 rast1848 <- terra::rasterize(vect1848, emptyRast, "name")
 ```
 
-### Load the 2018 satellite image
+## Load the 2018 satellite image
 
 The 2018 satellite image was obtained from Sentinel-2. Cloud-free days (1% cloud cover) were chosen from March 2018 and a composite was created. We then utilized groundtruthing points from [@arasumani2019] and used a Random Forests classifier (n = 1000 trees; Kappa statistic = 93.9%, overall accuracy of 94.8% was obtained on test data) to obtain a classified image with seven land cover classes (similar to the 1848 map). For more details on the classification, please visit this link: 
 
 ```{r}
 ## load the raster
-rast2018 <- terra::rast("data/spatial/2018-nilgiris/2018.tif")
+rast2018 <- terra::rast("data/landcover/2018-nilgiris/2018.tif")
 values(rast2018)[values(rast2018) <= 0] <- NA
 
 ## convert the raster to a categorical raster
@@ -159,11 +159,11 @@ rast1848 <- resample(rast1848, rast2018, method = "near")
 # visualization of the two rasters
 colors2018 <- c(
   '#be4fc4', # agriculture, violetish
-  '#04a310', # shola forests, lighter green
+  '#025a05',# shola forests, dark green
   '#cbb315', # shola grasslands, yellowish
   '#c17111', # timber plantations, brownish
   '#b0a69d', # settlements, grayish
-  '#025a05', # tea plantations, dark greenish
+   '#04a310',# tea plantations, light green
   '#2035df'  # waterbodies, royal blue
 )
 
@@ -172,7 +172,7 @@ colors1848 <- c(
   '#be4fc4', # agriculture, violetish
   '#c17111', # plantations, brownish
   '#b0a69d', # settlements, grayish
-  '#04a310', # shola forests, lighter green
+  '#025a05',# shola forests, dark green
   '#cbb315', # shola grasslands, yellowish
   '#2035df'  # waterbodies, royal blue
 )
@@ -204,7 +204,7 @@ dev.off()
 Since 1848 had very few to no tea plantations and only timber plantations were present at the time, we reclassify timber plantations into the plantations category for the 2018 raster to ease comparisons. 
 ```{r}
 # read reclassification matrix
-reclassification_matrix <- read.csv("data/spatial/2018-nilgiris/reclassification-matrix.csv")
+reclassification_matrix <- read.csv("data/landcover/2018-nilgiris/reclassification-matrix.csv")
 reclassification_matrix <- as.matrix(reclassification_matrix[, c("V1", "To")])
 
 # reclassification
@@ -227,7 +227,7 @@ levels(rast2018_reclassified) <- landcover_reclass
 ## side-by-side visualization
 colors2018reclass <- c(
   '#be4fc4', # agriculture, violetish
-  '#04a310', # shola forests, lighter green
+  '#025a05',# shola forests, dark green
   '#cbb315', # shola grasslands, yellowish
   '#c17111', # plantations, brownish
   '#b0a69d', # settlements, grayish
@@ -255,21 +255,21 @@ legend("bottom",
 dev.off()
 ```
 
-### Write the shapefiles and rasters to file  
+## Write the shapefiles and rasters to file  
 
 Please note that the processed rasters above have been resampled to a resolution of 10 metres.  
 ```{r}
 # vectors
-st_write(nil1848, "results/processed-shapefiles/1848.shp", 
+st_write(nil1848, "results/landcover/1848.shp", 
          driver = "ESRI Shapefile")
 
 # rasters
-terra::writeRaster(rast1848, "results/processed-rasters/1848.tif")
-terra::writeRaster(rast2018, "results/processed-rasters/2018.tif")
-terra::writeRaster(rast2018_reclassified, "results/processed-rasters/2018reclassified.tif")
+terra::writeRaster(rast1848, "results/landcover/1848.tif")
+terra::writeRaster(rast2018, "results/landcover/2018.tif")
+terra::writeRaster(rast2018_reclassified, "results/landcover/2018reclassified.tif")
 ```
 
-### Area-wise comparisons of land cover change
+## Area-wise comparisons of land cover change
 ```{r}
 # area-wise calculations for the 2018 raster (the below objects will be used to compare overall areas, alongside the 1848 map)
 sz2018 <- cellSize(rast2018, unit = "m")
@@ -290,7 +290,7 @@ area1848SqKm <- (area1848$area / 1000000)
 area1848 <- cbind(area1848, area1848SqKm)
 ```
 
-### Barplots of land cover change
+## Barplots of land cover change
 ```{r}
 # Joining all dataframes to create a single one for plotting and visualization
 
@@ -319,13 +319,13 @@ fig_area <- ggplot(areaCalc, aes(x = class,
   geom_bar(stat = "identity", 
            position = position_dodge()) + 
   scale_fill_manual(values = c('#be4fc4', '#d73027',  '#b0a69d',
-                               '#04a310','#cbb315', '#025a05',
+                              '#025a05','#cbb315', '#04a310',
                                 '#c17111', '#2035df' ))+
     geom_text(aes(label = round(Area), hjust = "middle", 
                 vjust = -0.5), family = "Century Gothic",
     position = position_dodge(), angle = 0, 
     size = 5) +
-  facet_wrap(~Year, scales ="free") +
+  facet_wrap(~Year, scales ="free_x") +
   theme_bw() +
   labs(
     x = "\nLand cover type",
@@ -357,10 +357,10 @@ percentArea <- areaCalc %>%
 fig_percent_area <- ggplot(percentArea, aes(x = class, y = percentArea, fill = class)) +
   geom_bar(stat = "identity", position = position_dodge()) +
    scale_fill_manual(values = c('#be4fc4', '#d73027',  '#b0a69d',
-                               '#04a310','#cbb315', '#025a05',
+                              '#025a05','#cbb315', '#04a310',
                                 '#c17111', '#2035df' ))+
   geom_text(aes(label = round(percentArea, digits = 1), hjust = "middle", vjust = -0.5), position = position_dodge(), family = "Century Gothic", angle = 0, size = 5) +
-  facet_wrap(~Year, scales = "free") +
+  facet_wrap(~Year, scales = "free_x") +
   theme_bw() +
   labs(
     x = "\nLand cover type",
@@ -384,7 +384,7 @@ dev.off()
 
 In the above classification, we see an increase in forest cover of ~ 70 sq.km between 1848 and 2018. However, is this classification accurate? Can we compare these estimates to an existing land cover classification from 2017?
 ```{r}
-nil2017 <- st_read("data/spatial/2017-nilgiris/2017.shp")
+nil2017 <- st_read("data/landcover/2017-nilgiris/2017.shp")
 nil2017 <- st_intersection(nil2017, all1848)
 
 # Let's add class name to nil1995 shapefile
