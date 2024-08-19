@@ -17,7 +17,7 @@ library(sf)
 
 ## Prepare climate data
 
-Read data and add date
+Read data and add date. Please contact the lead author for a copy of this data. We will add this to Zenodo as a release upon publication. 
 ```{r}
 clim_files <- list.files("data/climate/historical", full.names = T)
 data <- map(clim_files, read_delim,
