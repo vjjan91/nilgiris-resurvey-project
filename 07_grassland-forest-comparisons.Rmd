@@ -8,7 +8,7 @@ bibliography: references.bib
 
 In the previous script, we inferred that grasslands have contracted dramatically, plantations have increased drastically and forests have expanded as well. In this script, we will compare and contrasts areas where forests and plantations have increased over time and if these areas overlap with grassland habitats (in the past).
 
-### Load necessary libraries
+## Load necessary libraries
 
 ```{r}
 library(sf)
@@ -24,8 +24,8 @@ library(ggstatsplot)
 
 ## Load processed land cover rasters
 ```{r}
-rast1848 <- terra::rast("results/processed-rasters/1848.tif")
-rast2018 <- terra::rast("results/processed-rasters/2018reclassified.tif")
+rast1848 <- terra::rast("results/landcover/1848.tif")
+rast2018 <- terra::rast("results/landcover/2018reclassified.tif")
 ```
 
 ## Visualize forests across the two time periods
@@ -45,6 +45,8 @@ plot(rast2018 == "shola_forest",
 dev.off()
 ```
 
+![Forest cover differences between 1848 and 2018](figs/fig_forests_1848_vs_2018.png)
+
 ## Visualize grassland area across the two time periods
 
 ```{r}
@@ -61,6 +63,8 @@ plot(rast2018 == "shola_grassland",
      legend=FALSE)
 dev.off()
 ```
+
+![Comparing grassland areas between 1848 and 2018](figs/fig_grasslands_1848_vs_2018.png)
 
 ## Comparing if forests have increased in locations where grasslands were formerly found?
 
@@ -112,13 +116,15 @@ ggsave(fig_for2018_grass1848,
 dev.off()
 ```
 
+![Several areas across the landscape that were formerly grasslands in 1848 are now forests in 2018](figs/fig_forests2018_vs_grasslands1848.png)
+
 ## Have forests expanded across elevations? 
 
 In the above visualizations, we observed that forests have expanded across areas that were formerly grasslands. We ask if these expansions vary as a function of elevation. In other words, are forests expanding upslope?
 ```{r}
 # add elevation raster
 # adding a higher resolution DEM from ALOS
-alt <- rast("data/spatial/elevation/alos-elevation-30m.tif") # this layer is not added to github as a result of its large size and can be downloaded from SRTM (Farr et al. (2007))
+alt <- rast("data/elevation/alos-elevation-30m.tif") # this layer is not added to github as a result of its large size and can be downloaded from SRTM (Farr et al. (2007))
 
 # use shapefile to crop the elevation raster
 outline <- st_transform(vect1848, 4326)
@@ -264,6 +270,8 @@ ggsave(fig_forest_maxElev, filename = "figs/fig_sholaForests_maxElevation.png", 
 dev.off()
 ```
 
+![Mean elevation of shola forest patches in 1848 vs. 2018 suggests a significant decrease in elevation in the modern era](figs/fig_sholaForests_meanElevation.png)
+
 ## How do grassland patches vary by elevation across time periods?
 ```{r}
 data_grassland <-data_for_plotting %>% # get only grasslands
@@ -347,6 +355,8 @@ ggsave(fig_grassland_maxElev, filename = "figs/fig_sholaGrasslands_maxElevation.
 dev.off()
 ```
 
+![Comparison of mean elevation of grassland patches between 1848 and 2018 revealed a significant decline in elevation in the modern era](figs/fig_sholaGrasslands_meanElevation.png)
+
 ## Comparing if plantations have increased in locations where grasslands were formerly found?
 ```{r}
 # overlay plantations from 2018 over shola_grasslands from 1848
@@ -384,4 +394,7 @@ ggsave(fig_plant2018_grass1848,
   filename = "figs/fig_plantations2018_vs_grasslands1848.png", width = 22, height = 8, device = png(), units = "in", dpi = 600)
 dev.off()
 ```
+
+![Plantations have largely colonized former grassland habitat over time](figs/fig_plantations2018_vs_grasslands1848.png)
+Interactive visualizations of forests in 2018 and grasslands in 1848 can be accessed via Zenodo (the files are very large for a GitHub upload). 
 

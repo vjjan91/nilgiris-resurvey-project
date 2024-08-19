@@ -255,6 +255,8 @@ legend("bottom",
 dev.off()
 ```
 
+![Landcover change between 1848 and 2018](figs/fig_landCover_1848_vs_2018reclassified.png)
+
 ## Write the shapefiles and rasters to file  
 
 Please note that the processed rasters above have been resampled to a resolution of 10 metres.  
@@ -380,9 +382,11 @@ ggsave(fig_percent_area, filename = "figs/fig_percentArea_landCover.png", width 
 dev.off()
 ```
 
+![Barplots of change in area of each land cover class between 1848 and 2018](figs/fig_totalArea_landCover.png)
+
 ## Validating the 2018 Sentinel-2 classification
 
-In the above classification, we see an increase in forest cover of ~ 70 sq.km between 1848 and 2018. However, is this classification accurate? Can we compare these estimates to an existing land cover classification from 2017?
+In the above classification, we see an increase in forest cover of ~ 132 sq.km between 1848 and 2018. However, is the 2018 classification accurate? Can we compare these estimates to an existing land cover classification from 2017?
 ```{r}
 nil2017 <- st_read("data/landcover/2017-nilgiris/2017.shp")
 nil2017 <- st_intersection(nil2017, all1848)
@@ -420,9 +424,9 @@ rast2018 <- mask(rast2018, rast2017)
 colors2017 <- c(
   '#be4fc4', # agriculture, violetish
   '#b0a69d', # settlements, grayish
-  '#04a310', # shola forests, lighter green
+   '#025a05', # shola forests, dark green
   '#cbb315', # shola grasslands, yellowish
-  '#025a05', # tea plantations, dark greenish
+   '#04a310', # tea plantations, light green
   '#c17111', # timber plantations, brownish
   '#2035df'  # waterbodies, royal blue
 )
@@ -475,4 +479,6 @@ areaCalc <- areaCalc %>%
 
 write.csv(areaCalc, "results/totalArea-by-landCover-2018-vs-2017.csv", row.names = F)
 ```
+
+![Comparing the 2018 Sentinel classification to the 2017 Landsat classification of the same area revealed no major differences](figs/fig_landCover_2018_vs_2017.png)
 
