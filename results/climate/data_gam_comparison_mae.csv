@@ -1,0 +1,121 @@
+season,climvar,forms,group,mae
+dry,ppt,"value ~ s(elev, k = 3)",1,8.871836497306823
+dry,ppt,"value ~ s(elev, k = 3)",2,8.495287927945455
+dry,ppt,"value ~ s(elev, k = 3)",3,8.833432067871094
+dry,ppt,"value ~ s(elev, k = 3)",4,8.801777376174927
+dry,ppt,"value ~ s(elev, k = 3)",5,9.256165570576986
+dry,ppt,"value ~ s(elev, k = 3)",6,9.242866502205532
+dry,ppt,"value ~ s(elev, k = 3)",7,9.028507120768229
+dry,ppt,"value ~ s(elev, k = 3)",8,9.136469616095225
+dry,ppt,"value ~ s(elev, k = 3)",9,8.980094797054926
+dry,ppt,"value ~ s(elev, k = 3)",10,9.110349768559137
+dry,ppt,"value ~ s(elev, k = 3) + coast + lat",1,13.798251135826112
+dry,ppt,"value ~ s(elev, k = 3) + coast + lat",2,13.600084989229838
+dry,ppt,"value ~ s(elev, k = 3) + coast + lat",3,13.887344376365343
+dry,ppt,"value ~ s(elev, k = 3) + coast + lat",4,13.973768703142802
+dry,ppt,"value ~ s(elev, k = 3) + coast + lat",5,13.957004884759586
+dry,ppt,"value ~ s(elev, k = 3) + coast + lat",6,14.497193735599518
+dry,ppt,"value ~ s(elev, k = 3) + coast + lat",7,14.476644654393196
+dry,ppt,"value ~ s(elev, k = 3) + coast + lat",8,14.082448520859083
+dry,ppt,"value ~ s(elev, k = 3) + coast + lat",9,14.394954014579454
+dry,ppt,"value ~ s(elev, k = 3) + coast + lat",10,13.796780173341434
+dry,ppt,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",1,14.079000095486641
+dry,ppt,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",2,13.928426940480868
+dry,ppt,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",3,14.062159874240557
+dry,ppt,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",4,14.250620089213053
+dry,ppt,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",5,14.089994875709216
+dry,ppt,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",6,14.690555109620094
+dry,ppt,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",7,14.7054334076643
+dry,ppt,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",8,14.432526298125586
+dry,ppt,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",9,14.586564545551935
+dry,ppt,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",10,14.051575533548991
+dry,t_mean,"value ~ s(elev, k = 3)",1,1.2940473890542987
+dry,t_mean,"value ~ s(elev, k = 3)",2,1.33784009376367
+dry,t_mean,"value ~ s(elev, k = 3)",3,1.327442515285811
+dry,t_mean,"value ~ s(elev, k = 3)",4,1.284923849836987
+dry,t_mean,"value ~ s(elev, k = 3)",5,1.3410070617755265
+dry,t_mean,"value ~ s(elev, k = 3)",6,1.334087903936704
+dry,t_mean,"value ~ s(elev, k = 3)",7,1.3164753215630869
+dry,t_mean,"value ~ s(elev, k = 3)",8,1.3278654257297513
+dry,t_mean,"value ~ s(elev, k = 3)",9,1.307922196157775
+dry,t_mean,"value ~ s(elev, k = 3)",10,1.30764922823906
+dry,t_mean,"value ~ s(elev, k = 3) + coast + lat",1,1.6695683061043416
+dry,t_mean,"value ~ s(elev, k = 3) + coast + lat",2,1.7252867959976195
+dry,t_mean,"value ~ s(elev, k = 3) + coast + lat",3,1.7162406315167749
+dry,t_mean,"value ~ s(elev, k = 3) + coast + lat",4,1.661566464559238
+dry,t_mean,"value ~ s(elev, k = 3) + coast + lat",5,1.7410979485273357
+dry,t_mean,"value ~ s(elev, k = 3) + coast + lat",6,1.727862303853034
+dry,t_mean,"value ~ s(elev, k = 3) + coast + lat",7,1.6541620244105664
+dry,t_mean,"value ~ s(elev, k = 3) + coast + lat",8,1.6960324897448207
+dry,t_mean,"value ~ s(elev, k = 3) + coast + lat",9,1.634547401531538
+dry,t_mean,"value ~ s(elev, k = 3) + coast + lat",10,1.6849574732462551
+dry,t_mean,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",1,1.380252262202898
+dry,t_mean,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",2,1.4391804443677263
+dry,t_mean,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",3,1.4364281406799955
+dry,t_mean,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",4,1.3868193947156275
+dry,t_mean,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",5,1.452863937520981
+dry,t_mean,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",6,1.4740654230276737
+dry,t_mean,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",7,1.3764987606048587
+dry,t_mean,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",8,1.4087497004270542
+dry,t_mean,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",9,1.3674201431751252
+dry,t_mean,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",10,1.394330185143151
+rainy,ppt,"value ~ s(elev, k = 3)",1,127.08247333383561
+rainy,ppt,"value ~ s(elev, k = 3)",2,125.13658516899744
+rainy,ppt,"value ~ s(elev, k = 3)",3,130.55664373143514
+rainy,ppt,"value ~ s(elev, k = 3)",4,131.54633139276504
+rainy,ppt,"value ~ s(elev, k = 3)",5,131.76686869176228
+rainy,ppt,"value ~ s(elev, k = 3)",6,135.36520789225895
+rainy,ppt,"value ~ s(elev, k = 3)",7,133.0965791978836
+rainy,ppt,"value ~ s(elev, k = 3)",8,130.61064982080458
+rainy,ppt,"value ~ s(elev, k = 3)",9,132.6967837732633
+rainy,ppt,"value ~ s(elev, k = 3)",10,128.0887894589106
+rainy,ppt,"value ~ s(elev, k = 3) + coast + lat",1,77.20949619181951
+rainy,ppt,"value ~ s(elev, k = 3) + coast + lat",2,75.3269825041294
+rainy,ppt,"value ~ s(elev, k = 3) + coast + lat",3,78.75640510837238
+rainy,ppt,"value ~ s(elev, k = 3) + coast + lat",4,81.06836362894376
+rainy,ppt,"value ~ s(elev, k = 3) + coast + lat",5,78.65833425029119
+rainy,ppt,"value ~ s(elev, k = 3) + coast + lat",6,83.72950238045057
+rainy,ppt,"value ~ s(elev, k = 3) + coast + lat",7,81.61969020644824
+rainy,ppt,"value ~ s(elev, k = 3) + coast + lat",8,81.43462651022276
+rainy,ppt,"value ~ s(elev, k = 3) + coast + lat",9,81.90410273512205
+rainy,ppt,"value ~ s(elev, k = 3) + coast + lat",10,77.42348895406722
+rainy,ppt,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",1,87.27173028882345
+rainy,ppt,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",2,84.67261077578863
+rainy,ppt,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",3,87.91565394878387
+rainy,ppt,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",4,89.08157022968928
+rainy,ppt,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",5,88.0345252181689
+rainy,ppt,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",6,92.11688613971074
+rainy,ppt,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",7,91.80892535750071
+rainy,ppt,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",8,90.07759601561229
+rainy,ppt,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",9,91.12172452656428
+rainy,ppt,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",10,85.93194540023804
+rainy,t_mean,"value ~ s(elev, k = 3)",1,1.4734972508668895
+rainy,t_mean,"value ~ s(elev, k = 3)",2,1.522531498058638
+rainy,t_mean,"value ~ s(elev, k = 3)",3,1.5220122609933222
+rainy,t_mean,"value ~ s(elev, k = 3)",4,1.460883704066278
+rainy,t_mean,"value ~ s(elev, k = 3)",5,1.5383423397223168
+rainy,t_mean,"value ~ s(elev, k = 3)",6,1.501156890384357
+rainy,t_mean,"value ~ s(elev, k = 3)",7,1.489522148640951
+rainy,t_mean,"value ~ s(elev, k = 3)",8,1.5186876487970355
+rainy,t_mean,"value ~ s(elev, k = 3)",9,1.487188767059645
+rainy,t_mean,"value ~ s(elev, k = 3)",10,1.512188808361692
+rainy,t_mean,"value ~ s(elev, k = 3) + coast + lat",1,1.5495597553571054
+rainy,t_mean,"value ~ s(elev, k = 3) + coast + lat",2,1.5971552813053143
+rainy,t_mean,"value ~ s(elev, k = 3) + coast + lat",3,1.5811581493457163
+rainy,t_mean,"value ~ s(elev, k = 3) + coast + lat",4,1.5274560312191665
+rainy,t_mean,"value ~ s(elev, k = 3) + coast + lat",5,1.6107113877137513
+rainy,t_mean,"value ~ s(elev, k = 3) + coast + lat",6,1.5829828299363464
+rainy,t_mean,"value ~ s(elev, k = 3) + coast + lat",7,1.5408207147280375
+rainy,t_mean,"value ~ s(elev, k = 3) + coast + lat",8,1.5785869432290398
+rainy,t_mean,"value ~ s(elev, k = 3) + coast + lat",9,1.5233429419914888
+rainy,t_mean,"value ~ s(elev, k = 3) + coast + lat",10,1.5706533532142666
+rainy,t_mean,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",1,1.2425164279143013
+rainy,t_mean,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",2,1.2915998200734464
+rainy,t_mean,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",3,1.283906654540698
+rainy,t_mean,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",4,1.2347087145090128
+rainy,t_mean,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",5,1.3071688550631217
+rainy,t_mean,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",6,1.3092527742306401
+rainy,t_mean,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",7,1.2465174113909407
+rainy,t_mean,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",8,1.2695034944454833
+rainy,t_mean,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",9,1.2315631640275329
+rainy,t_mean,"value ~ s(elev, k = 3) + s(coast, lat, k = 5)",10,1.2636245469649667
