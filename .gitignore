@@ -4,18 +4,7 @@
 
 # Ignore large data files
 data/elevation
-data/climate/chelsa
-
-
-#*.shp
-#*.shx
-#*.cpg
-#*.prj
-#*.dbf
-#*.xml
-#*.sbn
-#*.sbx
-#*.gpkg
+data/climate
 
 # Session Data files
 .RData
@@ -53,28 +42,5 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
-#ignore these files
-
-# ignore data
-data/raw
-data/climate/raw
-data/historical_data/
-data/results
-data/spatial/elevation
-data/spatial/Elevation
-data/output/*.tif
-
-# ignore the sentinel classification from 2018 (can be accessed online)
-data/spatial/2018-nilgiris/2018.tif
-
-# remove occurence data
-data/*-occurrence-data.csv
-
-data/output/data_clim_daily.csv
-data/output/data_for_gam.csv
-data/output/data_monthly_climate.csv
-
 .Rproj.user
 
-# allow chelsa list
-!*envidatS3paths.txt
