@@ -4,11 +4,11 @@ editor_options:
 bibliography: references.bib
 ---
 
-## Visualizing time series of change  
+# Visualizing time series of change  
 
 From our previous visualizations, one could potentially attribute changes in grassland area in 2018 to expansion of forests and plantations over time. However, our interpretations are restricted to simply two time points over time. Here, we include the addition of data from three intermediate time periods: 1910 (Survey of India map that is partially digitized), 1973 and 1995 (the latter two are published maps from @arasumani2019). 
 
-### Load necessary libraries
+## Load necessary libraries
 ```{r}
 library(sf)
 library(raster)
@@ -24,14 +24,14 @@ library(extrafont)
 
 ## Load processed land cover rasters
 ```{r}
-rast1848 <- terra::rast("results/processed-rasters/1848.tif")
-rast2018 <- terra::rast("results/processed-rasters/2018.tif")
+rast1848 <- terra::rast("results/landcover/1848.tif")
+rast2018 <- terra::rast("results/landcover/2018.tif")
 ```
 
 ## Loading data from the 1910 map
 ```{r}
 # list all shapefiles in the directory
-nil1910 <- list.files("data/spatial/1910-nilgiris/", full.names = T, recursive = T, pattern=".shp$")
+nil1910 <- list.files("data/landcover/1910-nilgiris/", full.names = T, recursive = T, pattern=".shp$")
 
 # create vector files
 ag1910 <- st_read(nil1910[1]) # type: multipolygon
@@ -132,8 +132,8 @@ levels(rast1910) <- landcover_reclass
 ## Loading the 1973 and 1995 data
 ```{r}
 # load the 1973 and 1995 shapefiles
-nil1973 <- st_read("data/spatial/1973-nilgiris/1973.shp")
-nil1995 <- st_read("data/spatial/1995-nilgiris/1995.shp")
+nil1973 <- st_read("data/landcover/1973-nilgiris/1973.shp")
+nil1995 <- st_read("data/landcover/1995-nilgiris/1995.shp")
 
 # Let's first add class name to nil1973 shapefile
 nil1973 <- nil1973 %>%
@@ -236,7 +236,7 @@ colors1848 <- c(
   '#be4fc4', # agriculture, violetish
   '#c17111', # plantations, brownish
   '#b0a69d', # settlements, grayish
-  '#04a310', # shola forests, lighter green
+  '#025a05', # shola forests, dark green
   '#cbb315', # shola grasslands, yellowish
   '#2035df'  # waterbodies, royal blue
 )
@@ -244,20 +244,20 @@ colors1848 <- c(
 colors1973 <- c(
   '#be4fc4', # agriculture, violetish
   '#b0a69d', # settlements, grayish
-  '#04a310', # shola forests, lighter green
+  '#025a05', # shola forests, dark green
   '#cbb315', # shola grasslands, yellowish
-  '#025a05', # tea plantations, dark greenish
+  '#04a310', # tea plantations, light green
   '#c17111', # timber plantations, brownish
   '#2035df'  # waterbodies, royal blue
 )
 
 colors2018 <- c(
   '#be4fc4', # agriculture, violetish
-  '#04a310', # shola forests, lighter green
+ '#025a05', # shola forests, dark green
   '#cbb315', # shola grasslands, yellowish
   '#c17111', # timber plantations, brownish
   '#b0a69d', # settlements, grayish
-  '#025a05', # tea plantations, dark greenish
+ '#04a310', # tea plantations, light green
   '#2035df'  # waterbodies, royal blue
 )
 
@@ -289,16 +289,18 @@ legend("bottom",
 dev.off()
 ```
 
+![Landscape change over time with the inclusion of data across 1848, 1910, 1973, 1995 and 2018 revealed similar conclusions as before](figs/fig_landCover_timeSeries.png)
+
 ## Subsume plantations into one category for 1973, 1995, and 2018
 
 Since 1848 had very few to no tea plantations and only timber plantations were present at the time, we reclassify timber plantations into the plantations category for the 1973, 1995 and 2018 rasters to ease comparisons. 
 ```{r}
 # load existing reclassified 2018 raster
-rast2018 <- terra::rast("results/processed-rasters/2018reclassified.tif")
+rast2018 <- terra::rast("results/landcover/2018reclassified.tif")
 rast2018 <- resample(rast2018, rast1973, method = "near")
 
 # read reclassification matrix
-reclassification_matrix <- read.csv("data/spatial/1973-nilgiris/reclassification-matrix.csv")
+reclassification_matrix <- read.csv("data/landcover/1973-nilgiris/reclassification-matrix.csv")
 reclassification_matrix <- as.matrix(reclassification_matrix[, c("V1", "To")])
 
 # reclassification
@@ -327,7 +329,7 @@ levels(rast1995_reclassified) <- landcover_reclass
 colors1973reclass <- c(
   '#be4fc4', # agriculture, violetish
   '#b0a69d', # settlements, grayish
-  '#04a310', # shola forests, lighter green
+  '#025a05', # shola forests, dark green
   '#cbb315', # shola grasslands, yellowish
   '#c17111', # plantations, brownish
   '#2035df'  # waterbodies, royal blue
@@ -335,7 +337,7 @@ colors1973reclass <- c(
 
 colors2018reclass <- c(
   '#be4fc4', # agriculture, violetish
-  '#04a310', # shola forests, lighter green
+  '#025a05', # shola forests, dark green
   '#cbb315', # shola grasslands, yellowish
   '#c17111', # plantations, brownish
   '#b0a69d', # settlements, grayish
@@ -369,6 +371,8 @@ legend("bottom",
 dev.off()
 ```
 
+![Landscape change over time with tea plantations and timber plantations subsumed into a single category](figs/fig_landCover_timeSeries_reclassified.png)
+
 ## Creating smaller regions of interest for comparison
 
 While comparing a time series of landscape change shows how different land cover types have expanded or contracted over time, the broader regions of interest are slightly different across time periods. Here, I subset rasters by cropping smaller extents, prior to visualization.
@@ -392,25 +396,25 @@ png(filename = "figs/fig_landCover_timeSeries_southWesternRegion.png",
 par(mfrow = c(2,3))
 plot(sw1848, col = c('#be4fc4', # agriculture, violetish
   '#b0a69d', # settlements, grayish
-  '#04a310', # shola forests, lighter green
+  '#025a05', # shola forests, dark green
   '#cbb315', # shola grasslands, yellowish
   '#2035df'  # waterbodies, royal blue
 ),main = "1848", legend = FALSE)
 plot(sw1910, col = c(
   '#b0a69d', # settlements, grayish
-  '#04a310', # shola forests, lighter green
+  '#025a05', # shola forests, dark green
   '#cbb315', # shola grasslands, yellowish
   '#2035df'  # waterbodies, royal blue
 ), main = "1910", legend = FALSE)
 plot(sw1973, col = c('#be4fc4', # agriculture, violetish
-  '#04a310', # shola forests, lighter green
+  '#025a05', # shola forests, dark green
   '#cbb315', # shola grasslands, yellowish
   '#c17111', # plantations, brownish
   '#2035df'  # waterbodies, royal blue
 ), main = "1973",legend = FALSE)
 plot(sw1995, col = c('#be4fc4', # agriculture, violetish
                      '#b0a69d', # settlements, grayish
-  '#04a310', # shola forests, lighter green
+   '#025a05', # shola forests, dark green
   '#cbb315', # shola grasslands, yellowish
   '#c17111', # plantations, brownish
   '#2035df'  # waterbodies, royal blue
@@ -448,13 +452,13 @@ png(filename = "figs/fig_landCover_timeSeries_westernRegion.png",
 
 par(mfrow = c(2,3))
 plot(w1848, col = c('#be4fc4', # agriculture, violetish
-  '#04a310', # shola forests, lighter green
+   '#025a05', # shola forests, dark green
   '#cbb315' # shola grasslands, yellowish
 ),main = "1848", legend = FALSE)
 plot(w1910, col = c(
   '#be4fc4',
   '#b0a69d', # settlements, grayish
-  '#04a310', # shola forests, lighter green
+  '#025a05', # shola forests, dark green
   '#cbb315', # shola grasslands, yellowish
   '#2035df'  # waterbodies, royal blue
 ), main = "1910", legend = FALSE)
@@ -475,6 +479,10 @@ legend("bottom",
        ncol = 2)
 dev.off()
 ```
+
+![Comparing changes across the south-western quandrant of the map over time](figs/fig_landCover_timeSeries_southWesternRegion.png)
+
+![Comparing changes across the western Nilgiris over time](figs/fig_landCover_timeSeries_westernRegion.png)
 
 ## Comparisons only above 1400 meters in elevation 
 
@@ -511,3 +519,4 @@ legend("bottom",
 dev.off()
 ```
 
+![Comparing data above 1400 meters along revealed a similar result of grassland loss and forest increase](figs/fig_landCover_timeSeries_above1400meters.png)
