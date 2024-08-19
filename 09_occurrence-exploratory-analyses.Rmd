@@ -7,7 +7,7 @@ editor_options:
 
 This script carries out exploratory analysis of historical and modern occurrence data from the Nilgiri hills.   
 
-### Load necessary libraries
+## Load necessary libraries
 ```{r}
 library(dplyr)
 library(stringr)
@@ -17,7 +17,7 @@ library(RColorBrewer)
 library(extrafont)
 ```
 
-### Load the historical occurrence data and explore patterns
+## Load the historical occurrence data and explore patterns
 
 The historical occurrence data is a combination of data from museum specimens and those observations made in published literature/journals (titled journal data). We apply the following key filters on this dataset prior to carrying out further exploratory analyses: a) we subset historical data to only include specimen information until the year 1950 and b) we excluded historical sampling locations that had very few records (total specimen data < 10).
 ```{r}
@@ -33,7 +33,7 @@ hist_occ <- hist_occ %>%
 
 # total species count across historical data
 spp_count <- hist_occ %>%
-  group_by(scientific_name) %>%
+  group_by(scientific_name, common_name) %>%
   count() # total of 179 species
 
 sppMinThree <- spp_count %>%
@@ -58,7 +58,7 @@ collector <- hist_occ %>%
 # 37 unique collectors/ornithologists who collected museum specimens in this time period, with the maximum number of records by William Davison, followed by R G Wardlaw-Ramsay. 
 ```
 
-### Examining historical data by locality
+## Examining historical data by locality
 ```{r}
 # Twenty unique historical site localities across which species were recorded
 occ_locality <- hist_occ %>%
@@ -69,12 +69,12 @@ occ_locality <- hist_occ %>%
 
 # Examining species by locality
 spp_loc <- hist_occ %>%
-  group_by(scientific_name, historical_site_code) %>%
+  group_by(common_name, historical_site_code) %>%
   count()
 
 # how many unique sites
 prop_count <- spp_loc %>%
-  group_by(scientific_name) %>%
+  group_by(common_name) %>%
   summarise(uniqueSites = length(unique(historical_site_code)))
 ```
 
@@ -104,9 +104,11 @@ ggsave(fig_loc_timePeriod, filename = "figs/fig_histCount_locality.png", width =
 dev.off()
 ```
 
+![A count of historical occurrence data across resurvey locations](figs/fig_histCount_locality.png)
+
 ## Examining species specific counts by locality
 ```{r}
-fig_spp <- ggplot(spp_count, aes(x = reorder(scientific_name, -n), y = n, fill = scientific_name)) +
+fig_spp <- ggplot(spp_count, aes(x = reorder(common_name, -n), y = n, fill = scientific_name)) +
   geom_bar(stat = "identity", position = position_dodge(), fill = "#883107", alpha = 0.9) +
   geom_text(aes(label = n, hjust = "middle", vjust = -0.5),
     position = position_dodge(), angle = 0, size = 5
@@ -130,22 +132,24 @@ ggsave(fig_spp, filename = "figs/fig_histSpp.png", width = 50, height = 20, devi
 dev.off()
 ```
 
+![Species-specific counts of historical data across resurvey locations](figs/fig_histSpp.png)
+
 ## Load modern occurrence data and explore patterns
 ```{r}
 # note, we are only including those species that were reported in the historical data
 # this is mainly done to avoid artificial increases in abundance in the modern time period
 mod_occ <- read.csv("data/modern-occurrence-data.csv") %>%
-  filter(!is.na(species_code)) %>% filter(scientific_name %in% hist_occ$scientific_name) %>%
+  filter(!is.na(species_code)) %>% filter(common_name %in% hist_occ$common_name) %>%
   filter(historical_site_code %in% hist_occ$historical_site_code)
 
 # total observations of species in the modern surveys
 modOcc_spp <- mod_occ %>%
-  group_by(scientific_name) %>%
-  count() # 71 bird species that were common to modern & historical
+  group_by(common_name) %>%
+  count() # 63 bird species that were common to modern & historical
 
 # plot figure of species by locality
 mod_occ_loc <- mod_occ %>%
-  group_by(scientific_name, historical_site_code) %>%
+  group_by(common_name, historical_site_code) %>%
   count()
 
 # figure of species by locality
@@ -154,7 +158,7 @@ fig_modSpp_loc <- ggplot(mod_occ_loc, aes(x = reorder(historical_site_code,-n), 
   geom_text(aes(label = n, hjust = "middle", vjust = -0.5),
     position = position_dodge(), angle = 0, size = 5
   ) +
-  facet_wrap(~scientific_name) +
+  facet_wrap(~common_name) +
   theme_bw() +
   labs(
     x = "\nSpecies and Locality",
@@ -176,3 +180,4 @@ dev.off()
 ## Some interesting patterns of certain species being more abundant/detected in certain sites over others.
 ```
 
+![Modern occurrence data of species across resurvey locations](figs/fig_modSpp_loc.png)
