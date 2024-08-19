@@ -5,24 +5,21 @@ editor_options:
 
 # Prepare Climate Data for Interpolation
 
-```{r}
-# data libs
-# use tidyverse because small data
-# and collab readability
-library(tidyverse) # because data are small
-library(lubridate)
+In this script, we start by curating and processing the climate data. We interpolate the dataset to a fine resolution for future analysis. 
 
-# spatial libs
+## Load libraries
+```{r}
+library(tidyverse) 
+library(lubridate)
 library(terra)
 library(sf)
 ```
 
 ## Prepare climate data
 
-### Read data and add date
-
+Read data and add date
 ```{r}
-clim_files <- list.files("data/climate/raw/iitg-climate", full.names = T)
+clim_files <- list.files("data/climate/historical", full.names = T)
 data <- map(clim_files, read_delim,
   delim = " ", col_names = c("ppt", "tmin", "tmax", "wind")
 )
@@ -78,11 +75,11 @@ data <- filter(
 # save data
 write_csv(
   data,
-  file = "data/output/data_clim_daily.csv"
+  file = "results/climate/data_clim_daily.csv"
 )
 ```
 
-### Summarise by month
+## Summarise by month
 
 ```{r}
 # get daily mean temperature
@@ -112,11 +109,11 @@ data <- summarise(
 # save summary
 write_csv(
   data,
-  "data/output/data_monthly_climate.csv"
+  "results/climate/data_monthly_climate.csv"
 )
 ```
 
-### Prepare for spatial data
+## Prepare for spatial data 
 
 ```{r}
 # get unique data, i.e., from unique coords
@@ -128,8 +125,6 @@ coords <- ungroup(data) |>
 ```
 
 ## Prepare spatial data
-
-### Prepare elevation data
 
 ```{r}
 # get unique coordinates
@@ -147,31 +142,31 @@ ext <- st_bbox(coord_sf) |>
   st_transform(4326)
 
 # load elevation raster
-elevation <- terra::rast("data/spatial/elevation/alt")
+elevation <- terra::rast("data/elevation/alt")
 # crop by extent of study area
 elevation_hills <- terra::crop(elevation, as(ext, "Spatial"))
 
 # save a smaller piece
 terra::writeRaster(
   elevation_hills,
-  "data/spatial/raster_elevation.tif",
+  "results/elevation/raster_elevation.tif",
   overwrite = TRUE
 )
 ```
 
-### Prepare coastline data
+## Prepare coastline data
 
 ```{r}
 # load coastline and elevation
-coast <- st_read("data/spatial/India/India_Boundary.shp")
+coast <- st_read("data/landcover/India_Boundary.shp")
 coast_line <- st_cast(coast, "MULTILINESTRING")
 
 # load small elevation raster
-elev <- terra::rast("data/spatial/raster_elevation.tif")
+elev <- terra::rast("results/elevation/raster_elevation.tif")
 elev_utm <- terra::project(elev, "epsg:32643")
 ```
 
-### Resample raster to 600 m.
+## Resample raster to 600m
 
 ```{r}
 # resample the raster to 600 m from 30m
@@ -187,13 +182,14 @@ elev_600 <- terra::project(elev_utm_600, "epsg:4326")
 
 ```{r}
 # make coast raster
+# the below lines of code take a very long time to run
 coast_raster <- terra::distance(elev_600, terra::vect(coast_line))
 coast_raster <- terra::mask(coast_raster, terra::vect(coast))
 ```
 
 ```{r}
 # latitude raster using copy of elevation and assigning coordinate
-lat_raster <- copy(elev_600)
+lat_raster <- data.table::copy(elev_600)
 terra::values(lat_raster) <- terra::yFromCell(
   lat_raster,
   cell = seq(length(values(lat_raster)))
@@ -209,7 +205,7 @@ names(stack) <- c("coast", "elev", "lat")
 ```{r}
 terra::writeRaster(
   stack,
-  "data/output/raster_gam_stack.tif",
+  "results/climate/raster_gam_stack.tif",
   overwrite = T
 )
 ```
@@ -251,6 +247,6 @@ data <- mutate(
 # save data
 write_csv(
   data,
-  "data/output/data_for_gam.csv"
+  "results/climate/data_for_gam.csv"
 )
 ```

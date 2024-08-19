@@ -5,10 +5,9 @@ editor_options:
 
 # Reconstructing climate data
 
-## Prepare weather and spatial data
+This script is identical to previous scripts except that we shall run only a single model per season and climate variable, but for multiple time chunks, of about 30 years.
 
-These steps are identical to those in `run_clim_gams`, except that we shall run only a single model per season and climate variable, but for multiple time chunks, of about 30 years.
-
+## Load libraries
 ```{r}
 # for data
 library(tidyverse)
@@ -21,15 +20,15 @@ library(mgcv)
 library(terra)
 ```
 
-Load data prepared for the GAM, and the stack predictor raster.
+## Load data prepared for the GAM, and the stack predictor raster.
 
 ```{r}
 # read data
-data <- read_csv("data/output/data_for_gam.csv")
-stack <- terra::rast("data/output/raster_gam_stack.tif")
+data <- read_csv("results/climate/data_for_gam.csv")
+stack <- terra::rast("results/climate/raster_gam_stack.tif")
 ```
 
-Prepare data covariates and raster.
+## Prepare data covariates and raster.
 
 ```{r}
 # prepare data for gam fitting
@@ -50,7 +49,7 @@ data <- mutate(
 values(stack[["coast"]]) <- values(stack[["coast"]]) / 1000
 ```
 
-Pivot longer to separate by variable.
+## Pivot longer to separate by variable.
 
 ```{r}
 # pivot longer
@@ -67,7 +66,7 @@ data <- filter(
 )
 ```
 
-Split data by variable, season, and year bin (already assigned in `prep-gam-repdictors-climDownscaling`.
+## Split data by variable, season, and year bin
 
 ```{r}
 data <- nest(
@@ -88,7 +87,7 @@ form_temp <- "value ~ s(elev, k = 3)"
 form_ppt <- "value ~ s(elev, k = 3) + coast + lat"
 ```
 
-Assign formula to variable.
+## Assign formula to variable.
 
 ```{r}
 # assign formula as a character for now
@@ -100,7 +99,7 @@ data <- mutate(
 )
 ```
 
-Fit GAMs.
+## Fit GAMs
 
 ```{r}
 # fit models
@@ -115,10 +114,10 @@ data <- mutate(
 )
 ```
 
-Save model data.
+## Save model data.
 
 ```{r}
-save(data, file = "data/output/model_reconstruction_climate.Rds")
+save(data, file = "results/climate/model_reconstruction_climate.Rds")
 ```
 
 ## Predict over static environment
@@ -126,6 +125,13 @@ save(data, file = "data/output/model_reconstruction_climate.Rds")
 Get predictions
 
 ```{r}
+## ensure that NAs are removed from the stack object before running the model projections
+terra::global(stack, fun = "isNA") # this tells us that two raster layers within the stack object have NA values
+stack$coast[is.na(stack$coast)] <- 0
+stack$elev[stack$elev < 0] <- NA
+stack$elev[is.na(stack$elev)] <- 0
+stack$elev <- as.numeric(stack$elev)
+
 # save model predictions
 model_pred <- map(
   data$mod, function(g) {
@@ -155,15 +161,15 @@ Read in correction layers.
 ```{r}
 # read in correction layers
 temp_correction <- terra::rast(
-  "data/output/raster_correction_layers_temp.tif"
+  "results/climate/raster_correction_layers_temp.tif"
 )
 
 ppt_correction <- terra::rast(
-  "data/output/raster_correction_layers_ppt.tif"
+  "results/climate/raster_correction_layers_ppt.tif"
 )
 ```
 
-Link correction layers with predictions.
+## Link correction layers with predictions
 
 ```{r}
 # assign correction layer
@@ -221,7 +227,7 @@ pwalk(
 
     terra::writeRaster(
       corrected,
-      glue("data/output/raster_reconstructed_{climvar}_{season}.tif")
+      glue("results/climate/raster_reconstructed_{climvar}_{season}.tif")
     )
   }
 )

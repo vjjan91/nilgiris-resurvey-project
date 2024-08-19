@@ -22,7 +22,7 @@ data <- read_csv("results/climate/data_for_gam.csv")
 stack <- terra::rast("results/climate/raster_gam_stack.tif")
 ```
 
-###Prepare data covariates and raster.
+## Prepare data covariates and raster
 
 ```{r}
 # prepare data for gam fitting
@@ -114,6 +114,13 @@ save(data, file = "results/climate/model_gam_climate.Rds")
 Get predictions
 
 ```{r}
+## ensure that NAs are removed from the stack object before running the model projections
+terra::global(stack, fun = "isNA") # this tells us that two raster layers within the stack object have NA values
+stack$coast[is.na(stack$coast)] <- 0
+stack$elev[stack$elev < 0] <- NA
+stack$elev[is.na(stack$elev)] <- 0
+stack$elev <- as.numeric(stack$elev)
+
 # save model predictions
 model_pred <- map(
   data$mod, function(g) {
@@ -129,7 +136,7 @@ terra::writeRaster(model_pred, "results/climate/data_gam_pred.tif")
 model_pred <- terra::rast("results/climate/data_gam_pred.tif")
 ```
 
-### Average predictions over 1970 -- 2010.
+## Average predictions over 1970 to 2010.
 
 ```{r}
 # assign as list column
@@ -178,7 +185,7 @@ data_pred |>
 
 ## Get BIOCLIM data
 
-### Get mean temperature
+We obtained Bioclimatic data from CHELSA. We do not upload the rasters to GitHub as they are very large in size and these can be downloaded from this link: https://envicloud.wsl.ch/#/?prefix=chelsa%2Fchelsa_V1
 
 ```{r}
 patterns <- c("tmin", "tmax")
@@ -187,7 +194,7 @@ patterns <- c("tmin", "tmax")
 tkAvg <- map(patterns, function(pattern) {
   # list the paths
   files <- list.files(
-    path = "data/spatial/chelsa",
+    path = "data/climate/chelsa",
     full.names = TRUE,
     recursive = TRUE,
     pattern = pattern
@@ -242,17 +249,19 @@ names(chelsa_t_mean) <- c("chelsa_temp_rainy_6_11", "chelsa_temp_dry_12_5")
 # save stack
 terra::writeRaster(
   chelsa_t_mean,
-  filename = "data/output/chelsa_temp_stack.tif",
+  filename = "results/climate/chelsa_temp_stack.tif",
   overwrite = TRUE
 )
 ```
 
-### Get precipitation
+## Get precipitation data
+
+We obtain precipitation data from CHELSA, which can be accessed at this link here: https://envicloud.wsl.ch/#/?prefix=chelsa%2Fchelsa_V1
 
 ```{r}
 # list precipitation rasters --- get from BIOCLIM
 ppt <- list.files(
-  path = "data/spatial/chelsa",
+  path = "data/climate/chelsa",
   full.names = TRUE,
   recursive = TRUE,
   pattern = "prec"
@@ -278,7 +287,7 @@ names(chelsa_ppt_sum) <- c("chelsa_ppt_rainy_6_11", "chelsa_ppt_dry_12_5")
 # save stack
 terra::writeRaster(
   chelsa_ppt_sum,
-  filename = "data/output/chelsa_ppt_stack.tif",
+  filename = "results/climate/chelsa_ppt_stack.tif",
   overwrite = TRUE
 )
 ```
@@ -316,21 +325,19 @@ sample_locations <-
 # save data
 write_csv(
   sample_locations,
-  file = "data/output/data_sample_coords_gam_validation.csv"
+  file = "results/climate/data_sample_coords_gam_validation.csv"
 )
 ```
 
 ```{r}
 sample_locations <- read_csv(
-  "data/output/data_sample_coords_gam_validation.csv"
+  "results/climate/data_sample_coords_gam_validation.csv"
 )
 ```
 
 ## Compare BIOCLIM and model predictions
 
-### Link with samples
-
-First sample locations.
+First sample locations
 
 ```{r}
 # melt data
@@ -357,7 +364,7 @@ sample_locations <- mutate(
 )
 ```
 
-Link with GAM predictions.
+## Link with GAM predictions
 
 ```{r}
 # remove t_sd
@@ -379,7 +386,7 @@ data_pred <- left_join(
 )
 ```
 
-### Get GAM predictions at chelsa sample locations.
+## Get GAM predictions at chelsa sample locations.
 
 ```{r}
 # sample locations from GAM predictions
@@ -423,7 +430,7 @@ data_gam_validate <- data_gam_validate |>
 # save data
 write_csv(
   data_gam_validate,
-  file = "data/output/data_gam_validate_compare.csv"
+  file = "results/climate/data_gam_validate_compare.csv"
 )
 ```
 
@@ -456,7 +463,7 @@ data_mae <-
 # save data
 write_csv(
   data_mae,
-  file = "data/output/data_gam_comparison_mae.csv"
+  file = "results/climate/data_gam_comparison_mae.csv"
 )
 ```
 
@@ -464,13 +471,9 @@ write_csv(
 
 ```{r}
 # read survey sites
-survey_sites <- read_excel(
-  "data/raw/2020-resurvey-sites-master.csv.xlsx"
-) |>
-  rename(
-    x = "longitude",
-    y = "latitude"
-  )
+survey_sites <- read.csv("data/list-of-resurvey-locations.csv")
+names(survey_sites)[4] <- "x"
+names(survey_sites)[5] <- "y"
 
 # sample rasters at survey sites
 # BIOCLIM samples
@@ -483,12 +486,12 @@ survey_sites <- mutate(
 )
 
 # remove id
-survey_sites <- select(survey_sites, -ID)
+survey_sites <- select(survey_sites, -c(site_name, historical_site_code, modern_landCover_type, ID))
 
 # melt data
 survey_sites <- pivot_longer(
   survey_sites,
-  cols = !c("site_code", "x", "y")
+  cols = !c("modern_site_code", "x", "y")
 ) |>
   mutate(
     season = str_extract(
@@ -544,6 +547,6 @@ survey_sites <- survey_sites |>
 # save measures at survey sites
 write_csv(
   survey_sites,
-  file = "data/output/data_gam_compare_survey_sites.csv"
+  file = "results/climate/data_gam_compare_survey_sites.csv"
 )
 ```

@@ -5,12 +5,12 @@ editor_options:
 
 # GAM error in predicting climate
 
+## Load libraries
 ```{r}
 library(tidyverse)
 library(ggplot2)
 library(colorspace)
 library(patchwork)
-
 library(terra)
 library(stars)
 ```
@@ -18,11 +18,11 @@ library(stars)
 ## Load data
 
 ```{r}
-error_data <- read_csv("data/output/data_gam_comparison_mae.csv")
-survey_clim <- read_csv("data/output/data_gam_compare_survey_sites.csv")
+error_data <- read_csv("results/climate/data_gam_comparison_mae.csv")
+survey_clim <- read_csv("results/climate/data_gam_compare_survey_sites.csv")
 
-# load raster
-# load("data/output/model_pred_climate.Rds")
+# load saved object from previous script
+#load("results/climate/model_pred_climate.Rds")
 ```
 
 ## Plot model error
@@ -82,7 +82,7 @@ plots <- map2(
         y = "Mean absolute error",
         title = ifelse(
           cl == "ppt",
-          "Precipation",
+          "Precipitation",
           "Mean temperature"
         )
       )
@@ -104,11 +104,14 @@ plots <- wrap_plots(
 
 ggsave(
   plots,
-  filename = "figures/fig_compare_models_general.png",
+  filename = "figs/fig_compare_models_general.png",
   width = 6,
   height = 8
 )
+dev.off()
 ```
+
+![Comparing the mean absolute errors for the precipitation and temperature models](figs/fig_compare_models_general.png)
 
 ## Compare climate predictions at survey sites
 
@@ -172,20 +175,20 @@ plots_survey_pts <- wrap_plots(
 
 ggsave(
   plots_survey_pts,
-  filename = "figures/fig_survey_site_model_comparison.png",
+  filename = "figs/fig_survey_site_model_comparison.png",
   height = 10, width = 6
 )
 ```
 
-## Plot GAM prediction residuals
+![Comparing predicted values vs. data from Bioclim for rainy and dry seasons for both temperature and precipitation data](figs/fig_survey_site_model_comparison.png)
 
-### Load predicted data
+## Plot GAM prediction residuals
 
 ```{r}
 # load data
-gam_validation_pred <- terra::rast("data/output/gam_pred_valid_avg.tif") |>
+gam_validation_pred <- terra::rast("results/climate/gam_pred_valid_avg.tif") |>
   as.list()
-gam_validation_id <- read_csv("data/output/gam_model_formulas.csv")
+gam_validation_id <- read_csv("results/climate/gam_model_formulas.csv")
 
 # select and save
 gam_validation_pred <- gam_validation_pred[gam_validation_id$climvar %in%
@@ -196,12 +199,12 @@ gam_validation_id <- filter(gam_validation_id, climvar %in% c("ppt", "t_mean"))
 gam_validation_data <- mutate(gam_validation_id, prediction = gam_validation_pred)
 ```
 
-### Load BIOCLIM data
+## Load processed BIOCLIM data
 
 ```{r}
-chelsa_temp <- terra::rast("data/output/chelsa_temp_stack.tif") |>
+chelsa_temp <- terra::rast("results/climate/chelsa_temp_stack.tif") |>
   as.list()
-chelsa_ppt <- terra::rast("data/output/chelsa_ppt_stack.tif") |>
+chelsa_ppt <- terra::rast("results/climate/chelsa_ppt_stack.tif") |>
   as.list()
 
 # make data
@@ -216,7 +219,7 @@ chelsa_data <-
   )
 ```
 
-### Get prediction as fraction of BIOCLIM layers
+## Get prediction as fraction of BIOCLIM layers
 
 ```{r}
 # link prediction and residual
@@ -232,7 +235,7 @@ gam_validation_data <- mutate(
 )
 ```
 
-### Temperature fractions
+## Temperature fractions
 
 ```{r}
 plots_temp_resid <- filter(gam_validation_data, climvar == "t_mean") |>
@@ -281,7 +284,7 @@ plots_temp_resid <- pmap(
 plots_temp_resid[[1]]
 ```
 
-### Precipitation fractions
+## Precipitation fractions
 
 ```{r}
 plots_ppt_resid <- filter(gam_validation_data, climvar == "ppt") |>
@@ -334,16 +337,20 @@ plots_ppt_resid[[1]]
 # save residual plots
 ggsave(
   plots_temp_resid,
-  filename = "figures/fig_temp_resid.png",
+  filename = "figs/fig_temp_resid.png",
   width = 9, height = 7
 )
 
 ggsave(
   plots_ppt_resid,
-  filename = "figures/fig_ppt_resid.png",
+  filename = "figs/fig_ppt_resid.png",
   width = 9, height = 7
 )
 ```
+
+![Bioclimatic prediction across GAM models for temperature](figs/fig_temp_resid.png)
+
+![Bioclimatic predictions for precipitation](figs/fig_ppt_resid.png)
 
 ## Save climate correction layers
 
@@ -355,7 +362,7 @@ We then save the fraction, BIOCLIM / prediction, as a correction layer --- one l
 This allows us to fit GAMs to chunks of historical climate data, using physical predictors as covariates, and to then correct the resulting spatial prediction using the correction layer.
 Hence the 'true' historical value of a climate variable is $\text{GAM prediction} \times \text{correction factor}$, where the correction factor is the cell-specific value from the correction layers.
 
-### Seasonal mean temperature correction layer
+## Seasonal mean temperature correction layer
 
 ```{r}
 # subset validation dataset
@@ -391,11 +398,11 @@ names(temp_correction_layer) <- c(
 # save the layer
 terra::writeRaster(
   temp_correction_layer,
-  filename = "data/output/raster_correction_layers_temp.tif"
+  filename = "results/climate/raster_correction_layers_temp.tif"
 )
 ```
 
-### Seasonal total rainfall correction layer
+## Seasonal total rainfall correction layer
 
 ```{r}
 # subset validation dataset
@@ -431,6 +438,6 @@ names(ppt_correction_layer) <- c(
 # save the layer
 terra::writeRaster(
   ppt_correction_layer,
-  filename = "data/output/raster_correction_layers_ppt.tif"
+  filename = "results/climate/raster_correction_layers_ppt.tif"
 )
 ```
