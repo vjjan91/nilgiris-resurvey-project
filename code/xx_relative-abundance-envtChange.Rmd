@@ -39,8 +39,8 @@ scale_z <- function(x){
 
 ## Load processed land cover rasters
 ```{r}
-lc_1848 <- terra::rast("results/processed-rasters/1848.tif")
-lc_2018 <- terra::rast("results/processed-rasters/2018reclassified.tif")
+lc_1848 <- terra::rast("results/landcover/1848.tif")
+lc_2018 <- terra::rast("results/landcover/2018reclassified.tif")
 ```
 
 ## Load modern resurvey locations
@@ -135,10 +135,10 @@ write_csv(
 ## Calculate change in climate values at sampling sites
 ```{r}
 # load climate data
-raster_temp = list.files("data/climate/", pattern = "t_mean", full.names = T) |> 
+raster_temp = list.files("results/climate/", pattern = "t_mean", full.names = T) |> 
   lapply(rast)
 
-raster_rain = list.files("data/climate/", pattern = "ppt", full.names = T) |> 
+raster_rain = list.files("results/climate/", pattern = "ppt", full.names = T) |> 
   lapply(rast)
 
 # get difference between first and last files
@@ -159,7 +159,7 @@ climate_change_names = lapply(climate_change, function(ra) {
   })
 }) |> unlist()
 
-# get mean change within 250m buffer of resurvey locs
+# get mean change within 500m buffer of resurvey locs
 climate_change_sites = lapply(
   climate_change, function(ra) {
     terra::extract(
@@ -200,7 +200,7 @@ trait_dat <- read.csv("data/species-trait-dat.csv")
 We will first prepare the dataframes necessary for running linear mixed models.
 ```{r}
 ## preparing the relative abundance dataframe for a mixed effects model
-names(relAbun) <- c("scientific_name","historical_site_code","year","relAbundance")
+names(relAbun) <- c("common_name","historical_site_code","year","relAbundance")
 
 pivot_1850 <- relAbun %>%
   filter(year == 1850) %>%
@@ -213,7 +213,7 @@ pivot_2021 <- relAbun %>%
 # calculate difference between modern and historical time periods
 # positive value implies gain in relative abundance in 2021 compared to 1850, while negative value implies loss in relative abundance in 2021 compared to 1850
 
-relAbun_wide <- full_join(pivot_1850, pivot_2021, by=c("scientific_name","historical_site_code")) %>%
+relAbun_wide <- full_join(pivot_1850, pivot_2021, by=c("common_name","historical_site_code")) %>%
   mutate("relAbunChange" = (`2021` - `1850`))
 
 ## prepare the land cover data
@@ -260,7 +260,7 @@ glmm_data <- glmm_data %>%
 ## Test for correlations between covariates
 ```{r}
 library(psych)
-for_corr <- glmm_data[,c(16:26)] %>%
+for_corr <- glmm_data[,c(16:25)] %>%
   distinct()
 
 pairs.panels(for_corr)
@@ -271,7 +271,7 @@ pairs.panels(for_corr)
 
 ## Running generalized linear mixed effect models for specific habitat affiliations
 ```{r}
-glmm_habitat <- left_join(glmm_data, trait_dat, by = "scientific_name") 
+glmm_habitat <- left_join(glmm_data, trait_dat, by = "common_name") 
 
 ## grassland birds
 glmm_grassland <-  glmm_habitat %>%
@@ -280,7 +280,7 @@ glmm_grassland <-  glmm_habitat %>%
 # excluded water_bodies from this model because there is no specific biological reasoning for inclusion of that land cover
 m1 <- glmmTMB(relAbunChange ~ shola_grassland_z + plantations_z + 
                 settlements_z + agriculture_z + shola_forest_z +
-                (1|scientific_name),
+                (1|common_name),
               family=gaussian(),
                data = glmm_grassland)
 
@@ -317,8 +317,9 @@ plot(ggpredict(m1))
 # ---
 # Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-grass_clim <- glmmTMB(relAbunChange ~ t_mean_dry_2010_z +
-                         (1|scientific_name),
+grass_clim <- glmmTMB(relAbunChange ~ t_mean_dry_2010_z + 
+                        ppt_dry_2010_z+
+                         (1|common_name),
                       data = glmm_grassland,
                       family = gaussian())
 
@@ -348,7 +349,9 @@ summary(grass_clim)
 # ---
 # Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-plot_model(grass_clim, type = "re")
+plot_model(grass_clim, type = "std")
+plot(ggpredict(grass_clim))
+
 
 ## forest birds
 glmm_forest <-  glmm_habitat %>%
@@ -451,10 +454,5 @@ generalist_clim <- glmmTMB(relAbunChange ~ t_mean_dry_2010_z +
 
 summary(generalist_clim) # non-significant
 ```
-
-
-
-
-
 
 
