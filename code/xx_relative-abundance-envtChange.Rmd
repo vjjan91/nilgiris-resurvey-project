@@ -280,7 +280,7 @@ glmm_grassland <-  glmm_habitat %>%
 # excluded water_bodies from this model because there is no specific biological reasoning for inclusion of that land cover
 m1 <- glmmTMB(relAbunChange ~ shola_grassland_z + plantations_z + 
                 settlements_z + agriculture_z + shola_forest_z +
-                (1|common_name),
+                (1|common_name) + (1|historical_site_code),
               family=gaussian(),
                data = glmm_grassland)
 
@@ -319,7 +319,7 @@ plot(ggpredict(m1))
 
 grass_clim <- glmmTMB(relAbunChange ~ t_mean_dry_2010_z + 
                         ppt_dry_2010_z+
-                         (1|common_name),
+                         (1|common_name) + (1|historical_site_code),
                       data = glmm_grassland,
                       family = gaussian())
 
