@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Section 7 Land cover classification and change detection | Colonial-era landscape changes has led to grassland bird species declines over the last century</title>
+  <meta name="description" content="Section 7 Land cover classification and change detection | Colonial-era landscape changes has led to grassland bird species declines over the last century" />
+  <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Section 7 Land cover classification and change detection | Colonial-era landscape changes has led to grassland bird species declines over the last century" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta name="github-repo" content="vjjan91/nilgiris-resurvey-project" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Section 7 Land cover classification and change detection | Colonial-era landscape changes has led to grassland bird species declines over the last century" />
+  
+  
+  
+
+<meta name="author" content="Vijay Ramesh" />
+<meta name="author" content="VA Akshay" />
+<meta name="author" content="Pratik Rajan Gupte" />
+<meta name="author" content="Amrutha Rajan" />
+<meta name="author" content="Chandrasekar Das" />
+<meta name="author" content="Priyanka Hari Haran" />
+<meta name="author" content="Ian Lockwood" />
+<meta name="author" content="Ashwini Mohan" />
+<meta name="author" content="Morgan W Tingley" />
+<meta name="author" content="VV Robin" />
+<meta name="author" content="Ruth S DeFries" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="analyzing-temperature-and-precipitation-change-over-time.html"/>
+<link rel="next" href="grassland-contractions-forest-expansions.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#attribution"><i class="fa fa-check"></i><b>1.1</b> Attribution</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#data-access"><i class="fa fa-check"></i><b>1.2</b> Data access</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#data-processing"><i class="fa fa-check"></i><b>1.3</b> Data processing</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html"><i class="fa fa-check"></i><b>2</b> Prepare Climate Data for Interpolation</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#load-libraries"><i class="fa fa-check"></i><b>2.1</b> Load libraries</a></li>
+<li class="chapter" data-level="2.2" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#prepare-climate-data"><i class="fa fa-check"></i><b>2.2</b> Prepare climate data</a></li>
+<li class="chapter" data-level="2.3" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#summarise-by-month"><i class="fa fa-check"></i><b>2.3</b> Summarise by month</a></li>
+<li class="chapter" data-level="2.4" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#prepare-for-spatial-data"><i class="fa fa-check"></i><b>2.4</b> Prepare for spatial data</a></li>
+<li class="chapter" data-level="2.5" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#prepare-spatial-data"><i class="fa fa-check"></i><b>2.5</b> Prepare spatial data</a></li>
+<li class="chapter" data-level="2.6" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#prepare-coastline-data"><i class="fa fa-check"></i><b>2.6</b> Prepare coastline data</a></li>
+<li class="chapter" data-level="2.7" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#resample-raster-to-600m"><i class="fa fa-check"></i><b>2.7</b> Resample raster to 600m</a></li>
+<li class="chapter" data-level="2.8" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#link-predictors-to-climate-data"><i class="fa fa-check"></i><b>2.8</b> Link predictors to climate data</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html"><i class="fa fa-check"></i><b>3</b> Validating semi-spatial GAMs for climate</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#load-libraries-1"><i class="fa fa-check"></i><b>3.1</b> Load libraries</a></li>
+<li class="chapter" data-level="3.2" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#load-data-prepared-for-the-gam-and-the-stack-predictor-raster."><i class="fa fa-check"></i><b>3.2</b> Load data prepared for the GAM, and the stack predictor raster.</a></li>
+<li class="chapter" data-level="3.3" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#prepare-data-covariates-and-raster"><i class="fa fa-check"></i><b>3.3</b> Prepare data covariates and raster</a></li>
+<li class="chapter" data-level="3.4" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#pivot-longer-to-separate-by-variable."><i class="fa fa-check"></i><b>3.4</b> Pivot longer to separate by variable.</a></li>
+<li class="chapter" data-level="3.5" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#split-the-data-by-variable."><i class="fa fa-check"></i><b>3.5</b> Split the data by variable.</a></li>
+<li class="chapter" data-level="3.6" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#fit-candidate-models"><i class="fa fa-check"></i><b>3.6</b> Fit candidate models</a>
+<ul>
+<li class="chapter" data-level="3.6.1" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#save-model-data."><i class="fa fa-check"></i><b>3.6.1</b> Save model data.</a></li>
+</ul></li>
+<li class="chapter" data-level="3.7" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#predict-over-static-environment"><i class="fa fa-check"></i><b>3.7</b> Predict over static environment</a></li>
+<li class="chapter" data-level="3.8" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#average-predictions-over-1970-to-2010."><i class="fa fa-check"></i><b>3.8</b> Average predictions over 1970 to 2010.</a></li>
+<li class="chapter" data-level="3.9" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#get-bioclim-data"><i class="fa fa-check"></i><b>3.9</b> Get BIOCLIM data</a></li>
+<li class="chapter" data-level="3.10" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#get-precipitation-data"><i class="fa fa-check"></i><b>3.10</b> Get precipitation data</a></li>
+<li class="chapter" data-level="3.11" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#get-sample-coordinates"><i class="fa fa-check"></i><b>3.11</b> Get sample coordinates</a></li>
+<li class="chapter" data-level="3.12" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#compare-bioclim-and-model-predictions"><i class="fa fa-check"></i><b>3.12</b> Compare BIOCLIM and model predictions</a></li>
+<li class="chapter" data-level="3.13" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#link-with-gam-predictions"><i class="fa fa-check"></i><b>3.13</b> Link with GAM predictions</a></li>
+<li class="chapter" data-level="3.14" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#get-gam-predictions-at-chelsa-sample-locations."><i class="fa fa-check"></i><b>3.14</b> Get GAM predictions at chelsa sample locations.</a></li>
+<li class="chapter" data-level="3.15" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#gam-predictions-at-survey-sites"><i class="fa fa-check"></i><b>3.15</b> GAM predictions at survey sites</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html"><i class="fa fa-check"></i><b>4</b> GAM error in predicting climate</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#load-libraries-2"><i class="fa fa-check"></i><b>4.1</b> Load libraries</a></li>
+<li class="chapter" data-level="4.2" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#load-data"><i class="fa fa-check"></i><b>4.2</b> Load data</a></li>
+<li class="chapter" data-level="4.3" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#plot-model-error"><i class="fa fa-check"></i><b>4.3</b> Plot model error</a></li>
+<li class="chapter" data-level="4.4" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#compare-climate-predictions-at-survey-sites"><i class="fa fa-check"></i><b>4.4</b> Compare climate predictions at survey sites</a></li>
+<li class="chapter" data-level="4.5" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#plot-gam-prediction-residuals"><i class="fa fa-check"></i><b>4.5</b> Plot GAM prediction residuals</a></li>
+<li class="chapter" data-level="4.6" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#load-processed-bioclim-data"><i class="fa fa-check"></i><b>4.6</b> Load processed BIOCLIM data</a></li>
+<li class="chapter" data-level="4.7" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#get-prediction-as-fraction-of-bioclim-layers"><i class="fa fa-check"></i><b>4.7</b> Get prediction as fraction of BIOCLIM layers</a></li>
+<li class="chapter" data-level="4.8" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#temperature-fractions"><i class="fa fa-check"></i><b>4.8</b> Temperature fractions</a></li>
+<li class="chapter" data-level="4.9" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#precipitation-fractions"><i class="fa fa-check"></i><b>4.9</b> Precipitation fractions</a></li>
+<li class="chapter" data-level="4.10" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#save-climate-correction-layers"><i class="fa fa-check"></i><b>4.10</b> Save climate correction layers</a></li>
+<li class="chapter" data-level="4.11" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#seasonal-mean-temperature-correction-layer"><i class="fa fa-check"></i><b>4.11</b> Seasonal mean temperature correction layer</a></li>
+<li class="chapter" data-level="4.12" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#seasonal-total-rainfall-correction-layer"><i class="fa fa-check"></i><b>4.12</b> Seasonal total rainfall correction layer</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html"><i class="fa fa-check"></i><b>5</b> Reconstructing climate data</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#load-libraries-3"><i class="fa fa-check"></i><b>5.1</b> Load libraries</a></li>
+<li class="chapter" data-level="5.2" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#load-data-prepared-for-the-gam-and-the-stack-predictor-raster.-1"><i class="fa fa-check"></i><b>5.2</b> Load data prepared for the GAM, and the stack predictor raster.</a></li>
+<li class="chapter" data-level="5.3" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#prepare-data-covariates-and-raster."><i class="fa fa-check"></i><b>5.3</b> Prepare data covariates and raster.</a></li>
+<li class="chapter" data-level="5.4" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#pivot-longer-to-separate-by-variable.-1"><i class="fa fa-check"></i><b>5.4</b> Pivot longer to separate by variable.</a></li>
+<li class="chapter" data-level="5.5" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#split-data-by-variable-season-and-year-bin"><i class="fa fa-check"></i><b>5.5</b> Split data by variable, season, and year bin</a></li>
+<li class="chapter" data-level="5.6" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#fit-chosen-gams"><i class="fa fa-check"></i><b>5.6</b> Fit chosen GAMs</a></li>
+<li class="chapter" data-level="5.7" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#assign-formula-to-variable."><i class="fa fa-check"></i><b>5.7</b> Assign formula to variable.</a></li>
+<li class="chapter" data-level="5.8" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#fit-gams"><i class="fa fa-check"></i><b>5.8</b> Fit GAMs</a></li>
+<li class="chapter" data-level="5.9" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#save-model-data.-1"><i class="fa fa-check"></i><b>5.9</b> Save model data.</a></li>
+<li class="chapter" data-level="5.10" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#predict-over-static-environment-1"><i class="fa fa-check"></i><b>5.10</b> Predict over static environment</a></li>
+<li class="chapter" data-level="5.11" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#apply-correction-layers"><i class="fa fa-check"></i><b>5.11</b> Apply correction layers</a></li>
+<li class="chapter" data-level="5.12" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#link-correction-layers-with-predictions"><i class="fa fa-check"></i><b>5.12</b> Link correction layers with predictions</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html"><i class="fa fa-check"></i><b>6</b> Analyzing temperature and precipitation change over time</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html#load-necessary-libraries"><i class="fa fa-check"></i><b>6.1</b> Load necessary libraries</a></li>
+<li class="chapter" data-level="6.2" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html#plot-change-in-climate-as-percentages."><i class="fa fa-check"></i><b>6.2</b> Plot change in climate as percentages.</a></li>
+<li class="chapter" data-level="6.3" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html#load-list-of-resurvey-locationshistorical-sites-of-occurrence"><i class="fa fa-check"></i><b>6.3</b> Load list of resurvey locations/historical sites of occurrence</a></li>
+<li class="chapter" data-level="6.4" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html#load-the-climate-rasters"><i class="fa fa-check"></i><b>6.4</b> Load the climate rasters</a></li>
+<li class="chapter" data-level="6.5" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html#combine-site-climate-and-terrain-data"><i class="fa fa-check"></i><b>6.5</b> Combine site climate and terrain data</a></li>
+<li class="chapter" data-level="6.6" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html#plot-all-reconstructed-climate-over-time-colouring-by-elevation-and-grouping-by-site.-each-line-represents-one-modern-site-code."><i class="fa fa-check"></i><b>6.6</b> Plot all reconstructed climate over time colouring by elevation and grouping by site. Each line represents one modern site code.</a></li>
+<li class="chapter" data-level="6.7" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html#test-for-climate-change-over-time"><i class="fa fa-check"></i><b>6.7</b> Test for climate change over time</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html"><i class="fa fa-check"></i><b>7</b> Land cover classification and change detection</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#load-necessary-libraries-1"><i class="fa fa-check"></i><b>7.1</b> Load necessary libraries</a></li>
+<li class="chapter" data-level="7.2" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#processing-digitized-shapefiles-from-the-1848-map"><i class="fa fa-check"></i><b>7.2</b> Processing digitized shapefiles from the 1848 map</a></li>
+<li class="chapter" data-level="7.3" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#rasterization-of-the-1848-shapefiles"><i class="fa fa-check"></i><b>7.3</b> Rasterization of the 1848 shapefiles</a></li>
+<li class="chapter" data-level="7.4" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#load-the-2018-satellite-image"><i class="fa fa-check"></i><b>7.4</b> Load the 2018 satellite image</a></li>
+<li class="chapter" data-level="7.5" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#subsume-plantations-into-one-category-for-2018"><i class="fa fa-check"></i><b>7.5</b> Subsume plantations into one category for 2018</a></li>
+<li class="chapter" data-level="7.6" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#write-the-shapefiles-and-rasters-to-file"><i class="fa fa-check"></i><b>7.6</b> Write the shapefiles and rasters to file</a></li>
+<li class="chapter" data-level="7.7" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#area-wise-comparisons-of-land-cover-change"><i class="fa fa-check"></i><b>7.7</b> Area-wise comparisons of land cover change</a></li>
+<li class="chapter" data-level="7.8" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#barplots-of-land-cover-change"><i class="fa fa-check"></i><b>7.8</b> Barplots of land cover change</a></li>
+<li class="chapter" data-level="7.9" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#validating-the-2018-sentinel-2-classification"><i class="fa fa-check"></i><b>7.9</b> Validating the 2018 Sentinel-2 classification</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html"><i class="fa fa-check"></i><b>8</b> Grassland contractions &amp; forest expansions</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#load-necessary-libraries-2"><i class="fa fa-check"></i><b>8.1</b> Load necessary libraries</a></li>
+<li class="chapter" data-level="8.2" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#load-processed-land-cover-rasters"><i class="fa fa-check"></i><b>8.2</b> Load processed land cover rasters</a></li>
+<li class="chapter" data-level="8.3" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#visualize-forests-across-the-two-time-periods"><i class="fa fa-check"></i><b>8.3</b> Visualize forests across the two time periods</a></li>
+<li class="chapter" data-level="8.4" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#visualize-grassland-area-across-the-two-time-periods"><i class="fa fa-check"></i><b>8.4</b> Visualize grassland area across the two time periods</a></li>
+<li class="chapter" data-level="8.5" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#comparing-if-forests-have-increased-in-locations-where-grasslands-were-formerly-found"><i class="fa fa-check"></i><b>8.5</b> Comparing if forests have increased in locations where grasslands were formerly found?</a></li>
+<li class="chapter" data-level="8.6" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#have-forests-expanded-across-elevations"><i class="fa fa-check"></i><b>8.6</b> Have forests expanded across elevations?</a></li>
+<li class="chapter" data-level="8.7" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#how-do-grassland-patches-vary-by-elevation-across-time-periods"><i class="fa fa-check"></i><b>8.7</b> How do grassland patches vary by elevation across time periods?</a></li>
+<li class="chapter" data-level="8.8" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#comparing-if-plantations-have-increased-in-locations-where-grasslands-were-formerly-found"><i class="fa fa-check"></i><b>8.8</b> Comparing if plantations have increased in locations where grasslands were formerly found?</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html"><i class="fa fa-check"></i><b>9</b> Visualizing time series of change</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#load-necessary-libraries-3"><i class="fa fa-check"></i><b>9.1</b> Load necessary libraries</a></li>
+<li class="chapter" data-level="9.2" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#load-processed-land-cover-rasters-1"><i class="fa fa-check"></i><b>9.2</b> Load processed land cover rasters</a></li>
+<li class="chapter" data-level="9.3" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#loading-data-from-the-1910-map"><i class="fa fa-check"></i><b>9.3</b> Loading data from the 1910 map</a></li>
+<li class="chapter" data-level="9.4" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#rasterizing-of-the-1910-data"><i class="fa fa-check"></i><b>9.4</b> Rasterizing of the 1910 data</a></li>
+<li class="chapter" data-level="9.5" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#loading-the-1973-and-1995-data"><i class="fa fa-check"></i><b>9.5</b> Loading the 1973 and 1995 data</a></li>
+<li class="chapter" data-level="9.6" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#rasterization-of-the-1973-and-1995-data"><i class="fa fa-check"></i><b>9.6</b> Rasterization of the 1973 and 1995 data</a></li>
+<li class="chapter" data-level="9.7" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#visualization-of-landscape-change-over-time"><i class="fa fa-check"></i><b>9.7</b> Visualization of landscape change over time</a></li>
+<li class="chapter" data-level="9.8" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#subsume-plantations-into-one-category-for-1973-1995-and-2018"><i class="fa fa-check"></i><b>9.8</b> Subsume plantations into one category for 1973, 1995, and 2018</a></li>
+<li class="chapter" data-level="9.9" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#creating-smaller-regions-of-interest-for-comparison"><i class="fa fa-check"></i><b>9.9</b> Creating smaller regions of interest for comparison</a></li>
+<li class="chapter" data-level="9.10" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#comparisons-only-above-1400-meters-in-elevation"><i class="fa fa-check"></i><b>9.10</b> Comparisons only above 1400 meters in elevation</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="exploratory-analysis-of-occurrence-data.html"><a href="exploratory-analysis-of-occurrence-data.html"><i class="fa fa-check"></i><b>10</b> Exploratory analysis of occurrence data</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="exploratory-analysis-of-occurrence-data.html"><a href="exploratory-analysis-of-occurrence-data.html#load-necessary-libraries-4"><i class="fa fa-check"></i><b>10.1</b> Load necessary libraries</a></li>
+<li class="chapter" data-level="10.2" data-path="exploratory-analysis-of-occurrence-data.html"><a href="exploratory-analysis-of-occurrence-data.html#load-the-historical-occurrence-data-and-explore-patterns"><i class="fa fa-check"></i><b>10.2</b> Load the historical occurrence data and explore patterns</a></li>
+<li class="chapter" data-level="10.3" data-path="exploratory-analysis-of-occurrence-data.html"><a href="exploratory-analysis-of-occurrence-data.html#examining-historical-data-by-locality"><i class="fa fa-check"></i><b>10.3</b> Examining historical data by locality</a></li>
+<li class="chapter" data-level="10.4" data-path="exploratory-analysis-of-occurrence-data.html"><a href="exploratory-analysis-of-occurrence-data.html#visualizations-of-historical-data"><i class="fa fa-check"></i><b>10.4</b> Visualizations of historical data</a></li>
+<li class="chapter" data-level="10.5" data-path="exploratory-analysis-of-occurrence-data.html"><a href="exploratory-analysis-of-occurrence-data.html#examining-species-specific-counts-by-locality"><i class="fa fa-check"></i><b>10.5</b> Examining species specific counts by locality</a></li>
+<li class="chapter" data-level="10.6" data-path="exploratory-analysis-of-occurrence-data.html"><a href="exploratory-analysis-of-occurrence-data.html#load-modern-occurrence-data-and-explore-patterns"><i class="fa fa-check"></i><b>10.6</b> Load modern occurrence data and explore patterns</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html"><i class="fa fa-check"></i><b>11</b> Species relative abundances over time</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#load-necessary-libraries-5"><i class="fa fa-check"></i><b>11.1</b> Load necessary libraries</a></li>
+<li class="chapter" data-level="11.2" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#load-list-of-resurvey-locations"><i class="fa fa-check"></i><b>11.2</b> Load list of resurvey locations</a></li>
+<li class="chapter" data-level="11.3" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#for-the-historical-occurrence-data-we-will-choose-data-from-two-time-periods-1850-1900-1900-1950."><i class="fa fa-check"></i><b>11.3</b> For the historical occurrence data, we will choose data from two time periods: 1850-1900 &amp; 1900-1950.</a></li>
+<li class="chapter" data-level="11.4" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#load-the-modern-occurrence-data"><i class="fa fa-check"></i><b>11.4</b> Load the modern occurrence data</a></li>
+<li class="chapter" data-level="11.5" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#calculate-dirichlet-distributions-of-relative-abundance"><i class="fa fa-check"></i><b>11.5</b> Calculate dirichlet distributions of relative abundance</a></li>
+<li class="chapter" data-level="11.6" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#calibrating-historical-data-to-modern-survey-data-for-relative-abundance-calculations"><i class="fa fa-check"></i><b>11.6</b> Calibrating historical data to modern survey data for relative abundance calculations</a></li>
+<li class="chapter" data-level="11.7" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#boxplot-visualization-of-overall-relative-abundance-across-timeperiods"><i class="fa fa-check"></i><b>11.7</b> Boxplot visualization of overall relative abundance across timeperiods</a></li>
+<li class="chapter" data-level="11.8" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#species-relative-abundances-at-the-site-level"><i class="fa fa-check"></i><b>11.8</b> Species relative abundances at the site-level</a></li>
+<li class="chapter" data-level="11.9" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#visualizing-differences-in-relative-abundance-over-time-at-the-site-level"><i class="fa fa-check"></i><b>11.9</b> Visualizing differences in relative abundance over time at the site level</a></li>
+<li class="chapter" data-level="11.10" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#writing-results-to-file"><i class="fa fa-check"></i><b>11.10</b> Writing results to file</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><i class="fa fa-check"></i><b>12</b> Examining changes in relative abundance over time as a function of species habitat affiliation</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#load-necessary-libraries-6"><i class="fa fa-check"></i><b>12.1</b> Load necessary libraries</a></li>
+<li class="chapter" data-level="12.2" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#load-data-on-species-relative-abundances"><i class="fa fa-check"></i><b>12.2</b> Load data on species relative abundances</a></li>
+<li class="chapter" data-level="12.3" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#load-species-trait-data"><i class="fa fa-check"></i><b>12.3</b> Load species trait data</a></li>
+<li class="chapter" data-level="12.4" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#visualizing-relative-abundance-change-by-species-across-time-periods-for-grassland-bird-species"><i class="fa fa-check"></i><b>12.4</b> Visualizing relative abundance change by species across time periods for grassland bird species</a></li>
+<li class="chapter" data-level="12.5" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#rank-abundance-plots-of-relative-abundance-by-species-trait-across-time-periods"><i class="fa fa-check"></i><b>12.5</b> Rank abundance plots of relative abundance by species trait across time periods</a></li>
+<li class="chapter" data-level="12.6" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#are-there-significant-decreases-in-relative-abundance-by-time-periods-across-habitat-affiliations"><i class="fa fa-check"></i><b>12.6</b> Are there significant decreases in relative abundance by time periods across habitat affiliations?</a></li>
+<li class="chapter" data-level="12.7" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#forest-birds"><i class="fa fa-check"></i><b>12.7</b> Forest birds</a></li>
+<li class="chapter" data-level="12.8" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#grassland-birds"><i class="fa fa-check"></i><b>12.8</b> Grassland birds</a></li>
+<li class="chapter" data-level="12.9" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#generalist-birds"><i class="fa fa-check"></i><b>12.9</b> Generalist birds</a></li>
+<li class="chapter" data-level="12.10" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#creating-a-combined-figure-for-the-above-three-models"><i class="fa fa-check"></i><b>12.10</b> Creating a combined figure for the above three models</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./"><em>Colonial-era landscape changes has led to grassland bird species declines over the last century</em></a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="land-cover-classification-and-change-detection" class="section level1 hasAnchor" number="7">
+<h1><span class="header-section-number">Section 7</span> Land cover classification and change detection<a href="land-cover-classification-and-change-detection.html#land-cover-classification-and-change-detection" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>In this script, we will process land cover polygons and rasters for multiple time periods (1848 and 2018) across the Nilgiri hills of the Western Ghats biodiversity hotspot. For the year 1848, a survey map (created by Captain John Ouchterlony) was obtained from the British Library and the Tamil Nadu State Archive and was manually digitized to arrive at multiple land cover classes (for more information on the process of digitization, please read the accompanying manuscript and use the READMe section in the GitHub repository). For the year 2018, we relied on satellite imagery from Sentinel-2 (the imagery was classified using Google Earth Engine and more information on the classification can be obtained below).</p>
+<div id="load-necessary-libraries-1" class="section level2 hasAnchor" number="7.1">
+<h2><span class="header-section-number">7.1</span> Load necessary libraries<a href="land-cover-classification-and-change-detection.html#load-necessary-libraries-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="land-cover-classification-and-change-detection.html#cb74-1" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb74-2"><a href="land-cover-classification-and-change-detection.html#cb74-2" tabindex="-1"></a><span class="fu">library</span>(raster)</span>
+<span id="cb74-3"><a href="land-cover-classification-and-change-detection.html#cb74-3" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
+<span id="cb74-4"><a href="land-cover-classification-and-change-detection.html#cb74-4" tabindex="-1"></a><span class="fu">library</span>(stars)</span>
+<span id="cb74-5"><a href="land-cover-classification-and-change-detection.html#cb74-5" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb74-6"><a href="land-cover-classification-and-change-detection.html#cb74-6" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb74-7"><a href="land-cover-classification-and-change-detection.html#cb74-7" tabindex="-1"></a><span class="fu">library</span>(mapview)</span>
+<span id="cb74-8"><a href="land-cover-classification-and-change-detection.html#cb74-8" tabindex="-1"></a><span class="fu">library</span>(landscapemetrics)</span>
+<span id="cb74-9"><a href="land-cover-classification-and-change-detection.html#cb74-9" tabindex="-1"></a><span class="fu">library</span>(scico)</span>
+<span id="cb74-10"><a href="land-cover-classification-and-change-detection.html#cb74-10" tabindex="-1"></a><span class="fu">library</span>(extrafont)</span>
+<span id="cb74-11"><a href="land-cover-classification-and-change-detection.html#cb74-11" tabindex="-1"></a><span class="fu">library</span>(exactextractr)</span></code></pre></div>
+</div>
+<div id="processing-digitized-shapefiles-from-the-1848-map" class="section level2 hasAnchor" number="7.2">
+<h2><span class="header-section-number">7.2</span> Processing digitized shapefiles from the 1848 map<a href="land-cover-classification-and-change-detection.html#processing-digitized-shapefiles-from-the-1848-map" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>We will be loading shapefiles that were digitized by Amrutha Rajan for the 1848 historical map.</p>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="land-cover-classification-and-change-detection.html#cb75-1" tabindex="-1"></a><span class="co"># list all shapefiles in the directory</span></span>
+<span id="cb75-2"><a href="land-cover-classification-and-change-detection.html#cb75-2" tabindex="-1"></a>nil1848 <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="st">&quot;data/landcover/1848-nilgiris/&quot;</span>, <span class="at">full.names =</span> T, <span class="at">recursive =</span> T, <span class="at">pattern=</span><span class="st">&quot;.shp$&quot;</span>)</span>
+<span id="cb75-3"><a href="land-cover-classification-and-change-detection.html#cb75-3" tabindex="-1"></a></span>
+<span id="cb75-4"><a href="land-cover-classification-and-change-detection.html#cb75-4" tabindex="-1"></a><span class="co"># create vector files</span></span>
+<span id="cb75-5"><a href="land-cover-classification-and-change-detection.html#cb75-5" tabindex="-1"></a>ag1848 <span class="ot">&lt;-</span> <span class="fu">st_read</span>(nil1848[<span class="dv">1</span>]) <span class="co"># type: multipolygon; 6 empty geometries</span></span>
+<span id="cb75-6"><a href="land-cover-classification-and-change-detection.html#cb75-6" tabindex="-1"></a>noData1848 <span class="ot">&lt;-</span> <span class="fu">st_read</span>(nil1848[<span class="dv">2</span>]) <span class="co"># type: multipolygon</span></span>
+<span id="cb75-7"><a href="land-cover-classification-and-change-detection.html#cb75-7" tabindex="-1"></a>plantations1848 <span class="ot">&lt;-</span> <span class="fu">st_read</span>(nil1848[<span class="dv">3</span>]) <span class="co"># type: polygon &amp; multipolygon; 1 empty geometry</span></span>
+<span id="cb75-8"><a href="land-cover-classification-and-change-detection.html#cb75-8" tabindex="-1"></a>roads1848 <span class="ot">&lt;-</span> <span class="fu">st_read</span>(nil1848[<span class="dv">4</span>]) <span class="co"># type: linestring</span></span>
+<span id="cb75-9"><a href="land-cover-classification-and-change-detection.html#cb75-9" tabindex="-1"></a>settlements1848 <span class="ot">&lt;-</span> <span class="fu">st_read</span>(nil1848[<span class="dv">5</span>]) <span class="co"># type: polygon &amp; multipolygon; 3 geometries empty</span></span>
+<span id="cb75-10"><a href="land-cover-classification-and-change-detection.html#cb75-10" tabindex="-1"></a>sholaForest1848 <span class="ot">&lt;-</span> <span class="fu">st_read</span>(nil1848[<span class="dv">6</span>]) <span class="co"># type: polygon &amp; multippolygon; 6 geometries empty  </span></span>
+<span id="cb75-11"><a href="land-cover-classification-and-change-detection.html#cb75-11" tabindex="-1"></a>sholaGrassland1848 <span class="ot">&lt;-</span> <span class="fu">st_read</span>(nil1848[<span class="dv">7</span>]) <span class="co"># type: multipolygon</span></span>
+<span id="cb75-12"><a href="land-cover-classification-and-change-detection.html#cb75-12" tabindex="-1"></a>swamps1848 <span class="ot">&lt;-</span> <span class="fu">st_read</span>(nil1848[<span class="dv">8</span>]) <span class="co"># type: polygon &amp; multipolygon; eight geometries are empty</span></span>
+<span id="cb75-13"><a href="land-cover-classification-and-change-detection.html#cb75-13" tabindex="-1"></a>waterBodies1848 <span class="ot">&lt;-</span> <span class="fu">st_read</span>(nil1848[<span class="dv">9</span>]) <span class="co"># type: multipolygon</span></span>
+<span id="cb75-14"><a href="land-cover-classification-and-change-detection.html#cb75-14" tabindex="-1"></a></span>
+<span id="cb75-15"><a href="land-cover-classification-and-change-detection.html#cb75-15" tabindex="-1"></a><span class="co"># explore and fix any issues with the above vector files</span></span>
+<span id="cb75-16"><a href="land-cover-classification-and-change-detection.html#cb75-16" tabindex="-1"></a><span class="co"># we need to ensure consistency across files for the sake of merging them into a single geometry collection</span></span>
+<span id="cb75-17"><a href="land-cover-classification-and-change-detection.html#cb75-17" tabindex="-1"></a></span>
+<span id="cb75-18"><a href="land-cover-classification-and-change-detection.html#cb75-18" tabindex="-1"></a><span class="co"># we notice a range of small issues with the shapefiles above</span></span>
+<span id="cb75-19"><a href="land-cover-classification-and-change-detection.html#cb75-19" tabindex="-1"></a><span class="co"># the geometry type is variable and needs to be consistent</span></span>
+<span id="cb75-20"><a href="land-cover-classification-and-change-detection.html#cb75-20" tabindex="-1"></a><span class="co"># empty geometries need to be removed</span></span>
+<span id="cb75-21"><a href="land-cover-classification-and-change-detection.html#cb75-21" tabindex="-1"></a><span class="co"># attribute names need to be consistent across shapefiles</span></span>
+<span id="cb75-22"><a href="land-cover-classification-and-change-detection.html#cb75-22" tabindex="-1"></a></span>
+<span id="cb75-23"><a href="land-cover-classification-and-change-detection.html#cb75-23" tabindex="-1"></a><span class="co"># first, we will remove empty geometries</span></span>
+<span id="cb75-24"><a href="land-cover-classification-and-change-detection.html#cb75-24" tabindex="-1"></a>ag1848 <span class="ot">&lt;-</span> ag1848[<span class="sc">!</span><span class="fu">st_is_empty</span>(ag1848), ]</span>
+<span id="cb75-25"><a href="land-cover-classification-and-change-detection.html#cb75-25" tabindex="-1"></a>noData1848 <span class="ot">&lt;-</span> noData1848[<span class="sc">!</span><span class="fu">st_is_empty</span>(noData1848), ]</span>
+<span id="cb75-26"><a href="land-cover-classification-and-change-detection.html#cb75-26" tabindex="-1"></a>plantations1848 <span class="ot">&lt;-</span> plantations1848[<span class="sc">!</span><span class="fu">st_is_empty</span>(plantations1848),]</span>
+<span id="cb75-27"><a href="land-cover-classification-and-change-detection.html#cb75-27" tabindex="-1"></a>roads1848 <span class="ot">&lt;-</span> roads1848[<span class="sc">!</span><span class="fu">st_is_empty</span>(roads1848),]</span>
+<span id="cb75-28"><a href="land-cover-classification-and-change-detection.html#cb75-28" tabindex="-1"></a>settlements1848 <span class="ot">&lt;-</span> settlements1848[<span class="sc">!</span><span class="fu">st_is_empty</span>(settlements1848),]</span>
+<span id="cb75-29"><a href="land-cover-classification-and-change-detection.html#cb75-29" tabindex="-1"></a>sholaForest1848 <span class="ot">&lt;-</span> sholaForest1848[<span class="sc">!</span><span class="fu">st_is_empty</span>(sholaForest1848),]</span>
+<span id="cb75-30"><a href="land-cover-classification-and-change-detection.html#cb75-30" tabindex="-1"></a>sholaGrassland1848 <span class="ot">&lt;-</span> sholaGrassland1848[<span class="sc">!</span><span class="fu">st_is_empty</span>(sholaGrassland1848),]</span>
+<span id="cb75-31"><a href="land-cover-classification-and-change-detection.html#cb75-31" tabindex="-1"></a>swamps1848 <span class="ot">&lt;-</span> swamps1848[<span class="sc">!</span><span class="fu">st_is_empty</span>(swamps1848),]</span>
+<span id="cb75-32"><a href="land-cover-classification-and-change-detection.html#cb75-32" tabindex="-1"></a>waterBodies1848 <span class="ot">&lt;-</span> waterBodies1848[<span class="sc">!</span><span class="fu">st_is_empty</span>(waterBodies1848),]</span>
+<span id="cb75-33"><a href="land-cover-classification-and-change-detection.html#cb75-33" tabindex="-1"></a></span>
+<span id="cb75-34"><a href="land-cover-classification-and-change-detection.html#cb75-34" tabindex="-1"></a><span class="co"># fixing attribute tables to ensure they are consistent across shapefiles</span></span>
+<span id="cb75-35"><a href="land-cover-classification-and-change-detection.html#cb75-35" tabindex="-1"></a><span class="fu">names</span>(ag1848) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;name&quot;</span>,<span class="st">&quot;geometry&quot;</span>)</span>
+<span id="cb75-36"><a href="land-cover-classification-and-change-detection.html#cb75-36" tabindex="-1"></a>ag1848<span class="sc">$</span>name <span class="ot">&lt;-</span> <span class="st">&quot;agriculture&quot;</span></span>
+<span id="cb75-37"><a href="land-cover-classification-and-change-detection.html#cb75-37" tabindex="-1"></a><span class="fu">names</span>(noData1848) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;name&quot;</span>,<span class="st">&quot;geometry&quot;</span>)</span>
+<span id="cb75-38"><a href="land-cover-classification-and-change-detection.html#cb75-38" tabindex="-1"></a>noData1848<span class="sc">$</span>name <span class="ot">&lt;-</span> <span class="st">&quot;no_data&quot;</span></span>
+<span id="cb75-39"><a href="land-cover-classification-and-change-detection.html#cb75-39" tabindex="-1"></a><span class="fu">names</span>(plantations1848) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;name&quot;</span>,<span class="st">&quot;geometry&quot;</span>)</span>
+<span id="cb75-40"><a href="land-cover-classification-and-change-detection.html#cb75-40" tabindex="-1"></a>plantations1848<span class="sc">$</span>name <span class="ot">&lt;-</span> <span class="st">&quot;plantations&quot;</span></span>
+<span id="cb75-41"><a href="land-cover-classification-and-change-detection.html#cb75-41" tabindex="-1"></a><span class="fu">names</span>(roads1848) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;name&quot;</span>,<span class="st">&quot;geometry&quot;</span>)</span>
+<span id="cb75-42"><a href="land-cover-classification-and-change-detection.html#cb75-42" tabindex="-1"></a>roads1848<span class="sc">$</span>name <span class="ot">&lt;-</span> <span class="st">&quot;roads&quot;</span></span>
+<span id="cb75-43"><a href="land-cover-classification-and-change-detection.html#cb75-43" tabindex="-1"></a><span class="fu">names</span>(settlements1848) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;name&quot;</span>,<span class="st">&quot;geometry&quot;</span>)</span>
+<span id="cb75-44"><a href="land-cover-classification-and-change-detection.html#cb75-44" tabindex="-1"></a>settlements1848<span class="sc">$</span>name <span class="ot">&lt;-</span> <span class="st">&quot;settlements&quot;</span></span>
+<span id="cb75-45"><a href="land-cover-classification-and-change-detection.html#cb75-45" tabindex="-1"></a><span class="fu">names</span>(sholaForest1848) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;name&quot;</span>,<span class="st">&quot;geometry&quot;</span>)</span>
+<span id="cb75-46"><a href="land-cover-classification-and-change-detection.html#cb75-46" tabindex="-1"></a>sholaForest1848<span class="sc">$</span>name <span class="ot">&lt;-</span> <span class="st">&quot;shola_forest&quot;</span></span>
+<span id="cb75-47"><a href="land-cover-classification-and-change-detection.html#cb75-47" tabindex="-1"></a><span class="fu">names</span>(sholaGrassland1848) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;name&quot;</span>,<span class="st">&quot;geometry&quot;</span>)</span>
+<span id="cb75-48"><a href="land-cover-classification-and-change-detection.html#cb75-48" tabindex="-1"></a>sholaGrassland1848<span class="sc">$</span>name <span class="ot">&lt;-</span> <span class="st">&quot;shola_grassland&quot;</span></span>
+<span id="cb75-49"><a href="land-cover-classification-and-change-detection.html#cb75-49" tabindex="-1"></a><span class="fu">names</span>(swamps1848) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;name&quot;</span>,<span class="st">&quot;geometry&quot;</span>)</span>
+<span id="cb75-50"><a href="land-cover-classification-and-change-detection.html#cb75-50" tabindex="-1"></a>swamps1848<span class="sc">$</span>name <span class="ot">&lt;-</span> <span class="st">&quot;swamps&quot;</span></span>
+<span id="cb75-51"><a href="land-cover-classification-and-change-detection.html#cb75-51" tabindex="-1"></a><span class="fu">names</span>(waterBodies1848) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;name&quot;</span>,<span class="st">&quot;geometry&quot;</span>)</span>
+<span id="cb75-52"><a href="land-cover-classification-and-change-detection.html#cb75-52" tabindex="-1"></a>waterBodies1848<span class="sc">$</span>name <span class="ot">&lt;-</span> <span class="st">&quot;water_bodies&quot;</span></span>
+<span id="cb75-53"><a href="land-cover-classification-and-change-detection.html#cb75-53" tabindex="-1"></a></span>
+<span id="cb75-54"><a href="land-cover-classification-and-change-detection.html#cb75-54" tabindex="-1"></a><span class="co"># Note: the roads shapefile is a linestring while the other geometry types are polygon/multipolygon</span></span>
+<span id="cb75-55"><a href="land-cover-classification-and-change-detection.html#cb75-55" tabindex="-1"></a></span>
+<span id="cb75-56"><a href="land-cover-classification-and-change-detection.html#cb75-56" tabindex="-1"></a><span class="co"># transform to UTM 43N</span></span>
+<span id="cb75-57"><a href="land-cover-classification-and-change-detection.html#cb75-57" tabindex="-1"></a>ag1848 <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(ag1848, <span class="dv">32643</span>)</span>
+<span id="cb75-58"><a href="land-cover-classification-and-change-detection.html#cb75-58" tabindex="-1"></a>noData1848 <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(noData1848, <span class="dv">32643</span>)</span>
+<span id="cb75-59"><a href="land-cover-classification-and-change-detection.html#cb75-59" tabindex="-1"></a>plantations1848 <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(plantations1848, <span class="dv">32643</span>)</span>
+<span id="cb75-60"><a href="land-cover-classification-and-change-detection.html#cb75-60" tabindex="-1"></a>roads1848 <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(roads1848, <span class="dv">32643</span>)</span>
+<span id="cb75-61"><a href="land-cover-classification-and-change-detection.html#cb75-61" tabindex="-1"></a>settlements1848 <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(settlements1848, <span class="dv">32643</span>)</span>
+<span id="cb75-62"><a href="land-cover-classification-and-change-detection.html#cb75-62" tabindex="-1"></a>sholaForest1848 <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(sholaForest1848, <span class="dv">32643</span>)</span>
+<span id="cb75-63"><a href="land-cover-classification-and-change-detection.html#cb75-63" tabindex="-1"></a>sholaGrassland1848 <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(sholaGrassland1848, <span class="dv">32643</span>)</span>
+<span id="cb75-64"><a href="land-cover-classification-and-change-detection.html#cb75-64" tabindex="-1"></a>swamps1848 <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(swamps1848, <span class="dv">32643</span>)</span>
+<span id="cb75-65"><a href="land-cover-classification-and-change-detection.html#cb75-65" tabindex="-1"></a>waterBodies1848 <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(waterBodies1848, <span class="dv">32643</span>)</span>
+<span id="cb75-66"><a href="land-cover-classification-and-change-detection.html#cb75-66" tabindex="-1"></a></span>
+<span id="cb75-67"><a href="land-cover-classification-and-change-detection.html#cb75-67" tabindex="-1"></a><span class="co"># creating a single simple feature collection</span></span>
+<span id="cb75-68"><a href="land-cover-classification-and-change-detection.html#cb75-68" tabindex="-1"></a>nil1848 <span class="ot">&lt;-</span> <span class="fu">rbind</span>(ag1848, plantations1848, settlements1848,</span>
+<span id="cb75-69"><a href="land-cover-classification-and-change-detection.html#cb75-69" tabindex="-1"></a>  sholaForest1848, sholaGrassland1848, swamps1848,</span>
+<span id="cb75-70"><a href="land-cover-classification-and-change-detection.html#cb75-70" tabindex="-1"></a>  waterBodies1848)</span>
+<span id="cb75-71"><a href="land-cover-classification-and-change-detection.html#cb75-71" tabindex="-1"></a></span>
+<span id="cb75-72"><a href="land-cover-classification-and-change-detection.html#cb75-72" tabindex="-1"></a><span class="co"># subsuming swamps under grasslands</span></span>
+<span id="cb75-73"><a href="land-cover-classification-and-change-detection.html#cb75-73" tabindex="-1"></a>nil1848 <span class="ot">&lt;-</span> nil1848 <span class="sc">%&gt;%</span></span>
+<span id="cb75-74"><a href="land-cover-classification-and-change-detection.html#cb75-74" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">name =</span> <span class="fu">case_when</span>(</span>
+<span id="cb75-75"><a href="land-cover-classification-and-change-detection.html#cb75-75" tabindex="-1"></a>    name <span class="sc">==</span> <span class="st">&quot;swamps&quot;</span> <span class="sc">~</span> <span class="st">&quot;shola_grassland&quot;</span>,</span>
+<span id="cb75-76"><a href="land-cover-classification-and-change-detection.html#cb75-76" tabindex="-1"></a>    <span class="at">.default =</span> <span class="fu">as.character</span>(name)))</span>
+<span id="cb75-77"><a href="land-cover-classification-and-change-detection.html#cb75-77" tabindex="-1"></a></span>
+<span id="cb75-78"><a href="land-cover-classification-and-change-detection.html#cb75-78" tabindex="-1"></a><span class="co"># crop the 1848 shapefiles to within the 1400m contour only</span></span>
+<span id="cb75-79"><a href="land-cover-classification-and-change-detection.html#cb75-79" tabindex="-1"></a>nil1848 <span class="ot">&lt;-</span> <span class="fu">st_buffer</span>(nil1848, <span class="at">dist =</span> <span class="dv">0</span>)</span>
+<span id="cb75-80"><a href="land-cover-classification-and-change-detection.html#cb75-80" tabindex="-1"></a>nil1848 <span class="ot">&lt;-</span> nil1848[,<span class="sc">-</span><span class="fu">c</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">5</span>)]</span>
+<span id="cb75-81"><a href="land-cover-classification-and-change-detection.html#cb75-81" tabindex="-1"></a></span>
+<span id="cb75-82"><a href="land-cover-classification-and-change-detection.html#cb75-82" tabindex="-1"></a><span class="co"># Create a common boundary for clipping files from another time period (2018)(see below)</span></span>
+<span id="cb75-83"><a href="land-cover-classification-and-change-detection.html#cb75-83" tabindex="-1"></a>all1848 <span class="ot">&lt;-</span> <span class="fu">st_buffer</span>(<span class="fu">st_union</span>(nil1848), <span class="at">dist =</span> <span class="dv">0</span>)</span></code></pre></div>
+</div>
+<div id="rasterization-of-the-1848-shapefiles" class="section level2 hasAnchor" number="7.3">
+<h2><span class="header-section-number">7.3</span> Rasterization of the 1848 shapefiles<a href="land-cover-classification-and-change-detection.html#rasterization-of-the-1848-shapefiles" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The 1848 digitized shapefiles are rasterized for comparison with the 2018 sentinel satellite imagery.</p>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="land-cover-classification-and-change-detection.html#cb76-1" tabindex="-1"></a><span class="co"># nil11848 raster</span></span>
+<span id="cb76-2"><a href="land-cover-classification-and-change-detection.html#cb76-2" tabindex="-1"></a><span class="co"># scale: 1000ft to 1 inch (1:12000; 6 metres resolution)</span></span>
+<span id="cb76-3"><a href="land-cover-classification-and-change-detection.html#cb76-3" tabindex="-1"></a><span class="co"># This link was used for reference to convert from map scale to raster pixel resolution: https://www.esri.com/arcgis-blog/products/product/imagery/on-map-scale-and-raster-resolution/</span></span>
+<span id="cb76-4"><a href="land-cover-classification-and-change-detection.html#cb76-4" tabindex="-1"></a>vect1848 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">vect</span>(nil1848)</span>
+<span id="cb76-5"><a href="land-cover-classification-and-change-detection.html#cb76-5" tabindex="-1"></a>emptyRast <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(<span class="at">res =</span> <span class="dv">6</span>, <span class="at">xmin =</span> <span class="fl">660555.3</span>, <span class="at">xmax =</span> <span class="fl">719135.5</span>, <span class="at">ymin =</span> <span class="dv">1240050</span>, <span class="at">ymax =</span> <span class="dv">1277597</span>, <span class="at">crs =</span> <span class="st">&quot;+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs&quot;</span>)</span>
+<span id="cb76-6"><a href="land-cover-classification-and-change-detection.html#cb76-6" tabindex="-1"></a>rast1848 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rasterize</span>(vect1848, emptyRast, <span class="st">&quot;name&quot;</span>)</span></code></pre></div>
+</div>
+<div id="load-the-2018-satellite-image" class="section level2 hasAnchor" number="7.4">
+<h2><span class="header-section-number">7.4</span> Load the 2018 satellite image<a href="land-cover-classification-and-change-detection.html#load-the-2018-satellite-image" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The 2018 satellite image was obtained from Sentinel-2. Cloud-free days (1% cloud cover) were chosen from March 2018 and a composite was created. We then utilized groundtruthing points from <span class="citation">[@arasumani2019]</span> and used a Random Forests classifier (n = 1000 trees; Kappa statistic = 93.9%, overall accuracy of 94.8% was obtained on test data) to obtain a classified image with seven land cover classes (similar to the 1848 map). For more details on the classification, please visit this link:</p>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="land-cover-classification-and-change-detection.html#cb77-1" tabindex="-1"></a><span class="do">## load the raster</span></span>
+<span id="cb77-2"><a href="land-cover-classification-and-change-detection.html#cb77-2" tabindex="-1"></a>rast2018 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">&quot;data/landcover/2018-nilgiris/2018.tif&quot;</span>)</span>
+<span id="cb77-3"><a href="land-cover-classification-and-change-detection.html#cb77-3" tabindex="-1"></a><span class="fu">values</span>(rast2018)[<span class="fu">values</span>(rast2018) <span class="sc">&lt;=</span> <span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb77-4"><a href="land-cover-classification-and-change-detection.html#cb77-4" tabindex="-1"></a></span>
+<span id="cb77-5"><a href="land-cover-classification-and-change-detection.html#cb77-5" tabindex="-1"></a><span class="do">## convert the raster to a categorical raster</span></span>
+<span id="cb77-6"><a href="land-cover-classification-and-change-detection.html#cb77-6" tabindex="-1"></a>rast2018 <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(rast2018)</span>
+<span id="cb77-7"><a href="land-cover-classification-and-change-detection.html#cb77-7" tabindex="-1"></a></span>
+<span id="cb77-8"><a href="land-cover-classification-and-change-detection.html#cb77-8" tabindex="-1"></a><span class="do">## set land cover class names to the 2018 raster</span></span>
+<span id="cb77-9"><a href="land-cover-classification-and-change-detection.html#cb77-9" tabindex="-1"></a><span class="do">## note: this was done carefully by examining the values associated</span></span>
+<span id="cb77-10"><a href="land-cover-classification-and-change-detection.html#cb77-10" tabindex="-1"></a><span class="do">## with each number from classification process (done in GEE)</span></span>
+<span id="cb77-11"><a href="land-cover-classification-and-change-detection.html#cb77-11" tabindex="-1"></a></span>
+<span id="cb77-12"><a href="land-cover-classification-and-change-detection.html#cb77-12" tabindex="-1"></a><span class="do">## create a dataframe with names of classes and their corresponding values</span></span>
+<span id="cb77-13"><a href="land-cover-classification-and-change-detection.html#cb77-13" tabindex="-1"></a>landcover_class <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ID =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">7</span>,</span>
+<span id="cb77-14"><a href="land-cover-classification-and-change-detection.html#cb77-14" tabindex="-1"></a>                              <span class="at">name =</span> <span class="fu">c</span>( <span class="st">&quot;agriculture&quot;</span>,</span>
+<span id="cb77-15"><a href="land-cover-classification-and-change-detection.html#cb77-15" tabindex="-1"></a>                                           <span class="st">&quot;shola_forest&quot;</span>,</span>
+<span id="cb77-16"><a href="land-cover-classification-and-change-detection.html#cb77-16" tabindex="-1"></a>                                           <span class="st">&quot;shola_grassland&quot;</span>,</span>
+<span id="cb77-17"><a href="land-cover-classification-and-change-detection.html#cb77-17" tabindex="-1"></a>                                           <span class="st">&quot;timber_plantations&quot;</span>,</span>
+<span id="cb77-18"><a href="land-cover-classification-and-change-detection.html#cb77-18" tabindex="-1"></a>                                           <span class="st">&quot;settlements&quot;</span>,</span>
+<span id="cb77-19"><a href="land-cover-classification-and-change-detection.html#cb77-19" tabindex="-1"></a>                                           <span class="st">&quot;tea_plantations&quot;</span>,</span>
+<span id="cb77-20"><a href="land-cover-classification-and-change-detection.html#cb77-20" tabindex="-1"></a>                                           <span class="st">&quot;water_bodies&quot;</span>))</span>
+<span id="cb77-21"><a href="land-cover-classification-and-change-detection.html#cb77-21" tabindex="-1"></a><span class="fu">levels</span>(rast2018) <span class="ot">&lt;-</span> landcover_class</span>
+<span id="cb77-22"><a href="land-cover-classification-and-change-detection.html#cb77-22" tabindex="-1"></a></span>
+<span id="cb77-23"><a href="land-cover-classification-and-change-detection.html#cb77-23" tabindex="-1"></a><span class="do">## resample the 1848 raster to the 2018 raster to match spatial res</span></span>
+<span id="cb77-24"><a href="land-cover-classification-and-change-detection.html#cb77-24" tabindex="-1"></a><span class="do">## The 1848 raster is at 6 m resolution</span></span>
+<span id="cb77-25"><a href="land-cover-classification-and-change-detection.html#cb77-25" tabindex="-1"></a><span class="do">## The 2018 raster is at 10 m resolution</span></span>
+<span id="cb77-26"><a href="land-cover-classification-and-change-detection.html#cb77-26" tabindex="-1"></a>rast1848 <span class="ot">&lt;-</span> <span class="fu">resample</span>(rast1848, rast2018, <span class="at">method =</span> <span class="st">&quot;near&quot;</span>)</span>
+<span id="cb77-27"><a href="land-cover-classification-and-change-detection.html#cb77-27" tabindex="-1"></a></span>
+<span id="cb77-28"><a href="land-cover-classification-and-change-detection.html#cb77-28" tabindex="-1"></a><span class="co"># visualization of the two rasters</span></span>
+<span id="cb77-29"><a href="land-cover-classification-and-change-detection.html#cb77-29" tabindex="-1"></a>colors2018 <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb77-30"><a href="land-cover-classification-and-change-detection.html#cb77-30" tabindex="-1"></a>  <span class="st">&#39;#be4fc4&#39;</span>, <span class="co"># agriculture, violetish</span></span>
+<span id="cb77-31"><a href="land-cover-classification-and-change-detection.html#cb77-31" tabindex="-1"></a>  <span class="st">&#39;#025a05&#39;</span>,<span class="co"># shola forests, dark green</span></span>
+<span id="cb77-32"><a href="land-cover-classification-and-change-detection.html#cb77-32" tabindex="-1"></a>  <span class="st">&#39;#cbb315&#39;</span>, <span class="co"># shola grasslands, yellowish</span></span>
+<span id="cb77-33"><a href="land-cover-classification-and-change-detection.html#cb77-33" tabindex="-1"></a>  <span class="st">&#39;#c17111&#39;</span>, <span class="co"># timber plantations, brownish</span></span>
+<span id="cb77-34"><a href="land-cover-classification-and-change-detection.html#cb77-34" tabindex="-1"></a>  <span class="st">&#39;#b0a69d&#39;</span>, <span class="co"># settlements, grayish</span></span>
+<span id="cb77-35"><a href="land-cover-classification-and-change-detection.html#cb77-35" tabindex="-1"></a>   <span class="st">&#39;#04a310&#39;</span>,<span class="co"># tea plantations, light green</span></span>
+<span id="cb77-36"><a href="land-cover-classification-and-change-detection.html#cb77-36" tabindex="-1"></a>  <span class="st">&#39;#2035df&#39;</span>  <span class="co"># waterbodies, royal blue</span></span>
+<span id="cb77-37"><a href="land-cover-classification-and-change-detection.html#cb77-37" tabindex="-1"></a>)</span>
+<span id="cb77-38"><a href="land-cover-classification-and-change-detection.html#cb77-38" tabindex="-1"></a></span>
+<span id="cb77-39"><a href="land-cover-classification-and-change-detection.html#cb77-39" tabindex="-1"></a><span class="do">## side-by-side visualization</span></span>
+<span id="cb77-40"><a href="land-cover-classification-and-change-detection.html#cb77-40" tabindex="-1"></a>colors1848 <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb77-41"><a href="land-cover-classification-and-change-detection.html#cb77-41" tabindex="-1"></a>  <span class="st">&#39;#be4fc4&#39;</span>, <span class="co"># agriculture, violetish</span></span>
+<span id="cb77-42"><a href="land-cover-classification-and-change-detection.html#cb77-42" tabindex="-1"></a>  <span class="st">&#39;#c17111&#39;</span>, <span class="co"># plantations, brownish</span></span>
+<span id="cb77-43"><a href="land-cover-classification-and-change-detection.html#cb77-43" tabindex="-1"></a>  <span class="st">&#39;#b0a69d&#39;</span>, <span class="co"># settlements, grayish</span></span>
+<span id="cb77-44"><a href="land-cover-classification-and-change-detection.html#cb77-44" tabindex="-1"></a>  <span class="st">&#39;#025a05&#39;</span>,<span class="co"># shola forests, dark green</span></span>
+<span id="cb77-45"><a href="land-cover-classification-and-change-detection.html#cb77-45" tabindex="-1"></a>  <span class="st">&#39;#cbb315&#39;</span>, <span class="co"># shola grasslands, yellowish</span></span>
+<span id="cb77-46"><a href="land-cover-classification-and-change-detection.html#cb77-46" tabindex="-1"></a>  <span class="st">&#39;#2035df&#39;</span>  <span class="co"># waterbodies, royal blue</span></span>
+<span id="cb77-47"><a href="land-cover-classification-and-change-detection.html#cb77-47" tabindex="-1"></a>)</span>
+<span id="cb77-48"><a href="land-cover-classification-and-change-detection.html#cb77-48" tabindex="-1"></a></span>
+<span id="cb77-49"><a href="land-cover-classification-and-change-detection.html#cb77-49" tabindex="-1"></a><span class="do">## saving a high resolution visualization</span></span>
+<span id="cb77-50"><a href="land-cover-classification-and-change-detection.html#cb77-50" tabindex="-1"></a><span class="fu">png</span>(<span class="at">filename =</span> <span class="st">&quot;figs/fig_landCover_1848_vs_2018.png&quot;</span>, </span>
+<span id="cb77-51"><a href="land-cover-classification-and-change-detection.html#cb77-51" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">12</span>, <span class="at">height =</span> <span class="dv">7</span>, <span class="at">units =</span> <span class="st">&quot;in&quot;</span>, <span class="at">res =</span> <span class="dv">300</span>)</span>
+<span id="cb77-52"><a href="land-cover-classification-and-change-detection.html#cb77-52" tabindex="-1"></a></span>
+<span id="cb77-53"><a href="land-cover-classification-and-change-detection.html#cb77-53" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb77-54"><a href="land-cover-classification-and-change-detection.html#cb77-54" tabindex="-1"></a><span class="fu">plot</span>(rast1848, <span class="at">col =</span> colors1848, <span class="at">main =</span> <span class="st">&quot;1848&quot;</span>,</span>
+<span id="cb77-55"><a href="land-cover-classification-and-change-detection.html#cb77-55" tabindex="-1"></a>     <span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb77-56"><a href="land-cover-classification-and-change-detection.html#cb77-56" tabindex="-1"></a><span class="fu">plot</span>(rast2018, <span class="at">col=</span>colors2018, <span class="at">main =</span> <span class="st">&quot;2018&quot;</span>, </span>
+<span id="cb77-57"><a href="land-cover-classification-and-change-detection.html#cb77-57" tabindex="-1"></a>     <span class="at">legend=</span><span class="cn">FALSE</span>)</span>
+<span id="cb77-58"><a href="land-cover-classification-and-change-detection.html#cb77-58" tabindex="-1"></a></span>
+<span id="cb77-59"><a href="land-cover-classification-and-change-detection.html#cb77-59" tabindex="-1"></a><span class="co"># add custom legend</span></span>
+<span id="cb77-60"><a href="land-cover-classification-and-change-detection.html#cb77-60" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>), </span>
+<span id="cb77-61"><a href="land-cover-classification-and-change-detection.html#cb77-61" tabindex="-1"></a>     <span class="at">new =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb77-62"><a href="land-cover-classification-and-change-detection.html#cb77-62" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="at">type =</span> <span class="st">&#39;l&#39;</span>, <span class="at">bty =</span> <span class="st">&#39;n&#39;</span>, <span class="at">xaxt =</span> <span class="st">&#39;n&#39;</span>, <span class="at">yaxt =</span> <span class="st">&#39;n&#39;</span>)</span>
+<span id="cb77-63"><a href="land-cover-classification-and-change-detection.html#cb77-63" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&quot;bottom&quot;</span>,</span>
+<span id="cb77-64"><a href="land-cover-classification-and-change-detection.html#cb77-64" tabindex="-1"></a>       <span class="at">legend=</span>landcover_class<span class="sc">$</span>name, <span class="at">fill=</span>colors2018, </span>
+<span id="cb77-65"><a href="land-cover-classification-and-change-detection.html#cb77-65" tabindex="-1"></a>       <span class="at">cex =</span> <span class="fl">0.8</span>, </span>
+<span id="cb77-66"><a href="land-cover-classification-and-change-detection.html#cb77-66" tabindex="-1"></a>       <span class="at">title=</span><span class="st">&quot;land cover classes&quot;</span>,</span>
+<span id="cb77-67"><a href="land-cover-classification-and-change-detection.html#cb77-67" tabindex="-1"></a>       <span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb77-68"><a href="land-cover-classification-and-change-detection.html#cb77-68" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
+</div>
+<div id="subsume-plantations-into-one-category-for-2018" class="section level2 hasAnchor" number="7.5">
+<h2><span class="header-section-number">7.5</span> Subsume plantations into one category for 2018<a href="land-cover-classification-and-change-detection.html#subsume-plantations-into-one-category-for-2018" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Since 1848 had very few to no tea plantations and only timber plantations were present at the time, we reclassify timber plantations into the plantations category for the 2018 raster to ease comparisons.</p>
+<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="land-cover-classification-and-change-detection.html#cb78-1" tabindex="-1"></a><span class="co"># read reclassification matrix</span></span>
+<span id="cb78-2"><a href="land-cover-classification-and-change-detection.html#cb78-2" tabindex="-1"></a>reclassification_matrix <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;data/landcover/2018-nilgiris/reclassification-matrix.csv&quot;</span>)</span>
+<span id="cb78-3"><a href="land-cover-classification-and-change-detection.html#cb78-3" tabindex="-1"></a>reclassification_matrix <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(reclassification_matrix[, <span class="fu">c</span>(<span class="st">&quot;V1&quot;</span>, <span class="st">&quot;To&quot;</span>)])</span>
+<span id="cb78-4"><a href="land-cover-classification-and-change-detection.html#cb78-4" tabindex="-1"></a></span>
+<span id="cb78-5"><a href="land-cover-classification-and-change-detection.html#cb78-5" tabindex="-1"></a><span class="co"># reclassification</span></span>
+<span id="cb78-6"><a href="land-cover-classification-and-change-detection.html#cb78-6" tabindex="-1"></a>rast2018_reclassified <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">classify</span>(</span>
+<span id="cb78-7"><a href="land-cover-classification-and-change-detection.html#cb78-7" tabindex="-1"></a>  <span class="at">x =</span> rast2018,</span>
+<span id="cb78-8"><a href="land-cover-classification-and-change-detection.html#cb78-8" tabindex="-1"></a>  <span class="at">rcl =</span> reclassification_matrix</span>
+<span id="cb78-9"><a href="land-cover-classification-and-change-detection.html#cb78-9" tabindex="-1"></a>)</span>
+<span id="cb78-10"><a href="land-cover-classification-and-change-detection.html#cb78-10" tabindex="-1"></a></span>
+<span id="cb78-11"><a href="land-cover-classification-and-change-detection.html#cb78-11" tabindex="-1"></a><span class="do">## create a dataframe with names of classes and their corresponding values</span></span>
+<span id="cb78-12"><a href="land-cover-classification-and-change-detection.html#cb78-12" tabindex="-1"></a>landcover_reclass <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ID =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>,</span>
+<span id="cb78-13"><a href="land-cover-classification-and-change-detection.html#cb78-13" tabindex="-1"></a>                              <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;agriculture&quot;</span>,</span>
+<span id="cb78-14"><a href="land-cover-classification-and-change-detection.html#cb78-14" tabindex="-1"></a>                                           <span class="st">&quot;shola_forest&quot;</span>,</span>
+<span id="cb78-15"><a href="land-cover-classification-and-change-detection.html#cb78-15" tabindex="-1"></a>                                           <span class="st">&quot;shola_grassland&quot;</span>,</span>
+<span id="cb78-16"><a href="land-cover-classification-and-change-detection.html#cb78-16" tabindex="-1"></a>                                           <span class="st">&quot;plantations&quot;</span>,</span>
+<span id="cb78-17"><a href="land-cover-classification-and-change-detection.html#cb78-17" tabindex="-1"></a>                                           <span class="st">&quot;settlements&quot;</span>,</span>
+<span id="cb78-18"><a href="land-cover-classification-and-change-detection.html#cb78-18" tabindex="-1"></a>                                           <span class="st">&quot;water_bodies&quot;</span>))</span>
+<span id="cb78-19"><a href="land-cover-classification-and-change-detection.html#cb78-19" tabindex="-1"></a></span>
+<span id="cb78-20"><a href="land-cover-classification-and-change-detection.html#cb78-20" tabindex="-1"></a><span class="fu">levels</span>(rast2018_reclassified) <span class="ot">&lt;-</span> landcover_reclass</span>
+<span id="cb78-21"><a href="land-cover-classification-and-change-detection.html#cb78-21" tabindex="-1"></a></span>
+<span id="cb78-22"><a href="land-cover-classification-and-change-detection.html#cb78-22" tabindex="-1"></a><span class="do">## side-by-side visualization</span></span>
+<span id="cb78-23"><a href="land-cover-classification-and-change-detection.html#cb78-23" tabindex="-1"></a>colors2018reclass <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb78-24"><a href="land-cover-classification-and-change-detection.html#cb78-24" tabindex="-1"></a>  <span class="st">&#39;#be4fc4&#39;</span>, <span class="co"># agriculture, violetish</span></span>
+<span id="cb78-25"><a href="land-cover-classification-and-change-detection.html#cb78-25" tabindex="-1"></a>  <span class="st">&#39;#025a05&#39;</span>,<span class="co"># shola forests, dark green</span></span>
+<span id="cb78-26"><a href="land-cover-classification-and-change-detection.html#cb78-26" tabindex="-1"></a>  <span class="st">&#39;#cbb315&#39;</span>, <span class="co"># shola grasslands, yellowish</span></span>
+<span id="cb78-27"><a href="land-cover-classification-and-change-detection.html#cb78-27" tabindex="-1"></a>  <span class="st">&#39;#c17111&#39;</span>, <span class="co"># plantations, brownish</span></span>
+<span id="cb78-28"><a href="land-cover-classification-and-change-detection.html#cb78-28" tabindex="-1"></a>  <span class="st">&#39;#b0a69d&#39;</span>, <span class="co"># settlements, grayish</span></span>
+<span id="cb78-29"><a href="land-cover-classification-and-change-detection.html#cb78-29" tabindex="-1"></a>  <span class="st">&#39;#2035df&#39;</span>  <span class="co"># waterbodies, royal blue</span></span>
+<span id="cb78-30"><a href="land-cover-classification-and-change-detection.html#cb78-30" tabindex="-1"></a>)</span>
+<span id="cb78-31"><a href="land-cover-classification-and-change-detection.html#cb78-31" tabindex="-1"></a></span>
+<span id="cb78-32"><a href="land-cover-classification-and-change-detection.html#cb78-32" tabindex="-1"></a><span class="fu">png</span>(<span class="at">filename =</span> <span class="st">&quot;figs/fig_landCover_1848_vs_2018reclassified.png&quot;</span>, </span>
+<span id="cb78-33"><a href="land-cover-classification-and-change-detection.html#cb78-33" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">12</span>, <span class="at">height =</span> <span class="dv">7</span>, <span class="at">units =</span> <span class="st">&quot;in&quot;</span>, <span class="at">res =</span> <span class="dv">300</span>)</span>
+<span id="cb78-34"><a href="land-cover-classification-and-change-detection.html#cb78-34" tabindex="-1"></a></span>
+<span id="cb78-35"><a href="land-cover-classification-and-change-detection.html#cb78-35" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb78-36"><a href="land-cover-classification-and-change-detection.html#cb78-36" tabindex="-1"></a><span class="fu">plot</span>(rast1848, <span class="at">col =</span> colors1848, <span class="at">main =</span> <span class="st">&quot;1848&quot;</span>,</span>
+<span id="cb78-37"><a href="land-cover-classification-and-change-detection.html#cb78-37" tabindex="-1"></a>     <span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb78-38"><a href="land-cover-classification-and-change-detection.html#cb78-38" tabindex="-1"></a><span class="fu">plot</span>(rast2018_reclassified, <span class="at">col=</span>colors2018reclass, <span class="at">main =</span> <span class="st">&quot;2018&quot;</span>, </span>
+<span id="cb78-39"><a href="land-cover-classification-and-change-detection.html#cb78-39" tabindex="-1"></a>     <span class="at">legend=</span><span class="cn">FALSE</span>)</span>
+<span id="cb78-40"><a href="land-cover-classification-and-change-detection.html#cb78-40" tabindex="-1"></a></span>
+<span id="cb78-41"><a href="land-cover-classification-and-change-detection.html#cb78-41" tabindex="-1"></a><span class="co"># add custom legend</span></span>
+<span id="cb78-42"><a href="land-cover-classification-and-change-detection.html#cb78-42" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>), </span>
+<span id="cb78-43"><a href="land-cover-classification-and-change-detection.html#cb78-43" tabindex="-1"></a>     <span class="at">new =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb78-44"><a href="land-cover-classification-and-change-detection.html#cb78-44" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="at">type =</span> <span class="st">&#39;l&#39;</span>, <span class="at">bty =</span> <span class="st">&#39;n&#39;</span>, <span class="at">xaxt =</span> <span class="st">&#39;n&#39;</span>, <span class="at">yaxt =</span> <span class="st">&#39;n&#39;</span>)</span>
+<span id="cb78-45"><a href="land-cover-classification-and-change-detection.html#cb78-45" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&quot;bottom&quot;</span>,</span>
+<span id="cb78-46"><a href="land-cover-classification-and-change-detection.html#cb78-46" tabindex="-1"></a>       <span class="at">legend=</span>landcover_reclass<span class="sc">$</span>name, <span class="at">fill=</span>colors2018reclass, </span>
+<span id="cb78-47"><a href="land-cover-classification-and-change-detection.html#cb78-47" tabindex="-1"></a>       <span class="at">cex =</span> <span class="fl">0.8</span>, </span>
+<span id="cb78-48"><a href="land-cover-classification-and-change-detection.html#cb78-48" tabindex="-1"></a>       <span class="at">title=</span><span class="st">&quot;land cover classes&quot;</span>,</span>
+<span id="cb78-49"><a href="land-cover-classification-and-change-detection.html#cb78-49" tabindex="-1"></a>       <span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb78-50"><a href="land-cover-classification-and-change-detection.html#cb78-50" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
+<div class="float">
+<img src="figs/fig_landCover_1848_vs_2018reclassified.png" alt="Landcover change between 1848 and 2018" />
+<div class="figcaption">Landcover change between 1848 and 2018</div>
+</div>
+</div>
+<div id="write-the-shapefiles-and-rasters-to-file" class="section level2 hasAnchor" number="7.6">
+<h2><span class="header-section-number">7.6</span> Write the shapefiles and rasters to file<a href="land-cover-classification-and-change-detection.html#write-the-shapefiles-and-rasters-to-file" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Please note that the processed rasters above have been resampled to a resolution of 10 metres.</p>
+<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="land-cover-classification-and-change-detection.html#cb79-1" tabindex="-1"></a><span class="co"># vectors</span></span>
+<span id="cb79-2"><a href="land-cover-classification-and-change-detection.html#cb79-2" tabindex="-1"></a><span class="fu">st_write</span>(nil1848, <span class="st">&quot;results/landcover/1848.shp&quot;</span>, </span>
+<span id="cb79-3"><a href="land-cover-classification-and-change-detection.html#cb79-3" tabindex="-1"></a>         <span class="at">driver =</span> <span class="st">&quot;ESRI Shapefile&quot;</span>)</span>
+<span id="cb79-4"><a href="land-cover-classification-and-change-detection.html#cb79-4" tabindex="-1"></a></span>
+<span id="cb79-5"><a href="land-cover-classification-and-change-detection.html#cb79-5" tabindex="-1"></a><span class="co"># rasters</span></span>
+<span id="cb79-6"><a href="land-cover-classification-and-change-detection.html#cb79-6" tabindex="-1"></a>terra<span class="sc">::</span><span class="fu">writeRaster</span>(rast1848, <span class="st">&quot;results/landcover/1848.tif&quot;</span>)</span>
+<span id="cb79-7"><a href="land-cover-classification-and-change-detection.html#cb79-7" tabindex="-1"></a>terra<span class="sc">::</span><span class="fu">writeRaster</span>(rast2018, <span class="st">&quot;results/landcover/2018.tif&quot;</span>)</span>
+<span id="cb79-8"><a href="land-cover-classification-and-change-detection.html#cb79-8" tabindex="-1"></a>terra<span class="sc">::</span><span class="fu">writeRaster</span>(rast2018_reclassified, <span class="st">&quot;results/landcover/2018reclassified.tif&quot;</span>)</span></code></pre></div>
+</div>
+<div id="area-wise-comparisons-of-land-cover-change" class="section level2 hasAnchor" number="7.7">
+<h2><span class="header-section-number">7.7</span> Area-wise comparisons of land cover change<a href="land-cover-classification-and-change-detection.html#area-wise-comparisons-of-land-cover-change" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="land-cover-classification-and-change-detection.html#cb80-1" tabindex="-1"></a><span class="co"># area-wise calculations for the 2018 raster (the below objects will be used to compare overall areas, alongside the 1848 map)</span></span>
+<span id="cb80-2"><a href="land-cover-classification-and-change-detection.html#cb80-2" tabindex="-1"></a>sz2018 <span class="ot">&lt;-</span> <span class="fu">cellSize</span>(rast2018, <span class="at">unit =</span> <span class="st">&quot;m&quot;</span>)</span>
+<span id="cb80-3"><a href="land-cover-classification-and-change-detection.html#cb80-3" tabindex="-1"></a>area2018 <span class="ot">&lt;-</span> <span class="fu">zonal</span>(sz2018, rast2018, sum)</span>
+<span id="cb80-4"><a href="land-cover-classification-and-change-detection.html#cb80-4" tabindex="-1"></a>area2018SqKm <span class="ot">&lt;-</span> (area2018<span class="sc">$</span>area <span class="sc">/</span> <span class="dv">1000000</span>)</span>
+<span id="cb80-5"><a href="land-cover-classification-and-change-detection.html#cb80-5" tabindex="-1"></a>area2018 <span class="ot">&lt;-</span> <span class="fu">cbind</span>(area2018, area2018SqKm)</span>
+<span id="cb80-6"><a href="land-cover-classification-and-change-detection.html#cb80-6" tabindex="-1"></a></span>
+<span id="cb80-7"><a href="land-cover-classification-and-change-detection.html#cb80-7" tabindex="-1"></a><span class="co"># area-wise calculations for the 2018 reclassified raster (the below objects will be used to compare overall areas, alongside the 1848 map)</span></span>
+<span id="cb80-8"><a href="land-cover-classification-and-change-detection.html#cb80-8" tabindex="-1"></a>sz2018_reclass <span class="ot">&lt;-</span> <span class="fu">cellSize</span>(rast2018_reclassified, <span class="at">unit =</span> <span class="st">&quot;m&quot;</span>)</span>
+<span id="cb80-9"><a href="land-cover-classification-and-change-detection.html#cb80-9" tabindex="-1"></a>area2018_reclass <span class="ot">&lt;-</span> <span class="fu">zonal</span>(sz2018_reclass, rast2018_reclassified, sum)</span>
+<span id="cb80-10"><a href="land-cover-classification-and-change-detection.html#cb80-10" tabindex="-1"></a>area2018SqKm_reclass <span class="ot">&lt;-</span> (area2018_reclass<span class="sc">$</span>area <span class="sc">/</span> <span class="dv">1000000</span>)</span>
+<span id="cb80-11"><a href="land-cover-classification-and-change-detection.html#cb80-11" tabindex="-1"></a>area2018_reclass <span class="ot">&lt;-</span> <span class="fu">cbind</span>(area2018_reclass, area2018SqKm_reclass)</span>
+<span id="cb80-12"><a href="land-cover-classification-and-change-detection.html#cb80-12" tabindex="-1"></a></span>
+<span id="cb80-13"><a href="land-cover-classification-and-change-detection.html#cb80-13" tabindex="-1"></a><span class="co"># area-wise calculations for the 1848 raster (the below objects will be used to compare overall areas, alongside the 2018 sentinel satellite image)</span></span>
+<span id="cb80-14"><a href="land-cover-classification-and-change-detection.html#cb80-14" tabindex="-1"></a>sz1848 <span class="ot">&lt;-</span> <span class="fu">cellSize</span>(rast1848, <span class="at">unit =</span> <span class="st">&quot;m&quot;</span>)</span>
+<span id="cb80-15"><a href="land-cover-classification-and-change-detection.html#cb80-15" tabindex="-1"></a>area1848 <span class="ot">&lt;-</span> <span class="fu">zonal</span>(sz1848, rast1848, sum)</span>
+<span id="cb80-16"><a href="land-cover-classification-and-change-detection.html#cb80-16" tabindex="-1"></a>area1848SqKm <span class="ot">&lt;-</span> (area1848<span class="sc">$</span>area <span class="sc">/</span> <span class="dv">1000000</span>)</span>
+<span id="cb80-17"><a href="land-cover-classification-and-change-detection.html#cb80-17" tabindex="-1"></a>area1848 <span class="ot">&lt;-</span> <span class="fu">cbind</span>(area1848, area1848SqKm)</span></code></pre></div>
+</div>
+<div id="barplots-of-land-cover-change" class="section level2 hasAnchor" number="7.8">
+<h2><span class="header-section-number">7.8</span> Barplots of land cover change<a href="land-cover-classification-and-change-detection.html#barplots-of-land-cover-change" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="land-cover-classification-and-change-detection.html#cb81-1" tabindex="-1"></a><span class="co"># Joining all dataframes to create a single one for plotting and visualization</span></span>
+<span id="cb81-2"><a href="land-cover-classification-and-change-detection.html#cb81-2" tabindex="-1"></a></span>
+<span id="cb81-3"><a href="land-cover-classification-and-change-detection.html#cb81-3" tabindex="-1"></a><span class="fu">names</span>(area1848) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;class&quot;</span>, <span class="st">&quot;areaInMeters&quot;</span>,<span class="st">&quot;sumArea&quot;</span>)</span>
+<span id="cb81-4"><a href="land-cover-classification-and-change-detection.html#cb81-4" tabindex="-1"></a><span class="fu">names</span>(area2018) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;class&quot;</span>, <span class="st">&quot;areaInMeters&quot;</span>,<span class="st">&quot;sumArea&quot;</span>)</span>
+<span id="cb81-5"><a href="land-cover-classification-and-change-detection.html#cb81-5" tabindex="-1"></a></span>
+<span id="cb81-6"><a href="land-cover-classification-and-change-detection.html#cb81-6" tabindex="-1"></a>areaCalc <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">reduce</span>(<span class="fu">list</span>(</span>
+<span id="cb81-7"><a href="land-cover-classification-and-change-detection.html#cb81-7" tabindex="-1"></a>  area1848, </span>
+<span id="cb81-8"><a href="land-cover-classification-and-change-detection.html#cb81-8" tabindex="-1"></a>  area2018</span>
+<span id="cb81-9"><a href="land-cover-classification-and-change-detection.html#cb81-9" tabindex="-1"></a>), dplyr<span class="sc">::</span>full_join, <span class="at">by =</span> <span class="st">&quot;class&quot;</span>)</span>
+<span id="cb81-10"><a href="land-cover-classification-and-change-detection.html#cb81-10" tabindex="-1"></a></span>
+<span id="cb81-11"><a href="land-cover-classification-and-change-detection.html#cb81-11" tabindex="-1"></a><span class="fu">names</span>(areaCalc) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;class&quot;</span>, <span class="st">&quot;areaMt1848&quot;</span>, <span class="st">&quot;1848&quot;</span>, <span class="st">&quot;areaMt2018&quot;</span>, <span class="st">&quot;2018&quot;</span>)</span>
+<span id="cb81-12"><a href="land-cover-classification-and-change-detection.html#cb81-12" tabindex="-1"></a></span>
+<span id="cb81-13"><a href="land-cover-classification-and-change-detection.html#cb81-13" tabindex="-1"></a>areaCalc <span class="ot">&lt;-</span> areaCalc <span class="sc">%&gt;%</span></span>
+<span id="cb81-14"><a href="land-cover-classification-and-change-detection.html#cb81-14" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="st">&quot;class&quot;</span>, <span class="st">&quot;1848&quot;</span>, <span class="st">&quot;2018&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb81-15"><a href="land-cover-classification-and-change-detection.html#cb81-15" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">!</span>class, <span class="at">names_to =</span> <span class="st">&quot;Year&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;Area&quot;</span>)</span>
+<span id="cb81-16"><a href="land-cover-classification-and-change-detection.html#cb81-16" tabindex="-1"></a></span>
+<span id="cb81-17"><a href="land-cover-classification-and-change-detection.html#cb81-17" tabindex="-1"></a><span class="co"># since the 1848 map had timber and tea plantations subsumed and the 2018 had it separated, we will manually edit the same</span></span>
+<span id="cb81-18"><a href="land-cover-classification-and-change-detection.html#cb81-18" tabindex="-1"></a>areaCalc <span class="ot">&lt;-</span> areaCalc <span class="sc">%&gt;%</span> <span class="fu">drop_na</span>()</span>
+<span id="cb81-19"><a href="land-cover-classification-and-change-detection.html#cb81-19" tabindex="-1"></a></span>
+<span id="cb81-20"><a href="land-cover-classification-and-change-detection.html#cb81-20" tabindex="-1"></a><span class="fu">write.csv</span>(areaCalc, <span class="st">&quot;results/totalArea-by-landCover-timePeriod.csv&quot;</span>, <span class="at">row.names =</span> F)</span>
+<span id="cb81-21"><a href="land-cover-classification-and-change-detection.html#cb81-21" tabindex="-1"></a></span>
+<span id="cb81-22"><a href="land-cover-classification-and-change-detection.html#cb81-22" tabindex="-1"></a><span class="co"># make plot</span></span>
+<span id="cb81-23"><a href="land-cover-classification-and-change-detection.html#cb81-23" tabindex="-1"></a>fig_area <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(areaCalc, <span class="fu">aes</span>(<span class="at">x =</span> class, </span>
+<span id="cb81-24"><a href="land-cover-classification-and-change-detection.html#cb81-24" tabindex="-1"></a>                                 <span class="at">y =</span> Area, <span class="at">fill =</span> class)) <span class="sc">+</span> </span>
+<span id="cb81-25"><a href="land-cover-classification-and-change-detection.html#cb81-25" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">&quot;identity&quot;</span>, </span>
+<span id="cb81-26"><a href="land-cover-classification-and-change-detection.html#cb81-26" tabindex="-1"></a>           <span class="at">position =</span> <span class="fu">position_dodge</span>()) <span class="sc">+</span> </span>
+<span id="cb81-27"><a href="land-cover-classification-and-change-detection.html#cb81-27" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&#39;#be4fc4&#39;</span>, <span class="st">&#39;#d73027&#39;</span>,  <span class="st">&#39;#b0a69d&#39;</span>,</span>
+<span id="cb81-28"><a href="land-cover-classification-and-change-detection.html#cb81-28" tabindex="-1"></a>                              <span class="st">&#39;#025a05&#39;</span>,<span class="st">&#39;#cbb315&#39;</span>, <span class="st">&#39;#04a310&#39;</span>,</span>
+<span id="cb81-29"><a href="land-cover-classification-and-change-detection.html#cb81-29" tabindex="-1"></a>                                <span class="st">&#39;#c17111&#39;</span>, <span class="st">&#39;#2035df&#39;</span> ))<span class="sc">+</span></span>
+<span id="cb81-30"><a href="land-cover-classification-and-change-detection.html#cb81-30" tabindex="-1"></a>    <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(Area), <span class="at">hjust =</span> <span class="st">&quot;middle&quot;</span>, </span>
+<span id="cb81-31"><a href="land-cover-classification-and-change-detection.html#cb81-31" tabindex="-1"></a>                <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.5</span>), <span class="at">family =</span> <span class="st">&quot;Century Gothic&quot;</span>,</span>
+<span id="cb81-32"><a href="land-cover-classification-and-change-detection.html#cb81-32" tabindex="-1"></a>    <span class="at">position =</span> <span class="fu">position_dodge</span>(), <span class="at">angle =</span> <span class="dv">0</span>, </span>
+<span id="cb81-33"><a href="land-cover-classification-and-change-detection.html#cb81-33" tabindex="-1"></a>    <span class="at">size =</span> <span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb81-34"><a href="land-cover-classification-and-change-detection.html#cb81-34" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>Year, <span class="at">scales =</span><span class="st">&quot;free_x&quot;</span>) <span class="sc">+</span></span>
+<span id="cb81-35"><a href="land-cover-classification-and-change-detection.html#cb81-35" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb81-36"><a href="land-cover-classification-and-change-detection.html#cb81-36" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb81-37"><a href="land-cover-classification-and-change-detection.html#cb81-37" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;</span><span class="sc">\n</span><span class="st">Land cover type&quot;</span>,</span>
+<span id="cb81-38"><a href="land-cover-classification-and-change-detection.html#cb81-38" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Area in sq.km. </span><span class="sc">\n</span><span class="st">&quot;</span></span>
+<span id="cb81-39"><a href="land-cover-classification-and-change-detection.html#cb81-39" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb81-40"><a href="land-cover-classification-and-change-detection.html#cb81-40" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">14</span>,  <span class="at">family=</span><span class="st">&quot;Century Gothic&quot;</span>),</span>
+<span id="cb81-41"><a href="land-cover-classification-and-change-detection.html#cb81-41" tabindex="-1"></a>    <span class="at">axis.title =</span> <span class="fu">element_text</span>(</span>
+<span id="cb81-42"><a href="land-cover-classification-and-change-detection.html#cb81-42" tabindex="-1"></a>      <span class="at">family =</span> <span class="st">&quot;Century Gothic&quot;</span>,</span>
+<span id="cb81-43"><a href="land-cover-classification-and-change-detection.html#cb81-43" tabindex="-1"></a>      <span class="at">size =</span> <span class="dv">14</span>, <span class="at">face =</span> <span class="st">&quot;bold&quot;</span>),</span>
+<span id="cb81-44"><a href="land-cover-classification-and-change-detection.html#cb81-44" tabindex="-1"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">family =</span> <span class="st">&quot;Century Gothic&quot;</span>, </span>
+<span id="cb81-45"><a href="land-cover-classification-and-change-detection.html#cb81-45" tabindex="-1"></a>                             <span class="at">size =</span> <span class="dv">14</span>),</span>
+<span id="cb81-46"><a href="land-cover-classification-and-change-detection.html#cb81-46" tabindex="-1"></a>    <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>, </span>
+<span id="cb81-47"><a href="land-cover-classification-and-change-detection.html#cb81-47" tabindex="-1"></a>                               <span class="at">hjust =</span> <span class="dv">1</span>),</span>
+<span id="cb81-48"><a href="land-cover-classification-and-change-detection.html#cb81-48" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span>
+<span id="cb81-49"><a href="land-cover-classification-and-change-detection.html#cb81-49" tabindex="-1"></a></span>
+<span id="cb81-50"><a href="land-cover-classification-and-change-detection.html#cb81-50" tabindex="-1"></a><span class="fu">ggsave</span>(fig_area,</span>
+<span id="cb81-51"><a href="land-cover-classification-and-change-detection.html#cb81-51" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">&quot;figs/fig_totalArea_landCover.png&quot;</span>, <span class="at">width =</span> <span class="dv">15</span>, <span class="at">height =</span> <span class="dv">13</span>, <span class="at">device =</span> <span class="fu">png</span>(), <span class="at">units =</span> <span class="st">&quot;in&quot;</span>, <span class="at">dpi =</span> <span class="dv">600</span>)</span>
+<span id="cb81-52"><a href="land-cover-classification-and-change-detection.html#cb81-52" tabindex="-1"></a><span class="fu">dev.off</span>()</span>
+<span id="cb81-53"><a href="land-cover-classification-and-change-detection.html#cb81-53" tabindex="-1"></a></span>
+<span id="cb81-54"><a href="land-cover-classification-and-change-detection.html#cb81-54" tabindex="-1"></a><span class="co"># get percentArea occupied by each land cover class</span></span>
+<span id="cb81-55"><a href="land-cover-classification-and-change-detection.html#cb81-55" tabindex="-1"></a>percentArea <span class="ot">&lt;-</span> areaCalc <span class="sc">%&gt;%</span></span>
+<span id="cb81-56"><a href="land-cover-classification-and-change-detection.html#cb81-56" tabindex="-1"></a>  <span class="fu">group_by</span>(Year) <span class="sc">%&gt;%</span></span>
+<span id="cb81-57"><a href="land-cover-classification-and-change-detection.html#cb81-57" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb81-58"><a href="land-cover-classification-and-change-detection.html#cb81-58" tabindex="-1"></a>    <span class="at">totalArea =</span> <span class="fu">sum</span>(Area, <span class="at">na.rm =</span> T),</span>
+<span id="cb81-59"><a href="land-cover-classification-and-change-detection.html#cb81-59" tabindex="-1"></a>    <span class="at">percentArea =</span> (Area <span class="sc">/</span> totalArea) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb81-60"><a href="land-cover-classification-and-change-detection.html#cb81-60" tabindex="-1"></a>  )</span>
+<span id="cb81-61"><a href="land-cover-classification-and-change-detection.html#cb81-61" tabindex="-1"></a></span>
+<span id="cb81-62"><a href="land-cover-classification-and-change-detection.html#cb81-62" tabindex="-1"></a><span class="co"># plot figure</span></span>
+<span id="cb81-63"><a href="land-cover-classification-and-change-detection.html#cb81-63" tabindex="-1"></a>fig_percent_area <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(percentArea, <span class="fu">aes</span>(<span class="at">x =</span> class, <span class="at">y =</span> percentArea, <span class="at">fill =</span> class)) <span class="sc">+</span></span>
+<span id="cb81-64"><a href="land-cover-classification-and-change-detection.html#cb81-64" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">&quot;identity&quot;</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>()) <span class="sc">+</span></span>
+<span id="cb81-65"><a href="land-cover-classification-and-change-detection.html#cb81-65" tabindex="-1"></a>   <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&#39;#be4fc4&#39;</span>, <span class="st">&#39;#d73027&#39;</span>,  <span class="st">&#39;#b0a69d&#39;</span>,</span>
+<span id="cb81-66"><a href="land-cover-classification-and-change-detection.html#cb81-66" tabindex="-1"></a>                              <span class="st">&#39;#025a05&#39;</span>,<span class="st">&#39;#cbb315&#39;</span>, <span class="st">&#39;#04a310&#39;</span>,</span>
+<span id="cb81-67"><a href="land-cover-classification-and-change-detection.html#cb81-67" tabindex="-1"></a>                                <span class="st">&#39;#c17111&#39;</span>, <span class="st">&#39;#2035df&#39;</span> ))<span class="sc">+</span></span>
+<span id="cb81-68"><a href="land-cover-classification-and-change-detection.html#cb81-68" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(percentArea, <span class="at">digits =</span> <span class="dv">1</span>), <span class="at">hjust =</span> <span class="st">&quot;middle&quot;</span>, <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.5</span>), <span class="at">position =</span> <span class="fu">position_dodge</span>(), <span class="at">family =</span> <span class="st">&quot;Century Gothic&quot;</span>, <span class="at">angle =</span> <span class="dv">0</span>, <span class="at">size =</span> <span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb81-69"><a href="land-cover-classification-and-change-detection.html#cb81-69" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>Year, <span class="at">scales =</span> <span class="st">&quot;free_x&quot;</span>) <span class="sc">+</span></span>
+<span id="cb81-70"><a href="land-cover-classification-and-change-detection.html#cb81-70" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb81-71"><a href="land-cover-classification-and-change-detection.html#cb81-71" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb81-72"><a href="land-cover-classification-and-change-detection.html#cb81-72" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;</span><span class="sc">\n</span><span class="st">Land cover type&quot;</span>,</span>
+<span id="cb81-73"><a href="land-cover-classification-and-change-detection.html#cb81-73" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Percent Area </span><span class="sc">\n</span><span class="st">&quot;</span></span>
+<span id="cb81-74"><a href="land-cover-classification-and-change-detection.html#cb81-74" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb81-75"><a href="land-cover-classification-and-change-detection.html#cb81-75" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">14</span>,  <span class="at">family=</span><span class="st">&quot;Century Gothic&quot;</span>),</span>
+<span id="cb81-76"><a href="land-cover-classification-and-change-detection.html#cb81-76" tabindex="-1"></a>    <span class="at">axis.title =</span> <span class="fu">element_text</span>(</span>
+<span id="cb81-77"><a href="land-cover-classification-and-change-detection.html#cb81-77" tabindex="-1"></a>      <span class="at">family =</span> <span class="st">&quot;Century Gothic&quot;</span>,</span>
+<span id="cb81-78"><a href="land-cover-classification-and-change-detection.html#cb81-78" tabindex="-1"></a>      <span class="at">size =</span> <span class="dv">14</span>, <span class="at">face =</span> <span class="st">&quot;bold&quot;</span></span>
+<span id="cb81-79"><a href="land-cover-classification-and-change-detection.html#cb81-79" tabindex="-1"></a>    ),<span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">family =</span> <span class="st">&quot;Century Gothic&quot;</span>, </span>
+<span id="cb81-80"><a href="land-cover-classification-and-change-detection.html#cb81-80" tabindex="-1"></a>                               <span class="at">size =</span> <span class="dv">14</span>),</span>
+<span id="cb81-81"><a href="land-cover-classification-and-change-detection.html#cb81-81" tabindex="-1"></a>    <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, </span>
+<span id="cb81-82"><a href="land-cover-classification-and-change-detection.html#cb81-82" tabindex="-1"></a>                               <span class="at">vjust =</span> <span class="fl">0.5</span>, <span class="at">hjust =</span> <span class="dv">1</span>),</span>
+<span id="cb81-83"><a href="land-cover-classification-and-change-detection.html#cb81-83" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span>
+<span id="cb81-84"><a href="land-cover-classification-and-change-detection.html#cb81-84" tabindex="-1"></a></span>
+<span id="cb81-85"><a href="land-cover-classification-and-change-detection.html#cb81-85" tabindex="-1"></a><span class="fu">ggsave</span>(fig_percent_area, <span class="at">filename =</span> <span class="st">&quot;figs/fig_percentArea_landCover.png&quot;</span>, <span class="at">width =</span> <span class="dv">14</span>, <span class="at">height =</span> <span class="dv">13</span>, <span class="at">device =</span> <span class="fu">png</span>(), <span class="at">units =</span> <span class="st">&quot;in&quot;</span>, <span class="at">dpi =</span> <span class="dv">500</span>)</span>
+<span id="cb81-86"><a href="land-cover-classification-and-change-detection.html#cb81-86" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
+<div class="float">
+<img src="figs/fig_totalArea_landCover.png" alt="Barplots of change in area of each land cover class between 1848 and 2018" />
+<div class="figcaption">Barplots of change in area of each land cover class between 1848 and 2018</div>
+</div>
+</div>
+<div id="validating-the-2018-sentinel-2-classification" class="section level2 hasAnchor" number="7.9">
+<h2><span class="header-section-number">7.9</span> Validating the 2018 Sentinel-2 classification<a href="land-cover-classification-and-change-detection.html#validating-the-2018-sentinel-2-classification" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In the above classification, we see an increase in forest cover of ~ 132 sq.km between 1848 and 2018. However, is the 2018 classification accurate? Can we compare these estimates to an existing land cover classification from 2017?</p>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="land-cover-classification-and-change-detection.html#cb82-1" tabindex="-1"></a>nil2017 <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">&quot;data/landcover/2017-nilgiris/2017.shp&quot;</span>)</span>
+<span id="cb82-2"><a href="land-cover-classification-and-change-detection.html#cb82-2" tabindex="-1"></a>nil2017 <span class="ot">&lt;-</span> <span class="fu">st_intersection</span>(nil2017, all1848)</span>
+<span id="cb82-3"><a href="land-cover-classification-and-change-detection.html#cb82-3" tabindex="-1"></a></span>
+<span id="cb82-4"><a href="land-cover-classification-and-change-detection.html#cb82-4" tabindex="-1"></a><span class="co"># Let&#39;s add class name to nil1995 shapefile</span></span>
+<span id="cb82-5"><a href="land-cover-classification-and-change-detection.html#cb82-5" tabindex="-1"></a>nil2017 <span class="ot">&lt;-</span> nil2017 <span class="sc">%&gt;%</span></span>
+<span id="cb82-6"><a href="land-cover-classification-and-change-detection.html#cb82-6" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">name =</span> <span class="fu">case_when</span>(</span>
+<span id="cb82-7"><a href="land-cover-classification-and-change-detection.html#cb82-7" tabindex="-1"></a>    gridcode <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">&quot;shola_grassland&quot;</span>,</span>
+<span id="cb82-8"><a href="land-cover-classification-and-change-detection.html#cb82-8" tabindex="-1"></a>    gridcode <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="st">&quot;shola_forest&quot;</span>,</span>
+<span id="cb82-9"><a href="land-cover-classification-and-change-detection.html#cb82-9" tabindex="-1"></a>    gridcode <span class="sc">==</span> <span class="dv">3</span> <span class="sc">~</span> <span class="st">&quot;timber_plantations&quot;</span>,</span>
+<span id="cb82-10"><a href="land-cover-classification-and-change-detection.html#cb82-10" tabindex="-1"></a>    gridcode <span class="sc">==</span> <span class="dv">4</span> <span class="sc">~</span> <span class="st">&quot;tea_plantations&quot;</span>,</span>
+<span id="cb82-11"><a href="land-cover-classification-and-change-detection.html#cb82-11" tabindex="-1"></a>    gridcode <span class="sc">==</span> <span class="dv">6</span> <span class="sc">~</span> <span class="st">&quot;settlements&quot;</span>,</span>
+<span id="cb82-12"><a href="land-cover-classification-and-change-detection.html#cb82-12" tabindex="-1"></a>    gridcode <span class="sc">==</span> <span class="dv">7</span> <span class="sc">~</span> <span class="st">&quot;agriculture&quot;</span>,</span>
+<span id="cb82-13"><a href="land-cover-classification-and-change-detection.html#cb82-13" tabindex="-1"></a>    gridcode <span class="sc">==</span> <span class="dv">8</span> <span class="sc">~</span> <span class="st">&quot;water_bodies&quot;</span></span>
+<span id="cb82-14"><a href="land-cover-classification-and-change-detection.html#cb82-14" tabindex="-1"></a>  ))</span>
+<span id="cb82-15"><a href="land-cover-classification-and-change-detection.html#cb82-15" tabindex="-1"></a></span>
+<span id="cb82-16"><a href="land-cover-classification-and-change-detection.html#cb82-16" tabindex="-1"></a><span class="co"># remove older column</span></span>
+<span id="cb82-17"><a href="land-cover-classification-and-change-detection.html#cb82-17" tabindex="-1"></a>nil2017 <span class="ot">&lt;-</span> nil2017[,<span class="sc">-</span><span class="dv">3</span>]</span>
+<span id="cb82-18"><a href="land-cover-classification-and-change-detection.html#cb82-18" tabindex="-1"></a></span>
+<span id="cb82-19"><a href="land-cover-classification-and-change-detection.html#cb82-19" tabindex="-1"></a><span class="co"># renaming for ease of visualization</span></span>
+<span id="cb82-20"><a href="land-cover-classification-and-change-detection.html#cb82-20" tabindex="-1"></a><span class="fu">names</span>(nil2017) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span>,<span class="st">&quot;area&quot;</span>,<span class="st">&quot;geometry&quot;</span>,<span class="st">&quot;name&quot;</span>)</span>
+<span id="cb82-21"><a href="land-cover-classification-and-change-detection.html#cb82-21" tabindex="-1"></a></span>
+<span id="cb82-22"><a href="land-cover-classification-and-change-detection.html#cb82-22" tabindex="-1"></a><span class="do">## note that the spatial resolution of Landsat is at 30 m spatial resolution</span></span>
+<span id="cb82-23"><a href="land-cover-classification-and-change-detection.html#cb82-23" tabindex="-1"></a>vect2017 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">vect</span>(nil2017)</span>
+<span id="cb82-24"><a href="land-cover-classification-and-change-detection.html#cb82-24" tabindex="-1"></a>emptyRast <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(<span class="at">res =</span> <span class="dv">30</span>, <span class="at">xmin =</span> <span class="dv">660750</span>, <span class="at">xmax =</span> <span class="dv">718329</span>, <span class="at">ymin =</span> <span class="dv">1240554</span>, <span class="at">ymax =</span> <span class="dv">1275510</span>, <span class="at">crs =</span> <span class="st">&quot;+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs&quot;</span>)</span>
+<span id="cb82-25"><a href="land-cover-classification-and-change-detection.html#cb82-25" tabindex="-1"></a>rast2017 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rasterize</span>(vect2017, emptyRast, <span class="st">&quot;name&quot;</span>)</span>
+<span id="cb82-26"><a href="land-cover-classification-and-change-detection.html#cb82-26" tabindex="-1"></a></span>
+<span id="cb82-27"><a href="land-cover-classification-and-change-detection.html#cb82-27" tabindex="-1"></a><span class="co"># resample the 2018 raster to 30m</span></span>
+<span id="cb82-28"><a href="land-cover-classification-and-change-detection.html#cb82-28" tabindex="-1"></a>rast2018 <span class="ot">&lt;-</span> <span class="fu">resample</span>(rast2018, rast2017, <span class="at">method =</span> <span class="st">&quot;near&quot;</span>)</span>
+<span id="cb82-29"><a href="land-cover-classification-and-change-detection.html#cb82-29" tabindex="-1"></a></span>
+<span id="cb82-30"><a href="land-cover-classification-and-change-detection.html#cb82-30" tabindex="-1"></a><span class="co"># mask the 2018 raster with the 2017 one since the 2017 raster was only for area above 1400m</span></span>
+<span id="cb82-31"><a href="land-cover-classification-and-change-detection.html#cb82-31" tabindex="-1"></a>rast2018 <span class="ot">&lt;-</span> <span class="fu">mask</span>(rast2018, rast2017)</span>
+<span id="cb82-32"><a href="land-cover-classification-and-change-detection.html#cb82-32" tabindex="-1"></a></span>
+<span id="cb82-33"><a href="land-cover-classification-and-change-detection.html#cb82-33" tabindex="-1"></a><span class="co"># visualizing the two classifications</span></span>
+<span id="cb82-34"><a href="land-cover-classification-and-change-detection.html#cb82-34" tabindex="-1"></a>colors2017 <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb82-35"><a href="land-cover-classification-and-change-detection.html#cb82-35" tabindex="-1"></a>  <span class="st">&#39;#be4fc4&#39;</span>, <span class="co"># agriculture, violetish</span></span>
+<span id="cb82-36"><a href="land-cover-classification-and-change-detection.html#cb82-36" tabindex="-1"></a>  <span class="st">&#39;#b0a69d&#39;</span>, <span class="co"># settlements, grayish</span></span>
+<span id="cb82-37"><a href="land-cover-classification-and-change-detection.html#cb82-37" tabindex="-1"></a>   <span class="st">&#39;#025a05&#39;</span>, <span class="co"># shola forests, dark green</span></span>
+<span id="cb82-38"><a href="land-cover-classification-and-change-detection.html#cb82-38" tabindex="-1"></a>  <span class="st">&#39;#cbb315&#39;</span>, <span class="co"># shola grasslands, yellowish</span></span>
+<span id="cb82-39"><a href="land-cover-classification-and-change-detection.html#cb82-39" tabindex="-1"></a>   <span class="st">&#39;#04a310&#39;</span>, <span class="co"># tea plantations, light green</span></span>
+<span id="cb82-40"><a href="land-cover-classification-and-change-detection.html#cb82-40" tabindex="-1"></a>  <span class="st">&#39;#c17111&#39;</span>, <span class="co"># timber plantations, brownish</span></span>
+<span id="cb82-41"><a href="land-cover-classification-and-change-detection.html#cb82-41" tabindex="-1"></a>  <span class="st">&#39;#2035df&#39;</span>  <span class="co"># waterbodies, royal blue</span></span>
+<span id="cb82-42"><a href="land-cover-classification-and-change-detection.html#cb82-42" tabindex="-1"></a>)</span>
+<span id="cb82-43"><a href="land-cover-classification-and-change-detection.html#cb82-43" tabindex="-1"></a></span>
+<span id="cb82-44"><a href="land-cover-classification-and-change-detection.html#cb82-44" tabindex="-1"></a><span class="do">## saving a high resolution visualization</span></span>
+<span id="cb82-45"><a href="land-cover-classification-and-change-detection.html#cb82-45" tabindex="-1"></a><span class="fu">png</span>(<span class="at">filename =</span> <span class="st">&quot;figs/fig_landCover_2018_vs_2017.png&quot;</span>, </span>
+<span id="cb82-46"><a href="land-cover-classification-and-change-detection.html#cb82-46" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">12</span>, <span class="at">height =</span> <span class="dv">7</span>, <span class="at">units =</span> <span class="st">&quot;in&quot;</span>, <span class="at">res =</span> <span class="dv">300</span>)</span>
+<span id="cb82-47"><a href="land-cover-classification-and-change-detection.html#cb82-47" tabindex="-1"></a></span>
+<span id="cb82-48"><a href="land-cover-classification-and-change-detection.html#cb82-48" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb82-49"><a href="land-cover-classification-and-change-detection.html#cb82-49" tabindex="-1"></a><span class="fu">plot</span>(rast2018, <span class="at">col =</span> colors2018, <span class="at">main =</span> <span class="st">&quot;2018 Sentinel classification&quot;</span>,</span>
+<span id="cb82-50"><a href="land-cover-classification-and-change-detection.html#cb82-50" tabindex="-1"></a>     <span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb82-51"><a href="land-cover-classification-and-change-detection.html#cb82-51" tabindex="-1"></a><span class="fu">plot</span>(rast2017, <span class="at">col=</span>colors2017, <span class="at">main =</span> <span class="st">&quot;2017 Landsat classification&quot;</span>, <span class="at">legend=</span><span class="cn">FALSE</span>)</span>
+<span id="cb82-52"><a href="land-cover-classification-and-change-detection.html#cb82-52" tabindex="-1"></a></span>
+<span id="cb82-53"><a href="land-cover-classification-and-change-detection.html#cb82-53" tabindex="-1"></a><span class="co"># add custom legend</span></span>
+<span id="cb82-54"><a href="land-cover-classification-and-change-detection.html#cb82-54" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>), </span>
+<span id="cb82-55"><a href="land-cover-classification-and-change-detection.html#cb82-55" tabindex="-1"></a>     <span class="at">new =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb82-56"><a href="land-cover-classification-and-change-detection.html#cb82-56" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="at">type =</span> <span class="st">&#39;l&#39;</span>, <span class="at">bty =</span> <span class="st">&#39;n&#39;</span>, <span class="at">xaxt =</span> <span class="st">&#39;n&#39;</span>, <span class="at">yaxt =</span> <span class="st">&#39;n&#39;</span>)</span>
+<span id="cb82-57"><a href="land-cover-classification-and-change-detection.html#cb82-57" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&quot;bottom&quot;</span>,</span>
+<span id="cb82-58"><a href="land-cover-classification-and-change-detection.html#cb82-58" tabindex="-1"></a>       <span class="at">legend=</span>landcover_class<span class="sc">$</span>name, <span class="at">fill=</span>colors2018, </span>
+<span id="cb82-59"><a href="land-cover-classification-and-change-detection.html#cb82-59" tabindex="-1"></a>       <span class="at">cex =</span> <span class="fl">0.8</span>, </span>
+<span id="cb82-60"><a href="land-cover-classification-and-change-detection.html#cb82-60" tabindex="-1"></a>       <span class="at">title=</span><span class="st">&quot;land cover classes&quot;</span>,</span>
+<span id="cb82-61"><a href="land-cover-classification-and-change-detection.html#cb82-61" tabindex="-1"></a>       <span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb82-62"><a href="land-cover-classification-and-change-detection.html#cb82-62" tabindex="-1"></a><span class="fu">dev.off</span>()</span>
+<span id="cb82-63"><a href="land-cover-classification-and-change-detection.html#cb82-63" tabindex="-1"></a></span>
+<span id="cb82-64"><a href="land-cover-classification-and-change-detection.html#cb82-64" tabindex="-1"></a><span class="do">## area-wise calculations</span></span>
+<span id="cb82-65"><a href="land-cover-classification-and-change-detection.html#cb82-65" tabindex="-1"></a>sz2018 <span class="ot">&lt;-</span> <span class="fu">cellSize</span>(rast2018, <span class="at">unit =</span> <span class="st">&quot;m&quot;</span>)</span>
+<span id="cb82-66"><a href="land-cover-classification-and-change-detection.html#cb82-66" tabindex="-1"></a>area2018 <span class="ot">&lt;-</span> <span class="fu">zonal</span>(sz2018, rast2018, sum)</span>
+<span id="cb82-67"><a href="land-cover-classification-and-change-detection.html#cb82-67" tabindex="-1"></a>area2018SqKm <span class="ot">&lt;-</span> (area2018<span class="sc">$</span>area <span class="sc">/</span> <span class="dv">1000000</span>)</span>
+<span id="cb82-68"><a href="land-cover-classification-and-change-detection.html#cb82-68" tabindex="-1"></a>area2018 <span class="ot">&lt;-</span> <span class="fu">cbind</span>(area2018, area2018SqKm)</span>
+<span id="cb82-69"><a href="land-cover-classification-and-change-detection.html#cb82-69" tabindex="-1"></a></span>
+<span id="cb82-70"><a href="land-cover-classification-and-change-detection.html#cb82-70" tabindex="-1"></a>sz2017 <span class="ot">&lt;-</span> <span class="fu">cellSize</span>(rast2017, <span class="at">unit =</span> <span class="st">&quot;m&quot;</span>)</span>
+<span id="cb82-71"><a href="land-cover-classification-and-change-detection.html#cb82-71" tabindex="-1"></a>area2017 <span class="ot">&lt;-</span> <span class="fu">zonal</span>(sz2017, rast2017, sum)</span>
+<span id="cb82-72"><a href="land-cover-classification-and-change-detection.html#cb82-72" tabindex="-1"></a>area2017SqKm <span class="ot">&lt;-</span> (area2017<span class="sc">$</span>area <span class="sc">/</span> <span class="dv">1000000</span>)</span>
+<span id="cb82-73"><a href="land-cover-classification-and-change-detection.html#cb82-73" tabindex="-1"></a>area2017 <span class="ot">&lt;-</span> <span class="fu">cbind</span>(area2017, area2017SqKm)</span>
+<span id="cb82-74"><a href="land-cover-classification-and-change-detection.html#cb82-74" tabindex="-1"></a></span>
+<span id="cb82-75"><a href="land-cover-classification-and-change-detection.html#cb82-75" tabindex="-1"></a><span class="co"># Joining all dataframes to create a single one for plotting and visualization</span></span>
+<span id="cb82-76"><a href="land-cover-classification-and-change-detection.html#cb82-76" tabindex="-1"></a><span class="fu">names</span>(area2017) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;class&quot;</span>, <span class="st">&quot;areaInMeters&quot;</span>,<span class="st">&quot;sumArea&quot;</span>)</span>
+<span id="cb82-77"><a href="land-cover-classification-and-change-detection.html#cb82-77" tabindex="-1"></a><span class="fu">names</span>(area2018) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;class&quot;</span>, <span class="st">&quot;areaInMeters&quot;</span>,<span class="st">&quot;sumArea&quot;</span>)</span>
+<span id="cb82-78"><a href="land-cover-classification-and-change-detection.html#cb82-78" tabindex="-1"></a></span>
+<span id="cb82-79"><a href="land-cover-classification-and-change-detection.html#cb82-79" tabindex="-1"></a>areaCalc <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">reduce</span>(<span class="fu">list</span>(</span>
+<span id="cb82-80"><a href="land-cover-classification-and-change-detection.html#cb82-80" tabindex="-1"></a>  area2017, </span>
+<span id="cb82-81"><a href="land-cover-classification-and-change-detection.html#cb82-81" tabindex="-1"></a>  area2018</span>
+<span id="cb82-82"><a href="land-cover-classification-and-change-detection.html#cb82-82" tabindex="-1"></a>), dplyr<span class="sc">::</span>full_join, <span class="at">by =</span> <span class="st">&quot;class&quot;</span>)</span>
+<span id="cb82-83"><a href="land-cover-classification-and-change-detection.html#cb82-83" tabindex="-1"></a></span>
+<span id="cb82-84"><a href="land-cover-classification-and-change-detection.html#cb82-84" tabindex="-1"></a><span class="fu">names</span>(areaCalc) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;class&quot;</span>, <span class="st">&quot;areaMt2017&quot;</span>, <span class="st">&quot;2017&quot;</span>, <span class="st">&quot;areaMt2018&quot;</span>, <span class="st">&quot;2018&quot;</span>)</span>
+<span id="cb82-85"><a href="land-cover-classification-and-change-detection.html#cb82-85" tabindex="-1"></a></span>
+<span id="cb82-86"><a href="land-cover-classification-and-change-detection.html#cb82-86" tabindex="-1"></a>areaCalc <span class="ot">&lt;-</span> areaCalc <span class="sc">%&gt;%</span></span>
+<span id="cb82-87"><a href="land-cover-classification-and-change-detection.html#cb82-87" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="st">&quot;class&quot;</span>, <span class="st">&quot;2017&quot;</span>, <span class="st">&quot;2018&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb82-88"><a href="land-cover-classification-and-change-detection.html#cb82-88" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">!</span>class, <span class="at">names_to =</span> <span class="st">&quot;Year&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;Area&quot;</span>)</span>
+<span id="cb82-89"><a href="land-cover-classification-and-change-detection.html#cb82-89" tabindex="-1"></a></span>
+<span id="cb82-90"><a href="land-cover-classification-and-change-detection.html#cb82-90" tabindex="-1"></a><span class="fu">write.csv</span>(areaCalc, <span class="st">&quot;results/totalArea-by-landCover-2018-vs-2017.csv&quot;</span>, <span class="at">row.names =</span> F)</span></code></pre></div>
+<div class="float">
+<img src="figs/fig_landCover_2018_vs_2017.png" alt="Comparing the 2018 Sentinel classification to the 2017 Landsat classification of the same area revealed no major differences" />
+<div class="figcaption">Comparing the 2018 Sentinel classification to the 2017 Landsat classification of the same area revealed no major differences</div>
+</div>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="analyzing-temperature-and-precipitation-change-over-time.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="grassland-contractions-forest-expansions.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": false,
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/vjjan91/nilgiris-resurvey-project/edit/master/06_land-cover-classification.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

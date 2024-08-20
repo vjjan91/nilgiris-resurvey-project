@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Section 11 Species relative abundances over time | Colonial-era landscape changes has led to grassland bird species declines over the last century</title>
+  <meta name="description" content="Section 11 Species relative abundances over time | Colonial-era landscape changes has led to grassland bird species declines over the last century" />
+  <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Section 11 Species relative abundances over time | Colonial-era landscape changes has led to grassland bird species declines over the last century" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta name="github-repo" content="vjjan91/nilgiris-resurvey-project" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Section 11 Species relative abundances over time | Colonial-era landscape changes has led to grassland bird species declines over the last century" />
+  
+  
+  
+
+<meta name="author" content="Vijay Ramesh" />
+<meta name="author" content="VA Akshay" />
+<meta name="author" content="Pratik Rajan Gupte" />
+<meta name="author" content="Amrutha Rajan" />
+<meta name="author" content="Chandrasekar Das" />
+<meta name="author" content="Priyanka Hari Haran" />
+<meta name="author" content="Ian Lockwood" />
+<meta name="author" content="Ashwini Mohan" />
+<meta name="author" content="Morgan W Tingley" />
+<meta name="author" content="VV Robin" />
+<meta name="author" content="Ruth S DeFries" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="exploratory-analysis-of-occurrence-data.html"/>
+<link rel="next" href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#attribution"><i class="fa fa-check"></i><b>1.1</b> Attribution</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#data-access"><i class="fa fa-check"></i><b>1.2</b> Data access</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#data-processing"><i class="fa fa-check"></i><b>1.3</b> Data processing</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html"><i class="fa fa-check"></i><b>2</b> Prepare Climate Data for Interpolation</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#load-libraries"><i class="fa fa-check"></i><b>2.1</b> Load libraries</a></li>
+<li class="chapter" data-level="2.2" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#prepare-climate-data"><i class="fa fa-check"></i><b>2.2</b> Prepare climate data</a></li>
+<li class="chapter" data-level="2.3" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#summarise-by-month"><i class="fa fa-check"></i><b>2.3</b> Summarise by month</a></li>
+<li class="chapter" data-level="2.4" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#prepare-for-spatial-data"><i class="fa fa-check"></i><b>2.4</b> Prepare for spatial data</a></li>
+<li class="chapter" data-level="2.5" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#prepare-spatial-data"><i class="fa fa-check"></i><b>2.5</b> Prepare spatial data</a></li>
+<li class="chapter" data-level="2.6" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#prepare-coastline-data"><i class="fa fa-check"></i><b>2.6</b> Prepare coastline data</a></li>
+<li class="chapter" data-level="2.7" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#resample-raster-to-600m"><i class="fa fa-check"></i><b>2.7</b> Resample raster to 600m</a></li>
+<li class="chapter" data-level="2.8" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#link-predictors-to-climate-data"><i class="fa fa-check"></i><b>2.8</b> Link predictors to climate data</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html"><i class="fa fa-check"></i><b>3</b> Validating semi-spatial GAMs for climate</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#load-libraries-1"><i class="fa fa-check"></i><b>3.1</b> Load libraries</a></li>
+<li class="chapter" data-level="3.2" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#load-data-prepared-for-the-gam-and-the-stack-predictor-raster."><i class="fa fa-check"></i><b>3.2</b> Load data prepared for the GAM, and the stack predictor raster.</a></li>
+<li class="chapter" data-level="3.3" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#prepare-data-covariates-and-raster"><i class="fa fa-check"></i><b>3.3</b> Prepare data covariates and raster</a></li>
+<li class="chapter" data-level="3.4" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#pivot-longer-to-separate-by-variable."><i class="fa fa-check"></i><b>3.4</b> Pivot longer to separate by variable.</a></li>
+<li class="chapter" data-level="3.5" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#split-the-data-by-variable."><i class="fa fa-check"></i><b>3.5</b> Split the data by variable.</a></li>
+<li class="chapter" data-level="3.6" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#fit-candidate-models"><i class="fa fa-check"></i><b>3.6</b> Fit candidate models</a>
+<ul>
+<li class="chapter" data-level="3.6.1" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#save-model-data."><i class="fa fa-check"></i><b>3.6.1</b> Save model data.</a></li>
+</ul></li>
+<li class="chapter" data-level="3.7" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#predict-over-static-environment"><i class="fa fa-check"></i><b>3.7</b> Predict over static environment</a></li>
+<li class="chapter" data-level="3.8" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#average-predictions-over-1970-to-2010."><i class="fa fa-check"></i><b>3.8</b> Average predictions over 1970 to 2010.</a></li>
+<li class="chapter" data-level="3.9" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#get-bioclim-data"><i class="fa fa-check"></i><b>3.9</b> Get BIOCLIM data</a></li>
+<li class="chapter" data-level="3.10" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#get-precipitation-data"><i class="fa fa-check"></i><b>3.10</b> Get precipitation data</a></li>
+<li class="chapter" data-level="3.11" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#get-sample-coordinates"><i class="fa fa-check"></i><b>3.11</b> Get sample coordinates</a></li>
+<li class="chapter" data-level="3.12" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#compare-bioclim-and-model-predictions"><i class="fa fa-check"></i><b>3.12</b> Compare BIOCLIM and model predictions</a></li>
+<li class="chapter" data-level="3.13" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#link-with-gam-predictions"><i class="fa fa-check"></i><b>3.13</b> Link with GAM predictions</a></li>
+<li class="chapter" data-level="3.14" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#get-gam-predictions-at-chelsa-sample-locations."><i class="fa fa-check"></i><b>3.14</b> Get GAM predictions at chelsa sample locations.</a></li>
+<li class="chapter" data-level="3.15" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#gam-predictions-at-survey-sites"><i class="fa fa-check"></i><b>3.15</b> GAM predictions at survey sites</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html"><i class="fa fa-check"></i><b>4</b> GAM error in predicting climate</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#load-libraries-2"><i class="fa fa-check"></i><b>4.1</b> Load libraries</a></li>
+<li class="chapter" data-level="4.2" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#load-data"><i class="fa fa-check"></i><b>4.2</b> Load data</a></li>
+<li class="chapter" data-level="4.3" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#plot-model-error"><i class="fa fa-check"></i><b>4.3</b> Plot model error</a></li>
+<li class="chapter" data-level="4.4" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#compare-climate-predictions-at-survey-sites"><i class="fa fa-check"></i><b>4.4</b> Compare climate predictions at survey sites</a></li>
+<li class="chapter" data-level="4.5" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#plot-gam-prediction-residuals"><i class="fa fa-check"></i><b>4.5</b> Plot GAM prediction residuals</a></li>
+<li class="chapter" data-level="4.6" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#load-processed-bioclim-data"><i class="fa fa-check"></i><b>4.6</b> Load processed BIOCLIM data</a></li>
+<li class="chapter" data-level="4.7" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#get-prediction-as-fraction-of-bioclim-layers"><i class="fa fa-check"></i><b>4.7</b> Get prediction as fraction of BIOCLIM layers</a></li>
+<li class="chapter" data-level="4.8" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#temperature-fractions"><i class="fa fa-check"></i><b>4.8</b> Temperature fractions</a></li>
+<li class="chapter" data-level="4.9" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#precipitation-fractions"><i class="fa fa-check"></i><b>4.9</b> Precipitation fractions</a></li>
+<li class="chapter" data-level="4.10" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#save-climate-correction-layers"><i class="fa fa-check"></i><b>4.10</b> Save climate correction layers</a></li>
+<li class="chapter" data-level="4.11" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#seasonal-mean-temperature-correction-layer"><i class="fa fa-check"></i><b>4.11</b> Seasonal mean temperature correction layer</a></li>
+<li class="chapter" data-level="4.12" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#seasonal-total-rainfall-correction-layer"><i class="fa fa-check"></i><b>4.12</b> Seasonal total rainfall correction layer</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html"><i class="fa fa-check"></i><b>5</b> Reconstructing climate data</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#load-libraries-3"><i class="fa fa-check"></i><b>5.1</b> Load libraries</a></li>
+<li class="chapter" data-level="5.2" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#load-data-prepared-for-the-gam-and-the-stack-predictor-raster.-1"><i class="fa fa-check"></i><b>5.2</b> Load data prepared for the GAM, and the stack predictor raster.</a></li>
+<li class="chapter" data-level="5.3" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#prepare-data-covariates-and-raster."><i class="fa fa-check"></i><b>5.3</b> Prepare data covariates and raster.</a></li>
+<li class="chapter" data-level="5.4" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#pivot-longer-to-separate-by-variable.-1"><i class="fa fa-check"></i><b>5.4</b> Pivot longer to separate by variable.</a></li>
+<li class="chapter" data-level="5.5" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#split-data-by-variable-season-and-year-bin"><i class="fa fa-check"></i><b>5.5</b> Split data by variable, season, and year bin</a></li>
+<li class="chapter" data-level="5.6" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#fit-chosen-gams"><i class="fa fa-check"></i><b>5.6</b> Fit chosen GAMs</a></li>
+<li class="chapter" data-level="5.7" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#assign-formula-to-variable."><i class="fa fa-check"></i><b>5.7</b> Assign formula to variable.</a></li>
+<li class="chapter" data-level="5.8" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#fit-gams"><i class="fa fa-check"></i><b>5.8</b> Fit GAMs</a></li>
+<li class="chapter" data-level="5.9" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#save-model-data.-1"><i class="fa fa-check"></i><b>5.9</b> Save model data.</a></li>
+<li class="chapter" data-level="5.10" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#predict-over-static-environment-1"><i class="fa fa-check"></i><b>5.10</b> Predict over static environment</a></li>
+<li class="chapter" data-level="5.11" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#apply-correction-layers"><i class="fa fa-check"></i><b>5.11</b> Apply correction layers</a></li>
+<li class="chapter" data-level="5.12" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#link-correction-layers-with-predictions"><i class="fa fa-check"></i><b>5.12</b> Link correction layers with predictions</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html"><i class="fa fa-check"></i><b>6</b> Analyzing temperature and precipitation change over time</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html#load-necessary-libraries"><i class="fa fa-check"></i><b>6.1</b> Load necessary libraries</a></li>
+<li class="chapter" data-level="6.2" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html#plot-change-in-climate-as-percentages."><i class="fa fa-check"></i><b>6.2</b> Plot change in climate as percentages.</a></li>
+<li class="chapter" data-level="6.3" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html#load-list-of-resurvey-locationshistorical-sites-of-occurrence"><i class="fa fa-check"></i><b>6.3</b> Load list of resurvey locations/historical sites of occurrence</a></li>
+<li class="chapter" data-level="6.4" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html#load-the-climate-rasters"><i class="fa fa-check"></i><b>6.4</b> Load the climate rasters</a></li>
+<li class="chapter" data-level="6.5" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html#combine-site-climate-and-terrain-data"><i class="fa fa-check"></i><b>6.5</b> Combine site climate and terrain data</a></li>
+<li class="chapter" data-level="6.6" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html#plot-all-reconstructed-climate-over-time-colouring-by-elevation-and-grouping-by-site.-each-line-represents-one-modern-site-code."><i class="fa fa-check"></i><b>6.6</b> Plot all reconstructed climate over time colouring by elevation and grouping by site. Each line represents one modern site code.</a></li>
+<li class="chapter" data-level="6.7" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html#test-for-climate-change-over-time"><i class="fa fa-check"></i><b>6.7</b> Test for climate change over time</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html"><i class="fa fa-check"></i><b>7</b> Land cover classification and change detection</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#load-necessary-libraries-1"><i class="fa fa-check"></i><b>7.1</b> Load necessary libraries</a></li>
+<li class="chapter" data-level="7.2" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#processing-digitized-shapefiles-from-the-1848-map"><i class="fa fa-check"></i><b>7.2</b> Processing digitized shapefiles from the 1848 map</a></li>
+<li class="chapter" data-level="7.3" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#rasterization-of-the-1848-shapefiles"><i class="fa fa-check"></i><b>7.3</b> Rasterization of the 1848 shapefiles</a></li>
+<li class="chapter" data-level="7.4" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#load-the-2018-satellite-image"><i class="fa fa-check"></i><b>7.4</b> Load the 2018 satellite image</a></li>
+<li class="chapter" data-level="7.5" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#subsume-plantations-into-one-category-for-2018"><i class="fa fa-check"></i><b>7.5</b> Subsume plantations into one category for 2018</a></li>
+<li class="chapter" data-level="7.6" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#write-the-shapefiles-and-rasters-to-file"><i class="fa fa-check"></i><b>7.6</b> Write the shapefiles and rasters to file</a></li>
+<li class="chapter" data-level="7.7" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#area-wise-comparisons-of-land-cover-change"><i class="fa fa-check"></i><b>7.7</b> Area-wise comparisons of land cover change</a></li>
+<li class="chapter" data-level="7.8" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#barplots-of-land-cover-change"><i class="fa fa-check"></i><b>7.8</b> Barplots of land cover change</a></li>
+<li class="chapter" data-level="7.9" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#validating-the-2018-sentinel-2-classification"><i class="fa fa-check"></i><b>7.9</b> Validating the 2018 Sentinel-2 classification</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html"><i class="fa fa-check"></i><b>8</b> Grassland contractions &amp; forest expansions</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#load-necessary-libraries-2"><i class="fa fa-check"></i><b>8.1</b> Load necessary libraries</a></li>
+<li class="chapter" data-level="8.2" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#load-processed-land-cover-rasters"><i class="fa fa-check"></i><b>8.2</b> Load processed land cover rasters</a></li>
+<li class="chapter" data-level="8.3" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#visualize-forests-across-the-two-time-periods"><i class="fa fa-check"></i><b>8.3</b> Visualize forests across the two time periods</a></li>
+<li class="chapter" data-level="8.4" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#visualize-grassland-area-across-the-two-time-periods"><i class="fa fa-check"></i><b>8.4</b> Visualize grassland area across the two time periods</a></li>
+<li class="chapter" data-level="8.5" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#comparing-if-forests-have-increased-in-locations-where-grasslands-were-formerly-found"><i class="fa fa-check"></i><b>8.5</b> Comparing if forests have increased in locations where grasslands were formerly found?</a></li>
+<li class="chapter" data-level="8.6" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#have-forests-expanded-across-elevations"><i class="fa fa-check"></i><b>8.6</b> Have forests expanded across elevations?</a></li>
+<li class="chapter" data-level="8.7" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#how-do-grassland-patches-vary-by-elevation-across-time-periods"><i class="fa fa-check"></i><b>8.7</b> How do grassland patches vary by elevation across time periods?</a></li>
+<li class="chapter" data-level="8.8" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#comparing-if-plantations-have-increased-in-locations-where-grasslands-were-formerly-found"><i class="fa fa-check"></i><b>8.8</b> Comparing if plantations have increased in locations where grasslands were formerly found?</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html"><i class="fa fa-check"></i><b>9</b> Visualizing time series of change</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#load-necessary-libraries-3"><i class="fa fa-check"></i><b>9.1</b> Load necessary libraries</a></li>
+<li class="chapter" data-level="9.2" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#load-processed-land-cover-rasters-1"><i class="fa fa-check"></i><b>9.2</b> Load processed land cover rasters</a></li>
+<li class="chapter" data-level="9.3" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#loading-data-from-the-1910-map"><i class="fa fa-check"></i><b>9.3</b> Loading data from the 1910 map</a></li>
+<li class="chapter" data-level="9.4" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#rasterizing-of-the-1910-data"><i class="fa fa-check"></i><b>9.4</b> Rasterizing of the 1910 data</a></li>
+<li class="chapter" data-level="9.5" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#loading-the-1973-and-1995-data"><i class="fa fa-check"></i><b>9.5</b> Loading the 1973 and 1995 data</a></li>
+<li class="chapter" data-level="9.6" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#rasterization-of-the-1973-and-1995-data"><i class="fa fa-check"></i><b>9.6</b> Rasterization of the 1973 and 1995 data</a></li>
+<li class="chapter" data-level="9.7" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#visualization-of-landscape-change-over-time"><i class="fa fa-check"></i><b>9.7</b> Visualization of landscape change over time</a></li>
+<li class="chapter" data-level="9.8" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#subsume-plantations-into-one-category-for-1973-1995-and-2018"><i class="fa fa-check"></i><b>9.8</b> Subsume plantations into one category for 1973, 1995, and 2018</a></li>
+<li class="chapter" data-level="9.9" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#creating-smaller-regions-of-interest-for-comparison"><i class="fa fa-check"></i><b>9.9</b> Creating smaller regions of interest for comparison</a></li>
+<li class="chapter" data-level="9.10" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#comparisons-only-above-1400-meters-in-elevation"><i class="fa fa-check"></i><b>9.10</b> Comparisons only above 1400 meters in elevation</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="exploratory-analysis-of-occurrence-data.html"><a href="exploratory-analysis-of-occurrence-data.html"><i class="fa fa-check"></i><b>10</b> Exploratory analysis of occurrence data</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="exploratory-analysis-of-occurrence-data.html"><a href="exploratory-analysis-of-occurrence-data.html#load-necessary-libraries-4"><i class="fa fa-check"></i><b>10.1</b> Load necessary libraries</a></li>
+<li class="chapter" data-level="10.2" data-path="exploratory-analysis-of-occurrence-data.html"><a href="exploratory-analysis-of-occurrence-data.html#load-the-historical-occurrence-data-and-explore-patterns"><i class="fa fa-check"></i><b>10.2</b> Load the historical occurrence data and explore patterns</a></li>
+<li class="chapter" data-level="10.3" data-path="exploratory-analysis-of-occurrence-data.html"><a href="exploratory-analysis-of-occurrence-data.html#examining-historical-data-by-locality"><i class="fa fa-check"></i><b>10.3</b> Examining historical data by locality</a></li>
+<li class="chapter" data-level="10.4" data-path="exploratory-analysis-of-occurrence-data.html"><a href="exploratory-analysis-of-occurrence-data.html#visualizations-of-historical-data"><i class="fa fa-check"></i><b>10.4</b> Visualizations of historical data</a></li>
+<li class="chapter" data-level="10.5" data-path="exploratory-analysis-of-occurrence-data.html"><a href="exploratory-analysis-of-occurrence-data.html#examining-species-specific-counts-by-locality"><i class="fa fa-check"></i><b>10.5</b> Examining species specific counts by locality</a></li>
+<li class="chapter" data-level="10.6" data-path="exploratory-analysis-of-occurrence-data.html"><a href="exploratory-analysis-of-occurrence-data.html#load-modern-occurrence-data-and-explore-patterns"><i class="fa fa-check"></i><b>10.6</b> Load modern occurrence data and explore patterns</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html"><i class="fa fa-check"></i><b>11</b> Species relative abundances over time</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#load-necessary-libraries-5"><i class="fa fa-check"></i><b>11.1</b> Load necessary libraries</a></li>
+<li class="chapter" data-level="11.2" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#load-list-of-resurvey-locations"><i class="fa fa-check"></i><b>11.2</b> Load list of resurvey locations</a></li>
+<li class="chapter" data-level="11.3" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#for-the-historical-occurrence-data-we-will-choose-data-from-two-time-periods-1850-1900-1900-1950."><i class="fa fa-check"></i><b>11.3</b> For the historical occurrence data, we will choose data from two time periods: 1850-1900 &amp; 1900-1950.</a></li>
+<li class="chapter" data-level="11.4" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#load-the-modern-occurrence-data"><i class="fa fa-check"></i><b>11.4</b> Load the modern occurrence data</a></li>
+<li class="chapter" data-level="11.5" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#calculate-dirichlet-distributions-of-relative-abundance"><i class="fa fa-check"></i><b>11.5</b> Calculate dirichlet distributions of relative abundance</a></li>
+<li class="chapter" data-level="11.6" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#calibrating-historical-data-to-modern-survey-data-for-relative-abundance-calculations"><i class="fa fa-check"></i><b>11.6</b> Calibrating historical data to modern survey data for relative abundance calculations</a></li>
+<li class="chapter" data-level="11.7" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#boxplot-visualization-of-overall-relative-abundance-across-timeperiods"><i class="fa fa-check"></i><b>11.7</b> Boxplot visualization of overall relative abundance across timeperiods</a></li>
+<li class="chapter" data-level="11.8" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#species-relative-abundances-at-the-site-level"><i class="fa fa-check"></i><b>11.8</b> Species relative abundances at the site-level</a></li>
+<li class="chapter" data-level="11.9" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#visualizing-differences-in-relative-abundance-over-time-at-the-site-level"><i class="fa fa-check"></i><b>11.9</b> Visualizing differences in relative abundance over time at the site level</a></li>
+<li class="chapter" data-level="11.10" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#writing-results-to-file"><i class="fa fa-check"></i><b>11.10</b> Writing results to file</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><i class="fa fa-check"></i><b>12</b> Examining changes in relative abundance over time as a function of species habitat affiliation</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#load-necessary-libraries-6"><i class="fa fa-check"></i><b>12.1</b> Load necessary libraries</a></li>
+<li class="chapter" data-level="12.2" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#load-data-on-species-relative-abundances"><i class="fa fa-check"></i><b>12.2</b> Load data on species relative abundances</a></li>
+<li class="chapter" data-level="12.3" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#load-species-trait-data"><i class="fa fa-check"></i><b>12.3</b> Load species trait data</a></li>
+<li class="chapter" data-level="12.4" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#visualizing-relative-abundance-change-by-species-across-time-periods-for-grassland-bird-species"><i class="fa fa-check"></i><b>12.4</b> Visualizing relative abundance change by species across time periods for grassland bird species</a></li>
+<li class="chapter" data-level="12.5" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#rank-abundance-plots-of-relative-abundance-by-species-trait-across-time-periods"><i class="fa fa-check"></i><b>12.5</b> Rank abundance plots of relative abundance by species trait across time periods</a></li>
+<li class="chapter" data-level="12.6" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#are-there-significant-decreases-in-relative-abundance-by-time-periods-across-habitat-affiliations"><i class="fa fa-check"></i><b>12.6</b> Are there significant decreases in relative abundance by time periods across habitat affiliations?</a></li>
+<li class="chapter" data-level="12.7" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#forest-birds"><i class="fa fa-check"></i><b>12.7</b> Forest birds</a></li>
+<li class="chapter" data-level="12.8" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#grassland-birds"><i class="fa fa-check"></i><b>12.8</b> Grassland birds</a></li>
+<li class="chapter" data-level="12.9" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#generalist-birds"><i class="fa fa-check"></i><b>12.9</b> Generalist birds</a></li>
+<li class="chapter" data-level="12.10" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#creating-a-combined-figure-for-the-above-three-models"><i class="fa fa-check"></i><b>12.10</b> Creating a combined figure for the above three models</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./"><em>Colonial-era landscape changes has led to grassland bird species declines over the last century</em></a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="species-relative-abundances-over-time" class="section level1 hasAnchor" number="11">
+<h1><span class="header-section-number">Section 11</span> Species relative abundances over time<a href="species-relative-abundances-over-time.html#species-relative-abundances-over-time" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>In this script, we calculate species relative abundances over time by replicating a novel approach proposed by Gotelli et al. 2021 (who provides a methodological approach to calculate relative species abundances using historical museum records).</p>
+<p>The assumption is that the level of the analysis is at the ‘historic-site’ and not the ‘modern-site’ (which essentially corresponds to multiple unique modern survey sites for every ‘historic-site’).</p>
+<div id="load-necessary-libraries-5" class="section level2 hasAnchor" number="11.1">
+<h2><span class="header-section-number">11.1</span> Load necessary libraries<a href="species-relative-abundances-over-time.html#load-necessary-libraries-5" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="species-relative-abundances-over-time.html#cb107-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb107-2"><a href="species-relative-abundances-over-time.html#cb107-2" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb107-3"><a href="species-relative-abundances-over-time.html#cb107-3" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb107-4"><a href="species-relative-abundances-over-time.html#cb107-4" tabindex="-1"></a><span class="fu">library</span>(scico)</span>
+<span id="cb107-5"><a href="species-relative-abundances-over-time.html#cb107-5" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer)</span>
+<span id="cb107-6"><a href="species-relative-abundances-over-time.html#cb107-6" tabindex="-1"></a><span class="fu">library</span>(extrafont)</span>
+<span id="cb107-7"><a href="species-relative-abundances-over-time.html#cb107-7" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb107-8"><a href="species-relative-abundances-over-time.html#cb107-8" tabindex="-1"></a><span class="fu">library</span>(raster)</span>
+<span id="cb107-9"><a href="species-relative-abundances-over-time.html#cb107-9" tabindex="-1"></a><span class="fu">library</span>(lattice)</span>
+<span id="cb107-10"><a href="species-relative-abundances-over-time.html#cb107-10" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
+<span id="cb107-11"><a href="species-relative-abundances-over-time.html#cb107-11" tabindex="-1"></a><span class="fu">library</span>(ggrepel)</span>
+<span id="cb107-12"><a href="species-relative-abundances-over-time.html#cb107-12" tabindex="-1"></a><span class="fu">library</span>(report)</span>
+<span id="cb107-13"><a href="species-relative-abundances-over-time.html#cb107-13" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
+<span id="cb107-14"><a href="species-relative-abundances-over-time.html#cb107-14" tabindex="-1"></a><span class="fu">library</span>(glmmTMB)</span>
+<span id="cb107-15"><a href="species-relative-abundances-over-time.html#cb107-15" tabindex="-1"></a><span class="fu">library</span>(multcomp)</span>
+<span id="cb107-16"><a href="species-relative-abundances-over-time.html#cb107-16" tabindex="-1"></a><span class="fu">library</span>(ggstatsplot)</span>
+<span id="cb107-17"><a href="species-relative-abundances-over-time.html#cb107-17" tabindex="-1"></a><span class="fu">library</span>(paletteer)</span>
+<span id="cb107-18"><a href="species-relative-abundances-over-time.html#cb107-18" tabindex="-1"></a><span class="fu">library</span>(ggpubr)</span>
+<span id="cb107-19"><a href="species-relative-abundances-over-time.html#cb107-19" tabindex="-1"></a><span class="fu">library</span>(goeveg)</span>
+<span id="cb107-20"><a href="species-relative-abundances-over-time.html#cb107-20" tabindex="-1"></a><span class="fu">library</span>(sjPlot)</span>
+<span id="cb107-21"><a href="species-relative-abundances-over-time.html#cb107-21" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb107-22"><a href="species-relative-abundances-over-time.html#cb107-22" tabindex="-1"></a></span>
+<span id="cb107-23"><a href="species-relative-abundances-over-time.html#cb107-23" tabindex="-1"></a><span class="co"># source custom functions</span></span>
+<span id="cb107-24"><a href="species-relative-abundances-over-time.html#cb107-24" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;code/02_relative-species-abundance-functions.R&quot;</span>)</span></code></pre></div>
+</div>
+<div id="load-list-of-resurvey-locations" class="section level2 hasAnchor" number="11.2">
+<h2><span class="header-section-number">11.2</span> Load list of resurvey locations<a href="species-relative-abundances-over-time.html#load-list-of-resurvey-locations" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>We will load the list of sites across which a modern resurvey was carried out, along with elevation rasters.</p>
+<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb108-1"><a href="species-relative-abundances-over-time.html#cb108-1" tabindex="-1"></a><span class="co"># load list of resurvey locations and add elevation as a variable</span></span>
+<span id="cb108-2"><a href="species-relative-abundances-over-time.html#cb108-2" tabindex="-1"></a><span class="co"># remove the modern resurvey locations only (ie. ASFQ)</span></span>
+<span id="cb108-3"><a href="species-relative-abundances-over-time.html#cb108-3" tabindex="-1"></a>sites <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;data/list-of-resurvey-locations.csv&quot;</span>)</span>
+<span id="cb108-4"><a href="species-relative-abundances-over-time.html#cb108-4" tabindex="-1"></a>sites <span class="ot">&lt;-</span> sites[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">50</span>),]</span>
+<span id="cb108-5"><a href="species-relative-abundances-over-time.html#cb108-5" tabindex="-1"></a></span>
+<span id="cb108-6"><a href="species-relative-abundances-over-time.html#cb108-6" tabindex="-1"></a><span class="co"># convert to sf object and transform</span></span>
+<span id="cb108-7"><a href="species-relative-abundances-over-time.html#cb108-7" tabindex="-1"></a>sites <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(sites, <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">&quot;longitude&quot;</span>, <span class="st">&quot;latitude&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb108-8"><a href="species-relative-abundances-over-time.html#cb108-8" tabindex="-1"></a>  <span class="st">`</span><span class="at">st_crs&lt;-</span><span class="st">`</span>(<span class="dv">4326</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb108-9"><a href="species-relative-abundances-over-time.html#cb108-9" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="dv">32643</span>)</span>
+<span id="cb108-10"><a href="species-relative-abundances-over-time.html#cb108-10" tabindex="-1"></a></span>
+<span id="cb108-11"><a href="species-relative-abundances-over-time.html#cb108-11" tabindex="-1"></a><span class="co"># add elevation raster</span></span>
+<span id="cb108-12"><a href="species-relative-abundances-over-time.html#cb108-12" tabindex="-1"></a>alt <span class="ot">&lt;-</span> raster<span class="sc">::</span><span class="fu">raster</span>(<span class="st">&quot;data/elevation/alt&quot;</span>) <span class="co"># this layer is not added to github as a result of its large size and can be downloaded from SRTM (Farr et al. (2007))</span></span>
+<span id="cb108-13"><a href="species-relative-abundances-over-time.html#cb108-13" tabindex="-1"></a></span>
+<span id="cb108-14"><a href="species-relative-abundances-over-time.html#cb108-14" tabindex="-1"></a><span class="co"># extract values from that raster (note: transformation of coordinate system)</span></span>
+<span id="cb108-15"><a href="species-relative-abundances-over-time.html#cb108-15" tabindex="-1"></a>elev <span class="ot">&lt;-</span> raster<span class="sc">::</span><span class="fu">extract</span>(alt, sites)</span>
+<span id="cb108-16"><a href="species-relative-abundances-over-time.html#cb108-16" tabindex="-1"></a>sites <span class="ot">&lt;-</span> <span class="fu">cbind</span>(sites, elev)</span></code></pre></div>
+</div>
+<div id="for-the-historical-occurrence-data-we-will-choose-data-from-two-time-periods-1850-1900-1900-1950." class="section level2 hasAnchor" number="11.3">
+<h2><span class="header-section-number">11.3</span> For the historical occurrence data, we will choose data from two time periods: 1850-1900 &amp; 1900-1950.<a href="species-relative-abundances-over-time.html#for-the-historical-occurrence-data-we-will-choose-data-from-two-time-periods-1850-1900-1900-1950." class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb109-1"><a href="species-relative-abundances-over-time.html#cb109-1" tabindex="-1"></a><span class="do">## read in historical occurrence data</span></span>
+<span id="cb109-2"><a href="species-relative-abundances-over-time.html#cb109-2" tabindex="-1"></a>hist_occ <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;data/historical-occurrence-data.csv&quot;</span>)</span>
+<span id="cb109-3"><a href="species-relative-abundances-over-time.html#cb109-3" tabindex="-1"></a></span>
+<span id="cb109-4"><a href="species-relative-abundances-over-time.html#cb109-4" tabindex="-1"></a><span class="do">## applying filters:</span></span>
+<span id="cb109-5"><a href="species-relative-abundances-over-time.html#cb109-5" tabindex="-1"></a><span class="co"># a: include only data until 1950</span></span>
+<span id="cb109-6"><a href="species-relative-abundances-over-time.html#cb109-6" tabindex="-1"></a>hist_occ <span class="ot">&lt;-</span> hist_occ <span class="sc">%&gt;%</span></span>
+<span id="cb109-7"><a href="species-relative-abundances-over-time.html#cb109-7" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">&lt;=</span> <span class="dv">1950</span>)</span>
+<span id="cb109-8"><a href="species-relative-abundances-over-time.html#cb109-8" tabindex="-1"></a></span>
+<span id="cb109-9"><a href="species-relative-abundances-over-time.html#cb109-9" tabindex="-1"></a><span class="co"># b: a second filter includes only those species that had a minimum count of atleast three specimens and occurred across atleast two unique historical survey locations</span></span>
+<span id="cb109-10"><a href="species-relative-abundances-over-time.html#cb109-10" tabindex="-1"></a></span>
+<span id="cb109-11"><a href="species-relative-abundances-over-time.html#cb109-11" tabindex="-1"></a><span class="co"># total species count across historical data</span></span>
+<span id="cb109-12"><a href="species-relative-abundances-over-time.html#cb109-12" tabindex="-1"></a>spp_count <span class="ot">&lt;-</span> hist_occ <span class="sc">%&gt;%</span></span>
+<span id="cb109-13"><a href="species-relative-abundances-over-time.html#cb109-13" tabindex="-1"></a>  <span class="fu">group_by</span>(common_name) <span class="sc">%&gt;%</span></span>
+<span id="cb109-14"><a href="species-relative-abundances-over-time.html#cb109-14" tabindex="-1"></a>  <span class="fu">count</span>() <span class="co"># total of 179 species</span></span>
+<span id="cb109-15"><a href="species-relative-abundances-over-time.html#cb109-15" tabindex="-1"></a></span>
+<span id="cb109-16"><a href="species-relative-abundances-over-time.html#cb109-16" tabindex="-1"></a>sppMinThree <span class="ot">&lt;-</span> spp_count <span class="sc">%&gt;%</span></span>
+<span id="cb109-17"><a href="species-relative-abundances-over-time.html#cb109-17" tabindex="-1"></a>  <span class="fu">filter</span>(n <span class="sc">&gt;=</span> <span class="dv">3</span>) <span class="co"># total of 92 species</span></span>
+<span id="cb109-18"><a href="species-relative-abundances-over-time.html#cb109-18" tabindex="-1"></a><span class="co"># please note, we include ~four species that were collected from a single historical location Apus melba, Apus melba, Brachypodius priocephalus, Phylloscopus tytleri, Picus chlorolophus</span></span>
+<span id="cb109-19"><a href="species-relative-abundances-over-time.html#cb109-19" tabindex="-1"></a></span>
+<span id="cb109-20"><a href="species-relative-abundances-over-time.html#cb109-20" tabindex="-1"></a><span class="co"># filter historical data</span></span>
+<span id="cb109-21"><a href="species-relative-abundances-over-time.html#cb109-21" tabindex="-1"></a>hist_occ <span class="ot">&lt;-</span> hist_occ <span class="sc">%&gt;%</span></span>
+<span id="cb109-22"><a href="species-relative-abundances-over-time.html#cb109-22" tabindex="-1"></a>  <span class="fu">filter</span>(common_name <span class="sc">%in%</span> sppMinThree<span class="sc">$</span>common_name)</span>
+<span id="cb109-23"><a href="species-relative-abundances-over-time.html#cb109-23" tabindex="-1"></a></span>
+<span id="cb109-24"><a href="species-relative-abundances-over-time.html#cb109-24" tabindex="-1"></a><span class="do">### pre-1900</span></span>
+<span id="cb109-25"><a href="species-relative-abundances-over-time.html#cb109-25" tabindex="-1"></a>hist_occ_pre1900 <span class="ot">&lt;-</span> hist_occ <span class="sc">%&gt;%</span></span>
+<span id="cb109-26"><a href="species-relative-abundances-over-time.html#cb109-26" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">&lt;=</span> <span class="dv">1900</span>)</span>
+<span id="cb109-27"><a href="species-relative-abundances-over-time.html#cb109-27" tabindex="-1"></a></span>
+<span id="cb109-28"><a href="species-relative-abundances-over-time.html#cb109-28" tabindex="-1"></a><span class="co"># calculate total count of historical data at each site</span></span>
+<span id="cb109-29"><a href="species-relative-abundances-over-time.html#cb109-29" tabindex="-1"></a>hist_occ_pre1900 <span class="ot">&lt;-</span> hist_occ_pre1900 <span class="sc">%&gt;%</span></span>
+<span id="cb109-30"><a href="species-relative-abundances-over-time.html#cb109-30" tabindex="-1"></a>  <span class="fu">group_by</span>(common_name, historical_site_code) <span class="sc">%&gt;%</span></span>
+<span id="cb109-31"><a href="species-relative-abundances-over-time.html#cb109-31" tabindex="-1"></a>  <span class="fu">count</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb109-32"><a href="species-relative-abundances-over-time.html#cb109-32" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="st">&quot;1850-1900&quot;</span> <span class="ot">=</span> <span class="fu">sum</span>(n)) </span>
+<span id="cb109-33"><a href="species-relative-abundances-over-time.html#cb109-33" tabindex="-1"></a></span>
+<span id="cb109-34"><a href="species-relative-abundances-over-time.html#cb109-34" tabindex="-1"></a><span class="co"># left join the sites dataframe</span></span>
+<span id="cb109-35"><a href="species-relative-abundances-over-time.html#cb109-35" tabindex="-1"></a>hist_occ_pre1900 <span class="ot">&lt;-</span> <span class="fu">left_join</span>(hist_occ_pre1900, sites, <span class="at">by=</span><span class="fu">c</span>(<span class="st">&quot;historical_site_code&quot;</span><span class="ot">=</span><span class="st">&quot;historical_site_code&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb109-36"><a href="species-relative-abundances-over-time.html#cb109-36" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(common_name)) <span class="sc">%&gt;%</span></span>
+<span id="cb109-37"><a href="species-relative-abundances-over-time.html#cb109-37" tabindex="-1"></a>  <span class="fu">replace</span>(<span class="fu">is.na</span>(.), <span class="dv">0</span>) </span>
+<span id="cb109-38"><a href="species-relative-abundances-over-time.html#cb109-38" tabindex="-1"></a></span>
+<span id="cb109-39"><a href="species-relative-abundances-over-time.html#cb109-39" tabindex="-1"></a><span class="do">## 1900-1950 data</span></span>
+<span id="cb109-40"><a href="species-relative-abundances-over-time.html#cb109-40" tabindex="-1"></a>hist_occ_1900_1950 <span class="ot">&lt;-</span> hist_occ <span class="sc">%&gt;%</span></span>
+<span id="cb109-41"><a href="species-relative-abundances-over-time.html#cb109-41" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">&gt;</span> <span class="dv">1900</span> <span class="sc">&amp;</span> year <span class="sc">&lt;=</span> <span class="dv">1950</span>)</span>
+<span id="cb109-42"><a href="species-relative-abundances-over-time.html#cb109-42" tabindex="-1"></a></span>
+<span id="cb109-43"><a href="species-relative-abundances-over-time.html#cb109-43" tabindex="-1"></a><span class="co"># calculate total count of historical data at each site</span></span>
+<span id="cb109-44"><a href="species-relative-abundances-over-time.html#cb109-44" tabindex="-1"></a>hist_occ_1900_1950 <span class="ot">&lt;-</span>  hist_occ_1900_1950 <span class="sc">%&gt;%</span></span>
+<span id="cb109-45"><a href="species-relative-abundances-over-time.html#cb109-45" tabindex="-1"></a>  <span class="fu">group_by</span>(common_name, historical_site_code) <span class="sc">%&gt;%</span></span>
+<span id="cb109-46"><a href="species-relative-abundances-over-time.html#cb109-46" tabindex="-1"></a>  <span class="fu">count</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb109-47"><a href="species-relative-abundances-over-time.html#cb109-47" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="st">&quot;1900-1950&quot;</span> <span class="ot">=</span> <span class="fu">sum</span>(n)) </span>
+<span id="cb109-48"><a href="species-relative-abundances-over-time.html#cb109-48" tabindex="-1"></a></span>
+<span id="cb109-49"><a href="species-relative-abundances-over-time.html#cb109-49" tabindex="-1"></a><span class="co"># left join the sites dataframe</span></span>
+<span id="cb109-50"><a href="species-relative-abundances-over-time.html#cb109-50" tabindex="-1"></a>hist_occ_1900_1950 <span class="ot">&lt;-</span> <span class="fu">left_join</span>(hist_occ_1900_1950, sites, <span class="at">by=</span><span class="fu">c</span>(<span class="st">&quot;historical_site_code&quot;</span><span class="ot">=</span><span class="st">&quot;historical_site_code&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb109-51"><a href="species-relative-abundances-over-time.html#cb109-51" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(common_name)) <span class="sc">%&gt;%</span></span>
+<span id="cb109-52"><a href="species-relative-abundances-over-time.html#cb109-52" tabindex="-1"></a>  <span class="fu">replace</span>(<span class="fu">is.na</span>(.), <span class="dv">0</span>)</span></code></pre></div>
+</div>
+<div id="load-the-modern-occurrence-data" class="section level2 hasAnchor" number="11.4">
+<h2><span class="header-section-number">11.4</span> Load the modern occurrence data<a href="species-relative-abundances-over-time.html#load-the-modern-occurrence-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>For the modern occurrence data, we only keep species that were recorded historically to avoid artificial increases in relative abundance due to the method of collection.</p>
+<div class="sourceCode" id="cb110"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb110-1"><a href="species-relative-abundances-over-time.html#cb110-1" tabindex="-1"></a>mod_occ <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;data/modern-occurrence-data.csv&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb110-2"><a href="species-relative-abundances-over-time.html#cb110-2" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(species_code)) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(common_name <span class="sc">%in%</span> hist_occ<span class="sc">$</span>common_name) <span class="sc">%&gt;%</span></span>
+<span id="cb110-3"><a href="species-relative-abundances-over-time.html#cb110-3" tabindex="-1"></a>  <span class="fu">filter</span>(historical_site_code <span class="sc">%in%</span> hist_occ<span class="sc">$</span>historical_site_code) </span>
+<span id="cb110-4"><a href="species-relative-abundances-over-time.html#cb110-4" tabindex="-1"></a></span>
+<span id="cb110-5"><a href="species-relative-abundances-over-time.html#cb110-5" tabindex="-1"></a><span class="do">## group by scientific name and modern site code</span></span>
+<span id="cb110-6"><a href="species-relative-abundances-over-time.html#cb110-6" tabindex="-1"></a>mod_occ <span class="ot">&lt;-</span> mod_occ <span class="sc">%&gt;%</span></span>
+<span id="cb110-7"><a href="species-relative-abundances-over-time.html#cb110-7" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(common_name)) <span class="sc">%&gt;%</span></span>
+<span id="cb110-8"><a href="species-relative-abundances-over-time.html#cb110-8" tabindex="-1"></a>  <span class="fu">group_by</span>(common_name, modern_site_code) <span class="sc">%&gt;%</span></span>
+<span id="cb110-9"><a href="species-relative-abundances-over-time.html#cb110-9" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="st">&quot;2021&quot;</span> <span class="ot">=</span> <span class="fu">sum</span>(number))</span>
+<span id="cb110-10"><a href="species-relative-abundances-over-time.html#cb110-10" tabindex="-1"></a></span>
+<span id="cb110-11"><a href="species-relative-abundances-over-time.html#cb110-11" tabindex="-1"></a><span class="do">## left join the sites dataframe</span></span>
+<span id="cb110-12"><a href="species-relative-abundances-over-time.html#cb110-12" tabindex="-1"></a>mod_occ <span class="ot">&lt;-</span>  <span class="fu">left_join</span>(mod_occ, sites, <span class="at">by=</span><span class="fu">c</span>(<span class="st">&quot;modern_site_code&quot;</span><span class="ot">=</span><span class="st">&quot;modern_site_code&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb110-13"><a href="species-relative-abundances-over-time.html#cb110-13" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(common_name)) <span class="sc">%&gt;%</span></span>
+<span id="cb110-14"><a href="species-relative-abundances-over-time.html#cb110-14" tabindex="-1"></a>  <span class="fu">replace</span>(<span class="fu">is.na</span>(.), <span class="dv">0</span>)</span></code></pre></div>
+</div>
+<div id="calculate-dirichlet-distributions-of-relative-abundance" class="section level2 hasAnchor" number="11.5">
+<h2><span class="header-section-number">11.5</span> Calculate dirichlet distributions of relative abundance<a href="species-relative-abundances-over-time.html#calculate-dirichlet-distributions-of-relative-abundance" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Here, we will functions from Gotelli et al. 2021 to calculate relative species abundances between historic and modern periods.</p>
+<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb111-1"><a href="species-relative-abundances-over-time.html#cb111-1" tabindex="-1"></a><span class="co"># note: the level of the analysis is at the &#39;historic-site&#39; and not the &#39;modern-site&#39; (which essentially corresponds to two or three unique sites for every &#39;historic-site&#39;)</span></span>
+<span id="cb111-2"><a href="species-relative-abundances-over-time.html#cb111-2" tabindex="-1"></a><span class="co"># to ensure that the analysis is consistent, we sum abundances across the modern sites corresponding to each historic site</span></span>
+<span id="cb111-3"><a href="species-relative-abundances-over-time.html#cb111-3" tabindex="-1"></a><span class="co"># However, our analysis calculates relative species abundances for the give time period rather than by site + time-period</span></span>
+<span id="cb111-4"><a href="species-relative-abundances-over-time.html#cb111-4" tabindex="-1"></a></span>
+<span id="cb111-5"><a href="species-relative-abundances-over-time.html#cb111-5" tabindex="-1"></a><span class="co"># we remove modern site_code and get only distinct rows</span></span>
+<span id="cb111-6"><a href="species-relative-abundances-over-time.html#cb111-6" tabindex="-1"></a>unique_hist_pre1900 <span class="ot">&lt;-</span> hist_occ_pre1900[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>)] <span class="sc">%&gt;%</span></span>
+<span id="cb111-7"><a href="species-relative-abundances-over-time.html#cb111-7" tabindex="-1"></a>  <span class="fu">group_by</span>(common_name, historical_site_code) <span class="sc">%&gt;%</span></span>
+<span id="cb111-8"><a href="species-relative-abundances-over-time.html#cb111-8" tabindex="-1"></a>  <span class="fu">distinct</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb111-9"><a href="species-relative-abundances-over-time.html#cb111-9" tabindex="-1"></a>  <span class="fu">group_by</span>(common_name) <span class="sc">%&gt;%</span></span>
+<span id="cb111-10"><a href="species-relative-abundances-over-time.html#cb111-10" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="st">&quot;relAbund1850&quot;</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">1850-1900</span><span class="st">`</span>)) </span>
+<span id="cb111-11"><a href="species-relative-abundances-over-time.html#cb111-11" tabindex="-1"></a></span>
+<span id="cb111-12"><a href="species-relative-abundances-over-time.html#cb111-12" tabindex="-1"></a><span class="co"># we remove modern site_code and get only distinct rows</span></span>
+<span id="cb111-13"><a href="species-relative-abundances-over-time.html#cb111-13" tabindex="-1"></a>unique_hist_1900_1950 <span class="ot">&lt;-</span> hist_occ_1900_1950[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>)] <span class="sc">%&gt;%</span></span>
+<span id="cb111-14"><a href="species-relative-abundances-over-time.html#cb111-14" tabindex="-1"></a>  <span class="fu">group_by</span>(common_name, historical_site_code) <span class="sc">%&gt;%</span></span>
+<span id="cb111-15"><a href="species-relative-abundances-over-time.html#cb111-15" tabindex="-1"></a>  <span class="fu">distinct</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb111-16"><a href="species-relative-abundances-over-time.html#cb111-16" tabindex="-1"></a>  <span class="fu">group_by</span>(common_name) <span class="sc">%&gt;%</span></span>
+<span id="cb111-17"><a href="species-relative-abundances-over-time.html#cb111-17" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="st">&quot;relAbund1900&quot;</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">1900-1950</span><span class="st">`</span>)) </span>
+<span id="cb111-18"><a href="species-relative-abundances-over-time.html#cb111-18" tabindex="-1"></a></span>
+<span id="cb111-19"><a href="species-relative-abundances-over-time.html#cb111-19" tabindex="-1"></a><span class="co"># we remove modern site_code and get only distinct rows</span></span>
+<span id="cb111-20"><a href="species-relative-abundances-over-time.html#cb111-20" tabindex="-1"></a>unique_mod <span class="ot">&lt;-</span> mod_occ[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">5</span>)] <span class="sc">%&gt;%</span></span>
+<span id="cb111-21"><a href="species-relative-abundances-over-time.html#cb111-21" tabindex="-1"></a>  <span class="fu">group_by</span>(common_name, historical_site_code) <span class="sc">%&gt;%</span></span>
+<span id="cb111-22"><a href="species-relative-abundances-over-time.html#cb111-22" tabindex="-1"></a>  <span class="fu">distinct</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb111-23"><a href="species-relative-abundances-over-time.html#cb111-23" tabindex="-1"></a>  <span class="fu">group_by</span>(common_name) <span class="sc">%&gt;%</span></span>
+<span id="cb111-24"><a href="species-relative-abundances-over-time.html#cb111-24" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="st">&quot;relAbund2021&quot;</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">2021</span><span class="st">`</span>)) </span>
+<span id="cb111-25"><a href="species-relative-abundances-over-time.html#cb111-25" tabindex="-1"></a></span>
+<span id="cb111-26"><a href="species-relative-abundances-over-time.html#cb111-26" tabindex="-1"></a>hist_mod <span class="ot">&lt;-</span> <span class="fu">full_join</span>(unique_hist_pre1900, </span>
+<span id="cb111-27"><a href="species-relative-abundances-over-time.html#cb111-27" tabindex="-1"></a>                      unique_hist_1900_1950) <span class="sc">%&gt;%</span></span>
+<span id="cb111-28"><a href="species-relative-abundances-over-time.html#cb111-28" tabindex="-1"></a>            <span class="fu">full_join</span>(., unique_mod) <span class="sc">%&gt;%</span></span>
+<span id="cb111-29"><a href="species-relative-abundances-over-time.html#cb111-29" tabindex="-1"></a>  <span class="fu">replace_na</span>(<span class="fu">list</span>(<span class="at">relAbund1850 =</span> <span class="dv">0</span>, </span>
+<span id="cb111-30"><a href="species-relative-abundances-over-time.html#cb111-30" tabindex="-1"></a>                  <span class="at">relAbund1900 =</span> <span class="dv">0</span>,</span>
+<span id="cb111-31"><a href="species-relative-abundances-over-time.html#cb111-31" tabindex="-1"></a>                  <span class="at">relAbund2021 =</span> <span class="dv">0</span>)) </span>
+<span id="cb111-32"><a href="species-relative-abundances-over-time.html#cb111-32" tabindex="-1"></a></span>
+<span id="cb111-33"><a href="species-relative-abundances-over-time.html#cb111-33" tabindex="-1"></a><span class="co"># apply dirichlet distribution to the historical data</span></span>
+<span id="cb111-34"><a href="species-relative-abundances-over-time.html#cb111-34" tabindex="-1"></a><span class="co"># choosing 1850-1900 data first</span></span>
+<span id="cb111-35"><a href="species-relative-abundances-over-time.html#cb111-35" tabindex="-1"></a>dat <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">deframe</span>(hist_mod[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>])</span>
+<span id="cb111-36"><a href="species-relative-abundances-over-time.html#cb111-36" tabindex="-1"></a></span>
+<span id="cb111-37"><a href="species-relative-abundances-over-time.html#cb111-37" tabindex="-1"></a>relAbun1850 <span class="ot">&lt;-</span> <span class="fu">dirch_stats</span>(dat) <span class="sc">%&gt;%</span></span>
+<span id="cb111-38"><a href="species-relative-abundances-over-time.html#cb111-38" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(species, bayes_mean) <span class="sc">%&gt;%</span></span>
+<span id="cb111-39"><a href="species-relative-abundances-over-time.html#cb111-39" tabindex="-1"></a>  <span class="fu">rename</span>(., <span class="at">bayes_mean_1850 =</span> bayes_mean)</span>
+<span id="cb111-40"><a href="species-relative-abundances-over-time.html#cb111-40" tabindex="-1"></a></span>
+<span id="cb111-41"><a href="species-relative-abundances-over-time.html#cb111-41" tabindex="-1"></a><span class="co"># choosing 1900-1950 data</span></span>
+<span id="cb111-42"><a href="species-relative-abundances-over-time.html#cb111-42" tabindex="-1"></a>dat <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">deframe</span>(hist_mod[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>)])</span>
+<span id="cb111-43"><a href="species-relative-abundances-over-time.html#cb111-43" tabindex="-1"></a></span>
+<span id="cb111-44"><a href="species-relative-abundances-over-time.html#cb111-44" tabindex="-1"></a>relAbun1900 <span class="ot">&lt;-</span> <span class="fu">dirch_stats</span>(dat) <span class="sc">%&gt;%</span></span>
+<span id="cb111-45"><a href="species-relative-abundances-over-time.html#cb111-45" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(species, bayes_mean) <span class="sc">%&gt;%</span></span>
+<span id="cb111-46"><a href="species-relative-abundances-over-time.html#cb111-46" tabindex="-1"></a>  <span class="fu">rename</span>(., <span class="at">bayes_mean_1900 =</span> bayes_mean)</span>
+<span id="cb111-47"><a href="species-relative-abundances-over-time.html#cb111-47" tabindex="-1"></a></span>
+<span id="cb111-48"><a href="species-relative-abundances-over-time.html#cb111-48" tabindex="-1"></a><span class="co"># apply dirichlet distribution to the modern survey</span></span>
+<span id="cb111-49"><a href="species-relative-abundances-over-time.html#cb111-49" tabindex="-1"></a>dat <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">deframe</span>(hist_mod[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">4</span>)]) <span class="do">## choosing modern data</span></span>
+<span id="cb111-50"><a href="species-relative-abundances-over-time.html#cb111-50" tabindex="-1"></a></span>
+<span id="cb111-51"><a href="species-relative-abundances-over-time.html#cb111-51" tabindex="-1"></a>relAbun2021 <span class="ot">&lt;-</span> <span class="fu">dirch_stats</span>(dat) <span class="sc">%&gt;%</span></span>
+<span id="cb111-52"><a href="species-relative-abundances-over-time.html#cb111-52" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(species, bayes_mean) <span class="sc">%&gt;%</span></span>
+<span id="cb111-53"><a href="species-relative-abundances-over-time.html#cb111-53" tabindex="-1"></a>  <span class="fu">rename</span>(., <span class="at">bayes_mean_2021 =</span> bayes_mean)</span>
+<span id="cb111-54"><a href="species-relative-abundances-over-time.html#cb111-54" tabindex="-1"></a></span>
+<span id="cb111-55"><a href="species-relative-abundances-over-time.html#cb111-55" tabindex="-1"></a><span class="do">### join the relative abundance datasets together</span></span>
+<span id="cb111-56"><a href="species-relative-abundances-over-time.html#cb111-56" tabindex="-1"></a>relAbun <span class="ot">&lt;-</span> <span class="fu">full_join</span>(relAbun1850, relAbun1900) <span class="sc">%&gt;%</span></span>
+<span id="cb111-57"><a href="species-relative-abundances-over-time.html#cb111-57" tabindex="-1"></a>  <span class="fu">full_join</span>(., relAbun2021) <span class="sc">%&gt;%</span></span>
+<span id="cb111-58"><a href="species-relative-abundances-over-time.html#cb111-58" tabindex="-1"></a>  <span class="fu">arrange</span>(species) <span class="sc">%&gt;%</span></span>
+<span id="cb111-59"><a href="species-relative-abundances-over-time.html#cb111-59" tabindex="-1"></a>  <span class="fu">rename</span>(., <span class="st">`</span><span class="at">1850-1900</span><span class="st">`</span> <span class="ot">=</span> <span class="st">&quot;bayes_mean_1850&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb111-60"><a href="species-relative-abundances-over-time.html#cb111-60" tabindex="-1"></a>  <span class="fu">rename</span>(., <span class="st">`</span><span class="at">1900-1950</span><span class="st">`</span> <span class="ot">=</span> <span class="st">&quot;bayes_mean_1900&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb111-61"><a href="species-relative-abundances-over-time.html#cb111-61" tabindex="-1"></a>  <span class="fu">rename</span>(., <span class="st">`</span><span class="at">2021</span><span class="st">`</span> <span class="ot">=</span> <span class="st">&quot;bayes_mean_2021&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb111-62"><a href="species-relative-abundances-over-time.html#cb111-62" tabindex="-1"></a>  <span class="fu">rename</span>(., <span class="at">common_name =</span> species)</span></code></pre></div>
+</div>
+<div id="calibrating-historical-data-to-modern-survey-data-for-relative-abundance-calculations" class="section level2 hasAnchor" number="11.6">
+<h2><span class="header-section-number">11.6</span> Calibrating historical data to modern survey data for relative abundance calculations<a href="species-relative-abundances-over-time.html#calibrating-historical-data-to-modern-survey-data-for-relative-abundance-calculations" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb112"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb112-1"><a href="species-relative-abundances-over-time.html#cb112-1" tabindex="-1"></a><span class="co"># calculate total count of historical data at each site</span></span>
+<span id="cb112-2"><a href="species-relative-abundances-over-time.html#cb112-2" tabindex="-1"></a><span class="co"># here we pool all historical data</span></span>
+<span id="cb112-3"><a href="species-relative-abundances-over-time.html#cb112-3" tabindex="-1"></a>hist_occ_tot <span class="ot">&lt;-</span> hist_occ<span class="sc">%&gt;%</span></span>
+<span id="cb112-4"><a href="species-relative-abundances-over-time.html#cb112-4" tabindex="-1"></a>  <span class="fu">group_by</span>(common_name, historical_site_code) <span class="sc">%&gt;%</span></span>
+<span id="cb112-5"><a href="species-relative-abundances-over-time.html#cb112-5" tabindex="-1"></a>  <span class="fu">count</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb112-6"><a href="species-relative-abundances-over-time.html#cb112-6" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="st">&quot;historical&quot;</span> <span class="ot">=</span> <span class="fu">sum</span>(n)) </span>
+<span id="cb112-7"><a href="species-relative-abundances-over-time.html#cb112-7" tabindex="-1"></a></span>
+<span id="cb112-8"><a href="species-relative-abundances-over-time.html#cb112-8" tabindex="-1"></a><span class="co"># left join the sites dataframe</span></span>
+<span id="cb112-9"><a href="species-relative-abundances-over-time.html#cb112-9" tabindex="-1"></a>hist_occ_tot <span class="ot">&lt;-</span> <span class="fu">left_join</span>(hist_occ_tot, sites, <span class="at">by=</span><span class="fu">c</span>(<span class="st">&quot;historical_site_code&quot;</span><span class="ot">=</span><span class="st">&quot;historical_site_code&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb112-10"><a href="species-relative-abundances-over-time.html#cb112-10" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(common_name)) <span class="sc">%&gt;%</span></span>
+<span id="cb112-11"><a href="species-relative-abundances-over-time.html#cb112-11" tabindex="-1"></a>  <span class="fu">replace</span>(<span class="fu">is.na</span>(.), <span class="dv">0</span>) </span>
+<span id="cb112-12"><a href="species-relative-abundances-over-time.html#cb112-12" tabindex="-1"></a></span>
+<span id="cb112-13"><a href="species-relative-abundances-over-time.html#cb112-13" tabindex="-1"></a><span class="co"># we remove modern site_code and get only distinct rows</span></span>
+<span id="cb112-14"><a href="species-relative-abundances-over-time.html#cb112-14" tabindex="-1"></a>unique_hist <span class="ot">&lt;-</span> hist_occ_tot[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>)] <span class="sc">%&gt;%</span></span>
+<span id="cb112-15"><a href="species-relative-abundances-over-time.html#cb112-15" tabindex="-1"></a>  <span class="fu">group_by</span>(common_name, historical_site_code) <span class="sc">%&gt;%</span></span>
+<span id="cb112-16"><a href="species-relative-abundances-over-time.html#cb112-16" tabindex="-1"></a>  <span class="fu">distinct</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb112-17"><a href="species-relative-abundances-over-time.html#cb112-17" tabindex="-1"></a>  <span class="fu">group_by</span>(common_name) <span class="sc">%&gt;%</span></span>
+<span id="cb112-18"><a href="species-relative-abundances-over-time.html#cb112-18" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="st">&quot;relAbundHist&quot;</span> <span class="ot">=</span> <span class="fu">sum</span>(historical)) </span>
+<span id="cb112-19"><a href="species-relative-abundances-over-time.html#cb112-19" tabindex="-1"></a></span>
+<span id="cb112-20"><a href="species-relative-abundances-over-time.html#cb112-20" tabindex="-1"></a><span class="co"># join historical and modern dataframes</span></span>
+<span id="cb112-21"><a href="species-relative-abundances-over-time.html#cb112-21" tabindex="-1"></a>hist_mod <span class="ot">&lt;-</span> <span class="fu">full_join</span>(unique_hist, unique_mod)<span class="sc">%&gt;%</span></span>
+<span id="cb112-22"><a href="species-relative-abundances-over-time.html#cb112-22" tabindex="-1"></a>  <span class="fu">replace_na</span>(<span class="fu">list</span>(<span class="at">relAbundHist =</span> <span class="dv">0</span>,</span>
+<span id="cb112-23"><a href="species-relative-abundances-over-time.html#cb112-23" tabindex="-1"></a>                  <span class="at">relAbund2021 =</span> <span class="dv">0</span>)) </span>
+<span id="cb112-24"><a href="species-relative-abundances-over-time.html#cb112-24" tabindex="-1"></a></span>
+<span id="cb112-25"><a href="species-relative-abundances-over-time.html#cb112-25" tabindex="-1"></a><span class="co"># apply dirichlet distribution to the historical data</span></span>
+<span id="cb112-26"><a href="species-relative-abundances-over-time.html#cb112-26" tabindex="-1"></a><span class="co"># choosing 1850-1900 data first</span></span>
+<span id="cb112-27"><a href="species-relative-abundances-over-time.html#cb112-27" tabindex="-1"></a>dat <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">deframe</span>(hist_mod[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>])</span>
+<span id="cb112-28"><a href="species-relative-abundances-over-time.html#cb112-28" tabindex="-1"></a></span>
+<span id="cb112-29"><a href="species-relative-abundances-over-time.html#cb112-29" tabindex="-1"></a>relAbunHist <span class="ot">&lt;-</span> <span class="fu">dirch_stats</span>(dat) <span class="sc">%&gt;%</span></span>
+<span id="cb112-30"><a href="species-relative-abundances-over-time.html#cb112-30" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(species, bayes_mean) <span class="sc">%&gt;%</span></span>
+<span id="cb112-31"><a href="species-relative-abundances-over-time.html#cb112-31" tabindex="-1"></a>  <span class="fu">rename</span>(., <span class="at">bayes_mean_hist =</span> bayes_mean)</span>
+<span id="cb112-32"><a href="species-relative-abundances-over-time.html#cb112-32" tabindex="-1"></a></span>
+<span id="cb112-33"><a href="species-relative-abundances-over-time.html#cb112-33" tabindex="-1"></a><span class="co"># apply dirichlet distribution to the modern survey</span></span>
+<span id="cb112-34"><a href="species-relative-abundances-over-time.html#cb112-34" tabindex="-1"></a>dat <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">deframe</span>(hist_mod[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>)]) <span class="do">## choosing modern data</span></span>
+<span id="cb112-35"><a href="species-relative-abundances-over-time.html#cb112-35" tabindex="-1"></a></span>
+<span id="cb112-36"><a href="species-relative-abundances-over-time.html#cb112-36" tabindex="-1"></a>relAbun2021 <span class="ot">&lt;-</span> <span class="fu">dirch_stats</span>(dat) <span class="sc">%&gt;%</span></span>
+<span id="cb112-37"><a href="species-relative-abundances-over-time.html#cb112-37" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(species, bayes_mean) <span class="sc">%&gt;%</span></span>
+<span id="cb112-38"><a href="species-relative-abundances-over-time.html#cb112-38" tabindex="-1"></a>  <span class="fu">rename</span>(., <span class="at">bayes_mean_2021 =</span> bayes_mean)</span>
+<span id="cb112-39"><a href="species-relative-abundances-over-time.html#cb112-39" tabindex="-1"></a></span>
+<span id="cb112-40"><a href="species-relative-abundances-over-time.html#cb112-40" tabindex="-1"></a><span class="co"># for calibration</span></span>
+<span id="cb112-41"><a href="species-relative-abundances-over-time.html#cb112-41" tabindex="-1"></a><span class="do">### join the relative abundance datasets together</span></span>
+<span id="cb112-42"><a href="species-relative-abundances-over-time.html#cb112-42" tabindex="-1"></a>relAbunCalib <span class="ot">&lt;-</span> <span class="fu">full_join</span>(relAbunHist, relAbun2021) <span class="sc">%&gt;%</span></span>
+<span id="cb112-43"><a href="species-relative-abundances-over-time.html#cb112-43" tabindex="-1"></a>  <span class="fu">arrange</span>(species) <span class="sc">%&gt;%</span></span>
+<span id="cb112-44"><a href="species-relative-abundances-over-time.html#cb112-44" tabindex="-1"></a>  <span class="fu">rename</span>(., <span class="st">&quot;historical&quot;</span> <span class="ot">=</span> <span class="st">&quot;bayes_mean_hist&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb112-45"><a href="species-relative-abundances-over-time.html#cb112-45" tabindex="-1"></a>  <span class="fu">rename</span>(., <span class="st">&quot;modern&quot;</span> <span class="ot">=</span> <span class="st">&quot;bayes_mean_2021&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb112-46"><a href="species-relative-abundances-over-time.html#cb112-46" tabindex="-1"></a>  <span class="fu">rename</span>(., <span class="at">common_name =</span> species)</span>
+<span id="cb112-47"><a href="species-relative-abundances-over-time.html#cb112-47" tabindex="-1"></a></span>
+<span id="cb112-48"><a href="species-relative-abundances-over-time.html#cb112-48" tabindex="-1"></a><span class="co"># regressing 1850s data vs. 2021</span></span>
+<span id="cb112-49"><a href="species-relative-abundances-over-time.html#cb112-49" tabindex="-1"></a>fig_hist_v_mod_rel <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data=</span>relAbunCalib,<span class="fu">aes</span>(<span class="at">x=</span>modern,<span class="at">y=</span>historical)) <span class="sc">+</span></span>
+<span id="cb112-50"><a href="species-relative-abundances-over-time.html#cb112-50" tabindex="-1"></a>   <span class="fu">scale_y_log10</span>() <span class="sc">+</span></span>
+<span id="cb112-51"><a href="species-relative-abundances-over-time.html#cb112-51" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">slope=</span><span class="dv">1</span>, <span class="at">intercept=</span><span class="dv">0</span>,<span class="at">linetype=</span><span class="st">&quot;dashed&quot;</span>) <span class="sc">+</span></span>
+<span id="cb112-52"><a href="species-relative-abundances-over-time.html#cb112-52" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>() <span class="sc">+</span></span>
+<span id="cb112-53"><a href="species-relative-abundances-over-time.html#cb112-53" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">&quot;Historical Relative abundance&quot;</span>, </span>
+<span id="cb112-54"><a href="species-relative-abundances-over-time.html#cb112-54" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Modern Relative abundance&quot;</span>) <span class="sc">+</span></span>
+<span id="cb112-55"><a href="species-relative-abundances-over-time.html#cb112-55" tabindex="-1"></a>   <span class="fu">geom_point</span>(<span class="at">shape =</span> <span class="dv">21</span>, <span class="at">colour =</span> <span class="st">&quot;black&quot;</span>, <span class="at">fill =</span> <span class="st">&quot;white&quot;</span>, <span class="at">size =</span> <span class="dv">2</span>, <span class="at">stroke =</span> <span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb112-56"><a href="species-relative-abundances-over-time.html#cb112-56" tabindex="-1"></a>   <span class="fu">geom_smooth</span>(<span class="at">method=</span><span class="st">&quot;lm&quot;</span>, <span class="at">se=</span><span class="cn">TRUE</span>, <span class="at">fullrange=</span><span class="cn">FALSE</span>, <span class="at">level=</span><span class="fl">0.95</span>,<span class="at">linetype=</span><span class="st">&quot;solid&quot;</span>)<span class="sc">+</span></span>
+<span id="cb112-57"><a href="species-relative-abundances-over-time.html#cb112-57" tabindex="-1"></a>  <span class="fu">stat_regline_equation</span>(<span class="fu">aes</span>(<span class="at">label =</span> ..rr.label..)) <span class="sc">+</span></span>
+<span id="cb112-58"><a href="species-relative-abundances-over-time.html#cb112-58" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb112-59"><a href="species-relative-abundances-over-time.html#cb112-59" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">family =</span> <span class="st">&quot;Century Gothic&quot;</span>, <span class="at">size =</span> <span class="dv">13</span>),</span>
+<span id="cb112-60"><a href="species-relative-abundances-over-time.html#cb112-60" tabindex="-1"></a>        <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">family =</span> <span class="st">&quot;Century Gothic&quot;</span>),</span>
+<span id="cb112-61"><a href="species-relative-abundances-over-time.html#cb112-61" tabindex="-1"></a>    <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">family =</span> <span class="st">&quot;Century Gothic&quot;</span>),</span>
+<span id="cb112-62"><a href="species-relative-abundances-over-time.html#cb112-62" tabindex="-1"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">family =</span> <span class="st">&quot;Century Gothic&quot;</span>, <span class="at">size =</span> <span class="dv">25</span>))</span>
+<span id="cb112-63"><a href="species-relative-abundances-over-time.html#cb112-63" tabindex="-1"></a></span>
+<span id="cb112-64"><a href="species-relative-abundances-over-time.html#cb112-64" tabindex="-1"></a><span class="fu">ggsave</span>(fig_hist_v_mod_rel, <span class="at">filename =</span> <span class="st">&quot;figs/fig_historical_vs_modern_relAbun.png&quot;</span>, <span class="at">width =</span> <span class="dv">15</span>, <span class="at">height =</span> <span class="dv">10</span>, <span class="at">device =</span> <span class="fu">png</span>(), <span class="at">units =</span> <span class="st">&quot;in&quot;</span>, <span class="at">dpi =</span> <span class="dv">300</span>)</span>
+<span id="cb112-65"><a href="species-relative-abundances-over-time.html#cb112-65" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
+<div class="float">
+<img src="figs/fig_historical_vs_modern_relAbun.png" alt="Historical vs. modern species relative abundance" />
+<div class="figcaption">Historical vs. modern species relative abundance</div>
+</div>
+</div>
+<div id="boxplot-visualization-of-overall-relative-abundance-across-timeperiods" class="section level2 hasAnchor" number="11.7">
+<h2><span class="header-section-number">11.7</span> Boxplot visualization of overall relative abundance across timeperiods<a href="species-relative-abundances-over-time.html#boxplot-visualization-of-overall-relative-abundance-across-timeperiods" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb113"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb113-1"><a href="species-relative-abundances-over-time.html#cb113-1" tabindex="-1"></a>data_for_boxplot <span class="ot">&lt;-</span> relAbun <span class="sc">%&gt;%</span></span>
+<span id="cb113-2"><a href="species-relative-abundances-over-time.html#cb113-2" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>common_name) <span class="sc">%&gt;%</span></span>
+<span id="cb113-3"><a href="species-relative-abundances-over-time.html#cb113-3" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">everything</span>())</span>
+<span id="cb113-4"><a href="species-relative-abundances-over-time.html#cb113-4" tabindex="-1"></a></span>
+<span id="cb113-5"><a href="species-relative-abundances-over-time.html#cb113-5" tabindex="-1"></a>fig_relAbun_over_time <span class="ot">&lt;-</span> <span class="fu">ggbetweenstats</span>(</span>
+<span id="cb113-6"><a href="species-relative-abundances-over-time.html#cb113-6" tabindex="-1"></a>  <span class="at">data =</span> data_for_boxplot,</span>
+<span id="cb113-7"><a href="species-relative-abundances-over-time.html#cb113-7" tabindex="-1"></a>  <span class="at">x =</span> name,</span>
+<span id="cb113-8"><a href="species-relative-abundances-over-time.html#cb113-8" tabindex="-1"></a>  <span class="at">y =</span> value,</span>
+<span id="cb113-9"><a href="species-relative-abundances-over-time.html#cb113-9" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">&quot;Time Period&quot;</span>, </span>
+<span id="cb113-10"><a href="species-relative-abundances-over-time.html#cb113-10" tabindex="-1"></a>  <span class="at">ylab =</span> <span class="st">&quot;Relative Abundance&quot;</span>,</span>
+<span id="cb113-11"><a href="species-relative-abundances-over-time.html#cb113-11" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">&quot;Relative abundance by time period&quot;</span>,</span>
+<span id="cb113-12"><a href="species-relative-abundances-over-time.html#cb113-12" tabindex="-1"></a>  <span class="at">violin.args =</span> <span class="fu">list</span>(<span class="at">width =</span> <span class="dv">0</span>),</span>
+<span id="cb113-13"><a href="species-relative-abundances-over-time.html#cb113-13" tabindex="-1"></a>  <span class="at">pairwise.comparisons =</span> T) <span class="sc">+</span></span>
+<span id="cb113-14"><a href="species-relative-abundances-over-time.html#cb113-14" tabindex="-1"></a>  <span class="fu">scale_y_log10</span>() <span class="sc">+</span></span>
+<span id="cb113-15"><a href="species-relative-abundances-over-time.html#cb113-15" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;#9EB0FFFF&quot;</span>, <span class="st">&quot;#122C39FF&quot;</span>,<span class="st">&quot;#D5857DFF&quot;</span>)) <span class="sc">+</span>   </span>
+<span id="cb113-16"><a href="species-relative-abundances-over-time.html#cb113-16" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">family =</span> <span class="st">&quot;Century Gothic&quot;</span>,</span>
+<span id="cb113-17"><a href="species-relative-abundances-over-time.html#cb113-17" tabindex="-1"></a>      <span class="at">size =</span> <span class="dv">18</span>, <span class="at">face =</span> <span class="st">&quot;bold&quot;</span>),</span>
+<span id="cb113-18"><a href="species-relative-abundances-over-time.html#cb113-18" tabindex="-1"></a>    <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">family =</span> <span class="st">&quot;Century Gothic&quot;</span>,</span>
+<span id="cb113-19"><a href="species-relative-abundances-over-time.html#cb113-19" tabindex="-1"></a>      <span class="at">size =</span> <span class="dv">16</span>, <span class="at">face =</span> <span class="st">&quot;bold&quot;</span>),</span>
+<span id="cb113-20"><a href="species-relative-abundances-over-time.html#cb113-20" tabindex="-1"></a>        <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">family=</span><span class="st">&quot;Century Gothic&quot;</span>,</span>
+<span id="cb113-21"><a href="species-relative-abundances-over-time.html#cb113-21" tabindex="-1"></a>                                 <span class="at">size =</span> <span class="dv">14</span>),</span>
+<span id="cb113-22"><a href="species-relative-abundances-over-time.html#cb113-22" tabindex="-1"></a>      <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(</span>
+<span id="cb113-23"><a href="species-relative-abundances-over-time.html#cb113-23" tabindex="-1"></a>      <span class="at">family =</span> <span class="st">&quot;Century Gothic&quot;</span>, </span>
+<span id="cb113-24"><a href="species-relative-abundances-over-time.html#cb113-24" tabindex="-1"></a>      <span class="at">size =</span> <span class="dv">14</span>, </span>
+<span id="cb113-25"><a href="species-relative-abundances-over-time.html#cb113-25" tabindex="-1"></a>      <span class="at">face =</span> <span class="st">&quot;bold&quot;</span>,</span>
+<span id="cb113-26"><a href="species-relative-abundances-over-time.html#cb113-26" tabindex="-1"></a>      <span class="at">color=</span><span class="st">&quot;#1b2838&quot;</span></span>
+<span id="cb113-27"><a href="species-relative-abundances-over-time.html#cb113-27" tabindex="-1"></a>    ))</span>
+<span id="cb113-28"><a href="species-relative-abundances-over-time.html#cb113-28" tabindex="-1"></a></span>
+<span id="cb113-29"><a href="species-relative-abundances-over-time.html#cb113-29" tabindex="-1"></a><span class="fu">ggsave</span>(fig_relAbun_over_time, <span class="at">filename =</span> <span class="st">&quot;figs/fig_relAbun_landscapeLevel.png&quot;</span>, <span class="at">width =</span> <span class="dv">15</span>, <span class="at">height =</span> <span class="dv">10</span>, <span class="at">device =</span> <span class="fu">png</span>(), <span class="at">units =</span> <span class="st">&quot;in&quot;</span>, <span class="at">dpi =</span> <span class="dv">300</span>)</span>
+<span id="cb113-30"><a href="species-relative-abundances-over-time.html#cb113-30" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
+<div class="float">
+<img src="figs/fig_relAbun_landscapeLevel.png" alt="Species relative abundance over time (pooled at the landscape level)" />
+<div class="figcaption">Species relative abundance over time (pooled at the landscape level)</div>
+</div>
+</div>
+<div id="species-relative-abundances-at-the-site-level" class="section level2 hasAnchor" number="11.8">
+<h2><span class="header-section-number">11.8</span> Species relative abundances at the site-level<a href="species-relative-abundances-over-time.html#species-relative-abundances-at-the-site-level" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>We now recalculate species relative abundances at the site-level, which will be used for downstream comparisons with change in land cover and climate at a given site.</p>
+<div class="sourceCode" id="cb114"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb114-1"><a href="species-relative-abundances-over-time.html#cb114-1" tabindex="-1"></a><span class="co"># 1850-1900 data</span></span>
+<span id="cb114-2"><a href="species-relative-abundances-over-time.html#cb114-2" tabindex="-1"></a><span class="co"># we remove modern site_code and get only distinct rows</span></span>
+<span id="cb114-3"><a href="species-relative-abundances-over-time.html#cb114-3" tabindex="-1"></a>hist_pre1900 <span class="ot">&lt;-</span> hist_occ_pre1900[,<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)] <span class="sc">%&gt;%</span></span>
+<span id="cb114-4"><a href="species-relative-abundances-over-time.html#cb114-4" tabindex="-1"></a>  <span class="fu">distinct</span>(.)</span>
+<span id="cb114-5"><a href="species-relative-abundances-over-time.html#cb114-5" tabindex="-1"></a></span>
+<span id="cb114-6"><a href="species-relative-abundances-over-time.html#cb114-6" tabindex="-1"></a><span class="co"># 1900-1950 data</span></span>
+<span id="cb114-7"><a href="species-relative-abundances-over-time.html#cb114-7" tabindex="-1"></a><span class="co"># we remove modern site_code and get only distinct rows</span></span>
+<span id="cb114-8"><a href="species-relative-abundances-over-time.html#cb114-8" tabindex="-1"></a>hist_1900_1950 <span class="ot">&lt;-</span> hist_occ_1900_1950[,<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)] <span class="sc">%&gt;%</span></span>
+<span id="cb114-9"><a href="species-relative-abundances-over-time.html#cb114-9" tabindex="-1"></a>  <span class="fu">distinct</span>(.)</span>
+<span id="cb114-10"><a href="species-relative-abundances-over-time.html#cb114-10" tabindex="-1"></a></span>
+<span id="cb114-11"><a href="species-relative-abundances-over-time.html#cb114-11" tabindex="-1"></a><span class="do">##  modern resurvey</span></span>
+<span id="cb114-12"><a href="species-relative-abundances-over-time.html#cb114-12" tabindex="-1"></a><span class="do">## analysis is being done at the level of the historical site code</span></span>
+<span id="cb114-13"><a href="species-relative-abundances-over-time.html#cb114-13" tabindex="-1"></a>mod_site_level <span class="ot">&lt;-</span> mod_occ[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">5</span>)] <span class="sc">%&gt;%</span></span>
+<span id="cb114-14"><a href="species-relative-abundances-over-time.html#cb114-14" tabindex="-1"></a>  <span class="fu">group_by</span>(common_name, historical_site_code) <span class="sc">%&gt;%</span></span>
+<span id="cb114-15"><a href="species-relative-abundances-over-time.html#cb114-15" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">&quot;2021&quot;</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">2021</span><span class="st">`</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb114-16"><a href="species-relative-abundances-over-time.html#cb114-16" tabindex="-1"></a>  <span class="fu">distinct</span>(.)</span>
+<span id="cb114-17"><a href="species-relative-abundances-over-time.html#cb114-17" tabindex="-1"></a></span>
+<span id="cb114-18"><a href="species-relative-abundances-over-time.html#cb114-18" tabindex="-1"></a><span class="do">## join data frames together</span></span>
+<span id="cb114-19"><a href="species-relative-abundances-over-time.html#cb114-19" tabindex="-1"></a>site_level_relAbun <span class="ot">&lt;-</span> <span class="fu">full_join</span>(hist_pre1900,</span>
+<span id="cb114-20"><a href="species-relative-abundances-over-time.html#cb114-20" tabindex="-1"></a>                                hist_1900_1950) <span class="sc">%&gt;%</span></span>
+<span id="cb114-21"><a href="species-relative-abundances-over-time.html#cb114-21" tabindex="-1"></a>  <span class="fu">full_join</span>(., mod_site_level) <span class="sc">%&gt;%</span></span>
+<span id="cb114-22"><a href="species-relative-abundances-over-time.html#cb114-22" tabindex="-1"></a>  <span class="fu">replace_na</span>(<span class="fu">list</span>(<span class="st">`</span><span class="at">1850-1900</span><span class="st">`</span> <span class="ot">=</span> <span class="dv">0</span>, </span>
+<span id="cb114-23"><a href="species-relative-abundances-over-time.html#cb114-23" tabindex="-1"></a>                  <span class="st">`</span><span class="at">1900-1950</span><span class="st">`</span> <span class="ot">=</span> <span class="dv">0</span>,</span>
+<span id="cb114-24"><a href="species-relative-abundances-over-time.html#cb114-24" tabindex="-1"></a>                  <span class="st">`</span><span class="at">2021</span><span class="st">`</span> <span class="ot">=</span> <span class="dv">0</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb114-25"><a href="species-relative-abundances-over-time.html#cb114-25" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb114-26"><a href="species-relative-abundances-over-time.html#cb114-26" tabindex="-1"></a>  <span class="fu">complete</span>(common_name, historical_site_code, <span class="at">fill =</span> <span class="fu">list</span>(<span class="st">`</span><span class="at">1850-1900</span><span class="st">`</span> <span class="ot">=</span> <span class="dv">0</span>, </span>
+<span id="cb114-27"><a href="species-relative-abundances-over-time.html#cb114-27" tabindex="-1"></a>     <span class="st">`</span><span class="at">1900-1950</span><span class="st">`</span> <span class="ot">=</span> <span class="dv">0</span>,                                                     <span class="st">`</span><span class="at">2021</span><span class="st">`</span> <span class="ot">=</span> <span class="dv">0</span>))</span>
+<span id="cb114-28"><a href="species-relative-abundances-over-time.html#cb114-28" tabindex="-1"></a></span>
+<span id="cb114-29"><a href="species-relative-abundances-over-time.html#cb114-29" tabindex="-1"></a><span class="do">## site-level relative abundance for 1850-1900 data</span></span>
+<span id="cb114-30"><a href="species-relative-abundances-over-time.html#cb114-30" tabindex="-1"></a>relSpAbund_1850_1900 <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb114-31"><a href="species-relative-abundances-over-time.html#cb114-31" tabindex="-1"></a></span>
+<span id="cb114-32"><a href="species-relative-abundances-over-time.html#cb114-32" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(<span class="fu">unique</span>(site_level_relAbun<span class="sc">$</span>historical_site_code))) {</span>
+<span id="cb114-33"><a href="species-relative-abundances-over-time.html#cb114-33" tabindex="-1"></a>  </span>
+<span id="cb114-34"><a href="species-relative-abundances-over-time.html#cb114-34" tabindex="-1"></a>  <span class="co"># for every unique historical site</span></span>
+<span id="cb114-35"><a href="species-relative-abundances-over-time.html#cb114-35" tabindex="-1"></a>  a <span class="ot">&lt;-</span> site_level_relAbun <span class="sc">%&gt;%</span></span>
+<span id="cb114-36"><a href="species-relative-abundances-over-time.html#cb114-36" tabindex="-1"></a>  <span class="fu">filter</span>(historical_site_code <span class="sc">==</span> <span class="fu">unique</span>(site_level_relAbun<span class="sc">$</span>historical_site_code)[i])</span>
+<span id="cb114-37"><a href="species-relative-abundances-over-time.html#cb114-37" tabindex="-1"></a>  </span>
+<span id="cb114-38"><a href="species-relative-abundances-over-time.html#cb114-38" tabindex="-1"></a>  <span class="co"># subset historical data</span></span>
+<span id="cb114-39"><a href="species-relative-abundances-over-time.html#cb114-39" tabindex="-1"></a>  b <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">deframe</span>(a[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>)]) <span class="do">## choosing 1850-1900 data</span></span>
+<span id="cb114-40"><a href="species-relative-abundances-over-time.html#cb114-40" tabindex="-1"></a>  </span>
+<span id="cb114-41"><a href="species-relative-abundances-over-time.html#cb114-41" tabindex="-1"></a>  loc <span class="ot">&lt;-</span> <span class="fu">unique</span>(site_level_relAbun<span class="sc">$</span>historical_site_code)[i] <span class="co"># what&#39;s the site_code?</span></span>
+<span id="cb114-42"><a href="species-relative-abundances-over-time.html#cb114-42" tabindex="-1"></a>  </span>
+<span id="cb114-43"><a href="species-relative-abundances-over-time.html#cb114-43" tabindex="-1"></a>  <span class="do">## historical relative abundance</span></span>
+<span id="cb114-44"><a href="species-relative-abundances-over-time.html#cb114-44" tabindex="-1"></a>  relSpAbund_1850_1900[[i]] <span class="ot">&lt;-</span> <span class="fu">dirch_stats</span>(b) <span class="sc">%&gt;%</span></span>
+<span id="cb114-45"><a href="species-relative-abundances-over-time.html#cb114-45" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(species, bayes_mean)</span>
+<span id="cb114-46"><a href="species-relative-abundances-over-time.html#cb114-46" tabindex="-1"></a></span>
+<span id="cb114-47"><a href="species-relative-abundances-over-time.html#cb114-47" tabindex="-1"></a>  old_varname <span class="ot">&lt;-</span>  <span class="fu">c</span>(<span class="st">&#39;species&#39;</span>,<span class="st">&#39;bayes_mean&#39;</span>)</span>
+<span id="cb114-48"><a href="species-relative-abundances-over-time.html#cb114-48" tabindex="-1"></a>  new_varname <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&#39;common_name&#39;</span>, <span class="fu">paste</span>(loc,<span class="st">&quot;_&quot;</span>,<span class="st">&quot;1850&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>))</span>
+<span id="cb114-49"><a href="species-relative-abundances-over-time.html#cb114-49" tabindex="-1"></a></span>
+<span id="cb114-50"><a href="species-relative-abundances-over-time.html#cb114-50" tabindex="-1"></a>  relSpAbund_1850_1900[[i]] <span class="ot">&lt;-</span> relSpAbund_1850_1900[[i]] <span class="sc">%&gt;%</span></span>
+<span id="cb114-51"><a href="species-relative-abundances-over-time.html#cb114-51" tabindex="-1"></a>      data.table<span class="sc">::</span><span class="fu">setnames</span>(<span class="at">old =</span> old_varname, <span class="at">new =</span> new_varname)</span>
+<span id="cb114-52"><a href="species-relative-abundances-over-time.html#cb114-52" tabindex="-1"></a></span>
+<span id="cb114-53"><a href="species-relative-abundances-over-time.html#cb114-53" tabindex="-1"></a>  <span class="fu">names</span>(relSpAbund_1850_1900)[i] <span class="ot">&lt;-</span> loc</span>
+<span id="cb114-54"><a href="species-relative-abundances-over-time.html#cb114-54" tabindex="-1"></a>}</span>
+<span id="cb114-55"><a href="species-relative-abundances-over-time.html#cb114-55" tabindex="-1"></a></span>
+<span id="cb114-56"><a href="species-relative-abundances-over-time.html#cb114-56" tabindex="-1"></a><span class="co"># save object but full_join across lists</span></span>
+<span id="cb114-57"><a href="species-relative-abundances-over-time.html#cb114-57" tabindex="-1"></a>relSpAbund_1850_1900 <span class="ot">&lt;-</span> relSpAbund_1850_1900 <span class="sc">%&gt;%</span></span>
+<span id="cb114-58"><a href="species-relative-abundances-over-time.html#cb114-58" tabindex="-1"></a>    <span class="fu">reduce</span>(<span class="at">.f=</span>full_join)</span>
+<span id="cb114-59"><a href="species-relative-abundances-over-time.html#cb114-59" tabindex="-1"></a></span>
+<span id="cb114-60"><a href="species-relative-abundances-over-time.html#cb114-60" tabindex="-1"></a><span class="do">## site-level relative abundance for 1900-1950 data</span></span>
+<span id="cb114-61"><a href="species-relative-abundances-over-time.html#cb114-61" tabindex="-1"></a>relSpAbund_1900_1950 <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb114-62"><a href="species-relative-abundances-over-time.html#cb114-62" tabindex="-1"></a></span>
+<span id="cb114-63"><a href="species-relative-abundances-over-time.html#cb114-63" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(<span class="fu">unique</span>(site_level_relAbun<span class="sc">$</span>historical_site_code))) {</span>
+<span id="cb114-64"><a href="species-relative-abundances-over-time.html#cb114-64" tabindex="-1"></a>  </span>
+<span id="cb114-65"><a href="species-relative-abundances-over-time.html#cb114-65" tabindex="-1"></a>  <span class="co"># for every unique historical site</span></span>
+<span id="cb114-66"><a href="species-relative-abundances-over-time.html#cb114-66" tabindex="-1"></a>  a <span class="ot">&lt;-</span> site_level_relAbun <span class="sc">%&gt;%</span></span>
+<span id="cb114-67"><a href="species-relative-abundances-over-time.html#cb114-67" tabindex="-1"></a>  <span class="fu">filter</span>(historical_site_code <span class="sc">==</span> <span class="fu">unique</span>(site_level_relAbun<span class="sc">$</span>historical_site_code)[i])</span>
+<span id="cb114-68"><a href="species-relative-abundances-over-time.html#cb114-68" tabindex="-1"></a>  </span>
+<span id="cb114-69"><a href="species-relative-abundances-over-time.html#cb114-69" tabindex="-1"></a>  <span class="co"># subset historical data</span></span>
+<span id="cb114-70"><a href="species-relative-abundances-over-time.html#cb114-70" tabindex="-1"></a>  b <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">deframe</span>(a[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">4</span>)]) <span class="do">## choosing 1900-1950 data</span></span>
+<span id="cb114-71"><a href="species-relative-abundances-over-time.html#cb114-71" tabindex="-1"></a>  </span>
+<span id="cb114-72"><a href="species-relative-abundances-over-time.html#cb114-72" tabindex="-1"></a>  loc <span class="ot">&lt;-</span> <span class="fu">unique</span>(site_level_relAbun<span class="sc">$</span>historical_site_code)[i] <span class="co"># what&#39;s the site_code?</span></span>
+<span id="cb114-73"><a href="species-relative-abundances-over-time.html#cb114-73" tabindex="-1"></a>  </span>
+<span id="cb114-74"><a href="species-relative-abundances-over-time.html#cb114-74" tabindex="-1"></a>  <span class="do">## historical relative abundance</span></span>
+<span id="cb114-75"><a href="species-relative-abundances-over-time.html#cb114-75" tabindex="-1"></a>  relSpAbund_1900_1950[[i]] <span class="ot">&lt;-</span> <span class="fu">dirch_stats</span>(b) <span class="sc">%&gt;%</span></span>
+<span id="cb114-76"><a href="species-relative-abundances-over-time.html#cb114-76" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(species, bayes_mean)</span>
+<span id="cb114-77"><a href="species-relative-abundances-over-time.html#cb114-77" tabindex="-1"></a></span>
+<span id="cb114-78"><a href="species-relative-abundances-over-time.html#cb114-78" tabindex="-1"></a>  old_varname <span class="ot">&lt;-</span>  <span class="fu">c</span>(<span class="st">&#39;species&#39;</span>,<span class="st">&#39;bayes_mean&#39;</span>)</span>
+<span id="cb114-79"><a href="species-relative-abundances-over-time.html#cb114-79" tabindex="-1"></a>  new_varname <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&#39;common_name&#39;</span>, <span class="fu">paste</span>(loc,<span class="st">&quot;_&quot;</span>,<span class="st">&quot;1900&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>))</span>
+<span id="cb114-80"><a href="species-relative-abundances-over-time.html#cb114-80" tabindex="-1"></a></span>
+<span id="cb114-81"><a href="species-relative-abundances-over-time.html#cb114-81" tabindex="-1"></a>  relSpAbund_1900_1950[[i]] <span class="ot">&lt;-</span> relSpAbund_1900_1950[[i]] <span class="sc">%&gt;%</span></span>
+<span id="cb114-82"><a href="species-relative-abundances-over-time.html#cb114-82" tabindex="-1"></a>      data.table<span class="sc">::</span><span class="fu">setnames</span>(<span class="at">old =</span> old_varname, <span class="at">new =</span> new_varname)</span>
+<span id="cb114-83"><a href="species-relative-abundances-over-time.html#cb114-83" tabindex="-1"></a></span>
+<span id="cb114-84"><a href="species-relative-abundances-over-time.html#cb114-84" tabindex="-1"></a>  <span class="fu">names</span>(relSpAbund_1900_1950)[i] <span class="ot">&lt;-</span> loc</span>
+<span id="cb114-85"><a href="species-relative-abundances-over-time.html#cb114-85" tabindex="-1"></a>}</span>
+<span id="cb114-86"><a href="species-relative-abundances-over-time.html#cb114-86" tabindex="-1"></a></span>
+<span id="cb114-87"><a href="species-relative-abundances-over-time.html#cb114-87" tabindex="-1"></a><span class="co"># save object but full_join across lists</span></span>
+<span id="cb114-88"><a href="species-relative-abundances-over-time.html#cb114-88" tabindex="-1"></a>relSpAbund_1900_1950 <span class="ot">&lt;-</span> relSpAbund_1900_1950 <span class="sc">%&gt;%</span></span>
+<span id="cb114-89"><a href="species-relative-abundances-over-time.html#cb114-89" tabindex="-1"></a>    <span class="fu">reduce</span>(<span class="at">.f=</span>full_join)</span>
+<span id="cb114-90"><a href="species-relative-abundances-over-time.html#cb114-90" tabindex="-1"></a></span>
+<span id="cb114-91"><a href="species-relative-abundances-over-time.html#cb114-91" tabindex="-1"></a><span class="co"># modern resurvey relative abundance - site level</span></span>
+<span id="cb114-92"><a href="species-relative-abundances-over-time.html#cb114-92" tabindex="-1"></a>relSpAbund_2021 <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb114-93"><a href="species-relative-abundances-over-time.html#cb114-93" tabindex="-1"></a></span>
+<span id="cb114-94"><a href="species-relative-abundances-over-time.html#cb114-94" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(<span class="fu">unique</span>(site_level_relAbun<span class="sc">$</span>historical_site_code))) {</span>
+<span id="cb114-95"><a href="species-relative-abundances-over-time.html#cb114-95" tabindex="-1"></a>  </span>
+<span id="cb114-96"><a href="species-relative-abundances-over-time.html#cb114-96" tabindex="-1"></a>  a <span class="ot">&lt;-</span> site_level_relAbun <span class="sc">%&gt;%</span></span>
+<span id="cb114-97"><a href="species-relative-abundances-over-time.html#cb114-97" tabindex="-1"></a>  <span class="fu">filter</span>(historical_site_code <span class="sc">==</span> <span class="fu">unique</span>(site_level_relAbun<span class="sc">$</span>historical_site_code)[i])</span>
+<span id="cb114-98"><a href="species-relative-abundances-over-time.html#cb114-98" tabindex="-1"></a></span>
+<span id="cb114-99"><a href="species-relative-abundances-over-time.html#cb114-99" tabindex="-1"></a>  b <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">deframe</span>(a[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">5</span>)]) <span class="do">## choosing modern data</span></span>
+<span id="cb114-100"><a href="species-relative-abundances-over-time.html#cb114-100" tabindex="-1"></a>  </span>
+<span id="cb114-101"><a href="species-relative-abundances-over-time.html#cb114-101" tabindex="-1"></a>  loc <span class="ot">&lt;-</span> <span class="fu">unique</span>(site_level_relAbun<span class="sc">$</span>historical_site_code)[i] <span class="co"># what&#39;s the site_code?</span></span>
+<span id="cb114-102"><a href="species-relative-abundances-over-time.html#cb114-102" tabindex="-1"></a>  </span>
+<span id="cb114-103"><a href="species-relative-abundances-over-time.html#cb114-103" tabindex="-1"></a>  relSpAbund_2021[[i]] <span class="ot">&lt;-</span> <span class="fu">dirch_stats</span>(b) <span class="sc">%&gt;%</span></span>
+<span id="cb114-104"><a href="species-relative-abundances-over-time.html#cb114-104" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(species, bayes_mean)</span>
+<span id="cb114-105"><a href="species-relative-abundances-over-time.html#cb114-105" tabindex="-1"></a></span>
+<span id="cb114-106"><a href="species-relative-abundances-over-time.html#cb114-106" tabindex="-1"></a>  old_varname <span class="ot">&lt;-</span>  <span class="fu">c</span>(<span class="st">&#39;species&#39;</span>,<span class="st">&#39;bayes_mean&#39;</span>)</span>
+<span id="cb114-107"><a href="species-relative-abundances-over-time.html#cb114-107" tabindex="-1"></a>  new_varname <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&#39;common_name&#39;</span>, <span class="fu">paste</span>(loc,<span class="st">&quot;_&quot;</span>,<span class="st">&quot;2021&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>))</span>
+<span id="cb114-108"><a href="species-relative-abundances-over-time.html#cb114-108" tabindex="-1"></a></span>
+<span id="cb114-109"><a href="species-relative-abundances-over-time.html#cb114-109" tabindex="-1"></a>  relSpAbund_2021[[i]] <span class="ot">&lt;-</span> relSpAbund_2021[[i]] <span class="sc">%&gt;%</span></span>
+<span id="cb114-110"><a href="species-relative-abundances-over-time.html#cb114-110" tabindex="-1"></a>      data.table<span class="sc">::</span><span class="fu">setnames</span>(<span class="at">old =</span> old_varname, <span class="at">new =</span> new_varname)</span>
+<span id="cb114-111"><a href="species-relative-abundances-over-time.html#cb114-111" tabindex="-1"></a></span>
+<span id="cb114-112"><a href="species-relative-abundances-over-time.html#cb114-112" tabindex="-1"></a>  <span class="fu">names</span>(relSpAbund_2021)[i] <span class="ot">&lt;-</span> loc </span>
+<span id="cb114-113"><a href="species-relative-abundances-over-time.html#cb114-113" tabindex="-1"></a>}</span>
+<span id="cb114-114"><a href="species-relative-abundances-over-time.html#cb114-114" tabindex="-1"></a></span>
+<span id="cb114-115"><a href="species-relative-abundances-over-time.html#cb114-115" tabindex="-1"></a><span class="co"># save object but full_join across lists</span></span>
+<span id="cb114-116"><a href="species-relative-abundances-over-time.html#cb114-116" tabindex="-1"></a>relSpAbund_2021 <span class="ot">&lt;-</span> relSpAbund_2021 <span class="sc">%&gt;%</span></span>
+<span id="cb114-117"><a href="species-relative-abundances-over-time.html#cb114-117" tabindex="-1"></a>    <span class="fu">reduce</span>(<span class="at">.f=</span>full_join)</span>
+<span id="cb114-118"><a href="species-relative-abundances-over-time.html#cb114-118" tabindex="-1"></a></span>
+<span id="cb114-119"><a href="species-relative-abundances-over-time.html#cb114-119" tabindex="-1"></a><span class="do">## join all the datasets together</span></span>
+<span id="cb114-120"><a href="species-relative-abundances-over-time.html#cb114-120" tabindex="-1"></a>relSpAbund_by_site <span class="ot">&lt;-</span> <span class="fu">full_join</span>(relSpAbund_1850_1900,</span>
+<span id="cb114-121"><a href="species-relative-abundances-over-time.html#cb114-121" tabindex="-1"></a>                                relSpAbund_1900_1950) <span class="sc">%&gt;%</span></span>
+<span id="cb114-122"><a href="species-relative-abundances-over-time.html#cb114-122" tabindex="-1"></a>  <span class="fu">full_join</span>(., relSpAbund_2021) <span class="sc">%&gt;%</span></span>
+<span id="cb114-123"><a href="species-relative-abundances-over-time.html#cb114-123" tabindex="-1"></a>  <span class="fu">arrange</span>(common_name) </span></code></pre></div>
+</div>
+<div id="visualizing-differences-in-relative-abundance-over-time-at-the-site-level" class="section level2 hasAnchor" number="11.9">
+<h2><span class="header-section-number">11.9</span> Visualizing differences in relative abundance over time at the site level<a href="species-relative-abundances-over-time.html#visualizing-differences-in-relative-abundance-over-time-at-the-site-level" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb115"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb115-1"><a href="species-relative-abundances-over-time.html#cb115-1" tabindex="-1"></a><span class="do">## preparing dataframe for visualization</span></span>
+<span id="cb115-2"><a href="species-relative-abundances-over-time.html#cb115-2" tabindex="-1"></a>relSpAbund <span class="ot">&lt;-</span> relSpAbund_by_site <span class="sc">%&gt;%</span></span>
+<span id="cb115-3"><a href="species-relative-abundances-over-time.html#cb115-3" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">!</span>common_name, <span class="at">names_to =</span> <span class="st">&quot;site_year&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;relAbundance&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb115-4"><a href="species-relative-abundances-over-time.html#cb115-4" tabindex="-1"></a>  <span class="fu">separate</span>(site_year, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">&quot;site&quot;</span>, <span class="st">&quot;year&quot;</span>), <span class="at">sep =</span> <span class="st">&quot;_&quot;</span>) </span>
+<span id="cb115-5"><a href="species-relative-abundances-over-time.html#cb115-5" tabindex="-1"></a></span>
+<span id="cb115-6"><a href="species-relative-abundances-over-time.html#cb115-6" tabindex="-1"></a><span class="do">## Please note: for the sake of downstream analysis, we have renamed 1850-1900 as 1850. In other words, each year - except for 2021 represents a 50 year time period. </span></span>
+<span id="cb115-7"><a href="species-relative-abundances-over-time.html#cb115-7" tabindex="-1"></a></span>
+<span id="cb115-8"><a href="species-relative-abundances-over-time.html#cb115-8" tabindex="-1"></a>fig_relAbun_siteLevel <span class="ot">&lt;-</span> relSpAbund <span class="sc">%&gt;%</span></span>
+<span id="cb115-9"><a href="species-relative-abundances-over-time.html#cb115-9" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>common_name) <span class="sc">%&gt;%</span></span>
+<span id="cb115-10"><a href="species-relative-abundances-over-time.html#cb115-10" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>year, <span class="at">y =</span> relAbundance,</span>
+<span id="cb115-11"><a href="species-relative-abundances-over-time.html#cb115-11" tabindex="-1"></a>             <span class="at">fill =</span> year)) <span class="sc">+</span></span>
+<span id="cb115-12"><a href="species-relative-abundances-over-time.html#cb115-12" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb115-13"><a href="species-relative-abundances-over-time.html#cb115-13" tabindex="-1"></a>  <span class="fu">scale_y_log10</span>() <span class="sc">+</span></span>
+<span id="cb115-14"><a href="species-relative-abundances-over-time.html#cb115-14" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>site)<span class="sc">+</span></span>
+<span id="cb115-15"><a href="species-relative-abundances-over-time.html#cb115-15" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;Time period&quot;</span>) <span class="sc">+</span></span>
+<span id="cb115-16"><a href="species-relative-abundances-over-time.html#cb115-16" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Relative abundance&quot;</span>) <span class="sc">+</span></span>
+<span id="cb115-17"><a href="species-relative-abundances-over-time.html#cb115-17" tabindex="-1"></a>  <span class="fu">scale_fill_scico_d</span>(<span class="at">palette =</span> <span class="st">&quot;roma&quot;</span>) <span class="sc">+</span></span>
+<span id="cb115-18"><a href="species-relative-abundances-over-time.html#cb115-18" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb115-19"><a href="species-relative-abundances-over-time.html#cb115-19" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">family =</span> <span class="st">&quot;Century Gothic&quot;</span>,</span>
+<span id="cb115-20"><a href="species-relative-abundances-over-time.html#cb115-20" tabindex="-1"></a>      <span class="at">size =</span> <span class="dv">14</span>, <span class="at">face =</span> <span class="st">&quot;bold&quot;</span>),</span>
+<span id="cb115-21"><a href="species-relative-abundances-over-time.html#cb115-21" tabindex="-1"></a>        <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">family=</span><span class="st">&quot;Century Gothic&quot;</span>,<span class="at">size =</span> <span class="dv">14</span>),</span>
+<span id="cb115-22"><a href="species-relative-abundances-over-time.html#cb115-22" tabindex="-1"></a>      <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">family=</span><span class="st">&quot;Century Gothic&quot;</span>,</span>
+<span id="cb115-23"><a href="species-relative-abundances-over-time.html#cb115-23" tabindex="-1"></a>                                    <span class="at">size =</span> <span class="dv">14</span>, <span class="at">face =</span> <span class="st">&quot;bold&quot;</span>),</span>
+<span id="cb115-24"><a href="species-relative-abundances-over-time.html#cb115-24" tabindex="-1"></a>        <span class="at">legend.key.size =</span> <span class="fu">unit</span>(<span class="dv">1</span>,<span class="st">&quot;cm&quot;</span>),</span>
+<span id="cb115-25"><a href="species-relative-abundances-over-time.html#cb115-25" tabindex="-1"></a>        <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">family=</span><span class="st">&quot;Century Gothic&quot;</span>,<span class="at">size =</span> <span class="dv">14</span>)) </span>
+<span id="cb115-26"><a href="species-relative-abundances-over-time.html#cb115-26" tabindex="-1"></a></span>
+<span id="cb115-27"><a href="species-relative-abundances-over-time.html#cb115-27" tabindex="-1"></a><span class="fu">ggsave</span>(fig_relAbun_siteLevel, <span class="at">filename =</span> <span class="st">&quot;figs/fig_relAbun_siteLevel.png&quot;</span>, <span class="at">width =</span> <span class="dv">15</span>, <span class="at">height =</span> <span class="dv">10</span>, <span class="at">device =</span> <span class="fu">png</span>(), <span class="at">units =</span> <span class="st">&quot;in&quot;</span>, <span class="at">dpi =</span> <span class="dv">300</span>)</span>
+<span id="cb115-28"><a href="species-relative-abundances-over-time.html#cb115-28" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
+</div>
+<div id="writing-results-to-file" class="section level2 hasAnchor" number="11.10">
+<h2><span class="header-section-number">11.10</span> Writing results to file<a href="species-relative-abundances-over-time.html#writing-results-to-file" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb116"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb116-1"><a href="species-relative-abundances-over-time.html#cb116-1" tabindex="-1"></a><span class="fu">write.csv</span>(relAbun, <span class="st">&quot;results/species-relative-abundance.csv&quot;</span>, <span class="at">row.names =</span> F)</span>
+<span id="cb116-2"><a href="species-relative-abundances-over-time.html#cb116-2" tabindex="-1"></a><span class="fu">write.csv</span>(relSpAbund, <span class="st">&quot;results/species-relative-abundance-siteLevel.csv&quot;</span>, <span class="at">row.names =</span> F)</span></code></pre></div>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="exploratory-analysis-of-occurrence-data.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": false,
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/vjjan91/nilgiris-resurvey-project/edit/master/10_species-relative-abundances.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

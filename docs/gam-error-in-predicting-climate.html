@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Section 4 GAM error in predicting climate | Colonial-era landscape changes has led to grassland bird species declines over the last century</title>
+  <meta name="description" content="Section 4 GAM error in predicting climate | Colonial-era landscape changes has led to grassland bird species declines over the last century" />
+  <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Section 4 GAM error in predicting climate | Colonial-era landscape changes has led to grassland bird species declines over the last century" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta name="github-repo" content="vjjan91/nilgiris-resurvey-project" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Section 4 GAM error in predicting climate | Colonial-era landscape changes has led to grassland bird species declines over the last century" />
+  
+  
+  
+
+<meta name="author" content="Vijay Ramesh" />
+<meta name="author" content="VA Akshay" />
+<meta name="author" content="Pratik Rajan Gupte" />
+<meta name="author" content="Amrutha Rajan" />
+<meta name="author" content="Chandrasekar Das" />
+<meta name="author" content="Priyanka Hari Haran" />
+<meta name="author" content="Ian Lockwood" />
+<meta name="author" content="Ashwini Mohan" />
+<meta name="author" content="Morgan W Tingley" />
+<meta name="author" content="VV Robin" />
+<meta name="author" content="Ruth S DeFries" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="validating-semi-spatial-gams-for-climate.html"/>
+<link rel="next" href="reconstructing-climate-data.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#attribution"><i class="fa fa-check"></i><b>1.1</b> Attribution</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#data-access"><i class="fa fa-check"></i><b>1.2</b> Data access</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#data-processing"><i class="fa fa-check"></i><b>1.3</b> Data processing</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html"><i class="fa fa-check"></i><b>2</b> Prepare Climate Data for Interpolation</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#load-libraries"><i class="fa fa-check"></i><b>2.1</b> Load libraries</a></li>
+<li class="chapter" data-level="2.2" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#prepare-climate-data"><i class="fa fa-check"></i><b>2.2</b> Prepare climate data</a></li>
+<li class="chapter" data-level="2.3" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#summarise-by-month"><i class="fa fa-check"></i><b>2.3</b> Summarise by month</a></li>
+<li class="chapter" data-level="2.4" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#prepare-for-spatial-data"><i class="fa fa-check"></i><b>2.4</b> Prepare for spatial data</a></li>
+<li class="chapter" data-level="2.5" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#prepare-spatial-data"><i class="fa fa-check"></i><b>2.5</b> Prepare spatial data</a></li>
+<li class="chapter" data-level="2.6" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#prepare-coastline-data"><i class="fa fa-check"></i><b>2.6</b> Prepare coastline data</a></li>
+<li class="chapter" data-level="2.7" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#resample-raster-to-600m"><i class="fa fa-check"></i><b>2.7</b> Resample raster to 600m</a></li>
+<li class="chapter" data-level="2.8" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#link-predictors-to-climate-data"><i class="fa fa-check"></i><b>2.8</b> Link predictors to climate data</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html"><i class="fa fa-check"></i><b>3</b> Validating semi-spatial GAMs for climate</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#load-libraries-1"><i class="fa fa-check"></i><b>3.1</b> Load libraries</a></li>
+<li class="chapter" data-level="3.2" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#load-data-prepared-for-the-gam-and-the-stack-predictor-raster."><i class="fa fa-check"></i><b>3.2</b> Load data prepared for the GAM, and the stack predictor raster.</a></li>
+<li class="chapter" data-level="3.3" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#prepare-data-covariates-and-raster"><i class="fa fa-check"></i><b>3.3</b> Prepare data covariates and raster</a></li>
+<li class="chapter" data-level="3.4" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#pivot-longer-to-separate-by-variable."><i class="fa fa-check"></i><b>3.4</b> Pivot longer to separate by variable.</a></li>
+<li class="chapter" data-level="3.5" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#split-the-data-by-variable."><i class="fa fa-check"></i><b>3.5</b> Split the data by variable.</a></li>
+<li class="chapter" data-level="3.6" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#fit-candidate-models"><i class="fa fa-check"></i><b>3.6</b> Fit candidate models</a>
+<ul>
+<li class="chapter" data-level="3.6.1" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#save-model-data."><i class="fa fa-check"></i><b>3.6.1</b> Save model data.</a></li>
+</ul></li>
+<li class="chapter" data-level="3.7" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#predict-over-static-environment"><i class="fa fa-check"></i><b>3.7</b> Predict over static environment</a></li>
+<li class="chapter" data-level="3.8" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#average-predictions-over-1970-to-2010."><i class="fa fa-check"></i><b>3.8</b> Average predictions over 1970 to 2010.</a></li>
+<li class="chapter" data-level="3.9" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#get-bioclim-data"><i class="fa fa-check"></i><b>3.9</b> Get BIOCLIM data</a></li>
+<li class="chapter" data-level="3.10" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#get-precipitation-data"><i class="fa fa-check"></i><b>3.10</b> Get precipitation data</a></li>
+<li class="chapter" data-level="3.11" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#get-sample-coordinates"><i class="fa fa-check"></i><b>3.11</b> Get sample coordinates</a></li>
+<li class="chapter" data-level="3.12" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#compare-bioclim-and-model-predictions"><i class="fa fa-check"></i><b>3.12</b> Compare BIOCLIM and model predictions</a></li>
+<li class="chapter" data-level="3.13" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#link-with-gam-predictions"><i class="fa fa-check"></i><b>3.13</b> Link with GAM predictions</a></li>
+<li class="chapter" data-level="3.14" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#get-gam-predictions-at-chelsa-sample-locations."><i class="fa fa-check"></i><b>3.14</b> Get GAM predictions at chelsa sample locations.</a></li>
+<li class="chapter" data-level="3.15" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#gam-predictions-at-survey-sites"><i class="fa fa-check"></i><b>3.15</b> GAM predictions at survey sites</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html"><i class="fa fa-check"></i><b>4</b> GAM error in predicting climate</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#load-libraries-2"><i class="fa fa-check"></i><b>4.1</b> Load libraries</a></li>
+<li class="chapter" data-level="4.2" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#load-data"><i class="fa fa-check"></i><b>4.2</b> Load data</a></li>
+<li class="chapter" data-level="4.3" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#plot-model-error"><i class="fa fa-check"></i><b>4.3</b> Plot model error</a></li>
+<li class="chapter" data-level="4.4" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#compare-climate-predictions-at-survey-sites"><i class="fa fa-check"></i><b>4.4</b> Compare climate predictions at survey sites</a></li>
+<li class="chapter" data-level="4.5" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#plot-gam-prediction-residuals"><i class="fa fa-check"></i><b>4.5</b> Plot GAM prediction residuals</a></li>
+<li class="chapter" data-level="4.6" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#load-processed-bioclim-data"><i class="fa fa-check"></i><b>4.6</b> Load processed BIOCLIM data</a></li>
+<li class="chapter" data-level="4.7" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#get-prediction-as-fraction-of-bioclim-layers"><i class="fa fa-check"></i><b>4.7</b> Get prediction as fraction of BIOCLIM layers</a></li>
+<li class="chapter" data-level="4.8" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#temperature-fractions"><i class="fa fa-check"></i><b>4.8</b> Temperature fractions</a></li>
+<li class="chapter" data-level="4.9" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#precipitation-fractions"><i class="fa fa-check"></i><b>4.9</b> Precipitation fractions</a></li>
+<li class="chapter" data-level="4.10" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#save-climate-correction-layers"><i class="fa fa-check"></i><b>4.10</b> Save climate correction layers</a></li>
+<li class="chapter" data-level="4.11" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#seasonal-mean-temperature-correction-layer"><i class="fa fa-check"></i><b>4.11</b> Seasonal mean temperature correction layer</a></li>
+<li class="chapter" data-level="4.12" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#seasonal-total-rainfall-correction-layer"><i class="fa fa-check"></i><b>4.12</b> Seasonal total rainfall correction layer</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html"><i class="fa fa-check"></i><b>5</b> Reconstructing climate data</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#load-libraries-3"><i class="fa fa-check"></i><b>5.1</b> Load libraries</a></li>
+<li class="chapter" data-level="5.2" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#load-data-prepared-for-the-gam-and-the-stack-predictor-raster.-1"><i class="fa fa-check"></i><b>5.2</b> Load data prepared for the GAM, and the stack predictor raster.</a></li>
+<li class="chapter" data-level="5.3" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#prepare-data-covariates-and-raster."><i class="fa fa-check"></i><b>5.3</b> Prepare data covariates and raster.</a></li>
+<li class="chapter" data-level="5.4" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#pivot-longer-to-separate-by-variable.-1"><i class="fa fa-check"></i><b>5.4</b> Pivot longer to separate by variable.</a></li>
+<li class="chapter" data-level="5.5" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#split-data-by-variable-season-and-year-bin"><i class="fa fa-check"></i><b>5.5</b> Split data by variable, season, and year bin</a></li>
+<li class="chapter" data-level="5.6" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#fit-chosen-gams"><i class="fa fa-check"></i><b>5.6</b> Fit chosen GAMs</a></li>
+<li class="chapter" data-level="5.7" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#assign-formula-to-variable."><i class="fa fa-check"></i><b>5.7</b> Assign formula to variable.</a></li>
+<li class="chapter" data-level="5.8" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#fit-gams"><i class="fa fa-check"></i><b>5.8</b> Fit GAMs</a></li>
+<li class="chapter" data-level="5.9" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#save-model-data.-1"><i class="fa fa-check"></i><b>5.9</b> Save model data.</a></li>
+<li class="chapter" data-level="5.10" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#predict-over-static-environment-1"><i class="fa fa-check"></i><b>5.10</b> Predict over static environment</a></li>
+<li class="chapter" data-level="5.11" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#apply-correction-layers"><i class="fa fa-check"></i><b>5.11</b> Apply correction layers</a></li>
+<li class="chapter" data-level="5.12" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#link-correction-layers-with-predictions"><i class="fa fa-check"></i><b>5.12</b> Link correction layers with predictions</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html"><i class="fa fa-check"></i><b>6</b> Analyzing temperature and precipitation change over time</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html#load-necessary-libraries"><i class="fa fa-check"></i><b>6.1</b> Load necessary libraries</a></li>
+<li class="chapter" data-level="6.2" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html#plot-change-in-climate-as-percentages."><i class="fa fa-check"></i><b>6.2</b> Plot change in climate as percentages.</a></li>
+<li class="chapter" data-level="6.3" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html#load-list-of-resurvey-locationshistorical-sites-of-occurrence"><i class="fa fa-check"></i><b>6.3</b> Load list of resurvey locations/historical sites of occurrence</a></li>
+<li class="chapter" data-level="6.4" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html#load-the-climate-rasters"><i class="fa fa-check"></i><b>6.4</b> Load the climate rasters</a></li>
+<li class="chapter" data-level="6.5" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html#combine-site-climate-and-terrain-data"><i class="fa fa-check"></i><b>6.5</b> Combine site climate and terrain data</a></li>
+<li class="chapter" data-level="6.6" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html#plot-all-reconstructed-climate-over-time-colouring-by-elevation-and-grouping-by-site.-each-line-represents-one-modern-site-code."><i class="fa fa-check"></i><b>6.6</b> Plot all reconstructed climate over time colouring by elevation and grouping by site. Each line represents one modern site code.</a></li>
+<li class="chapter" data-level="6.7" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html#test-for-climate-change-over-time"><i class="fa fa-check"></i><b>6.7</b> Test for climate change over time</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html"><i class="fa fa-check"></i><b>7</b> Land cover classification and change detection</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#load-necessary-libraries-1"><i class="fa fa-check"></i><b>7.1</b> Load necessary libraries</a></li>
+<li class="chapter" data-level="7.2" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#processing-digitized-shapefiles-from-the-1848-map"><i class="fa fa-check"></i><b>7.2</b> Processing digitized shapefiles from the 1848 map</a></li>
+<li class="chapter" data-level="7.3" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#rasterization-of-the-1848-shapefiles"><i class="fa fa-check"></i><b>7.3</b> Rasterization of the 1848 shapefiles</a></li>
+<li class="chapter" data-level="7.4" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#load-the-2018-satellite-image"><i class="fa fa-check"></i><b>7.4</b> Load the 2018 satellite image</a></li>
+<li class="chapter" data-level="7.5" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#subsume-plantations-into-one-category-for-2018"><i class="fa fa-check"></i><b>7.5</b> Subsume plantations into one category for 2018</a></li>
+<li class="chapter" data-level="7.6" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#write-the-shapefiles-and-rasters-to-file"><i class="fa fa-check"></i><b>7.6</b> Write the shapefiles and rasters to file</a></li>
+<li class="chapter" data-level="7.7" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#area-wise-comparisons-of-land-cover-change"><i class="fa fa-check"></i><b>7.7</b> Area-wise comparisons of land cover change</a></li>
+<li class="chapter" data-level="7.8" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#barplots-of-land-cover-change"><i class="fa fa-check"></i><b>7.8</b> Barplots of land cover change</a></li>
+<li class="chapter" data-level="7.9" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#validating-the-2018-sentinel-2-classification"><i class="fa fa-check"></i><b>7.9</b> Validating the 2018 Sentinel-2 classification</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html"><i class="fa fa-check"></i><b>8</b> Grassland contractions &amp; forest expansions</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#load-necessary-libraries-2"><i class="fa fa-check"></i><b>8.1</b> Load necessary libraries</a></li>
+<li class="chapter" data-level="8.2" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#load-processed-land-cover-rasters"><i class="fa fa-check"></i><b>8.2</b> Load processed land cover rasters</a></li>
+<li class="chapter" data-level="8.3" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#visualize-forests-across-the-two-time-periods"><i class="fa fa-check"></i><b>8.3</b> Visualize forests across the two time periods</a></li>
+<li class="chapter" data-level="8.4" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#visualize-grassland-area-across-the-two-time-periods"><i class="fa fa-check"></i><b>8.4</b> Visualize grassland area across the two time periods</a></li>
+<li class="chapter" data-level="8.5" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#comparing-if-forests-have-increased-in-locations-where-grasslands-were-formerly-found"><i class="fa fa-check"></i><b>8.5</b> Comparing if forests have increased in locations where grasslands were formerly found?</a></li>
+<li class="chapter" data-level="8.6" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#have-forests-expanded-across-elevations"><i class="fa fa-check"></i><b>8.6</b> Have forests expanded across elevations?</a></li>
+<li class="chapter" data-level="8.7" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#how-do-grassland-patches-vary-by-elevation-across-time-periods"><i class="fa fa-check"></i><b>8.7</b> How do grassland patches vary by elevation across time periods?</a></li>
+<li class="chapter" data-level="8.8" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#comparing-if-plantations-have-increased-in-locations-where-grasslands-were-formerly-found"><i class="fa fa-check"></i><b>8.8</b> Comparing if plantations have increased in locations where grasslands were formerly found?</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html"><i class="fa fa-check"></i><b>9</b> Visualizing time series of change</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#load-necessary-libraries-3"><i class="fa fa-check"></i><b>9.1</b> Load necessary libraries</a></li>
+<li class="chapter" data-level="9.2" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#load-processed-land-cover-rasters-1"><i class="fa fa-check"></i><b>9.2</b> Load processed land cover rasters</a></li>
+<li class="chapter" data-level="9.3" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#loading-data-from-the-1910-map"><i class="fa fa-check"></i><b>9.3</b> Loading data from the 1910 map</a></li>
+<li class="chapter" data-level="9.4" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#rasterizing-of-the-1910-data"><i class="fa fa-check"></i><b>9.4</b> Rasterizing of the 1910 data</a></li>
+<li class="chapter" data-level="9.5" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#loading-the-1973-and-1995-data"><i class="fa fa-check"></i><b>9.5</b> Loading the 1973 and 1995 data</a></li>
+<li class="chapter" data-level="9.6" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#rasterization-of-the-1973-and-1995-data"><i class="fa fa-check"></i><b>9.6</b> Rasterization of the 1973 and 1995 data</a></li>
+<li class="chapter" data-level="9.7" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#visualization-of-landscape-change-over-time"><i class="fa fa-check"></i><b>9.7</b> Visualization of landscape change over time</a></li>
+<li class="chapter" data-level="9.8" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#subsume-plantations-into-one-category-for-1973-1995-and-2018"><i class="fa fa-check"></i><b>9.8</b> Subsume plantations into one category for 1973, 1995, and 2018</a></li>
+<li class="chapter" data-level="9.9" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#creating-smaller-regions-of-interest-for-comparison"><i class="fa fa-check"></i><b>9.9</b> Creating smaller regions of interest for comparison</a></li>
+<li class="chapter" data-level="9.10" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#comparisons-only-above-1400-meters-in-elevation"><i class="fa fa-check"></i><b>9.10</b> Comparisons only above 1400 meters in elevation</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="exploratory-analysis-of-occurrence-data.html"><a href="exploratory-analysis-of-occurrence-data.html"><i class="fa fa-check"></i><b>10</b> Exploratory analysis of occurrence data</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="exploratory-analysis-of-occurrence-data.html"><a href="exploratory-analysis-of-occurrence-data.html#load-necessary-libraries-4"><i class="fa fa-check"></i><b>10.1</b> Load necessary libraries</a></li>
+<li class="chapter" data-level="10.2" data-path="exploratory-analysis-of-occurrence-data.html"><a href="exploratory-analysis-of-occurrence-data.html#load-the-historical-occurrence-data-and-explore-patterns"><i class="fa fa-check"></i><b>10.2</b> Load the historical occurrence data and explore patterns</a></li>
+<li class="chapter" data-level="10.3" data-path="exploratory-analysis-of-occurrence-data.html"><a href="exploratory-analysis-of-occurrence-data.html#examining-historical-data-by-locality"><i class="fa fa-check"></i><b>10.3</b> Examining historical data by locality</a></li>
+<li class="chapter" data-level="10.4" data-path="exploratory-analysis-of-occurrence-data.html"><a href="exploratory-analysis-of-occurrence-data.html#visualizations-of-historical-data"><i class="fa fa-check"></i><b>10.4</b> Visualizations of historical data</a></li>
+<li class="chapter" data-level="10.5" data-path="exploratory-analysis-of-occurrence-data.html"><a href="exploratory-analysis-of-occurrence-data.html#examining-species-specific-counts-by-locality"><i class="fa fa-check"></i><b>10.5</b> Examining species specific counts by locality</a></li>
+<li class="chapter" data-level="10.6" data-path="exploratory-analysis-of-occurrence-data.html"><a href="exploratory-analysis-of-occurrence-data.html#load-modern-occurrence-data-and-explore-patterns"><i class="fa fa-check"></i><b>10.6</b> Load modern occurrence data and explore patterns</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html"><i class="fa fa-check"></i><b>11</b> Species relative abundances over time</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#load-necessary-libraries-5"><i class="fa fa-check"></i><b>11.1</b> Load necessary libraries</a></li>
+<li class="chapter" data-level="11.2" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#load-list-of-resurvey-locations"><i class="fa fa-check"></i><b>11.2</b> Load list of resurvey locations</a></li>
+<li class="chapter" data-level="11.3" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#for-the-historical-occurrence-data-we-will-choose-data-from-two-time-periods-1850-1900-1900-1950."><i class="fa fa-check"></i><b>11.3</b> For the historical occurrence data, we will choose data from two time periods: 1850-1900 &amp; 1900-1950.</a></li>
+<li class="chapter" data-level="11.4" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#load-the-modern-occurrence-data"><i class="fa fa-check"></i><b>11.4</b> Load the modern occurrence data</a></li>
+<li class="chapter" data-level="11.5" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#calculate-dirichlet-distributions-of-relative-abundance"><i class="fa fa-check"></i><b>11.5</b> Calculate dirichlet distributions of relative abundance</a></li>
+<li class="chapter" data-level="11.6" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#calibrating-historical-data-to-modern-survey-data-for-relative-abundance-calculations"><i class="fa fa-check"></i><b>11.6</b> Calibrating historical data to modern survey data for relative abundance calculations</a></li>
+<li class="chapter" data-level="11.7" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#boxplot-visualization-of-overall-relative-abundance-across-timeperiods"><i class="fa fa-check"></i><b>11.7</b> Boxplot visualization of overall relative abundance across timeperiods</a></li>
+<li class="chapter" data-level="11.8" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#species-relative-abundances-at-the-site-level"><i class="fa fa-check"></i><b>11.8</b> Species relative abundances at the site-level</a></li>
+<li class="chapter" data-level="11.9" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#visualizing-differences-in-relative-abundance-over-time-at-the-site-level"><i class="fa fa-check"></i><b>11.9</b> Visualizing differences in relative abundance over time at the site level</a></li>
+<li class="chapter" data-level="11.10" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#writing-results-to-file"><i class="fa fa-check"></i><b>11.10</b> Writing results to file</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><i class="fa fa-check"></i><b>12</b> Examining changes in relative abundance over time as a function of species habitat affiliation</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#load-necessary-libraries-6"><i class="fa fa-check"></i><b>12.1</b> Load necessary libraries</a></li>
+<li class="chapter" data-level="12.2" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#load-data-on-species-relative-abundances"><i class="fa fa-check"></i><b>12.2</b> Load data on species relative abundances</a></li>
+<li class="chapter" data-level="12.3" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#load-species-trait-data"><i class="fa fa-check"></i><b>12.3</b> Load species trait data</a></li>
+<li class="chapter" data-level="12.4" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#visualizing-relative-abundance-change-by-species-across-time-periods-for-grassland-bird-species"><i class="fa fa-check"></i><b>12.4</b> Visualizing relative abundance change by species across time periods for grassland bird species</a></li>
+<li class="chapter" data-level="12.5" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#rank-abundance-plots-of-relative-abundance-by-species-trait-across-time-periods"><i class="fa fa-check"></i><b>12.5</b> Rank abundance plots of relative abundance by species trait across time periods</a></li>
+<li class="chapter" data-level="12.6" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#are-there-significant-decreases-in-relative-abundance-by-time-periods-across-habitat-affiliations"><i class="fa fa-check"></i><b>12.6</b> Are there significant decreases in relative abundance by time periods across habitat affiliations?</a></li>
+<li class="chapter" data-level="12.7" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#forest-birds"><i class="fa fa-check"></i><b>12.7</b> Forest birds</a></li>
+<li class="chapter" data-level="12.8" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#grassland-birds"><i class="fa fa-check"></i><b>12.8</b> Grassland birds</a></li>
+<li class="chapter" data-level="12.9" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#generalist-birds"><i class="fa fa-check"></i><b>12.9</b> Generalist birds</a></li>
+<li class="chapter" data-level="12.10" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#creating-a-combined-figure-for-the-above-three-models"><i class="fa fa-check"></i><b>12.10</b> Creating a combined figure for the above three models</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./"><em>Colonial-era landscape changes has led to grassland bird species declines over the last century</em></a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="gam-error-in-predicting-climate" class="section level1 hasAnchor" number="4">
+<h1><span class="header-section-number">Section 4</span> GAM error in predicting climate<a href="gam-error-in-predicting-climate.html#gam-error-in-predicting-climate" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="load-libraries-2" class="section level2 hasAnchor" number="4.1">
+<h2><span class="header-section-number">4.1</span> Load libraries<a href="gam-error-in-predicting-climate.html#load-libraries-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="gam-error-in-predicting-climate.html#cb36-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb36-2"><a href="gam-error-in-predicting-climate.html#cb36-2" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb36-3"><a href="gam-error-in-predicting-climate.html#cb36-3" tabindex="-1"></a><span class="fu">library</span>(colorspace)</span>
+<span id="cb36-4"><a href="gam-error-in-predicting-climate.html#cb36-4" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb36-5"><a href="gam-error-in-predicting-climate.html#cb36-5" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
+<span id="cb36-6"><a href="gam-error-in-predicting-climate.html#cb36-6" tabindex="-1"></a><span class="fu">library</span>(stars)</span></code></pre></div>
+</div>
+<div id="load-data" class="section level2 hasAnchor" number="4.2">
+<h2><span class="header-section-number">4.2</span> Load data<a href="gam-error-in-predicting-climate.html#load-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="gam-error-in-predicting-climate.html#cb37-1" tabindex="-1"></a>error_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;results/climate/data_gam_comparison_mae.csv&quot;</span>)</span>
+<span id="cb37-2"><a href="gam-error-in-predicting-climate.html#cb37-2" tabindex="-1"></a>survey_clim <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;results/climate/data_gam_compare_survey_sites.csv&quot;</span>)</span>
+<span id="cb37-3"><a href="gam-error-in-predicting-climate.html#cb37-3" tabindex="-1"></a></span>
+<span id="cb37-4"><a href="gam-error-in-predicting-climate.html#cb37-4" tabindex="-1"></a><span class="co"># load saved object from previous script</span></span>
+<span id="cb37-5"><a href="gam-error-in-predicting-climate.html#cb37-5" tabindex="-1"></a><span class="co">#load(&quot;results/climate/model_pred_climate.Rds&quot;)</span></span></code></pre></div>
+</div>
+<div id="plot-model-error" class="section level2 hasAnchor" number="4.3">
+<h2><span class="header-section-number">4.3</span> Plot model error<a href="gam-error-in-predicting-climate.html#plot-model-error" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="gam-error-in-predicting-climate.html#cb38-1" tabindex="-1"></a><span class="co"># nest data</span></span>
+<span id="cb38-2"><a href="gam-error-in-predicting-climate.html#cb38-2" tabindex="-1"></a>error_data <span class="ot">&lt;-</span> <span class="fu">nest</span>(</span>
+<span id="cb38-3"><a href="gam-error-in-predicting-climate.html#cb38-3" tabindex="-1"></a>  error_data,</span>
+<span id="cb38-4"><a href="gam-error-in-predicting-climate.html#cb38-4" tabindex="-1"></a>  <span class="at">data =</span> <span class="sc">!</span><span class="fu">c</span>(<span class="st">&quot;climvar&quot;</span>)</span>
+<span id="cb38-5"><a href="gam-error-in-predicting-climate.html#cb38-5" tabindex="-1"></a>)</span>
+<span id="cb38-6"><a href="gam-error-in-predicting-climate.html#cb38-6" tabindex="-1"></a></span>
+<span id="cb38-7"><a href="gam-error-in-predicting-climate.html#cb38-7" tabindex="-1"></a>forms <span class="ot">&lt;-</span> <span class="fu">distinct</span>(survey_clim, <span class="at">form =</span> forms)</span>
+<span id="cb38-8"><a href="gam-error-in-predicting-climate.html#cb38-8" tabindex="-1"></a></span>
+<span id="cb38-9"><a href="gam-error-in-predicting-climate.html#cb38-9" tabindex="-1"></a><span class="co"># plot data</span></span>
+<span id="cb38-10"><a href="gam-error-in-predicting-climate.html#cb38-10" tabindex="-1"></a>plots <span class="ot">&lt;-</span> <span class="fu">map2</span>(</span>
+<span id="cb38-11"><a href="gam-error-in-predicting-climate.html#cb38-11" tabindex="-1"></a>  error_data<span class="sc">$</span>data, error_data<span class="sc">$</span>climvar,</span>
+<span id="cb38-12"><a href="gam-error-in-predicting-climate.html#cb38-12" tabindex="-1"></a>  <span class="cf">function</span>(df, cl) {</span>
+<span id="cb38-13"><a href="gam-error-in-predicting-climate.html#cb38-13" tabindex="-1"></a>    <span class="fu">ggplot</span>(df) <span class="sc">+</span></span>
+<span id="cb38-14"><a href="gam-error-in-predicting-climate.html#cb38-14" tabindex="-1"></a>      <span class="fu">geom_boxplot</span>(</span>
+<span id="cb38-15"><a href="gam-error-in-predicting-climate.html#cb38-15" tabindex="-1"></a>        <span class="fu">aes</span>(</span>
+<span id="cb38-16"><a href="gam-error-in-predicting-climate.html#cb38-16" tabindex="-1"></a>          forms, mae</span>
+<span id="cb38-17"><a href="gam-error-in-predicting-climate.html#cb38-17" tabindex="-1"></a>        ),</span>
+<span id="cb38-18"><a href="gam-error-in-predicting-climate.html#cb38-18" tabindex="-1"></a>        <span class="at">width =</span> <span class="fl">0.5</span></span>
+<span id="cb38-19"><a href="gam-error-in-predicting-climate.html#cb38-19" tabindex="-1"></a>      ) <span class="sc">+</span></span>
+<span id="cb38-20"><a href="gam-error-in-predicting-climate.html#cb38-20" tabindex="-1"></a>      <span class="fu">geom_text</span>(</span>
+<span id="cb38-21"><a href="gam-error-in-predicting-climate.html#cb38-21" tabindex="-1"></a>        <span class="at">data =</span> forms,</span>
+<span id="cb38-22"><a href="gam-error-in-predicting-climate.html#cb38-22" tabindex="-1"></a>        <span class="fu">aes</span>(</span>
+<span id="cb38-23"><a href="gam-error-in-predicting-climate.html#cb38-23" tabindex="-1"></a>          form, <span class="dv">1</span>,</span>
+<span id="cb38-24"><a href="gam-error-in-predicting-climate.html#cb38-24" tabindex="-1"></a>          <span class="at">label =</span> form</span>
+<span id="cb38-25"><a href="gam-error-in-predicting-climate.html#cb38-25" tabindex="-1"></a>        ),</span>
+<span id="cb38-26"><a href="gam-error-in-predicting-climate.html#cb38-26" tabindex="-1"></a>        <span class="at">angle =</span> <span class="dv">90</span>,</span>
+<span id="cb38-27"><a href="gam-error-in-predicting-climate.html#cb38-27" tabindex="-1"></a>        <span class="at">hjust =</span> <span class="st">&quot;inward&quot;</span>,</span>
+<span id="cb38-28"><a href="gam-error-in-predicting-climate.html#cb38-28" tabindex="-1"></a>        <span class="at">nudge_x =</span> <span class="sc">-</span><span class="fl">0.5</span>,</span>
+<span id="cb38-29"><a href="gam-error-in-predicting-climate.html#cb38-29" tabindex="-1"></a>        <span class="at">col =</span> <span class="st">&quot;steelblue&quot;</span>,</span>
+<span id="cb38-30"><a href="gam-error-in-predicting-climate.html#cb38-30" tabindex="-1"></a>        <span class="at">alpha =</span> <span class="fl">0.6</span>,</span>
+<span id="cb38-31"><a href="gam-error-in-predicting-climate.html#cb38-31" tabindex="-1"></a>        <span class="at">fontface =</span> <span class="st">&quot;italic&quot;</span></span>
+<span id="cb38-32"><a href="gam-error-in-predicting-climate.html#cb38-32" tabindex="-1"></a>      ) <span class="sc">+</span></span>
+<span id="cb38-33"><a href="gam-error-in-predicting-climate.html#cb38-33" tabindex="-1"></a>      <span class="fu">scale_y_log10</span>() <span class="sc">+</span></span>
+<span id="cb38-34"><a href="gam-error-in-predicting-climate.html#cb38-34" tabindex="-1"></a>      <span class="fu">facet_wrap</span>(</span>
+<span id="cb38-35"><a href="gam-error-in-predicting-climate.html#cb38-35" tabindex="-1"></a>        <span class="sc">~</span>season,</span>
+<span id="cb38-36"><a href="gam-error-in-predicting-climate.html#cb38-36" tabindex="-1"></a>        <span class="at">labeller =</span> label_both</span>
+<span id="cb38-37"><a href="gam-error-in-predicting-climate.html#cb38-37" tabindex="-1"></a>      ) <span class="sc">+</span></span>
+<span id="cb38-38"><a href="gam-error-in-predicting-climate.html#cb38-38" tabindex="-1"></a>      <span class="fu">theme_grey</span>(<span class="at">base_size =</span> <span class="dv">10</span>) <span class="sc">+</span></span>
+<span id="cb38-39"><a href="gam-error-in-predicting-climate.html#cb38-39" tabindex="-1"></a>      <span class="fu">theme</span>(</span>
+<span id="cb38-40"><a href="gam-error-in-predicting-climate.html#cb38-40" tabindex="-1"></a>        <span class="at">strip.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb38-41"><a href="gam-error-in-predicting-climate.html#cb38-41" tabindex="-1"></a>        <span class="at">axis.text.y =</span> <span class="fu">element_text</span>(</span>
+<span id="cb38-42"><a href="gam-error-in-predicting-climate.html#cb38-42" tabindex="-1"></a>          <span class="at">angle =</span> <span class="dv">90</span>,</span>
+<span id="cb38-43"><a href="gam-error-in-predicting-climate.html#cb38-43" tabindex="-1"></a>          <span class="at">hjust =</span> <span class="fl">0.5</span></span>
+<span id="cb38-44"><a href="gam-error-in-predicting-climate.html#cb38-44" tabindex="-1"></a>        ),</span>
+<span id="cb38-45"><a href="gam-error-in-predicting-climate.html#cb38-45" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb38-46"><a href="gam-error-in-predicting-climate.html#cb38-46" tabindex="-1"></a>        <span class="at">panel.border =</span> <span class="fu">element_rect</span>(</span>
+<span id="cb38-47"><a href="gam-error-in-predicting-climate.html#cb38-47" tabindex="-1"></a>          <span class="at">fill =</span> <span class="cn">NA</span>, <span class="at">colour =</span> <span class="st">&quot;black&quot;</span></span>
+<span id="cb38-48"><a href="gam-error-in-predicting-climate.html#cb38-48" tabindex="-1"></a>        )</span>
+<span id="cb38-49"><a href="gam-error-in-predicting-climate.html#cb38-49" tabindex="-1"></a>      ) <span class="sc">+</span></span>
+<span id="cb38-50"><a href="gam-error-in-predicting-climate.html#cb38-50" tabindex="-1"></a>      <span class="fu">labs</span>(</span>
+<span id="cb38-51"><a href="gam-error-in-predicting-climate.html#cb38-51" tabindex="-1"></a>        <span class="at">x =</span> <span class="st">&quot;GAM formula&quot;</span>,</span>
+<span id="cb38-52"><a href="gam-error-in-predicting-climate.html#cb38-52" tabindex="-1"></a>        <span class="at">y =</span> <span class="st">&quot;Mean absolute error&quot;</span>,</span>
+<span id="cb38-53"><a href="gam-error-in-predicting-climate.html#cb38-53" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">ifelse</span>(</span>
+<span id="cb38-54"><a href="gam-error-in-predicting-climate.html#cb38-54" tabindex="-1"></a>          cl <span class="sc">==</span> <span class="st">&quot;ppt&quot;</span>,</span>
+<span id="cb38-55"><a href="gam-error-in-predicting-climate.html#cb38-55" tabindex="-1"></a>          <span class="st">&quot;Precipitation&quot;</span>,</span>
+<span id="cb38-56"><a href="gam-error-in-predicting-climate.html#cb38-56" tabindex="-1"></a>          <span class="st">&quot;Mean temperature&quot;</span></span>
+<span id="cb38-57"><a href="gam-error-in-predicting-climate.html#cb38-57" tabindex="-1"></a>        )</span>
+<span id="cb38-58"><a href="gam-error-in-predicting-climate.html#cb38-58" tabindex="-1"></a>      )</span>
+<span id="cb38-59"><a href="gam-error-in-predicting-climate.html#cb38-59" tabindex="-1"></a>  }</span>
+<span id="cb38-60"><a href="gam-error-in-predicting-climate.html#cb38-60" tabindex="-1"></a>)</span>
+<span id="cb38-61"><a href="gam-error-in-predicting-climate.html#cb38-61" tabindex="-1"></a></span>
+<span id="cb38-62"><a href="gam-error-in-predicting-climate.html#cb38-62" tabindex="-1"></a>plots <span class="ot">&lt;-</span> <span class="fu">wrap_plots</span>(</span>
+<span id="cb38-63"><a href="gam-error-in-predicting-climate.html#cb38-63" tabindex="-1"></a>  plots,</span>
+<span id="cb38-64"><a href="gam-error-in-predicting-climate.html#cb38-64" tabindex="-1"></a>  <span class="at">ncol =</span> <span class="dv">1</span></span>
+<span id="cb38-65"><a href="gam-error-in-predicting-climate.html#cb38-65" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb38-66"><a href="gam-error-in-predicting-climate.html#cb38-66" tabindex="-1"></a>  <span class="fu">plot_annotation</span>(</span>
+<span id="cb38-67"><a href="gam-error-in-predicting-climate.html#cb38-67" tabindex="-1"></a>    <span class="at">tag_levels =</span> <span class="st">&quot;A&quot;</span></span>
+<span id="cb38-68"><a href="gam-error-in-predicting-climate.html#cb38-68" tabindex="-1"></a>  ) <span class="sc">&amp;</span></span>
+<span id="cb38-69"><a href="gam-error-in-predicting-climate.html#cb38-69" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb38-70"><a href="gam-error-in-predicting-climate.html#cb38-70" tabindex="-1"></a>    <span class="at">plot.tag =</span> <span class="fu">element_text</span>(</span>
+<span id="cb38-71"><a href="gam-error-in-predicting-climate.html#cb38-71" tabindex="-1"></a>      <span class="at">face =</span> <span class="st">&quot;bold&quot;</span></span>
+<span id="cb38-72"><a href="gam-error-in-predicting-climate.html#cb38-72" tabindex="-1"></a>    )</span>
+<span id="cb38-73"><a href="gam-error-in-predicting-climate.html#cb38-73" tabindex="-1"></a>  )</span>
+<span id="cb38-74"><a href="gam-error-in-predicting-climate.html#cb38-74" tabindex="-1"></a></span>
+<span id="cb38-75"><a href="gam-error-in-predicting-climate.html#cb38-75" tabindex="-1"></a><span class="fu">ggsave</span>(</span>
+<span id="cb38-76"><a href="gam-error-in-predicting-climate.html#cb38-76" tabindex="-1"></a>  plots,</span>
+<span id="cb38-77"><a href="gam-error-in-predicting-climate.html#cb38-77" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">&quot;figs/fig_compare_models_general.png&quot;</span>,</span>
+<span id="cb38-78"><a href="gam-error-in-predicting-climate.html#cb38-78" tabindex="-1"></a>  <span class="at">width =</span> <span class="dv">6</span>,</span>
+<span id="cb38-79"><a href="gam-error-in-predicting-climate.html#cb38-79" tabindex="-1"></a>  <span class="at">height =</span> <span class="dv">8</span></span>
+<span id="cb38-80"><a href="gam-error-in-predicting-climate.html#cb38-80" tabindex="-1"></a>)</span>
+<span id="cb38-81"><a href="gam-error-in-predicting-climate.html#cb38-81" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
+<div class="float">
+<img src="figs/fig_compare_models_general.png" alt="Comparing the mean absolute errors for the precipitation and temperature models" />
+<div class="figcaption">Comparing the mean absolute errors for the precipitation and temperature models</div>
+</div>
+</div>
+<div id="compare-climate-predictions-at-survey-sites" class="section level2 hasAnchor" number="4.4">
+<h2><span class="header-section-number">4.4</span> Compare climate predictions at survey sites<a href="gam-error-in-predicting-climate.html#compare-climate-predictions-at-survey-sites" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="gam-error-in-predicting-climate.html#cb39-1" tabindex="-1"></a>survey_clim <span class="ot">&lt;-</span> <span class="fu">group_by</span>(survey_clim, climvar, season) <span class="sc">|&gt;</span></span>
+<span id="cb39-2"><a href="gam-error-in-predicting-climate.html#cb39-2" tabindex="-1"></a>  <span class="fu">nest</span>()</span>
+<span id="cb39-3"><a href="gam-error-in-predicting-climate.html#cb39-3" tabindex="-1"></a></span>
+<span id="cb39-4"><a href="gam-error-in-predicting-climate.html#cb39-4" tabindex="-1"></a>plots_survey_pts <span class="ot">&lt;-</span> <span class="fu">Map</span>(</span>
+<span id="cb39-5"><a href="gam-error-in-predicting-climate.html#cb39-5" tabindex="-1"></a>  survey_clim<span class="sc">$</span>climvar, survey_clim<span class="sc">$</span>data, survey_clim<span class="sc">$</span>season,</span>
+<span id="cb39-6"><a href="gam-error-in-predicting-climate.html#cb39-6" tabindex="-1"></a>  <span class="at">f =</span> <span class="cf">function</span>(cvar, df, season) {</span>
+<span id="cb39-7"><a href="gam-error-in-predicting-climate.html#cb39-7" tabindex="-1"></a>    <span class="fu">ggplot</span>(</span>
+<span id="cb39-8"><a href="gam-error-in-predicting-climate.html#cb39-8" tabindex="-1"></a>      df</span>
+<span id="cb39-9"><a href="gam-error-in-predicting-climate.html#cb39-9" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb39-10"><a href="gam-error-in-predicting-climate.html#cb39-10" tabindex="-1"></a>      <span class="fu">geom_abline</span>(</span>
+<span id="cb39-11"><a href="gam-error-in-predicting-climate.html#cb39-11" tabindex="-1"></a>        <span class="at">slope =</span> <span class="dv">1</span></span>
+<span id="cb39-12"><a href="gam-error-in-predicting-climate.html#cb39-12" tabindex="-1"></a>      ) <span class="sc">+</span></span>
+<span id="cb39-13"><a href="gam-error-in-predicting-climate.html#cb39-13" tabindex="-1"></a>      <span class="fu">geom_point</span>(</span>
+<span id="cb39-14"><a href="gam-error-in-predicting-climate.html#cb39-14" tabindex="-1"></a>        <span class="fu">aes</span>(bioclim_val, pred_val),</span>
+<span id="cb39-15"><a href="gam-error-in-predicting-climate.html#cb39-15" tabindex="-1"></a>        <span class="at">shape =</span> <span class="dv">1</span>,</span>
+<span id="cb39-16"><a href="gam-error-in-predicting-climate.html#cb39-16" tabindex="-1"></a>        <span class="at">alpha =</span> <span class="fl">0.8</span></span>
+<span id="cb39-17"><a href="gam-error-in-predicting-climate.html#cb39-17" tabindex="-1"></a>      ) <span class="sc">+</span></span>
+<span id="cb39-18"><a href="gam-error-in-predicting-climate.html#cb39-18" tabindex="-1"></a>      <span class="fu">scale_y_continuous</span>(</span>
+<span id="cb39-19"><a href="gam-error-in-predicting-climate.html#cb39-19" tabindex="-1"></a>        <span class="co"># trans = &quot;sqrt&quot;</span></span>
+<span id="cb39-20"><a href="gam-error-in-predicting-climate.html#cb39-20" tabindex="-1"></a>        <span class="co"># trans = ggallin::ssqrt_trans</span></span>
+<span id="cb39-21"><a href="gam-error-in-predicting-climate.html#cb39-21" tabindex="-1"></a>      ) <span class="sc">+</span></span>
+<span id="cb39-22"><a href="gam-error-in-predicting-climate.html#cb39-22" tabindex="-1"></a>      <span class="fu">facet_grid</span>(</span>
+<span id="cb39-23"><a href="gam-error-in-predicting-climate.html#cb39-23" tabindex="-1"></a>        <span class="sc">~</span>forms,</span>
+<span id="cb39-24"><a href="gam-error-in-predicting-climate.html#cb39-24" tabindex="-1"></a>        <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>,</span>
+<span id="cb39-25"><a href="gam-error-in-predicting-climate.html#cb39-25" tabindex="-1"></a>        <span class="at">labeller =</span> <span class="fu">labeller</span>(</span>
+<span id="cb39-26"><a href="gam-error-in-predicting-climate.html#cb39-26" tabindex="-1"></a>          <span class="at">.multi_line =</span> F,</span>
+<span id="cb39-27"><a href="gam-error-in-predicting-climate.html#cb39-27" tabindex="-1"></a>          <span class="at">season =</span> label_both</span>
+<span id="cb39-28"><a href="gam-error-in-predicting-climate.html#cb39-28" tabindex="-1"></a>        )</span>
+<span id="cb39-29"><a href="gam-error-in-predicting-climate.html#cb39-29" tabindex="-1"></a>      ) <span class="sc">+</span></span>
+<span id="cb39-30"><a href="gam-error-in-predicting-climate.html#cb39-30" tabindex="-1"></a>      <span class="fu">theme_grey</span>(</span>
+<span id="cb39-31"><a href="gam-error-in-predicting-climate.html#cb39-31" tabindex="-1"></a>        <span class="at">base_size =</span> <span class="dv">8</span></span>
+<span id="cb39-32"><a href="gam-error-in-predicting-climate.html#cb39-32" tabindex="-1"></a>      ) <span class="sc">+</span></span>
+<span id="cb39-33"><a href="gam-error-in-predicting-climate.html#cb39-33" tabindex="-1"></a>      <span class="fu">theme</span>(</span>
+<span id="cb39-34"><a href="gam-error-in-predicting-climate.html#cb39-34" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">&quot;top&quot;</span>,</span>
+<span id="cb39-35"><a href="gam-error-in-predicting-climate.html#cb39-35" tabindex="-1"></a>        <span class="at">panel.border =</span> <span class="fu">element_rect</span>(</span>
+<span id="cb39-36"><a href="gam-error-in-predicting-climate.html#cb39-36" tabindex="-1"></a>          <span class="at">fill =</span> <span class="cn">NA</span>, <span class="at">colour =</span> <span class="st">&quot;black&quot;</span></span>
+<span id="cb39-37"><a href="gam-error-in-predicting-climate.html#cb39-37" tabindex="-1"></a>        )</span>
+<span id="cb39-38"><a href="gam-error-in-predicting-climate.html#cb39-38" tabindex="-1"></a>      ) <span class="sc">+</span></span>
+<span id="cb39-39"><a href="gam-error-in-predicting-climate.html#cb39-39" tabindex="-1"></a>      <span class="fu">labs</span>(</span>
+<span id="cb39-40"><a href="gam-error-in-predicting-climate.html#cb39-40" tabindex="-1"></a>        <span class="at">colur =</span> <span class="st">&quot;Model&quot;</span>,</span>
+<span id="cb39-41"><a href="gam-error-in-predicting-climate.html#cb39-41" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">ifelse</span>(</span>
+<span id="cb39-42"><a href="gam-error-in-predicting-climate.html#cb39-42" tabindex="-1"></a>          cvar <span class="sc">==</span> <span class="st">&quot;ppt&quot;</span>,</span>
+<span id="cb39-43"><a href="gam-error-in-predicting-climate.html#cb39-43" tabindex="-1"></a>          glue<span class="sc">::</span><span class="fu">glue</span>(<span class="st">&quot;Precipation; season: {season}&quot;</span>),</span>
+<span id="cb39-44"><a href="gam-error-in-predicting-climate.html#cb39-44" tabindex="-1"></a>          glue<span class="sc">::</span><span class="fu">glue</span>(<span class="st">&quot;Mean temperature; season: {season}&quot;</span>)</span>
+<span id="cb39-45"><a href="gam-error-in-predicting-climate.html#cb39-45" tabindex="-1"></a>        )</span>
+<span id="cb39-46"><a href="gam-error-in-predicting-climate.html#cb39-46" tabindex="-1"></a>      )</span>
+<span id="cb39-47"><a href="gam-error-in-predicting-climate.html#cb39-47" tabindex="-1"></a>  }</span>
+<span id="cb39-48"><a href="gam-error-in-predicting-climate.html#cb39-48" tabindex="-1"></a>)</span>
+<span id="cb39-49"><a href="gam-error-in-predicting-climate.html#cb39-49" tabindex="-1"></a></span>
+<span id="cb39-50"><a href="gam-error-in-predicting-climate.html#cb39-50" tabindex="-1"></a>plots_survey_pts <span class="ot">&lt;-</span> <span class="fu">wrap_plots</span>(</span>
+<span id="cb39-51"><a href="gam-error-in-predicting-climate.html#cb39-51" tabindex="-1"></a>  plots_survey_pts,</span>
+<span id="cb39-52"><a href="gam-error-in-predicting-climate.html#cb39-52" tabindex="-1"></a>  <span class="at">ncol =</span> <span class="dv">1</span></span>
+<span id="cb39-53"><a href="gam-error-in-predicting-climate.html#cb39-53" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb39-54"><a href="gam-error-in-predicting-climate.html#cb39-54" tabindex="-1"></a>  <span class="fu">plot_annotation</span>(</span>
+<span id="cb39-55"><a href="gam-error-in-predicting-climate.html#cb39-55" tabindex="-1"></a>    <span class="at">tag_levels =</span> <span class="st">&quot;A&quot;</span></span>
+<span id="cb39-56"><a href="gam-error-in-predicting-climate.html#cb39-56" tabindex="-1"></a>  )</span>
+<span id="cb39-57"><a href="gam-error-in-predicting-climate.html#cb39-57" tabindex="-1"></a></span>
+<span id="cb39-58"><a href="gam-error-in-predicting-climate.html#cb39-58" tabindex="-1"></a><span class="fu">ggsave</span>(</span>
+<span id="cb39-59"><a href="gam-error-in-predicting-climate.html#cb39-59" tabindex="-1"></a>  plots_survey_pts,</span>
+<span id="cb39-60"><a href="gam-error-in-predicting-climate.html#cb39-60" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">&quot;figs/fig_survey_site_model_comparison.png&quot;</span>,</span>
+<span id="cb39-61"><a href="gam-error-in-predicting-climate.html#cb39-61" tabindex="-1"></a>  <span class="at">height =</span> <span class="dv">10</span>, <span class="at">width =</span> <span class="dv">6</span></span>
+<span id="cb39-62"><a href="gam-error-in-predicting-climate.html#cb39-62" tabindex="-1"></a>)</span></code></pre></div>
+<div class="float">
+<img src="figs/fig_survey_site_model_comparison.png" alt="Comparing predicted values vs. data from Bioclim for rainy and dry seasons for both temperature and precipitation data" />
+<div class="figcaption">Comparing predicted values vs. data from Bioclim for rainy and dry seasons for both temperature and precipitation data</div>
+</div>
+</div>
+<div id="plot-gam-prediction-residuals" class="section level2 hasAnchor" number="4.5">
+<h2><span class="header-section-number">4.5</span> Plot GAM prediction residuals<a href="gam-error-in-predicting-climate.html#plot-gam-prediction-residuals" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="gam-error-in-predicting-climate.html#cb40-1" tabindex="-1"></a><span class="co"># load data</span></span>
+<span id="cb40-2"><a href="gam-error-in-predicting-climate.html#cb40-2" tabindex="-1"></a>gam_validation_pred <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">&quot;results/climate/gam_pred_valid_avg.tif&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb40-3"><a href="gam-error-in-predicting-climate.html#cb40-3" tabindex="-1"></a>  <span class="fu">as.list</span>()</span>
+<span id="cb40-4"><a href="gam-error-in-predicting-climate.html#cb40-4" tabindex="-1"></a>gam_validation_id <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;results/climate/gam_model_formulas.csv&quot;</span>)</span>
+<span id="cb40-5"><a href="gam-error-in-predicting-climate.html#cb40-5" tabindex="-1"></a></span>
+<span id="cb40-6"><a href="gam-error-in-predicting-climate.html#cb40-6" tabindex="-1"></a><span class="co"># select and save</span></span>
+<span id="cb40-7"><a href="gam-error-in-predicting-climate.html#cb40-7" tabindex="-1"></a>gam_validation_pred <span class="ot">&lt;-</span> gam_validation_pred[gam_validation_id<span class="sc">$</span>climvar <span class="sc">%in%</span></span>
+<span id="cb40-8"><a href="gam-error-in-predicting-climate.html#cb40-8" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">&quot;ppt&quot;</span>, <span class="st">&quot;t_mean&quot;</span>)]</span>
+<span id="cb40-9"><a href="gam-error-in-predicting-climate.html#cb40-9" tabindex="-1"></a>gam_validation_id <span class="ot">&lt;-</span> <span class="fu">filter</span>(gam_validation_id, climvar <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;ppt&quot;</span>, <span class="st">&quot;t_mean&quot;</span>))</span>
+<span id="cb40-10"><a href="gam-error-in-predicting-climate.html#cb40-10" tabindex="-1"></a></span>
+<span id="cb40-11"><a href="gam-error-in-predicting-climate.html#cb40-11" tabindex="-1"></a><span class="co"># link -- could have filtered here too -- oh well</span></span>
+<span id="cb40-12"><a href="gam-error-in-predicting-climate.html#cb40-12" tabindex="-1"></a>gam_validation_data <span class="ot">&lt;-</span> <span class="fu">mutate</span>(gam_validation_id, <span class="at">prediction =</span> gam_validation_pred)</span></code></pre></div>
+</div>
+<div id="load-processed-bioclim-data" class="section level2 hasAnchor" number="4.6">
+<h2><span class="header-section-number">4.6</span> Load processed BIOCLIM data<a href="gam-error-in-predicting-climate.html#load-processed-bioclim-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="gam-error-in-predicting-climate.html#cb41-1" tabindex="-1"></a>chelsa_temp <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">&quot;results/climate/chelsa_temp_stack.tif&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb41-2"><a href="gam-error-in-predicting-climate.html#cb41-2" tabindex="-1"></a>  <span class="fu">as.list</span>()</span>
+<span id="cb41-3"><a href="gam-error-in-predicting-climate.html#cb41-3" tabindex="-1"></a>chelsa_ppt <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">&quot;results/climate/chelsa_ppt_stack.tif&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb41-4"><a href="gam-error-in-predicting-climate.html#cb41-4" tabindex="-1"></a>  <span class="fu">as.list</span>()</span>
+<span id="cb41-5"><a href="gam-error-in-predicting-climate.html#cb41-5" tabindex="-1"></a></span>
+<span id="cb41-6"><a href="gam-error-in-predicting-climate.html#cb41-6" tabindex="-1"></a><span class="co"># make data</span></span>
+<span id="cb41-7"><a href="gam-error-in-predicting-climate.html#cb41-7" tabindex="-1"></a>chelsa_data <span class="ot">&lt;-</span></span>
+<span id="cb41-8"><a href="gam-error-in-predicting-climate.html#cb41-8" tabindex="-1"></a>  <span class="fu">crossing</span>(</span>
+<span id="cb41-9"><a href="gam-error-in-predicting-climate.html#cb41-9" tabindex="-1"></a>    <span class="at">season =</span> <span class="fu">c</span>(<span class="st">&quot;rainy&quot;</span>, <span class="st">&quot;dry&quot;</span>),</span>
+<span id="cb41-10"><a href="gam-error-in-predicting-climate.html#cb41-10" tabindex="-1"></a>    <span class="at">climvar =</span> <span class="fu">c</span>(<span class="st">&quot;t_mean&quot;</span>, <span class="st">&quot;ppt&quot;</span>)</span>
+<span id="cb41-11"><a href="gam-error-in-predicting-climate.html#cb41-11" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb41-12"><a href="gam-error-in-predicting-climate.html#cb41-12" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(climvar), <span class="fu">desc</span>(season)) <span class="sc">|&gt;</span></span>
+<span id="cb41-13"><a href="gam-error-in-predicting-climate.html#cb41-13" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb41-14"><a href="gam-error-in-predicting-climate.html#cb41-14" tabindex="-1"></a>    <span class="at">chelsa_rast =</span> <span class="fu">append</span>(chelsa_temp, chelsa_ppt)</span>
+<span id="cb41-15"><a href="gam-error-in-predicting-climate.html#cb41-15" tabindex="-1"></a>  )</span></code></pre></div>
+</div>
+<div id="get-prediction-as-fraction-of-bioclim-layers" class="section level2 hasAnchor" number="4.7">
+<h2><span class="header-section-number">4.7</span> Get prediction as fraction of BIOCLIM layers<a href="gam-error-in-predicting-climate.html#get-prediction-as-fraction-of-bioclim-layers" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="gam-error-in-predicting-climate.html#cb42-1" tabindex="-1"></a><span class="co"># link prediction and residual</span></span>
+<span id="cb42-2"><a href="gam-error-in-predicting-climate.html#cb42-2" tabindex="-1"></a>gam_validation_data <span class="ot">&lt;-</span> gam_validation_data <span class="sc">|&gt;</span></span>
+<span id="cb42-3"><a href="gam-error-in-predicting-climate.html#cb42-3" tabindex="-1"></a>  <span class="fu">left_join</span>(chelsa_data)</span>
+<span id="cb42-4"><a href="gam-error-in-predicting-climate.html#cb42-4" tabindex="-1"></a></span>
+<span id="cb42-5"><a href="gam-error-in-predicting-climate.html#cb42-5" tabindex="-1"></a>gam_validation_data <span class="ot">&lt;-</span> <span class="fu">mutate</span>(</span>
+<span id="cb42-6"><a href="gam-error-in-predicting-climate.html#cb42-6" tabindex="-1"></a>  gam_validation_data,</span>
+<span id="cb42-7"><a href="gam-error-in-predicting-climate.html#cb42-7" tabindex="-1"></a>  <span class="at">residual =</span> <span class="fu">map2</span>(chelsa_rast, prediction, <span class="cf">function</span>(ch, pr) {</span>
+<span id="cb42-8"><a href="gam-error-in-predicting-climate.html#cb42-8" tabindex="-1"></a>    pr <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">resample</span>(pr, ch) <span class="co"># resampling required</span></span>
+<span id="cb42-9"><a href="gam-error-in-predicting-climate.html#cb42-9" tabindex="-1"></a>    pr <span class="sc">/</span> ch</span>
+<span id="cb42-10"><a href="gam-error-in-predicting-climate.html#cb42-10" tabindex="-1"></a>  })</span>
+<span id="cb42-11"><a href="gam-error-in-predicting-climate.html#cb42-11" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="temperature-fractions" class="section level2 hasAnchor" number="4.8">
+<h2><span class="header-section-number">4.8</span> Temperature fractions<a href="gam-error-in-predicting-climate.html#temperature-fractions" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="gam-error-in-predicting-climate.html#cb43-1" tabindex="-1"></a>plots_temp_resid <span class="ot">&lt;-</span> <span class="fu">filter</span>(gam_validation_data, climvar <span class="sc">==</span> <span class="st">&quot;t_mean&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb43-2"><a href="gam-error-in-predicting-climate.html#cb43-2" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>prediction, <span class="sc">-</span>chelsa_rast)</span>
+<span id="cb43-3"><a href="gam-error-in-predicting-climate.html#cb43-3" tabindex="-1"></a></span>
+<span id="cb43-4"><a href="gam-error-in-predicting-climate.html#cb43-4" tabindex="-1"></a>plots_temp_resid <span class="ot">&lt;-</span> <span class="fu">pmap</span>(</span>
+<span id="cb43-5"><a href="gam-error-in-predicting-climate.html#cb43-5" tabindex="-1"></a>  plots_temp_resid,</span>
+<span id="cb43-6"><a href="gam-error-in-predicting-climate.html#cb43-6" tabindex="-1"></a>  <span class="at">.f =</span> <span class="cf">function</span>(season, climvar, forms, residual) {</span>
+<span id="cb43-7"><a href="gam-error-in-predicting-climate.html#cb43-7" tabindex="-1"></a>    residual <span class="ot">&lt;-</span> <span class="fu">st_as_stars</span>(residual)</span>
+<span id="cb43-8"><a href="gam-error-in-predicting-climate.html#cb43-8" tabindex="-1"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb43-9"><a href="gam-error-in-predicting-climate.html#cb43-9" tabindex="-1"></a>      <span class="fu">geom_stars</span>(</span>
+<span id="cb43-10"><a href="gam-error-in-predicting-climate.html#cb43-10" tabindex="-1"></a>        <span class="at">data =</span> residual</span>
+<span id="cb43-11"><a href="gam-error-in-predicting-climate.html#cb43-11" tabindex="-1"></a>      ) <span class="sc">+</span></span>
+<span id="cb43-12"><a href="gam-error-in-predicting-climate.html#cb43-12" tabindex="-1"></a>      <span class="fu">scale_fill_continuous_diverging</span>(</span>
+<span id="cb43-13"><a href="gam-error-in-predicting-climate.html#cb43-13" tabindex="-1"></a>        <span class="at">palette =</span> <span class="st">&quot;Blue-Red 3&quot;</span>,</span>
+<span id="cb43-14"><a href="gam-error-in-predicting-climate.html#cb43-14" tabindex="-1"></a>        <span class="at">mid =</span> <span class="dv">1</span>,</span>
+<span id="cb43-15"><a href="gam-error-in-predicting-climate.html#cb43-15" tabindex="-1"></a>        <span class="at">na.value =</span> <span class="st">&quot;transparent&quot;</span>,</span>
+<span id="cb43-16"><a href="gam-error-in-predicting-climate.html#cb43-16" tabindex="-1"></a>        <span class="at">name =</span> glue<span class="sc">::</span><span class="fu">glue</span>(<span class="st">&quot;Prediction / BIOCLIM</span></span>
+<span id="cb43-17"><a href="gam-error-in-predicting-climate.html#cb43-17" tabindex="-1"></a><span class="st">                          {climvar}&quot;</span>),</span>
+<span id="cb43-18"><a href="gam-error-in-predicting-climate.html#cb43-18" tabindex="-1"></a>        <span class="at">limits =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="dv">2</span>),</span>
+<span id="cb43-19"><a href="gam-error-in-predicting-climate.html#cb43-19" tabindex="-1"></a>        <span class="at">labels =</span> scales<span class="sc">::</span>percent,</span>
+<span id="cb43-20"><a href="gam-error-in-predicting-climate.html#cb43-20" tabindex="-1"></a>        <span class="at">trans =</span> ggallin<span class="sc">::</span>ssqrt_trans</span>
+<span id="cb43-21"><a href="gam-error-in-predicting-climate.html#cb43-21" tabindex="-1"></a>      ) <span class="sc">+</span></span>
+<span id="cb43-22"><a href="gam-error-in-predicting-climate.html#cb43-22" tabindex="-1"></a>      <span class="fu">theme_test</span>(<span class="at">base_size =</span> <span class="dv">6</span>) <span class="sc">+</span></span>
+<span id="cb43-23"><a href="gam-error-in-predicting-climate.html#cb43-23" tabindex="-1"></a>      <span class="fu">theme</span>(</span>
+<span id="cb43-24"><a href="gam-error-in-predicting-climate.html#cb43-24" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">&quot;right&quot;</span>,</span>
+<span id="cb43-25"><a href="gam-error-in-predicting-climate.html#cb43-25" tabindex="-1"></a>        <span class="at">legend.key.height =</span> <span class="fu">unit</span>(<span class="dv">10</span>, <span class="st">&quot;mm&quot;</span>),</span>
+<span id="cb43-26"><a href="gam-error-in-predicting-climate.html#cb43-26" tabindex="-1"></a>        <span class="at">legend.key.width =</span> <span class="fu">unit</span>(<span class="dv">2</span>, <span class="st">&quot;mm&quot;</span>),</span>
+<span id="cb43-27"><a href="gam-error-in-predicting-climate.html#cb43-27" tabindex="-1"></a>        <span class="at">axis.title =</span> <span class="fu">element_blank</span>()</span>
+<span id="cb43-28"><a href="gam-error-in-predicting-climate.html#cb43-28" tabindex="-1"></a>      ) <span class="sc">+</span></span>
+<span id="cb43-29"><a href="gam-error-in-predicting-climate.html#cb43-29" tabindex="-1"></a>      <span class="fu">coord_sf</span>(</span>
+<span id="cb43-30"><a href="gam-error-in-predicting-climate.html#cb43-30" tabindex="-1"></a>        <span class="at">expand =</span> F</span>
+<span id="cb43-31"><a href="gam-error-in-predicting-climate.html#cb43-31" tabindex="-1"></a>      ) <span class="sc">+</span></span>
+<span id="cb43-32"><a href="gam-error-in-predicting-climate.html#cb43-32" tabindex="-1"></a>      <span class="fu">labs</span>(</span>
+<span id="cb43-33"><a href="gam-error-in-predicting-climate.html#cb43-33" tabindex="-1"></a>        <span class="at">title =</span> glue<span class="sc">::</span><span class="fu">glue</span>(<span class="st">&quot;variable: {climvar} season: {season}</span></span>
+<span id="cb43-34"><a href="gam-error-in-predicting-climate.html#cb43-34" tabindex="-1"></a><span class="st">                           model: {forms}&quot;</span>)</span>
+<span id="cb43-35"><a href="gam-error-in-predicting-climate.html#cb43-35" tabindex="-1"></a>      )</span>
+<span id="cb43-36"><a href="gam-error-in-predicting-climate.html#cb43-36" tabindex="-1"></a>  }</span>
+<span id="cb43-37"><a href="gam-error-in-predicting-climate.html#cb43-37" tabindex="-1"></a>) <span class="sc">|&gt;</span> <span class="fu">wrap_plots</span>(</span>
+<span id="cb43-38"><a href="gam-error-in-predicting-climate.html#cb43-38" tabindex="-1"></a>  <span class="at">guides =</span> <span class="st">&quot;collect&quot;</span></span>
+<span id="cb43-39"><a href="gam-error-in-predicting-climate.html#cb43-39" tabindex="-1"></a>) <span class="sc">&amp;</span></span>
+<span id="cb43-40"><a href="gam-error-in-predicting-climate.html#cb43-40" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb43-41"><a href="gam-error-in-predicting-climate.html#cb43-41" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">&quot;right&quot;</span></span>
+<span id="cb43-42"><a href="gam-error-in-predicting-climate.html#cb43-42" tabindex="-1"></a>  )</span>
+<span id="cb43-43"><a href="gam-error-in-predicting-climate.html#cb43-43" tabindex="-1"></a></span>
+<span id="cb43-44"><a href="gam-error-in-predicting-climate.html#cb43-44" tabindex="-1"></a>plots_temp_resid[[<span class="dv">1</span>]]</span></code></pre></div>
+</div>
+<div id="precipitation-fractions" class="section level2 hasAnchor" number="4.9">
+<h2><span class="header-section-number">4.9</span> Precipitation fractions<a href="gam-error-in-predicting-climate.html#precipitation-fractions" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="gam-error-in-predicting-climate.html#cb44-1" tabindex="-1"></a>plots_ppt_resid <span class="ot">&lt;-</span> <span class="fu">filter</span>(gam_validation_data, climvar <span class="sc">==</span> <span class="st">&quot;ppt&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb44-2"><a href="gam-error-in-predicting-climate.html#cb44-2" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>prediction, <span class="sc">-</span>chelsa_rast)</span>
+<span id="cb44-3"><a href="gam-error-in-predicting-climate.html#cb44-3" tabindex="-1"></a>plots_ppt_resid <span class="ot">&lt;-</span> <span class="fu">pmap</span>(</span>
+<span id="cb44-4"><a href="gam-error-in-predicting-climate.html#cb44-4" tabindex="-1"></a>  plots_ppt_resid,</span>
+<span id="cb44-5"><a href="gam-error-in-predicting-climate.html#cb44-5" tabindex="-1"></a>  <span class="at">.f =</span> <span class="cf">function</span>(season, climvar, forms, residual) {</span>
+<span id="cb44-6"><a href="gam-error-in-predicting-climate.html#cb44-6" tabindex="-1"></a>    residual <span class="ot">&lt;-</span> <span class="fu">st_as_stars</span>(residual)</span>
+<span id="cb44-7"><a href="gam-error-in-predicting-climate.html#cb44-7" tabindex="-1"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb44-8"><a href="gam-error-in-predicting-climate.html#cb44-8" tabindex="-1"></a>      <span class="fu">geom_stars</span>(</span>
+<span id="cb44-9"><a href="gam-error-in-predicting-climate.html#cb44-9" tabindex="-1"></a>        <span class="at">data =</span> residual</span>
+<span id="cb44-10"><a href="gam-error-in-predicting-climate.html#cb44-10" tabindex="-1"></a>      ) <span class="sc">+</span></span>
+<span id="cb44-11"><a href="gam-error-in-predicting-climate.html#cb44-11" tabindex="-1"></a>      <span class="fu">scale_fill_continuous_diverging</span>(</span>
+<span id="cb44-12"><a href="gam-error-in-predicting-climate.html#cb44-12" tabindex="-1"></a>        <span class="at">palette =</span> <span class="st">&quot;Vik&quot;</span>,</span>
+<span id="cb44-13"><a href="gam-error-in-predicting-climate.html#cb44-13" tabindex="-1"></a>        <span class="at">rev =</span> T,</span>
+<span id="cb44-14"><a href="gam-error-in-predicting-climate.html#cb44-14" tabindex="-1"></a>        <span class="at">mid =</span> <span class="dv">1</span>,</span>
+<span id="cb44-15"><a href="gam-error-in-predicting-climate.html#cb44-15" tabindex="-1"></a>        <span class="at">na.value =</span> <span class="st">&quot;transparent&quot;</span>,</span>
+<span id="cb44-16"><a href="gam-error-in-predicting-climate.html#cb44-16" tabindex="-1"></a>        <span class="at">name =</span> glue<span class="sc">::</span><span class="fu">glue</span>(<span class="st">&quot;Prediction / BIOCLIM</span></span>
+<span id="cb44-17"><a href="gam-error-in-predicting-climate.html#cb44-17" tabindex="-1"></a><span class="st">                          {climvar}&quot;</span>),</span>
+<span id="cb44-18"><a href="gam-error-in-predicting-climate.html#cb44-18" tabindex="-1"></a>        <span class="at">limits =</span> <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="fl">5.5</span>),</span>
+<span id="cb44-19"><a href="gam-error-in-predicting-climate.html#cb44-19" tabindex="-1"></a>        <span class="at">labels =</span> scales<span class="sc">::</span>percent,</span>
+<span id="cb44-20"><a href="gam-error-in-predicting-climate.html#cb44-20" tabindex="-1"></a>        <span class="at">breaks =</span> <span class="fu">c</span>(<span class="fl">0.01</span>, <span class="fl">0.5</span>, <span class="fu">seq</span>(<span class="fl">0.0</span>, <span class="fl">5.5</span>, <span class="dv">1</span>))</span>
+<span id="cb44-21"><a href="gam-error-in-predicting-climate.html#cb44-21" tabindex="-1"></a>      ) <span class="sc">+</span></span>
+<span id="cb44-22"><a href="gam-error-in-predicting-climate.html#cb44-22" tabindex="-1"></a>      <span class="fu">theme_test</span>(<span class="at">base_size =</span> <span class="dv">6</span>) <span class="sc">+</span></span>
+<span id="cb44-23"><a href="gam-error-in-predicting-climate.html#cb44-23" tabindex="-1"></a>      <span class="fu">theme</span>(</span>
+<span id="cb44-24"><a href="gam-error-in-predicting-climate.html#cb44-24" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">&quot;right&quot;</span>,</span>
+<span id="cb44-25"><a href="gam-error-in-predicting-climate.html#cb44-25" tabindex="-1"></a>        <span class="at">legend.key.height =</span> <span class="fu">unit</span>(<span class="dv">10</span>, <span class="st">&quot;mm&quot;</span>),</span>
+<span id="cb44-26"><a href="gam-error-in-predicting-climate.html#cb44-26" tabindex="-1"></a>        <span class="at">legend.key.width =</span> <span class="fu">unit</span>(<span class="dv">2</span>, <span class="st">&quot;mm&quot;</span>),</span>
+<span id="cb44-27"><a href="gam-error-in-predicting-climate.html#cb44-27" tabindex="-1"></a>        <span class="at">axis.title =</span> <span class="fu">element_blank</span>()</span>
+<span id="cb44-28"><a href="gam-error-in-predicting-climate.html#cb44-28" tabindex="-1"></a>      ) <span class="sc">+</span></span>
+<span id="cb44-29"><a href="gam-error-in-predicting-climate.html#cb44-29" tabindex="-1"></a>      <span class="fu">coord_sf</span>(</span>
+<span id="cb44-30"><a href="gam-error-in-predicting-climate.html#cb44-30" tabindex="-1"></a>        <span class="at">expand =</span> F</span>
+<span id="cb44-31"><a href="gam-error-in-predicting-climate.html#cb44-31" tabindex="-1"></a>      ) <span class="sc">+</span></span>
+<span id="cb44-32"><a href="gam-error-in-predicting-climate.html#cb44-32" tabindex="-1"></a>      <span class="fu">labs</span>(</span>
+<span id="cb44-33"><a href="gam-error-in-predicting-climate.html#cb44-33" tabindex="-1"></a>        <span class="at">title =</span> glue<span class="sc">::</span><span class="fu">glue</span>(<span class="st">&quot;variable: {climvar} season: {season}</span></span>
+<span id="cb44-34"><a href="gam-error-in-predicting-climate.html#cb44-34" tabindex="-1"></a><span class="st">                           model: {forms}&quot;</span>)</span>
+<span id="cb44-35"><a href="gam-error-in-predicting-climate.html#cb44-35" tabindex="-1"></a>      )</span>
+<span id="cb44-36"><a href="gam-error-in-predicting-climate.html#cb44-36" tabindex="-1"></a>  }</span>
+<span id="cb44-37"><a href="gam-error-in-predicting-climate.html#cb44-37" tabindex="-1"></a>) <span class="sc">|&gt;</span> <span class="fu">wrap_plots</span>(</span>
+<span id="cb44-38"><a href="gam-error-in-predicting-climate.html#cb44-38" tabindex="-1"></a>  <span class="at">guides =</span> <span class="st">&quot;collect&quot;</span></span>
+<span id="cb44-39"><a href="gam-error-in-predicting-climate.html#cb44-39" tabindex="-1"></a>) <span class="sc">&amp;</span></span>
+<span id="cb44-40"><a href="gam-error-in-predicting-climate.html#cb44-40" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb44-41"><a href="gam-error-in-predicting-climate.html#cb44-41" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">&quot;right&quot;</span></span>
+<span id="cb44-42"><a href="gam-error-in-predicting-climate.html#cb44-42" tabindex="-1"></a>  )</span>
+<span id="cb44-43"><a href="gam-error-in-predicting-climate.html#cb44-43" tabindex="-1"></a></span>
+<span id="cb44-44"><a href="gam-error-in-predicting-climate.html#cb44-44" tabindex="-1"></a>plots_ppt_resid[[<span class="dv">1</span>]]</span></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="gam-error-in-predicting-climate.html#cb45-1" tabindex="-1"></a><span class="co"># save residual plots</span></span>
+<span id="cb45-2"><a href="gam-error-in-predicting-climate.html#cb45-2" tabindex="-1"></a><span class="fu">ggsave</span>(</span>
+<span id="cb45-3"><a href="gam-error-in-predicting-climate.html#cb45-3" tabindex="-1"></a>  plots_temp_resid,</span>
+<span id="cb45-4"><a href="gam-error-in-predicting-climate.html#cb45-4" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">&quot;figs/fig_temp_resid.png&quot;</span>,</span>
+<span id="cb45-5"><a href="gam-error-in-predicting-climate.html#cb45-5" tabindex="-1"></a>  <span class="at">width =</span> <span class="dv">9</span>, <span class="at">height =</span> <span class="dv">7</span></span>
+<span id="cb45-6"><a href="gam-error-in-predicting-climate.html#cb45-6" tabindex="-1"></a>)</span>
+<span id="cb45-7"><a href="gam-error-in-predicting-climate.html#cb45-7" tabindex="-1"></a></span>
+<span id="cb45-8"><a href="gam-error-in-predicting-climate.html#cb45-8" tabindex="-1"></a><span class="fu">ggsave</span>(</span>
+<span id="cb45-9"><a href="gam-error-in-predicting-climate.html#cb45-9" tabindex="-1"></a>  plots_ppt_resid,</span>
+<span id="cb45-10"><a href="gam-error-in-predicting-climate.html#cb45-10" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">&quot;figs/fig_ppt_resid.png&quot;</span>,</span>
+<span id="cb45-11"><a href="gam-error-in-predicting-climate.html#cb45-11" tabindex="-1"></a>  <span class="at">width =</span> <span class="dv">9</span>, <span class="at">height =</span> <span class="dv">7</span></span>
+<span id="cb45-12"><a href="gam-error-in-predicting-climate.html#cb45-12" tabindex="-1"></a>)</span></code></pre></div>
+<div class="float">
+<img src="figs/fig_temp_resid.png" alt="Bioclimatic prediction across GAM models for temperature" />
+<div class="figcaption">Bioclimatic prediction across GAM models for temperature</div>
+</div>
+<div class="float">
+<img src="figs/fig_ppt_resid.png" alt="Bioclimatic predictions for precipitation" />
+<div class="figcaption">Bioclimatic predictions for precipitation</div>
+</div>
+</div>
+<div id="save-climate-correction-layers" class="section level2 hasAnchor" number="4.10">
+<h2><span class="header-section-number">4.10</span> Save climate correction layers<a href="gam-error-in-predicting-climate.html#save-climate-correction-layers" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Looking at the GAM predictions as fractions of the BIOCLIM layers, we can choose model formulas for each season and each variable that lead to predictions that are closest to the real BIOCLIM values. We choose formulas on the basis of observed deviation from the true value, as well as spatial contiguity of deviations, basically, are nearby areas similarly different from true values. For example, there is an odd north east regional deviation for rainfall in the wet season for the forumla <span class="math inline">\(\text{ppt} ~ s(\text{elevation}, k = 3) + s(\text{distance to coast, latitude}, k = 5)\)</span>, so we prefer to chose another formula.</p>
+<p>This means we pick the simple <span class="math inline">\(\text{temp} ~ s(\text{elevation}, k = 3)\)</span> formula for mean monthly temperature, in both dry and wet seasons, and the <span class="math inline">\(\text{ppt} ~ s(\text{elevation}, k = 3) + \text{distance to coast} + \text{latitude}\)</span> formula for total monthly rainfall in both dry and wet seasons.</p>
+<p>We then save the fraction, BIOCLIM / prediction, as a correction layer — one layer per season and variable.
+This allows us to fit GAMs to chunks of historical climate data, using physical predictors as covariates, and to then correct the resulting spatial prediction using the correction layer.
+Hence the ‘true’ historical value of a climate variable is <span class="math inline">\(\text{GAM prediction} \times \text{correction factor}\)</span>, where the correction factor is the cell-specific value from the correction layers.</p>
+</div>
+<div id="seasonal-mean-temperature-correction-layer" class="section level2 hasAnchor" number="4.11">
+<h2><span class="header-section-number">4.11</span> Seasonal mean temperature correction layer<a href="gam-error-in-predicting-climate.html#seasonal-mean-temperature-correction-layer" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="gam-error-in-predicting-climate.html#cb46-1" tabindex="-1"></a><span class="co"># subset validation dataset</span></span>
+<span id="cb46-2"><a href="gam-error-in-predicting-climate.html#cb46-2" tabindex="-1"></a>temp_correction_layer <span class="ot">&lt;-</span> gam_validation_data <span class="sc">%&gt;%</span></span>
+<span id="cb46-3"><a href="gam-error-in-predicting-climate.html#cb46-3" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
+<span id="cb46-4"><a href="gam-error-in-predicting-climate.html#cb46-4" tabindex="-1"></a>    climvar <span class="sc">==</span> <span class="st">&quot;t_mean&quot;</span>,</span>
+<span id="cb46-5"><a href="gam-error-in-predicting-climate.html#cb46-5" tabindex="-1"></a>    forms <span class="sc">==</span> <span class="st">&quot;value~s(elev, k = 3)&quot;</span></span>
+<span id="cb46-6"><a href="gam-error-in-predicting-climate.html#cb46-6" tabindex="-1"></a>  )</span>
+<span id="cb46-7"><a href="gam-error-in-predicting-climate.html#cb46-7" tabindex="-1"></a></span>
+<span id="cb46-8"><a href="gam-error-in-predicting-climate.html#cb46-8" tabindex="-1"></a><span class="co"># now get the correction layer</span></span>
+<span id="cb46-9"><a href="gam-error-in-predicting-climate.html#cb46-9" tabindex="-1"></a>temp_correction_layer <span class="ot">&lt;-</span> <span class="fu">mutate</span>(</span>
+<span id="cb46-10"><a href="gam-error-in-predicting-climate.html#cb46-10" tabindex="-1"></a>  temp_correction_layer,</span>
+<span id="cb46-11"><a href="gam-error-in-predicting-climate.html#cb46-11" tabindex="-1"></a>  <span class="at">correction_layer =</span> <span class="fu">map2</span>(</span>
+<span id="cb46-12"><a href="gam-error-in-predicting-climate.html#cb46-12" tabindex="-1"></a>    chelsa_rast, prediction, <span class="cf">function</span>(ch, pr) {</span>
+<span id="cb46-13"><a href="gam-error-in-predicting-climate.html#cb46-13" tabindex="-1"></a>      pr <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">resample</span>(pr, ch) <span class="co"># resampling required</span></span>
+<span id="cb46-14"><a href="gam-error-in-predicting-climate.html#cb46-14" tabindex="-1"></a>      ch <span class="sc">/</span> pr</span>
+<span id="cb46-15"><a href="gam-error-in-predicting-climate.html#cb46-15" tabindex="-1"></a>    }</span>
+<span id="cb46-16"><a href="gam-error-in-predicting-climate.html#cb46-16" tabindex="-1"></a>  )</span>
+<span id="cb46-17"><a href="gam-error-in-predicting-climate.html#cb46-17" tabindex="-1"></a>)</span>
+<span id="cb46-18"><a href="gam-error-in-predicting-climate.html#cb46-18" tabindex="-1"></a></span>
+<span id="cb46-19"><a href="gam-error-in-predicting-climate.html#cb46-19" tabindex="-1"></a><span class="co"># make the correction layer a single raster stack object and name correctly</span></span>
+<span id="cb46-20"><a href="gam-error-in-predicting-climate.html#cb46-20" tabindex="-1"></a>temp_correction_layer <span class="ot">&lt;-</span> <span class="fu">Reduce</span>(</span>
+<span id="cb46-21"><a href="gam-error-in-predicting-climate.html#cb46-21" tabindex="-1"></a>  temp_correction_layer<span class="sc">$</span>correction_layer,</span>
+<span id="cb46-22"><a href="gam-error-in-predicting-climate.html#cb46-22" tabindex="-1"></a>  <span class="at">f =</span> c</span>
+<span id="cb46-23"><a href="gam-error-in-predicting-climate.html#cb46-23" tabindex="-1"></a>)</span>
+<span id="cb46-24"><a href="gam-error-in-predicting-climate.html#cb46-24" tabindex="-1"></a></span>
+<span id="cb46-25"><a href="gam-error-in-predicting-climate.html#cb46-25" tabindex="-1"></a><span class="co"># set names for layers</span></span>
+<span id="cb46-26"><a href="gam-error-in-predicting-climate.html#cb46-26" tabindex="-1"></a><span class="fu">names</span>(temp_correction_layer) <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb46-27"><a href="gam-error-in-predicting-climate.html#cb46-27" tabindex="-1"></a>  <span class="st">&quot;correction_layer_temp_dry&quot;</span>,</span>
+<span id="cb46-28"><a href="gam-error-in-predicting-climate.html#cb46-28" tabindex="-1"></a>  <span class="st">&quot;correction_layer_temp_wet&quot;</span></span>
+<span id="cb46-29"><a href="gam-error-in-predicting-climate.html#cb46-29" tabindex="-1"></a>)</span>
+<span id="cb46-30"><a href="gam-error-in-predicting-climate.html#cb46-30" tabindex="-1"></a></span>
+<span id="cb46-31"><a href="gam-error-in-predicting-climate.html#cb46-31" tabindex="-1"></a><span class="co"># save the layer</span></span>
+<span id="cb46-32"><a href="gam-error-in-predicting-climate.html#cb46-32" tabindex="-1"></a>terra<span class="sc">::</span><span class="fu">writeRaster</span>(</span>
+<span id="cb46-33"><a href="gam-error-in-predicting-climate.html#cb46-33" tabindex="-1"></a>  temp_correction_layer,</span>
+<span id="cb46-34"><a href="gam-error-in-predicting-climate.html#cb46-34" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">&quot;results/climate/raster_correction_layers_temp.tif&quot;</span></span>
+<span id="cb46-35"><a href="gam-error-in-predicting-climate.html#cb46-35" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="seasonal-total-rainfall-correction-layer" class="section level2 hasAnchor" number="4.12">
+<h2><span class="header-section-number">4.12</span> Seasonal total rainfall correction layer<a href="gam-error-in-predicting-climate.html#seasonal-total-rainfall-correction-layer" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="gam-error-in-predicting-climate.html#cb47-1" tabindex="-1"></a><span class="co"># subset validation dataset</span></span>
+<span id="cb47-2"><a href="gam-error-in-predicting-climate.html#cb47-2" tabindex="-1"></a>ppt_correction_layer <span class="ot">&lt;-</span> gam_validation_data <span class="sc">%&gt;%</span></span>
+<span id="cb47-3"><a href="gam-error-in-predicting-climate.html#cb47-3" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
+<span id="cb47-4"><a href="gam-error-in-predicting-climate.html#cb47-4" tabindex="-1"></a>    climvar <span class="sc">==</span> <span class="st">&quot;ppt&quot;</span>,</span>
+<span id="cb47-5"><a href="gam-error-in-predicting-climate.html#cb47-5" tabindex="-1"></a>    forms <span class="sc">==</span> <span class="st">&quot;value~s(elev, k = 3) + coast + lat&quot;</span></span>
+<span id="cb47-6"><a href="gam-error-in-predicting-climate.html#cb47-6" tabindex="-1"></a>  )</span>
+<span id="cb47-7"><a href="gam-error-in-predicting-climate.html#cb47-7" tabindex="-1"></a></span>
+<span id="cb47-8"><a href="gam-error-in-predicting-climate.html#cb47-8" tabindex="-1"></a><span class="co"># now get the correction layer</span></span>
+<span id="cb47-9"><a href="gam-error-in-predicting-climate.html#cb47-9" tabindex="-1"></a>ppt_correction_layer <span class="ot">&lt;-</span> <span class="fu">mutate</span>(</span>
+<span id="cb47-10"><a href="gam-error-in-predicting-climate.html#cb47-10" tabindex="-1"></a>  ppt_correction_layer,</span>
+<span id="cb47-11"><a href="gam-error-in-predicting-climate.html#cb47-11" tabindex="-1"></a>  <span class="at">correction_layer =</span> <span class="fu">map2</span>(</span>
+<span id="cb47-12"><a href="gam-error-in-predicting-climate.html#cb47-12" tabindex="-1"></a>    chelsa_rast, prediction, <span class="cf">function</span>(ch, pr) {</span>
+<span id="cb47-13"><a href="gam-error-in-predicting-climate.html#cb47-13" tabindex="-1"></a>      pr <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">resample</span>(pr, ch) <span class="co"># resampling required</span></span>
+<span id="cb47-14"><a href="gam-error-in-predicting-climate.html#cb47-14" tabindex="-1"></a>      ch <span class="sc">/</span> pr</span>
+<span id="cb47-15"><a href="gam-error-in-predicting-climate.html#cb47-15" tabindex="-1"></a>    }</span>
+<span id="cb47-16"><a href="gam-error-in-predicting-climate.html#cb47-16" tabindex="-1"></a>  )</span>
+<span id="cb47-17"><a href="gam-error-in-predicting-climate.html#cb47-17" tabindex="-1"></a>)</span>
+<span id="cb47-18"><a href="gam-error-in-predicting-climate.html#cb47-18" tabindex="-1"></a></span>
+<span id="cb47-19"><a href="gam-error-in-predicting-climate.html#cb47-19" tabindex="-1"></a><span class="co"># make the correction layer a single raster stack object and name correctly</span></span>
+<span id="cb47-20"><a href="gam-error-in-predicting-climate.html#cb47-20" tabindex="-1"></a>ppt_correction_layer <span class="ot">&lt;-</span> <span class="fu">Reduce</span>(</span>
+<span id="cb47-21"><a href="gam-error-in-predicting-climate.html#cb47-21" tabindex="-1"></a>  ppt_correction_layer<span class="sc">$</span>correction_layer,</span>
+<span id="cb47-22"><a href="gam-error-in-predicting-climate.html#cb47-22" tabindex="-1"></a>  <span class="at">f =</span> c</span>
+<span id="cb47-23"><a href="gam-error-in-predicting-climate.html#cb47-23" tabindex="-1"></a>)</span>
+<span id="cb47-24"><a href="gam-error-in-predicting-climate.html#cb47-24" tabindex="-1"></a></span>
+<span id="cb47-25"><a href="gam-error-in-predicting-climate.html#cb47-25" tabindex="-1"></a><span class="co"># set names for layers</span></span>
+<span id="cb47-26"><a href="gam-error-in-predicting-climate.html#cb47-26" tabindex="-1"></a><span class="fu">names</span>(ppt_correction_layer) <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb47-27"><a href="gam-error-in-predicting-climate.html#cb47-27" tabindex="-1"></a>  <span class="st">&quot;correction_layer_ppt_dry&quot;</span>,</span>
+<span id="cb47-28"><a href="gam-error-in-predicting-climate.html#cb47-28" tabindex="-1"></a>  <span class="st">&quot;correction_layer_ppt_wet&quot;</span></span>
+<span id="cb47-29"><a href="gam-error-in-predicting-climate.html#cb47-29" tabindex="-1"></a>)</span>
+<span id="cb47-30"><a href="gam-error-in-predicting-climate.html#cb47-30" tabindex="-1"></a></span>
+<span id="cb47-31"><a href="gam-error-in-predicting-climate.html#cb47-31" tabindex="-1"></a><span class="co"># save the layer</span></span>
+<span id="cb47-32"><a href="gam-error-in-predicting-climate.html#cb47-32" tabindex="-1"></a>terra<span class="sc">::</span><span class="fu">writeRaster</span>(</span>
+<span id="cb47-33"><a href="gam-error-in-predicting-climate.html#cb47-33" tabindex="-1"></a>  ppt_correction_layer,</span>
+<span id="cb47-34"><a href="gam-error-in-predicting-climate.html#cb47-34" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">&quot;results/climate/raster_correction_layers_ppt.tif&quot;</span></span>
+<span id="cb47-35"><a href="gam-error-in-predicting-climate.html#cb47-35" tabindex="-1"></a>)</span></code></pre></div>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="validating-semi-spatial-gams-for-climate.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="reconstructing-climate-data.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": false,
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/vjjan91/nilgiris-resurvey-project/edit/master/03_climate-correction-layer-for-downscaling.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
