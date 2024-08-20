@@ -8,5 +8,8 @@ This repository contains code and analyses to understand how a century of landsc
 
 ### [Readable version](https://vjjan91.github.io/nilgiris-resurvey-project/)
 
+A readable version of this analysis is available in bookdown format by clicking on the heading above.  
+
+
 
 
