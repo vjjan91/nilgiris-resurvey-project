@@ -3,9 +3,10 @@ editor_options:
   chunk_output_type: console
 ---
 
-# Prepare Climate Data for Interpolation
+# Preparing historical climate data and geographical covariates
 
-In this script, we start by curating and processing the climate data. We interpolate the dataset to a fine resolution for future analysis. 
+The overall aim is to prepare historical climate data associated with specific locations, and to link the data to geoghraphical covariates.
+This will prepare the data for a semi-spatial statistical model that will be used to predict historical climatic conditions across the study area.
 
 ## Load libraries
 ```{r}
