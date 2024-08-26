@@ -391,7 +391,7 @@ In the above classification, we see an increase in forest cover of ~ 132 sq.km b
 nil2017 <- st_read("data/landcover/2017-nilgiris/2017.shp")
 nil2017 <- st_intersection(nil2017, all1848)
 
-# Let's add class name to nil1995 shapefile
+# Let's add class name to nil2017 shapefile
 nil2017 <- nil2017 %>%
   mutate(name = case_when(
     gridcode == 1 ~ "shola_grassland",
