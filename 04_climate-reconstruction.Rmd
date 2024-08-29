@@ -3,11 +3,14 @@ editor_options:
   chunk_output_type: console
 ---
 
-# Reconstructing climate data
+# Modelling historical climate over the study area
 
-This script is identical to previous scripts except that we shall run only a single model per season and climate variable, but for multiple time chunks, of about 30 years.
+Here we use the model formulation chosen in the previous section to model climate variables as a function of geographical predictors over the study area.
+We use one model formula (henceforth, model) for each climate variable in each season.
+We model historical climate for 30 year periods, as this is about the temporal resolution of interest.
 
-## Load libraries
+## Setup with libraries and data
+
 ```{r}
 # for data
 library(tidyverse)
@@ -20,18 +23,20 @@ library(mgcv)
 library(terra)
 ```
 
-## Load data prepared for the GAM, and the stack predictor raster.
-
 ```{r}
-# read data
+# Read in geographical covariates of weather data locations
+# and rasters of spatial data
 data <- read_csv("results/climate/data_for_gam.csv")
 stack <- terra::rast("results/climate/raster_gam_stack.tif")
 ```
 
-## Prepare data covariates and raster.
+## Model climate as a function of geographic variables
+
+Here we prepare the data and model climate variables as a function of geographic variables.
+As in the section on modelling the contemporary climate, we add some small error to each geographic variable to facilitate model fitting.
 
 ```{r}
-# prepare data for gam fitting
+# Prepare geographic variables
 data <- mutate(
   data,
 
@@ -49,10 +54,8 @@ data <- mutate(
 values(stack[["coast"]]) <- values(stack[["coast"]]) / 1000
 ```
 
-## Pivot longer to separate by variable.
-
 ```{r}
-# pivot longer
+# Pivot the data to long format and remove the SD of temperature
 data <- pivot_longer(
   data,
   cols = c("ppt", "t_mean", "t_sd"),
@@ -66,18 +69,18 @@ data <- filter(
 )
 ```
 
-## Split data by variable, season, and year bin
-
 ```{r}
+# Nest the data by climate variable, season, and 30-year bin
 data <- nest(
   data,
   data = !c(climvar, season, year_bin)
 )
 ```
 
-## Fit chosen GAMs
+We specify the GAM formulas for temperature and precipitation, chosen in the previous section after examining the mean absolute error (MAE) of predictions for contemporary data (i.e., compared against remotely sensed data).
 
-Specify GAM formulas for temperature and precipitation.
+Temperature is modelled as a smooth function of elevation with three knots.
+Precipitation is modelled as a smooth function of elevation with three knots, with linear terms for distance from the coast and latitude.
 
 ```{r}
 # model formula for temp
@@ -87,10 +90,8 @@ form_temp <- "value ~ s(elev, k = 3)"
 form_ppt <- "value ~ s(elev, k = 3) + coast + lat"
 ```
 
-## Assign formula to variable.
-
 ```{r}
-# assign formula as a character for now
+# Assign formula as a character column in the nested data.frame
 data <- mutate(
   data,
   form = if_else(
@@ -99,10 +100,10 @@ data <- mutate(
 )
 ```
 
-## Fit GAMs
-
 ```{r}
-# fit models
+# Fit models for each climate variable, season, and year bin
+# Note that the formulae are converted to the `<formula>` class
+# using `as.formula()`
 data <- mutate(
   data,
   mod = map2(data, form, function(df, form) {
@@ -112,27 +113,37 @@ data <- mutate(
     )
   })
 )
+
+# NOTE: if mgcv::gam() is excessively slow, consider mgcv::bam() which is
+# said to be more suitable for large datasets
 ```
 
-## Save model data.
+We save the model as an R data object.
 
 ```{r}
 save(data, file = "results/climate/model_reconstruction_climate.Rds")
 ```
 
-## Predict over static environment
+## Obtaining model predictions over the study area
 
-Get predictions
+We use the `predict()` method to get climate predictions over the study area, using the spatial raster data as inputs.
 
 ```{r}
-## ensure that NAs are removed from the stack object before running the model projections
-terra::global(stack, fun = "isNA") # this tells us that two raster layers within the stack object have NA values
+# ensure that NAs are removed from the stack object before running the model
+# projections
+
+# this tells us that two raster layers within the stack object have NA values
+terra::global(stack, fun = "isNA")
+
+# Replace NAs with 0s for distance to coast
 stack$coast[is.na(stack$coast)] <- 0
+
+# Replace elevations < 0 with NA and then 0
 stack$elev[stack$elev < 0] <- NA
 stack$elev[is.na(stack$elev)] <- 0
 stack$elev <- as.numeric(stack$elev)
 
-# save model predictions
+# Get model predictions
 model_pred <- map(
   data$mod, function(g) {
     predict(stack, g, type = "response") # order matters here
@@ -141,7 +152,7 @@ model_pred <- map(
 ```
 
 ```{r}
-# assign predicted rasters as list column object
+# Assign predicted climate rasters as list column object
 data <- mutate(
   data,
   pred = model_pred
@@ -149,17 +160,20 @@ data <- mutate(
 ```
 
 ```{r}
-# subset columns
+# Ungroup the data and select relevant columns
 data_pred <- ungroup(data) %>%
   select(season, year_bin, climvar, pred)
 ```
 
-## Apply correction layers
+## Scaling predicted historical climate
 
-Read in correction layers.
+Here we aim to scale the predicted historical climate using the scaling layers developed in the previous section.
+The idea is that the predicted historical climate differs from the true historical climate over the study area in the same way (i.e., with the same ratio) that the contemporary climate prediction differs from the canonical (remotely sensed) climate variables.
+
+We read in the scaling layers and apply them to the data (taking the cell-wise product of the two).
 
 ```{r}
-# read in correction layers
+# Read in scaling layers
 temp_correction <- terra::rast(
   "results/climate/raster_correction_layers_temp.tif"
 )
@@ -169,10 +183,8 @@ ppt_correction <- terra::rast(
 )
 ```
 
-## Link correction layers with predictions
-
 ```{r}
-# assign correction layer
+# Match scaling layers to the appropriate prediction layer
 data_pred <- mutate(
   data_pred,
   correction = map2(
@@ -190,7 +202,8 @@ data_pred <- mutate(
   )
 )
 
-# make correction to prediction
+# Scale predicted historical climate by cell-wise product of
+# prediction and scaling layer
 data_pred <- mutate(
   data_pred,
   corrected = map2(
@@ -201,7 +214,7 @@ data_pred <- mutate(
   )
 )
 
-# assign names to rasters
+# Assign names to corrected rasters
 data_pred <- mutate(
   data_pred,
   names = glue("{climvar}_{year_bin}_{season}")
@@ -211,6 +224,9 @@ names(data_pred$corrected) <- data_pred$names
 ```
 
 ```{r}
+# Collect the predictions for each season and climate variable
+# into one raster stack each
+# Each stack has multiple layers, each representing one 30-year bin
 data_reconstructed <- data_pred %>%
   group_by(
     season, climvar
@@ -219,7 +235,7 @@ data_reconstructed <- data_pred %>%
     corrected = list(Reduce(corrected, f = c))
   )
 
-# save each as a tif
+# Save each raster stack as a TIF file
 pwalk(
   data_reconstructed,
   function(season, climvar, corrected) {
