@@ -138,9 +138,15 @@ dev.off()
 ```{r}
 # note, we are only including those species that were reported in the historical data
 # this is mainly done to avoid artificial increases in abundance in the modern time period
+
 mod_occ <- read.csv("data/modern-occurrence-data.csv") %>%
-  filter(!is.na(species_code)) %>% filter(common_name %in% hist_occ$common_name) %>%
-  filter(historical_site_code %in% hist_occ$historical_site_code)
+  filter(!is.na(historical_site_code)) # 2301 observations of 103 bird species
+
+# ensure the data is comparable with historical data
+mod_occ <- mod_occ %>%
+  filter(!is.na(species_code)) %>% 
+  filter(common_name %in% hist_occ$common_name) %>%
+  filter(historical_site_code %in% hist_occ$historical_site_code) 
 
 # total observations of species in the modern surveys
 modOcc_spp <- mod_occ %>%
