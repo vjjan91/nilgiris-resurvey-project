@@ -3,26 +3,39 @@ editor_options:
   chunk_output_type: console
 ---
 
-# Validating semi-spatial GAMs for climate
+# Building and validating semi-spatial GAMs for climate
+
+The overall aim here is to model historical climate variables --- mean temperature, standard deviation in temperature, and total precipitation --- as functions of geographical characteristics of the locations with which the data are associated.
+
+We fit three candidate models of increasing complexity.
+Then, the models are used to predict historical climate over the entire study area; we refer to these as semi-spatial climate models, as they include additional predictors over the coordinates of the locations alone.
+
+The climate data extend into the modern period, allowing predictions from the candidate models to be compared against data from remote sensing, in order to select the best model formulation for each climate variable in each season. 
 
 ## Load libraries
+
 ```{r}
+# Load libraries
 library(tidyverse)
 library(sf)
 library(readxl)
-library(mgcv)
-library(terra)
+library(mgcv) # for GAMs
+library(terra) # for spatial rasters
 ```
 
-## Load data prepared for the GAM, and the stack predictor raster.
+## Prepare linked climate-spatial data and spatial data for modelling
+
+We load the historical climate data with linked geographical covariates (hereon, climate data), and the spatial data raster stack.
+
+We prepare the covariates for modelling: distance from the coast is converted from metres to kilometres, and a small amount of random noise is added to all values. This is necessary to allow for fitting as otherwise all predictor values are identical.
 
 ```{r}
 # read data
 data <- read_csv("results/climate/data_for_gam.csv")
+# `stack` is the raster stack of geographical predictors, and not the climate
+# model predictions.
 stack <- terra::rast("results/climate/raster_gam_stack.tif")
 ```
-
-## Prepare data covariates and raster
 
 ```{r}
 # prepare data for gam fitting
@@ -43,10 +56,14 @@ data <- mutate(
 values(stack[["coast"]]) <- values(stack[["coast"]]) / 1000
 ```
 
-## Pivot longer to separate by variable.
+We pivot the data to long format, and then nest the data by season and decade, gving us smaller datatsets for which models will be fit separately.
+
+While there is no specific reason to believe that the relationship between climate and geographical predictors has changed over the past 150 years, splitting the data by decade may help adjust for long-term climate system effects within certain time-periods that could be drowned out by the overall effect of geographical predictors.
+
+We subset the data for the decades between 1970 and 2010 for which reliable comparator spatial climate datasets are available from remote sensing.
 
 ```{r}
-# pivot longer
+# Pivot to long format, remove unnecessary variables,
 data <- pivot_longer(
   data,
   cols = c("ppt", "t_mean", "t_sd"),
@@ -54,11 +71,9 @@ data <- pivot_longer(
 )
 data <- dplyr::select(data, !month)
 
-# select period 1970 -- 2010 where we also have satellite data
+# Select period 1970 -- 2010 where we also have satellite data
 data <- filter(data, between(year, 1970, 2010))
 ```
-
-## Split the data by variable.
 
 ```{r}
 data <- nest(
@@ -67,9 +82,17 @@ data <- nest(
 )
 ```
 
-## Fit candidate models
+## Fit candidate spatial-climate models
 
-Prepare model formulas.
+We prepare three candidate spatial-climate models for each climate variable:
+
+- A model where the variable is only a smooth function of elevation;
+
+- A model where the variable is a smooth function of elevation, and a linear function of distance from the coast and latitude; and
+
+- A model where the variable is a smooth function of elevation, and of the interaction between latitude and distance from the coast.
+
+We create combinations of each climate variable dataset (further split by decade and season) and each model formulation, and fit the variable to candidate predictors using generalised additive models (GAMs) from [the _mgcv_ package](https://cran.r-project.org/package=mgcv).
 
 ```{r}
 # elevation with 3 knots
@@ -103,19 +126,22 @@ data <- mutate(
 )
 ```
 
-### Save model data.
-
 ```{r}
+# Save the fitted model data as an Rdata object
 save(data, file = "results/climate/model_gam_climate.Rds")
 ```
 
-## Predict over static environment
+## Model predictions for modern climate
 
-Get predictions
+We use the fitted models to predict climatic variables over the remainder of the study area.
 
 ```{r}
-## ensure that NAs are removed from the stack object before running the model projections
-terra::global(stack, fun = "isNA") # this tells us that two raster layers within the stack object have NA values
+# ensure that NAs are removed from the stack object before running the model
+# projections
+terra::global(stack, fun = "isNA")
+
+# this tells us that two raster layers within the stack object have NA values
+
 stack$coast[is.na(stack$coast)] <- 0
 stack$elev[stack$elev < 0] <- NA
 stack$elev[is.na(stack$elev)] <- 0
@@ -128,15 +154,22 @@ model_pred <- map(
   }
 )
 
+# `Reduce()` with function `c()` combines model predictions into a
+# single raster stack, which is then saved
 model_pred <- Reduce(model_pred, f = c)
 terra::writeRaster(model_pred, "results/climate/data_gam_pred.tif")
 ```
 
 ```{r}
+# Read in the saved model predictions
+# this allows us to start at this stage without needing to run
+# previous steps
 model_pred <- terra::rast("results/climate/data_gam_pred.tif")
 ```
 
-## Average predictions over 1970 to 2010.
+### Average predictions over 1970 to 2010
+
+We combine the model predictions with the appropriate identifier variables (decade, season, climate variable, and model formulation) in the nested climate data dataframe, and get the average predicted values for each variable in each season.
 
 ```{r}
 # assign as list column
@@ -145,7 +178,7 @@ data <- mutate(
   pred = as.list(model_pred)
 )
 
-# summarise rasters using a reduce over the list
+# Summarise rasters using a reduce over the list
 # basically gets the average over 1970 -- 2010
 data_pred <- ungroup(data) %>%
   group_by(season, climvar, forms) %>%
@@ -158,8 +191,13 @@ gam_pred_avg <- data_pred$mean_pred
 gam_pred_avg <- Reduce(f = c, gam_pred_avg)
 
 # save averaged predictions
-terra::writeRaster(gam_pred_avg, filename = "results/climate/gam_pred_valid_avg.tif")
+terra::writeRaster(
+  gam_pred_avg,
+  filename = "results/climate/gam_pred_valid_avg.tif"
+)
 ```
+
+We save the dataframe of season, climate variable, and model formula for future reference.
 
 ```{r}
 # load saved pred
@@ -185,12 +223,19 @@ data_pred |>
 
 ## Get BIOCLIM data
 
-We obtained Bioclimatic data from CHELSA. We do not upload the rasters to GitHub as they are very large in size and these can be downloaded from this link: https://envicloud.wsl.ch/#/?prefix=chelsa%2Fchelsa_V1
+In this section, we acquire remotely sensed cliamte variables for the study area, which will serve as a comparator for the values generated from fitted model predictions, and will help to pick the most appropriate model formulation to reconstruct historical climate for which remotely sensed data are not available.
+
+First, we obtained bio-climatic data from CHELSA. We do not upload the rasters to GitHub as they are very large in size and these can be downloaded from this link: https://envicloud.wsl.ch/#/?prefix=chelsa%2Fchelsa_V1
+
+### Temperature data
+
+We process monthly minimum and maximum CHELSA temperature data to get the mean monthly temperature in the dry and wet season as previously defined.
 
 ```{r}
+# Define the patterns for data to search local data files
 patterns <- c("tmin", "tmax")
 
-# list the filepaths
+# List the filepaths matching the pattern in local data (relative to the proj.)
 tkAvg <- map(patterns, function(pattern) {
   # list the paths
   files <- list.files(
@@ -201,7 +246,8 @@ tkAvg <- map(patterns, function(pattern) {
   )
 })
 
-# now run over the paths and read as rasters and crop by buffer
+# Read found rasters and crop them to the extent of other rasters representing
+# the study area; this is the object `stack`
 tkAvg <- map(tkAvg, function(paths) {
   # going over the file paths, read them in as rasters, convert CRS and crop
   tempData <- map(paths, function(path) {
@@ -209,44 +255,48 @@ tkAvg <- map(tkAvg, function(paths) {
     a <- terra::crop(a, terra::ext(stack))
     a
   })
-  # convert each to kelvin, first dividing by 10 to get celsius
+
+  # The data are in a native format that needs to be converted before
+  # processing.
+  # Convert each to Kelvin, first dividing by 10 to get celsius
   tempData <- map(tempData, function(tmpRaster) {
     tmpRaster <- (tmpRaster / 10) + 273.15
     tmpRaster
   })
 })
 
-# recursively get the mean temperature for each month
-# assign names
+# Iteratively get the mean temperature for each month, and assign
+# names to the resulting raster stacks
 names(tkAvg) <- patterns
 
 # go over the tmin and tmax and get the average monthly temp
 tkAvg <- map2(tkAvg[["tmin"]], tkAvg[["tmax"]], function(tmin, tmax) {
   # return the mean of the corresponding tmin and tmax
-  # still in kelvin
+  # still in Kelvin
   terra::mean(c(tmin, tmax))
 })
 
-# check temp data
+# Error if the there are fewer than 12 output layers
 assertthat::assert_that(
   length(tkAvg) == 12,
   msg = "temp raster list has fewer than 12 months"
 )
 
-# assign names
+# Assign names to identify months
 names(tkAvg) <- sprintf("month_%i", seq(12))
 
-# separate rainy and dry season
+# Separate data for the rainy and dry seasons to get the
+# rainy and dry season mean monthyl temperature
 temp_rainy <- Reduce(tkAvg[seq(6, 11)], f = `c`) |>
   terra::mean()
 temp_dry <- Reduce(tkAvg[c(12, seq(5))], f = `c`) |>
   terra::mean()
 
-# convert values back to celsius
+# Convert values back to celsius
 chelsa_t_mean <- c(temp_rainy, temp_dry) - 273.15
 names(chelsa_t_mean) <- c("chelsa_temp_rainy_6_11", "chelsa_temp_dry_12_5")
 
-# save stack
+# Save stack
 terra::writeRaster(
   chelsa_t_mean,
   filename = "results/climate/chelsa_temp_stack.tif",
@@ -254,12 +304,12 @@ terra::writeRaster(
 )
 ```
 
-## Get precipitation data
+### Precipitation data
 
-We obtain precipitation data from CHELSA, which can be accessed at this link here: https://envicloud.wsl.ch/#/?prefix=chelsa%2Fchelsa_V1
+We process total monthly precipitation data from CHELSA to get the mean monthly temperature in the dry and wet seasons in millimetres.
 
 ```{r}
-# list precipitation rasters --- get from BIOCLIM
+# List precipitation rasters stored locally (relative to this project)
 ppt <- list.files(
   path = "data/climate/chelsa",
   full.names = TRUE,
@@ -267,24 +317,22 @@ ppt <- list.files(
   pattern = "prec"
 )
 
-# now run over the paths and read as rasters and crop by buffer
+# Read each as rasters and crop by extent of study area
 ppt <- map(ppt, function(path) {
-  # going over the file paths, read them in as rasts
   a <- terra::rast(path)
   terra::crop(a, terra::ext(stack))
 })
 
-# separate rainy and dry season
+# Separate rainy and dry season and get the mean total monthly precipitation
 ppt_rainy <- Reduce(ppt[seq(6, 11)], f = `c`) |>
   terra::mean()
 ppt_dry <- Reduce(ppt[c(12, seq(5))], f = `c`) |>
   terra::mean()
 
-# make and save stack
+# Make and save stack
 chelsa_ppt_sum <- c(ppt_rainy, ppt_dry)
 names(chelsa_ppt_sum) <- c("chelsa_ppt_rainy_6_11", "chelsa_ppt_dry_12_5")
 
-# save stack
 terra::writeRaster(
   chelsa_ppt_sum,
   filename = "results/climate/chelsa_ppt_stack.tif",
@@ -292,9 +340,12 @@ terra::writeRaster(
 )
 ```
 
-## Get sample coordinates
+## Compare spatial-climate model predictions against BIOCLIM data
 
-Select some coordinates and save data.
+### Sample locations
+
+First we draw 10,000 randomly selected coordinates from the extent of the study area, and use these to compare the model predictions against CHELSA-derived data.
+We will further stratify these into 10 arbitrary groups at a later stage.
 
 ```{r}
 # get coordinates from terra
@@ -303,11 +354,17 @@ coords <- terra::xyFromCell(
   cell = seq(length(values(stack[[1]])))
 )
 
-# sample 10 groups of 1000
-coords <- coords[sample(1e4, replace = FALSE), ] |>
+# Sample 1000 locations from the raster data coordinates
+# Use `withr::with_local_seed()` to preserve which coordinates are selected
+# in each analysis run
+coords <- withr::with_seed(
+  1,
+  coords[sample(1e4, replace = FALSE), ]
+) |>
   as_tibble()
 
-# extract data at locations
+# Extract geographical predictors and CHELSA data at locations
+# NOTE: recall that `stack` is the raster stack of geographical predictors
 sample_locations <-
   mutate(
     coords,
@@ -329,25 +386,28 @@ write_csv(
 )
 ```
 
+### Link BIOCLIM data and model predictions
+
+Next we link the remote-sensing-derived BIOCLIM data at the sampled locations with the predicted values from our spatial-climate GAMs.
+
 ```{r}
+# Read in the saved data; this allows continuing from this point without
+# re-running the previous code
 sample_locations <- read_csv(
   "results/climate/data_sample_coords_gam_validation.csv"
 )
 ```
 
-## Compare BIOCLIM and model predictions
-
-First sample locations
-
 ```{r}
-# melt data
+# Pivot the data to long format, retaining coordinates, ID, and geographical
+# predictors as identifying variables
 sample_locations <-
   sample_locations |>
   pivot_longer(
     cols = !c("x", "y", "ID", "coast", "elev", "lat")
   )
 
-# assign season and climvar
+# Assign the season and identify the variable from the variable name
 sample_locations <- mutate(
   sample_locations,
   season = str_extract(
@@ -364,32 +424,34 @@ sample_locations <- mutate(
 )
 ```
 
-## Link with GAM predictions
+We link the spatial-climate models' predictions. Recall that there are three candidate models for each variable, in each season, and the aim is to select a model formulation for the remaining historical data based on minimising deviation from the BIOCLIM data.
 
 ```{r}
-# remove t_sd
+# Filter the climate-model predictions to remove the SD of temperature
 data_pred <- filter(
   data_pred,
   climvar != "t_sd"
 )
 
-# nest by season and variable
+# Nest model predictions by season and variable
 sample_locations <- nest(
   sample_locations,
   chelsa = !c("season", "climvar")
 )
 
-# link with data predictions
+# Link predictions for sampled locations with CHELSA data rasters and
+# geographical predictors
 data_pred <- left_join(
   data_pred,
   sample_locations
 )
 ```
 
-## Get GAM predictions at chelsa sample locations.
+Since the model prediction rasters are stored as-is, we need to extract the values at the coordinates from those rasters.
 
 ```{r}
-# sample locations from GAM predictions
+# For each climate variable, extract the predicted values at the sampled
+# locations
 data_pred <- mutate(
   data_pred,
   chelsa = map2(chelsa, mean_pred, function(ch, pr) {
@@ -404,39 +466,45 @@ data_pred <- mutate(
   })
 )
 
-# make copy
+# Make a copy for further operations
 data_gam_validate <- data_pred |>
   select(season, climvar, forms, chelsa)
 
-# unnest data
+# Unnest data
 data_gam_validate <- unnest(
   data_gam_validate,
   cols = chelsa
 )
 
-# convert from formula to characters
+# Convert model formula from formula to characters
 data_gam_validate <- mutate(
   data_gam_validate,
   forms = as.character(forms)
 )
 
-## extract pred val
+# Extract the predicted values
+# TODO: check why this is being done again
 data_gam_validate <- data_gam_validate |>
   mutate(
     pred_val = pred_val$lyr1
   )
 
-# rename and drop some variables
-# save data
+# Drop some variables and save data
 write_csv(
   data_gam_validate,
   file = "results/climate/data_gam_validate_compare.csv"
 )
 ```
 
+## Error between model prediction and CHELSA data
+
+We use mean absolute error (MAE) as a measure of how much the model predictions deviate from the CHELSA data. In order to calculate the mean, we group the data into ten arbitrary groups of 1,000 samples each.
+
+We calculate MAE as the mean of the absolute differences between the CHELSA data and the model predicted data, and save the data to a local file.
+MAE is calculated for each climate variable, model formulation, and season separately (in addition to the sample group, which is arbitrary).
 
 ```{r}
-# use mean absolute error Measure for 10 chunks of 1000 coordinates
+# Group samples into 10 chunks of 1000 coordinates each
 data_gam_validate <- group_by(
   data_gam_validate,
   season, climvar, forms
@@ -445,7 +513,7 @@ data_gam_validate <- group_by(
     group = rep(seq(10), each = 1e3L)
   )
 
-# save mean absolute error measures for plotting - plot script in figure scripts
+# Grouping by season, climate variable, and model formula, calculate MAE
 data_mae <-
   group_by(
     data_gam_validate,
@@ -460,7 +528,7 @@ data_mae <-
     )
   )
 
-# save data
+# Save data
 write_csv(
   data_mae,
   file = "results/climate/data_gam_comparison_mae.csv"
@@ -469,14 +537,17 @@ write_csv(
 
 ## GAM predictions at survey sites
 
+In this section, we get the spatial-climate model predictions at the modern survey site locations (called 'survey sites').
+This is a repitition of the steps above for the much smaller subset of survery sites.
+Recall that for each survey site, there will be three candidate model predictions for each climate variable in each season.
+
 ```{r}
-# read survey sites
+# Read survey sites from a local file
 survey_sites <- read.csv("data/list-of-resurvey-locations.csv")
 names(survey_sites)[4] <- "x"
 names(survey_sites)[5] <- "y"
 
-# sample rasters at survey sites
-# BIOCLIM samples
+# Sample BIOCLIM rasters at survey sites
 survey_sites <- mutate(
   survey_sites,
   terra::extract(
@@ -485,10 +556,14 @@ survey_sites <- mutate(
   )
 )
 
-# remove id
-survey_sites <- select(survey_sites, -c(site_name, historical_site_code, modern_landCover_type, ID))
+# Remove survery site id, keeping only the 'modern_site_code'
+survey_sites <- select(
+  survey_sites,
+  -c(site_name, historical_site_code, modern_landCover_type, ID)
+)
 
-# melt data
+# Pivot the data to long format and identify the season and climate
+# variable from the variable name (this is autogenerated by `terra::extract()`)
 survey_sites <- pivot_longer(
   survey_sites,
   cols = !c("modern_site_code", "x", "y")
@@ -506,21 +581,22 @@ survey_sites <- pivot_longer(
       climvar == "temp", "t_mean", "ppt"
     )
   )
-# nest data
+
+# Nest data, and remove the linked rasters
 survey_sites <- nest(
   survey_sites,
   chelsa = !c("season", "climvar")
 )
+data_pred <- select(data_pred, -chelsa) # remove rasters as data extracted
 
-# remove chelsa data
-data_pred <- select(data_pred, -chelsa)
-
-# link survey data
+# Link survey data coordinates with model prediction data
 survey_sites <- left_join(
   survey_sites,
   data_pred
 )
 
+# For each survey site location, extract model-predicted values from
+# the model-prediction rasters
 survey_sites <- mutate(
   survey_sites,
   chelsa = map2(chelsa, mean_pred, function(ch, pr) {
@@ -535,6 +611,8 @@ survey_sites <- mutate(
   })
 )
 
+# Convert the model forumlae in the data to characters and unnest the
+# CHELSA data
 survey_sites <- survey_sites |>
   select(season, climvar, chelsa, forms) |>
   mutate(
@@ -544,7 +622,7 @@ survey_sites <- survey_sites |>
     cols = chelsa
   )
 
-# save measures at survey sites
+# Save the CHELSA and predicted measures at survey sites
 write_csv(
   survey_sites,
   file = "results/climate/data_gam_compare_survey_sites.csv"

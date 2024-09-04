@@ -3,9 +3,17 @@ editor_options:
   chunk_output_type: console
 ---
 
-# GAM error in predicting climate
+# Building a correction layer for climate predictions
 
-## Load libraries
+In this section we focus on quantifying the error over the entire study site between model-predicted climate and climate measures derived from remote sensing data (from BIOCLIM, and referred to as CHELSA data).
+We then use these differences to create a 'correction layer', that allows us to scale the model predictions for historical data.
+
+The assumption is that the correction layer is applicable to historical climate model predictions.
+
+## Setup
+
+We load the libraries and the data.
+
 ```{r}
 library(tidyverse)
 library(ggplot2)
@@ -15,28 +23,30 @@ library(terra)
 library(stars)
 ```
 
-## Load data
-
 ```{r}
 error_data <- read_csv("results/climate/data_gam_comparison_mae.csv")
 survey_clim <- read_csv("results/climate/data_gam_compare_survey_sites.csv")
 
 # load saved object from previous script
-#load("results/climate/model_pred_climate.Rds")
+load("results/climate/model_pred_climate.Rds")
 ```
 
 ## Plot model error
 
+Here we plot the mean absolute error (MAE) between CHELSA data and model predicted data in each season (dry or rainy) using boxplots.
+Recall that this is for the 10,000 sampled locations split into 10 groups of 1,000 locations to calculate MAE.
+
 ```{r}
-# nest data
+# Nest data by climate variable
 error_data <- nest(
   error_data,
   data = !c("climvar")
 )
 
+# Get the distinct values of the model formulae
 forms <- distinct(survey_clim, form = forms)
 
-# plot data
+# Map over each climate variable, producing a list of ggplots
 plots <- map2(
   error_data$data, error_data$climvar,
   function(df, cl) {
@@ -89,6 +99,7 @@ plots <- map2(
   }
 )
 
+# Combine into a single plot to save
 plots <- wrap_plots(
   plots,
   ncol = 1
@@ -102,6 +113,7 @@ plots <- wrap_plots(
     )
   )
 
+# Save the plot for future reference
 ggsave(
   plots,
   filename = "figs/fig_compare_models_general.png",
@@ -115,10 +127,15 @@ dev.off()
 
 ## Compare climate predictions at survey sites
 
+Next we plot the model-predicted climate variable values against the equivalent remote-sensing derived climate values at each of the modern resurvey locations, separating by model formulation and season.
+
 ```{r}
+# Nest the data by climate variable and season
 survey_clim <- group_by(survey_clim, climvar, season) |>
   nest()
 
+# For each climate variable and season, produce a separate plot
+# Plots form a list of ggplot objects
 plots_survey_pts <- Map(
   survey_clim$climvar, survey_clim$data, survey_clim$season,
   f = function(cvar, df, season) {
@@ -133,10 +150,7 @@ plots_survey_pts <- Map(
         shape = 1,
         alpha = 0.8
       ) +
-      scale_y_continuous(
-        # trans = "sqrt"
-        # trans = ggallin::ssqrt_trans
-      ) +
+      scale_y_continuous() +
       facet_grid(
         ~forms,
         scales = "free",
@@ -165,6 +179,7 @@ plots_survey_pts <- Map(
   }
 )
 
+# Combine plots into a single plot
 plots_survey_pts <- wrap_plots(
   plots_survey_pts,
   ncol = 1
@@ -173,6 +188,7 @@ plots_survey_pts <- wrap_plots(
     tag_levels = "A"
   )
 
+# Save the plot for future reference
 ggsave(
   plots_survey_pts,
   filename = "figs/fig_survey_site_model_comparison.png",
@@ -182,32 +198,41 @@ ggsave(
 
 ![Comparing predicted values vs. data from Bioclim for rainy and dry seasons for both temperature and precipitation data](figs/fig_survey_site_model_comparison.png)
 
-## Plot GAM prediction residuals
+## Visualise model predictions as proportion of remote sensing data
+
+Here, we obtain the model-predicted climate data (for each variable in each season) and express it as a proportion of the CHELSA value for the same variable, which we take as the canonical value.
 
 ```{r}
-# load data
+# Read in the raster data of model predictions
 gam_validation_pred <- terra::rast("results/climate/gam_pred_valid_avg.tif") |>
   as.list()
+
+# Read in the data for season, climate variable, and model formulation
 gam_validation_id <- read_csv("results/climate/gam_model_formulas.csv")
 
-# select and save
+# Select only data for climate variables precip. and temp. mean
+# and assign raster data as a list column
 gam_validation_pred <- gam_validation_pred[gam_validation_id$climvar %in%
   c("ppt", "t_mean")]
 gam_validation_id <- filter(gam_validation_id, climvar %in% c("ppt", "t_mean"))
 
-# link -- could have filtered here too -- oh well
-gam_validation_data <- mutate(gam_validation_id, prediction = gam_validation_pred)
+gam_validation_data <- mutate(
+  gam_validation_id,
+  prediction = gam_validation_pred
+)
 ```
 
-## Load processed BIOCLIM data
+Next we load the BIOCLIM data and prepare variables that allow it to be merged with the model-predictions dataframe.
 
 ```{r}
+# Read in BIOCLIM/CHELSA rasters
 chelsa_temp <- terra::rast("results/climate/chelsa_temp_stack.tif") |>
   as.list()
 chelsa_ppt <- terra::rast("results/climate/chelsa_ppt_stack.tif") |>
   as.list()
 
-# make data
+# Make a dataframe with combinations of season and climate variable
+# and assing the raster data as a list column
 chelsa_data <-
   crossing(
     season = c("rainy", "dry"),
@@ -219,7 +244,7 @@ chelsa_data <-
   )
 ```
 
-## Get prediction as fraction of BIOCLIM layers
+We merge the CHELSA data with the model-prediction and get the scaling layer (called 'residual'), which is the prediction as a proportion of the canonical CHELSA data.
 
 ```{r}
 # link prediction and residual
@@ -235,7 +260,10 @@ gam_validation_data <- mutate(
 )
 ```
 
-## Temperature fractions
+### Temperature scaling layer
+
+We plot the scaling layer for temperature. The general pattern is that all models overestimate temperature in hilly regions of the study area; higher elevations have a higher ratio of prediction to CHELSA in all models.
+In contrast, lower elevations have a prediction to CHELSA ratio close to 1.0 in all models, i.e., the model prediction is relatively good in the non-hilly areas.
 
 ```{r}
 plots_temp_resid <- filter(gam_validation_data, climvar == "t_mean") |>
@@ -284,7 +312,13 @@ plots_temp_resid <- pmap(
 plots_temp_resid[[1]]
 ```
 
-## Precipitation fractions
+## Precipitation scaling layer
+
+We plot the scaling layer for precipitation. The general pattern is that all models overestimate precipitation on the leeward side of the study area, i.e., in the rain shadow of the Western Ghats, while underestimating precipitation on the windward side.
+This makes sense as the driver of canonical variation is largely the blocking of monsoon winds and associated rainfall by the Ghats; while this could be expected to be captured by the distance-to-coast variable, it does not appear to do so well.
+
+The underestimation of precipitation on the windward side is more pronounced in the rainy season, which is expected.
+Higher elevations also have a lower prediction to CHELSA ratio than lower elevations on the windward side.
 
 ```{r}
 plots_ppt_resid <- filter(gam_validation_data, climvar == "ppt") |>
@@ -299,8 +333,7 @@ plots_ppt_resid <- pmap(
       ) +
       scale_fill_continuous_diverging(
         palette = "Vik",
-        rev = T,
-        mid = 1,
+        rev = TRUE, mid = 1,
         na.value = "transparent",
         name = glue::glue("Prediction / BIOCLIM
                           {climvar}"),
@@ -334,7 +367,7 @@ plots_ppt_resid[[1]]
 ```
 
 ```{r}
-# save residual plots
+# Save the scaling layer plots for future reference
 ggsave(
   plots_temp_resid,
   filename = "figs/fig_temp_resid.png",
@@ -352,27 +385,29 @@ ggsave(
 
 ![Bioclimatic predictions for precipitation](figs/fig_ppt_resid.png)
 
-## Save climate correction layers
+## Save climate scaling layers
 
-Looking at the GAM predictions as fractions of the BIOCLIM layers, we can choose model formulas for each season and each variable that lead to predictions that are closest to the real BIOCLIM values. We choose formulas on the basis of observed deviation from the true value, as well as spatial contiguity of deviations, basically, are nearby areas similarly different from true values. For example, there is an odd north east regional deviation for rainfall in the wet season for the forumla $\text{ppt} ~ s(\text{elevation}, k = 3) + s(\text{distance to coast, latitude}, k = 5)$, so we prefer to chose another formula.
+Looking at the GAM predictions as proportions of the BIOCLIM layers, we can choose model formulas for each season and each variable that lead to predictions that are closest to the real BIOCLIM values. We choose formulas on the basis of observed deviation from the true value, as well as spatial contiguity of deviations, basically, are nearby areas similarly different from true values. For example, there is an odd north east regional deviation for rainfall in the wet season for the forumla $\text{ppt} ~ s(\text{elevation}, k = 3) + s(\text{distance to coast, latitude}, k = 5)$, so we prefer to chose another formula.
 
 This means we pick the simple $\text{temp} ~ s(\text{elevation}, k = 3)$ formula for mean monthly temperature, in both dry and wet seasons, and the $\text{ppt} ~ s(\text{elevation}, k = 3) + \text{distance to coast} + \text{latitude}$ formula for total monthly rainfall in both dry and wet seasons.
 
-We then save the fraction, BIOCLIM / prediction, as a correction layer --- one layer per season and variable.
+We then save the inverse proportion, BIOCLIM / prediction, as a correction layer --- one layer per season and variable.
 This allows us to fit GAMs to chunks of historical climate data, using physical predictors as covariates, and to then correct the resulting spatial prediction using the correction layer.
 Hence the 'true' historical value of a climate variable is $\text{GAM prediction} \times \text{correction factor}$, where the correction factor is the cell-specific value from the correction layers.
 
 ## Seasonal mean temperature correction layer
 
+We prepare the season-specific mean temperature correction layer.
+
 ```{r}
-# subset validation dataset
+# Subset validation dataset
 temp_correction_layer <- gam_validation_data %>%
   filter(
     climvar == "t_mean",
     forms == "value~s(elev, k = 3)"
   )
 
-# now get the correction layer
+# Get the correction layer as CHELSA / prediction
 temp_correction_layer <- mutate(
   temp_correction_layer,
   correction_layer = map2(
@@ -383,19 +418,19 @@ temp_correction_layer <- mutate(
   )
 )
 
-# make the correction layer a single raster stack object and name correctly
+# Make the correction layer a single raster stack object and name correctly
 temp_correction_layer <- Reduce(
   temp_correction_layer$correction_layer,
   f = c
 )
 
-# set names for layers
+# Set names for layers
 names(temp_correction_layer) <- c(
   "correction_layer_temp_dry",
   "correction_layer_temp_wet"
 )
 
-# save the layer
+# Save the correction layer
 terra::writeRaster(
   temp_correction_layer,
   filename = "results/climate/raster_correction_layers_temp.tif"
@@ -404,15 +439,17 @@ terra::writeRaster(
 
 ## Seasonal total rainfall correction layer
 
+We prepare the season-specific total precipitation correction layer.
+
 ```{r}
-# subset validation dataset
+# Subset validation dataset
 ppt_correction_layer <- gam_validation_data %>%
   filter(
     climvar == "ppt",
     forms == "value~s(elev, k = 3) + coast + lat"
   )
 
-# now get the correction layer
+# Now get the correction layer as CHELSA / prediction
 ppt_correction_layer <- mutate(
   ppt_correction_layer,
   correction_layer = map2(
@@ -423,19 +460,19 @@ ppt_correction_layer <- mutate(
   )
 )
 
-# make the correction layer a single raster stack object and name correctly
+# Make the correction layer a single raster stack object and name correctly
 ppt_correction_layer <- Reduce(
   ppt_correction_layer$correction_layer,
   f = c
 )
 
-# set names for layers
+# Set names for layers
 names(ppt_correction_layer) <- c(
   "correction_layer_ppt_dry",
   "correction_layer_ppt_wet"
 )
 
-# save the layer
+# Save the layer
 terra::writeRaster(
   ppt_correction_layer,
   filename = "results/climate/raster_correction_layers_ppt.tif"

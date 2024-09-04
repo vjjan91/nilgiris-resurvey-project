@@ -3,39 +3,53 @@ editor_options:
   chunk_output_type: console
 ---
 
-# Prepare Climate Data for Interpolation
+# Preparing historical climate data and geographical covariates
 
-In this script, we start by curating and processing the climate data. We interpolate the dataset to a fine resolution for future analysis. 
+The overall aim is to prepare historical climate data associated with specific locations, and to link the data to geoghraphical covariates.
+This will prepare the data for a semi-spatial statistical model that will be used to predict historical climatic conditions across the study area.
 
 ## Load libraries
 ```{r}
-library(tidyverse) 
+library(tidyverse)
 library(lubridate)
 library(terra)
 library(sf)
 ```
 
-## Prepare climate data
+## Reading raw historical climate data
 
-Read data and add date. Please contact the lead author for a copy of this data. We will add this to Zenodo as a release upon publication. 
+We first read in historical climate data from the Western Ghats, and convert them to a format suitable for further processing.
+
+**NOTE:** Need to add text explaining historical climate data sourcing.
+
+Read data and add date. Please contact the lead author for a copy of this data. We will add this to Zenodo as a release upon publication.
+
+The climate data are in the form of delimited text files with four columns for the daily total precipitation, minimum temperature, maximum temperature, and wind speed.
+Each file represents readings associated with a particular location, with coordinates indicated by the file name. We read the coordinates from the file names to assign them to each dataset.
+The number of rows represents the number of days of data, with a start date of 1st of January 1870, and an end date of 31st December 2018.
+
+We further classify each daily reading by the year and month, and assign each day to one of two seasons: rainy (June through November) or dry (December through May).
+We combine the data and filter for the southern Western Ghats as our area of interest based on the latitudinal range \[9, 12\], and write them to file.
+
 ```{r}
-clim_files <- list.files("data/climate/historical", full.names = T)
+# List the climate data files and read them in, assigning column names
+clim_files <- list.files("data/climate/historical", full.names = TRUE)
 data <- map(clim_files, read_delim,
   delim = " ", col_names = c("ppt", "tmin", "tmax", "wind")
 )
 
-# seq dates
+# Prepare a sequence of dates
 seq_date <- seq(
   ymd("1870-01-01"),
   ymd("2018-12-31"),
   by = "days"
 )
 
-# add date, year, month, and season
+# Read the coordinates from each file name
+# for each date, add the year and month, as well as the season
 data <- map2(
   data, clim_files,
   function(df, clf) {
-
     # get the coordinates
     coords <- str_extract_all(clf, "\\d+\\.\\d+")[[1]]
     mutate(
@@ -54,10 +68,11 @@ data <- map2(
   }
 )
 
-# bind all data
+# combine all data into a single dataframe
 data <- bind_rows(data)
 
-# check data
+# Check that the number of unique coordinates corresponds to the number of
+# data files (since one data file per location)
 assertthat::assert_that(
   nrow(
     distinct(data, x, y)
@@ -65,7 +80,7 @@ assertthat::assert_that(
   msg = "error in some weather station coordinates"
 )
 
-# filter for southern western ghats
+# Filter for southern western ghats
 # y < 12 and y > 9
 data <- filter(
   data,
@@ -79,26 +94,27 @@ write_csv(
 )
 ```
 
-## Summarise by month
+## Summarising historical climate data
+
+We summarise the historical climate data for each location by calculating the mean daily temperature from the minimum and maximum temperature, and then calculating the monthly total precipitation, mean temperature, and the standard deviation of the mean temperature. The coordinates, year, month, and season are preserved as identifying variables.
 
 ```{r}
-# get daily mean temperature
+# Get daily mean temperature
 data <- mutate(
   data,
   tmean = (tmax + tmin) / 2
 )
 
-# prepare to summarise
+# Group data by coordinate and select precipitation and mean daily temp.
 data <- group_by(
   data,
   x, y, month, year, season,
 ) |>
-  # groups will be added by default
   select(
     ppt, tmean
   )
 
-# summarise monthly ppt sum and tmean mean and sd
+# Summarise monthly total precip. and mean and SD of temp. mean
 data <- summarise(
   data,
   ppt = sum(ppt),
@@ -113,40 +129,49 @@ write_csv(
 )
 ```
 
-## Prepare for spatial data 
+## Prepare study area spatial extent
+
+We prepare a spatial polygon for the extent of our area of interest. All operations are with reference to the subset of historical climate data from the southern Western Ghats.
+
+First collecting the unique locations associated with the data, we prepare a bounding box that covers all points, and then add a 25km buffer (transforming coordinates as appropriate into the UTM 43N coordinate reference system for buffer creation to ensure accurate buffer distances).
 
 ```{r}
-# get unique data, i.e., from unique coords
+# Get unique coordinates and create an `sf` points object
 coords <- ungroup(data) |>
   distinct(x, y) |>
   mutate_all(
     as.numeric
   )
-```
 
-## Prepare spatial data
-
-```{r}
-# get unique coordinates
+# Create `sf` spatial object and assign WGS 84 CRS as standard
 coord_sf <- st_as_sf(
   coords,
   coords = c("x", "y"),
   crs = 4326
 )
 
-# get extent to clip elevation
+# Create a bounding box, transform to UTM 43N CRS, and add a 25km buffer
 ext <- st_bbox(coord_sf) |>
   st_as_sfc() |>
   st_transform(32643) |>
   st_buffer(25000) |>
   st_transform(4326)
+```
 
-# load elevation raster
+## Prepare spatial data for the study area
+
+We use the buffered spatial extent of the study area to subset (or crop) raster spatial data. We save these cropped data for further use as they are smaller and easier to work with than the full datasets.
+
+### Elevation data
+
+We read in elevation data and crop the raster to the buffered study area.
+
+```{r masking_spatial_rasters}
+# Load elevation raster and crop by buffered study area extent
 elevation <- terra::rast("data/elevation/alt")
-# crop by extent of study area
 elevation_hills <- terra::crop(elevation, as(ext, "Spatial"))
 
-# save a smaller piece
+# Save the smaller cropped elevation data in spatial TIF format
 terra::writeRaster(
   elevation_hills,
   "results/elevation/raster_elevation.tif",
@@ -154,23 +179,25 @@ terra::writeRaster(
 )
 ```
 
-## Prepare coastline data
+### Distance to coast data
+
+We prepare a synthetic raster layer for the distance of points in the study area from the coastline.
+Reading in vector spatial data for the boundary of India, we 
 
 ```{r}
-# load coastline and elevation
+# Load coastline and re-load elevation
 coast <- st_read("data/landcover/India_Boundary.shp")
 coast_line <- st_cast(coast, "MULTILINESTRING")
 
-# load small elevation raster
 elev <- terra::rast("results/elevation/raster_elevation.tif")
 elev_utm <- terra::project(elev, "epsg:32643")
 ```
 
-## Resample raster to 600m
+We resample the elevation raster from 30m to 600m as this is the resolution of interest (converting to a UTM CRS when passing the resolution in metres). The resampled raster is also in UTM 43N projection, and we covert that WGS 84 for future use.
 
 ```{r}
-# resample the raster to 600 m from 30m
-elev_utm_600 <- rast(ext(elev_utm), resolution = 600)
+# Resample the elevation raster to 600 m from 30m
+elev_utm_600 <- terra::rast(ext(elev_utm), resolution = 600)
 elev_utm_600 <- terra::resample(
   elev_utm, elev_utm_600
 )
@@ -180,40 +207,60 @@ crs(elev_utm_600) <- "epsg:32643"
 elev_600 <- terra::project(elev_utm_600, "epsg:4326")
 ```
 
+We prepare the distance-to-coast raster by calculating the distance between each cell in the 600m resolution elevation raster and the cost vector data; we refer to this as the coast raster on occasion.
+We mask (set to `NA`) all cells in the coast raster that are not on land.
+**Note that** this operation takes a long time to run!
+
 ```{r}
-# make coast raster
-# the below lines of code take a very long time to run
+# Coast raster is a distance raster to the India land boundary vector
+# masked by the same vector; this sets all cells in the sea to zero
+
+# NOTE: this code takes a very long time to run!
 coast_raster <- terra::distance(elev_600, terra::vect(coast_line))
 coast_raster <- terra::mask(coast_raster, terra::vect(coast))
 ```
 
+### Latitude data
+
+We prepare a raster containing the latitude of each cell of the 600m resolution elevation raster in order to use this as a latitude predictor.
+
+**Note** the use of `terra::deepcopy()` to make a copy of the elevation raster; this is to prevent the values of the elevation raster chaning when the copy's values are re-assigned. See the help for `terra::deepcopy()` for more.
+
 ```{r}
-# latitude raster using copy of elevation and assigning coordinate
-lat_raster <- data.table::copy(elev_600)
+# Make a deep copy of the elevation data, and assign the Y coordinate
+# of each cell as the latitude
+# NOTE: using terra::deepcopy() is a MUST to prevent reassignment of values
+# in elev_600
+lat_raster <- terra::deepcopy(elev_600)
 terra::values(lat_raster) <- terra::yFromCell(
   lat_raster,
-  cell = seq(length(values(lat_raster)))
+  cell = seq_along(values(lat_raster))
 )
 ```
 
-```{r}
-# stack rasters
-stack <- c(coast_raster, elev_600, lat_raster)
-names(stack) <- c("coast", "elev", "lat")
-```
+We combine the three data rasters into layers of a stack, and save them for later use.
 
 ```{r}
+# Stack each data layer into a single stack
+stack <- c(coast_raster, elev_600, lat_raster)
+names(stack) <- c("coast", "elev", "lat")
+
 terra::writeRaster(
   stack,
   "results/climate/raster_gam_stack.tif",
-  overwrite = T
+  overwrite = TRUE
 )
 ```
 
 ## Link predictors to climate data
 
+Here we link the geographical predictors --- elevation, distance from the coast, and latitude --- to the monthly weather data locations, in order to model the relationship between them.
+
+This is to help us get a statistical model that can be used to predict historical climate over the entire study area, in different historical periods.
+
 ```{r}
-# extract covariates using high-res raster
+# Extract the elevation, distance from the coast, and latitude
+# at each historical climate location
 coords <- mutate(
   coords,
 
@@ -232,19 +279,19 @@ coords <- mutate(
   lat = y
 )
 
-# link to climate data summary
+# Link by coordinates to the monthly climate data summary
 data <- left_join(
   data,
   coords
 )
 
-# bin into 10 year intervals
+# Bin data into 10 year intervals
 data <- mutate(
   data,
   year_bin = floor(year / 10) * 10
 )
 
-# save data
+# Save data
 write_csv(
   data,
   "results/climate/data_for_gam.csv"
