@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Page not found | Colonial-era landscape changes has led to grassland bird species declines over the last century</title>
-  <meta name="description" content="Page not found | Colonial-era landscape changes has led to grassland bird species declines over the last century" />
+  <title>Section 5 Modelling historical climate over the study area | Colonial-era landscape changes has led to grassland bird species declines over the last century</title>
+  <meta name="description" content="Section 5 Modelling historical climate over the study area | Colonial-era landscape changes has led to grassland bird species declines over the last century" />
   <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Page not found | Colonial-era landscape changes has led to grassland bird species declines over the last century" />
+  <meta property="og:title" content="Section 5 Modelling historical climate over the study area | Colonial-era landscape changes has led to grassland bird species declines over the last century" />
   <meta property="og:type" content="book" />
   
   
   <meta name="github-repo" content="vjjan91/nilgiris-resurvey-project" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Page not found | Colonial-era landscape changes has led to grassland bird species declines over the last century" />
+  <meta name="twitter:title" content="Section 5 Modelling historical climate over the study area | Colonial-era landscape changes has led to grassland bird species declines over the last century" />
   
   
   
@@ -39,8 +39,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-
-
+<link rel="prev" href="building-a-correction-layer-for-climate-predictions.html"/>
+<link rel="next" href="analyzing-temperature-and-precipitation-change-over-time.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -307,19 +307,212 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="page-not-found" class="section level1">
-<h1>Page not found</h1>
-<p>The page you requested cannot be found (perhaps it was moved or renamed).</p>
-<p>You may want to try searching to find the page's new location, or use
-the table of contents to find the page you are looking for.</p>
+<div id="modelling-historical-climate-over-the-study-area" class="section level1 hasAnchor" number="5">
+<h1><span class="header-section-number">Section 5</span> Modelling historical climate over the study area<a href="modelling-historical-climate-over-the-study-area.html#modelling-historical-climate-over-the-study-area" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>Here we use the model formulation chosen in the previous section to model climate variables as a function of geographical predictors over the study area.
+We use one model formula (henceforth, model) for each climate variable in each season.
+We model historical climate for 30 year periods, as this is about the temporal resolution of interest.</p>
+<div id="setup-with-libraries-and-data" class="section level2 hasAnchor" number="5.1">
+<h2><span class="header-section-number">5.1</span> Setup with libraries and data<a href="modelling-historical-climate-over-the-study-area.html#setup-with-libraries-and-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="modelling-historical-climate-over-the-study-area.html#cb47-1" tabindex="-1"></a><span class="co"># for data</span></span>
+<span id="cb47-2"><a href="modelling-historical-climate-over-the-study-area.html#cb47-2" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb47-3"><a href="modelling-historical-climate-over-the-study-area.html#cb47-3" tabindex="-1"></a><span class="fu">library</span>(glue)</span>
+<span id="cb47-4"><a href="modelling-historical-climate-over-the-study-area.html#cb47-4" tabindex="-1"></a></span>
+<span id="cb47-5"><a href="modelling-historical-climate-over-the-study-area.html#cb47-5" tabindex="-1"></a><span class="co"># for gam</span></span>
+<span id="cb47-6"><a href="modelling-historical-climate-over-the-study-area.html#cb47-6" tabindex="-1"></a><span class="fu">library</span>(mgcv)</span>
+<span id="cb47-7"><a href="modelling-historical-climate-over-the-study-area.html#cb47-7" tabindex="-1"></a></span>
+<span id="cb47-8"><a href="modelling-historical-climate-over-the-study-area.html#cb47-8" tabindex="-1"></a><span class="co"># for rasters</span></span>
+<span id="cb47-9"><a href="modelling-historical-climate-over-the-study-area.html#cb47-9" tabindex="-1"></a><span class="fu">library</span>(terra)</span></code></pre></div>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="modelling-historical-climate-over-the-study-area.html#cb48-1" tabindex="-1"></a><span class="co"># Read in geographical covariates of weather data locations</span></span>
+<span id="cb48-2"><a href="modelling-historical-climate-over-the-study-area.html#cb48-2" tabindex="-1"></a><span class="co"># and rasters of spatial data</span></span>
+<span id="cb48-3"><a href="modelling-historical-climate-over-the-study-area.html#cb48-3" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;results/climate/data_for_gam.csv&quot;</span>)</span>
+<span id="cb48-4"><a href="modelling-historical-climate-over-the-study-area.html#cb48-4" tabindex="-1"></a>stack <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">&quot;results/climate/raster_gam_stack.tif&quot;</span>)</span></code></pre></div>
+</div>
+<div id="model-climate-as-a-function-of-geographic-variables" class="section level2 hasAnchor" number="5.2">
+<h2><span class="header-section-number">5.2</span> Model climate as a function of geographic variables<a href="modelling-historical-climate-over-the-study-area.html#model-climate-as-a-function-of-geographic-variables" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Here we prepare the data and model climate variables as a function of geographic variables.
+As in the section on modelling the contemporary climate, we add some small error to each geographic variable to facilitate model fitting.</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="modelling-historical-climate-over-the-study-area.html#cb49-1" tabindex="-1"></a><span class="co"># Prepare geographic variables</span></span>
+<span id="cb49-2"><a href="modelling-historical-climate-over-the-study-area.html#cb49-2" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">mutate</span>(</span>
+<span id="cb49-3"><a href="modelling-historical-climate-over-the-study-area.html#cb49-3" tabindex="-1"></a>  data,</span>
+<span id="cb49-4"><a href="modelling-historical-climate-over-the-study-area.html#cb49-4" tabindex="-1"></a></span>
+<span id="cb49-5"><a href="modelling-historical-climate-over-the-study-area.html#cb49-5" tabindex="-1"></a>  <span class="co"># divide distance by 1000 for km</span></span>
+<span id="cb49-6"><a href="modelling-historical-climate-over-the-study-area.html#cb49-6" tabindex="-1"></a>  <span class="at">coast =</span> coast <span class="sc">/</span> <span class="dv">1000</span>,</span>
+<span id="cb49-7"><a href="modelling-historical-climate-over-the-study-area.html#cb49-7" tabindex="-1"></a></span>
+<span id="cb49-8"><a href="modelling-historical-climate-over-the-study-area.html#cb49-8" tabindex="-1"></a>  <span class="co"># add some error to all physical variables</span></span>
+<span id="cb49-9"><a href="modelling-historical-climate-over-the-study-area.html#cb49-9" tabindex="-1"></a>  <span class="co"># hopefully prevents model issues</span></span>
+<span id="cb49-10"><a href="modelling-historical-climate-over-the-study-area.html#cb49-10" tabindex="-1"></a>  <span class="at">coast =</span> coast <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="fu">length</span>(coast), <span class="fl">0.1</span>, <span class="at">sd =</span> <span class="fl">0.01</span>),</span>
+<span id="cb49-11"><a href="modelling-historical-climate-over-the-study-area.html#cb49-11" tabindex="-1"></a>  <span class="at">elev =</span> elev <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="fu">length</span>(coast), <span class="dv">1</span>, <span class="at">sd =</span> <span class="fl">0.01</span>),</span>
+<span id="cb49-12"><a href="modelling-historical-climate-over-the-study-area.html#cb49-12" tabindex="-1"></a>  <span class="at">lat =</span> lat <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="fu">length</span>(lat), <span class="dv">0</span>, <span class="at">sd =</span> <span class="fl">0.01</span>)</span>
+<span id="cb49-13"><a href="modelling-historical-climate-over-the-study-area.html#cb49-13" tabindex="-1"></a>)</span>
+<span id="cb49-14"><a href="modelling-historical-climate-over-the-study-area.html#cb49-14" tabindex="-1"></a></span>
+<span id="cb49-15"><a href="modelling-historical-climate-over-the-study-area.html#cb49-15" tabindex="-1"></a><span class="co"># set distance to coast raster in km</span></span>
+<span id="cb49-16"><a href="modelling-historical-climate-over-the-study-area.html#cb49-16" tabindex="-1"></a><span class="fu">values</span>(stack[[<span class="st">&quot;coast&quot;</span>]]) <span class="ot">&lt;-</span> <span class="fu">values</span>(stack[[<span class="st">&quot;coast&quot;</span>]]) <span class="sc">/</span> <span class="dv">1000</span></span></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="modelling-historical-climate-over-the-study-area.html#cb50-1" tabindex="-1"></a><span class="co"># Pivot the data to long format and remove the SD of temperature</span></span>
+<span id="cb50-2"><a href="modelling-historical-climate-over-the-study-area.html#cb50-2" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">pivot_longer</span>(</span>
+<span id="cb50-3"><a href="modelling-historical-climate-over-the-study-area.html#cb50-3" tabindex="-1"></a>  data,</span>
+<span id="cb50-4"><a href="modelling-historical-climate-over-the-study-area.html#cb50-4" tabindex="-1"></a>  <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">&quot;ppt&quot;</span>, <span class="st">&quot;t_mean&quot;</span>, <span class="st">&quot;t_sd&quot;</span>),</span>
+<span id="cb50-5"><a href="modelling-historical-climate-over-the-study-area.html#cb50-5" tabindex="-1"></a>  <span class="at">names_to =</span> <span class="st">&quot;climvar&quot;</span></span>
+<span id="cb50-6"><a href="modelling-historical-climate-over-the-study-area.html#cb50-6" tabindex="-1"></a>)</span>
+<span id="cb50-7"><a href="modelling-historical-climate-over-the-study-area.html#cb50-7" tabindex="-1"></a>data <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">select</span>(data, <span class="sc">!</span>month)</span>
+<span id="cb50-8"><a href="modelling-historical-climate-over-the-study-area.html#cb50-8" tabindex="-1"></a></span>
+<span id="cb50-9"><a href="modelling-historical-climate-over-the-study-area.html#cb50-9" tabindex="-1"></a><span class="co"># remove t_sd</span></span>
+<span id="cb50-10"><a href="modelling-historical-climate-over-the-study-area.html#cb50-10" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">filter</span>(</span>
+<span id="cb50-11"><a href="modelling-historical-climate-over-the-study-area.html#cb50-11" tabindex="-1"></a>  data, climvar <span class="sc">!=</span> <span class="st">&quot;t_sd&quot;</span></span>
+<span id="cb50-12"><a href="modelling-historical-climate-over-the-study-area.html#cb50-12" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="modelling-historical-climate-over-the-study-area.html#cb51-1" tabindex="-1"></a><span class="co"># Nest the data by climate variable, season, and 30-year bin</span></span>
+<span id="cb51-2"><a href="modelling-historical-climate-over-the-study-area.html#cb51-2" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">nest</span>(</span>
+<span id="cb51-3"><a href="modelling-historical-climate-over-the-study-area.html#cb51-3" tabindex="-1"></a>  data,</span>
+<span id="cb51-4"><a href="modelling-historical-climate-over-the-study-area.html#cb51-4" tabindex="-1"></a>  <span class="at">data =</span> <span class="sc">!</span><span class="fu">c</span>(climvar, season, year_bin)</span>
+<span id="cb51-5"><a href="modelling-historical-climate-over-the-study-area.html#cb51-5" tabindex="-1"></a>)</span></code></pre></div>
+<p>We specify the GAM formulas for temperature and precipitation, chosen in the previous section after examining the mean absolute error (MAE) of predictions for contemporary data (i.e., compared against remotely sensed data).</p>
+<p>Temperature is modelled as a smooth function of elevation with three knots.
+Precipitation is modelled as a smooth function of elevation with three knots, with linear terms for distance from the coast and latitude.</p>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="modelling-historical-climate-over-the-study-area.html#cb52-1" tabindex="-1"></a><span class="co"># model formula for temp</span></span>
+<span id="cb52-2"><a href="modelling-historical-climate-over-the-study-area.html#cb52-2" tabindex="-1"></a>form_temp <span class="ot">&lt;-</span> <span class="st">&quot;value ~ s(elev, k = 3)&quot;</span></span>
+<span id="cb52-3"><a href="modelling-historical-climate-over-the-study-area.html#cb52-3" tabindex="-1"></a></span>
+<span id="cb52-4"><a href="modelling-historical-climate-over-the-study-area.html#cb52-4" tabindex="-1"></a><span class="co"># model formula for ppt</span></span>
+<span id="cb52-5"><a href="modelling-historical-climate-over-the-study-area.html#cb52-5" tabindex="-1"></a>form_ppt <span class="ot">&lt;-</span> <span class="st">&quot;value ~ s(elev, k = 3) + coast + lat&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="modelling-historical-climate-over-the-study-area.html#cb53-1" tabindex="-1"></a><span class="co"># Assign formula as a character column in the nested data.frame</span></span>
+<span id="cb53-2"><a href="modelling-historical-climate-over-the-study-area.html#cb53-2" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">mutate</span>(</span>
+<span id="cb53-3"><a href="modelling-historical-climate-over-the-study-area.html#cb53-3" tabindex="-1"></a>  data,</span>
+<span id="cb53-4"><a href="modelling-historical-climate-over-the-study-area.html#cb53-4" tabindex="-1"></a>  <span class="at">form =</span> <span class="fu">if_else</span>(</span>
+<span id="cb53-5"><a href="modelling-historical-climate-over-the-study-area.html#cb53-5" tabindex="-1"></a>    climvar <span class="sc">==</span> <span class="st">&quot;t_mean&quot;</span>, form_temp, form_ppt</span>
+<span id="cb53-6"><a href="modelling-historical-climate-over-the-study-area.html#cb53-6" tabindex="-1"></a>  )</span>
+<span id="cb53-7"><a href="modelling-historical-climate-over-the-study-area.html#cb53-7" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="modelling-historical-climate-over-the-study-area.html#cb54-1" tabindex="-1"></a><span class="co"># Fit models for each climate variable, season, and year bin</span></span>
+<span id="cb54-2"><a href="modelling-historical-climate-over-the-study-area.html#cb54-2" tabindex="-1"></a><span class="co"># Note that the formulae are converted to the `&lt;formula&gt;` class</span></span>
+<span id="cb54-3"><a href="modelling-historical-climate-over-the-study-area.html#cb54-3" tabindex="-1"></a><span class="co"># using `as.formula()`</span></span>
+<span id="cb54-4"><a href="modelling-historical-climate-over-the-study-area.html#cb54-4" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">mutate</span>(</span>
+<span id="cb54-5"><a href="modelling-historical-climate-over-the-study-area.html#cb54-5" tabindex="-1"></a>  data,</span>
+<span id="cb54-6"><a href="modelling-historical-climate-over-the-study-area.html#cb54-6" tabindex="-1"></a>  <span class="at">mod =</span> <span class="fu">map2</span>(data, form, <span class="cf">function</span>(df, form) {</span>
+<span id="cb54-7"><a href="modelling-historical-climate-over-the-study-area.html#cb54-7" tabindex="-1"></a>    <span class="fu">gam</span>(</span>
+<span id="cb54-8"><a href="modelling-historical-climate-over-the-study-area.html#cb54-8" tabindex="-1"></a>      <span class="at">formula =</span> <span class="fu">as.formula</span>(form),</span>
+<span id="cb54-9"><a href="modelling-historical-climate-over-the-study-area.html#cb54-9" tabindex="-1"></a>      <span class="at">data =</span> df</span>
+<span id="cb54-10"><a href="modelling-historical-climate-over-the-study-area.html#cb54-10" tabindex="-1"></a>    )</span>
+<span id="cb54-11"><a href="modelling-historical-climate-over-the-study-area.html#cb54-11" tabindex="-1"></a>  })</span>
+<span id="cb54-12"><a href="modelling-historical-climate-over-the-study-area.html#cb54-12" tabindex="-1"></a>)</span>
+<span id="cb54-13"><a href="modelling-historical-climate-over-the-study-area.html#cb54-13" tabindex="-1"></a></span>
+<span id="cb54-14"><a href="modelling-historical-climate-over-the-study-area.html#cb54-14" tabindex="-1"></a><span class="co"># </span><span class="al">NOTE</span><span class="co">: if mgcv::gam() is excessively slow, consider mgcv::bam() which is</span></span>
+<span id="cb54-15"><a href="modelling-historical-climate-over-the-study-area.html#cb54-15" tabindex="-1"></a><span class="co"># said to be more suitable for large datasets</span></span></code></pre></div>
+<p>We save the model as an R data object.</p>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="modelling-historical-climate-over-the-study-area.html#cb55-1" tabindex="-1"></a><span class="fu">save</span>(data, <span class="at">file =</span> <span class="st">&quot;results/climate/model_reconstruction_climate.Rds&quot;</span>)</span></code></pre></div>
+</div>
+<div id="obtaining-model-predictions-over-the-study-area" class="section level2 hasAnchor" number="5.3">
+<h2><span class="header-section-number">5.3</span> Obtaining model predictions over the study area<a href="modelling-historical-climate-over-the-study-area.html#obtaining-model-predictions-over-the-study-area" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>We use the <code>predict()</code> method to get climate predictions over the study area, using the spatial raster data as inputs.</p>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="modelling-historical-climate-over-the-study-area.html#cb56-1" tabindex="-1"></a><span class="co"># ensure that NAs are removed from the stack object before running the model</span></span>
+<span id="cb56-2"><a href="modelling-historical-climate-over-the-study-area.html#cb56-2" tabindex="-1"></a><span class="co"># projections</span></span>
+<span id="cb56-3"><a href="modelling-historical-climate-over-the-study-area.html#cb56-3" tabindex="-1"></a></span>
+<span id="cb56-4"><a href="modelling-historical-climate-over-the-study-area.html#cb56-4" tabindex="-1"></a><span class="co"># this tells us that two raster layers within the stack object have NA values</span></span>
+<span id="cb56-5"><a href="modelling-historical-climate-over-the-study-area.html#cb56-5" tabindex="-1"></a>terra<span class="sc">::</span><span class="fu">global</span>(stack, <span class="at">fun =</span> <span class="st">&quot;isNA&quot;</span>)</span>
+<span id="cb56-6"><a href="modelling-historical-climate-over-the-study-area.html#cb56-6" tabindex="-1"></a></span>
+<span id="cb56-7"><a href="modelling-historical-climate-over-the-study-area.html#cb56-7" tabindex="-1"></a><span class="co"># Replace NAs with 0s for distance to coast</span></span>
+<span id="cb56-8"><a href="modelling-historical-climate-over-the-study-area.html#cb56-8" tabindex="-1"></a>stack<span class="sc">$</span>coast[<span class="fu">is.na</span>(stack<span class="sc">$</span>coast)] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb56-9"><a href="modelling-historical-climate-over-the-study-area.html#cb56-9" tabindex="-1"></a></span>
+<span id="cb56-10"><a href="modelling-historical-climate-over-the-study-area.html#cb56-10" tabindex="-1"></a><span class="co"># Replace elevations &lt; 0 with NA and then 0</span></span>
+<span id="cb56-11"><a href="modelling-historical-climate-over-the-study-area.html#cb56-11" tabindex="-1"></a>stack<span class="sc">$</span>elev[stack<span class="sc">$</span>elev <span class="sc">&lt;</span> <span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb56-12"><a href="modelling-historical-climate-over-the-study-area.html#cb56-12" tabindex="-1"></a>stack<span class="sc">$</span>elev[<span class="fu">is.na</span>(stack<span class="sc">$</span>elev)] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb56-13"><a href="modelling-historical-climate-over-the-study-area.html#cb56-13" tabindex="-1"></a>stack<span class="sc">$</span>elev <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(stack<span class="sc">$</span>elev)</span>
+<span id="cb56-14"><a href="modelling-historical-climate-over-the-study-area.html#cb56-14" tabindex="-1"></a></span>
+<span id="cb56-15"><a href="modelling-historical-climate-over-the-study-area.html#cb56-15" tabindex="-1"></a><span class="co"># Get model predictions</span></span>
+<span id="cb56-16"><a href="modelling-historical-climate-over-the-study-area.html#cb56-16" tabindex="-1"></a>model_pred <span class="ot">&lt;-</span> <span class="fu">map</span>(</span>
+<span id="cb56-17"><a href="modelling-historical-climate-over-the-study-area.html#cb56-17" tabindex="-1"></a>  data<span class="sc">$</span>mod, <span class="cf">function</span>(g) {</span>
+<span id="cb56-18"><a href="modelling-historical-climate-over-the-study-area.html#cb56-18" tabindex="-1"></a>    <span class="fu">predict</span>(stack, g, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>) <span class="co"># order matters here</span></span>
+<span id="cb56-19"><a href="modelling-historical-climate-over-the-study-area.html#cb56-19" tabindex="-1"></a>  }</span>
+<span id="cb56-20"><a href="modelling-historical-climate-over-the-study-area.html#cb56-20" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="modelling-historical-climate-over-the-study-area.html#cb57-1" tabindex="-1"></a><span class="co"># Assign predicted climate rasters as list column object</span></span>
+<span id="cb57-2"><a href="modelling-historical-climate-over-the-study-area.html#cb57-2" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">mutate</span>(</span>
+<span id="cb57-3"><a href="modelling-historical-climate-over-the-study-area.html#cb57-3" tabindex="-1"></a>  data,</span>
+<span id="cb57-4"><a href="modelling-historical-climate-over-the-study-area.html#cb57-4" tabindex="-1"></a>  <span class="at">pred =</span> model_pred</span>
+<span id="cb57-5"><a href="modelling-historical-climate-over-the-study-area.html#cb57-5" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="modelling-historical-climate-over-the-study-area.html#cb58-1" tabindex="-1"></a><span class="co"># Ungroup the data and select relevant columns</span></span>
+<span id="cb58-2"><a href="modelling-historical-climate-over-the-study-area.html#cb58-2" tabindex="-1"></a>data_pred <span class="ot">&lt;-</span> <span class="fu">ungroup</span>(data) <span class="sc">%&gt;%</span></span>
+<span id="cb58-3"><a href="modelling-historical-climate-over-the-study-area.html#cb58-3" tabindex="-1"></a>  <span class="fu">select</span>(season, year_bin, climvar, pred)</span></code></pre></div>
+</div>
+<div id="scaling-predicted-historical-climate" class="section level2 hasAnchor" number="5.4">
+<h2><span class="header-section-number">5.4</span> Scaling predicted historical climate<a href="modelling-historical-climate-over-the-study-area.html#scaling-predicted-historical-climate" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Here we aim to scale the predicted historical climate using the scaling layers developed in the previous section.
+The idea is that the predicted historical climate differs from the true historical climate over the study area in the same way (i.e., with the same ratio) that the contemporary climate prediction differs from the canonical (remotely sensed) climate variables.</p>
+<p>We read in the scaling layers and apply them to the data (taking the cell-wise product of the two).</p>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="modelling-historical-climate-over-the-study-area.html#cb59-1" tabindex="-1"></a><span class="co"># Read in scaling layers</span></span>
+<span id="cb59-2"><a href="modelling-historical-climate-over-the-study-area.html#cb59-2" tabindex="-1"></a>temp_correction <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(</span>
+<span id="cb59-3"><a href="modelling-historical-climate-over-the-study-area.html#cb59-3" tabindex="-1"></a>  <span class="st">&quot;results/climate/raster_correction_layers_temp.tif&quot;</span></span>
+<span id="cb59-4"><a href="modelling-historical-climate-over-the-study-area.html#cb59-4" tabindex="-1"></a>)</span>
+<span id="cb59-5"><a href="modelling-historical-climate-over-the-study-area.html#cb59-5" tabindex="-1"></a></span>
+<span id="cb59-6"><a href="modelling-historical-climate-over-the-study-area.html#cb59-6" tabindex="-1"></a>ppt_correction <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(</span>
+<span id="cb59-7"><a href="modelling-historical-climate-over-the-study-area.html#cb59-7" tabindex="-1"></a>  <span class="st">&quot;results/climate/raster_correction_layers_ppt.tif&quot;</span></span>
+<span id="cb59-8"><a href="modelling-historical-climate-over-the-study-area.html#cb59-8" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="modelling-historical-climate-over-the-study-area.html#cb60-1" tabindex="-1"></a><span class="co"># Match scaling layers to the appropriate prediction layer</span></span>
+<span id="cb60-2"><a href="modelling-historical-climate-over-the-study-area.html#cb60-2" tabindex="-1"></a>data_pred <span class="ot">&lt;-</span> <span class="fu">mutate</span>(</span>
+<span id="cb60-3"><a href="modelling-historical-climate-over-the-study-area.html#cb60-3" tabindex="-1"></a>  data_pred,</span>
+<span id="cb60-4"><a href="modelling-historical-climate-over-the-study-area.html#cb60-4" tabindex="-1"></a>  <span class="at">correction =</span> <span class="fu">map2</span>(</span>
+<span id="cb60-5"><a href="modelling-historical-climate-over-the-study-area.html#cb60-5" tabindex="-1"></a>    season, climvar, <span class="cf">function</span>(season, climvar) {</span>
+<span id="cb60-6"><a href="modelling-historical-climate-over-the-study-area.html#cb60-6" tabindex="-1"></a>      <span class="cf">if</span> (season <span class="sc">==</span> <span class="st">&quot;dry&quot;</span> <span class="sc">&amp;</span> climvar <span class="sc">==</span> <span class="st">&quot;ppt&quot;</span>) {</span>
+<span id="cb60-7"><a href="modelling-historical-climate-over-the-study-area.html#cb60-7" tabindex="-1"></a>        ppt_correction[[<span class="st">&quot;correction_layer_ppt_dry&quot;</span>]]</span>
+<span id="cb60-8"><a href="modelling-historical-climate-over-the-study-area.html#cb60-8" tabindex="-1"></a>      } <span class="cf">else</span> <span class="cf">if</span> (season <span class="sc">==</span> <span class="st">&quot;dry&quot;</span> <span class="sc">&amp;</span> climvar <span class="sc">==</span> <span class="st">&quot;temp&quot;</span>) {</span>
+<span id="cb60-9"><a href="modelling-historical-climate-over-the-study-area.html#cb60-9" tabindex="-1"></a>        temp_correction[[<span class="st">&quot;correction_layer_temp_dry&quot;</span>]]</span>
+<span id="cb60-10"><a href="modelling-historical-climate-over-the-study-area.html#cb60-10" tabindex="-1"></a>      } <span class="cf">else</span> <span class="cf">if</span> (season <span class="sc">==</span> <span class="st">&quot;wet&quot;</span> <span class="sc">&amp;</span> climvar <span class="sc">==</span> <span class="st">&quot;ppt&quot;</span>) {</span>
+<span id="cb60-11"><a href="modelling-historical-climate-over-the-study-area.html#cb60-11" tabindex="-1"></a>        ppt_correction[[<span class="st">&quot;correction_layer_ppt_wet&quot;</span>]]</span>
+<span id="cb60-12"><a href="modelling-historical-climate-over-the-study-area.html#cb60-12" tabindex="-1"></a>      } <span class="cf">else</span> {</span>
+<span id="cb60-13"><a href="modelling-historical-climate-over-the-study-area.html#cb60-13" tabindex="-1"></a>        temp_correction[[<span class="st">&quot;correction_layer_temp_wet&quot;</span>]]</span>
+<span id="cb60-14"><a href="modelling-historical-climate-over-the-study-area.html#cb60-14" tabindex="-1"></a>      }</span>
+<span id="cb60-15"><a href="modelling-historical-climate-over-the-study-area.html#cb60-15" tabindex="-1"></a>    }</span>
+<span id="cb60-16"><a href="modelling-historical-climate-over-the-study-area.html#cb60-16" tabindex="-1"></a>  )</span>
+<span id="cb60-17"><a href="modelling-historical-climate-over-the-study-area.html#cb60-17" tabindex="-1"></a>)</span>
+<span id="cb60-18"><a href="modelling-historical-climate-over-the-study-area.html#cb60-18" tabindex="-1"></a></span>
+<span id="cb60-19"><a href="modelling-historical-climate-over-the-study-area.html#cb60-19" tabindex="-1"></a><span class="co"># Scale predicted historical climate by cell-wise product of</span></span>
+<span id="cb60-20"><a href="modelling-historical-climate-over-the-study-area.html#cb60-20" tabindex="-1"></a><span class="co"># prediction and scaling layer</span></span>
+<span id="cb60-21"><a href="modelling-historical-climate-over-the-study-area.html#cb60-21" tabindex="-1"></a>data_pred <span class="ot">&lt;-</span> <span class="fu">mutate</span>(</span>
+<span id="cb60-22"><a href="modelling-historical-climate-over-the-study-area.html#cb60-22" tabindex="-1"></a>  data_pred,</span>
+<span id="cb60-23"><a href="modelling-historical-climate-over-the-study-area.html#cb60-23" tabindex="-1"></a>  <span class="at">corrected =</span> <span class="fu">map2</span>(</span>
+<span id="cb60-24"><a href="modelling-historical-climate-over-the-study-area.html#cb60-24" tabindex="-1"></a>    correction, pred, <span class="cf">function</span>(ch, pr) {</span>
+<span id="cb60-25"><a href="modelling-historical-climate-over-the-study-area.html#cb60-25" tabindex="-1"></a>      pr <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">resample</span>(pr, ch) <span class="co"># resampling required</span></span>
+<span id="cb60-26"><a href="modelling-historical-climate-over-the-study-area.html#cb60-26" tabindex="-1"></a>      ch <span class="sc">*</span> pr</span>
+<span id="cb60-27"><a href="modelling-historical-climate-over-the-study-area.html#cb60-27" tabindex="-1"></a>    }</span>
+<span id="cb60-28"><a href="modelling-historical-climate-over-the-study-area.html#cb60-28" tabindex="-1"></a>  )</span>
+<span id="cb60-29"><a href="modelling-historical-climate-over-the-study-area.html#cb60-29" tabindex="-1"></a>)</span>
+<span id="cb60-30"><a href="modelling-historical-climate-over-the-study-area.html#cb60-30" tabindex="-1"></a></span>
+<span id="cb60-31"><a href="modelling-historical-climate-over-the-study-area.html#cb60-31" tabindex="-1"></a><span class="co"># Assign names to corrected rasters</span></span>
+<span id="cb60-32"><a href="modelling-historical-climate-over-the-study-area.html#cb60-32" tabindex="-1"></a>data_pred <span class="ot">&lt;-</span> <span class="fu">mutate</span>(</span>
+<span id="cb60-33"><a href="modelling-historical-climate-over-the-study-area.html#cb60-33" tabindex="-1"></a>  data_pred,</span>
+<span id="cb60-34"><a href="modelling-historical-climate-over-the-study-area.html#cb60-34" tabindex="-1"></a>  <span class="at">names =</span> <span class="fu">glue</span>(<span class="st">&quot;{climvar}_{year_bin}_{season}&quot;</span>)</span>
+<span id="cb60-35"><a href="modelling-historical-climate-over-the-study-area.html#cb60-35" tabindex="-1"></a>)</span>
+<span id="cb60-36"><a href="modelling-historical-climate-over-the-study-area.html#cb60-36" tabindex="-1"></a></span>
+<span id="cb60-37"><a href="modelling-historical-climate-over-the-study-area.html#cb60-37" tabindex="-1"></a><span class="fu">names</span>(data_pred<span class="sc">$</span>corrected) <span class="ot">&lt;-</span> data_pred<span class="sc">$</span>names</span></code></pre></div>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="modelling-historical-climate-over-the-study-area.html#cb61-1" tabindex="-1"></a><span class="co"># Collect the predictions for each season and climate variable</span></span>
+<span id="cb61-2"><a href="modelling-historical-climate-over-the-study-area.html#cb61-2" tabindex="-1"></a><span class="co"># into one raster stack each</span></span>
+<span id="cb61-3"><a href="modelling-historical-climate-over-the-study-area.html#cb61-3" tabindex="-1"></a><span class="co"># Each stack has multiple layers, each representing one 30-year bin</span></span>
+<span id="cb61-4"><a href="modelling-historical-climate-over-the-study-area.html#cb61-4" tabindex="-1"></a>data_reconstructed <span class="ot">&lt;-</span> data_pred <span class="sc">%&gt;%</span></span>
+<span id="cb61-5"><a href="modelling-historical-climate-over-the-study-area.html#cb61-5" tabindex="-1"></a>  <span class="fu">group_by</span>(</span>
+<span id="cb61-6"><a href="modelling-historical-climate-over-the-study-area.html#cb61-6" tabindex="-1"></a>    season, climvar</span>
+<span id="cb61-7"><a href="modelling-historical-climate-over-the-study-area.html#cb61-7" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb61-8"><a href="modelling-historical-climate-over-the-study-area.html#cb61-8" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb61-9"><a href="modelling-historical-climate-over-the-study-area.html#cb61-9" tabindex="-1"></a>    <span class="at">corrected =</span> <span class="fu">list</span>(<span class="fu">Reduce</span>(corrected, <span class="at">f =</span> c))</span>
+<span id="cb61-10"><a href="modelling-historical-climate-over-the-study-area.html#cb61-10" tabindex="-1"></a>  )</span>
+<span id="cb61-11"><a href="modelling-historical-climate-over-the-study-area.html#cb61-11" tabindex="-1"></a></span>
+<span id="cb61-12"><a href="modelling-historical-climate-over-the-study-area.html#cb61-12" tabindex="-1"></a><span class="co"># Save each raster stack as a TIF file</span></span>
+<span id="cb61-13"><a href="modelling-historical-climate-over-the-study-area.html#cb61-13" tabindex="-1"></a><span class="fu">pwalk</span>(</span>
+<span id="cb61-14"><a href="modelling-historical-climate-over-the-study-area.html#cb61-14" tabindex="-1"></a>  data_reconstructed,</span>
+<span id="cb61-15"><a href="modelling-historical-climate-over-the-study-area.html#cb61-15" tabindex="-1"></a>  <span class="cf">function</span>(season, climvar, corrected) {</span>
+<span id="cb61-16"><a href="modelling-historical-climate-over-the-study-area.html#cb61-16" tabindex="-1"></a>    <span class="fu">names</span>(corrected) <span class="ot">&lt;-</span> <span class="fu">glue</span>(<span class="st">&quot;{climvar}_{season}_{seq(1870, 2018, 10)}&quot;</span>)</span>
+<span id="cb61-17"><a href="modelling-historical-climate-over-the-study-area.html#cb61-17" tabindex="-1"></a></span>
+<span id="cb61-18"><a href="modelling-historical-climate-over-the-study-area.html#cb61-18" tabindex="-1"></a>    terra<span class="sc">::</span><span class="fu">writeRaster</span>(</span>
+<span id="cb61-19"><a href="modelling-historical-climate-over-the-study-area.html#cb61-19" tabindex="-1"></a>      corrected,</span>
+<span id="cb61-20"><a href="modelling-historical-climate-over-the-study-area.html#cb61-20" tabindex="-1"></a>      <span class="fu">glue</span>(<span class="st">&quot;results/climate/raster_reconstructed_{climvar}_{season}.tif&quot;</span>)</span>
+<span id="cb61-21"><a href="modelling-historical-climate-over-the-study-area.html#cb61-21" tabindex="-1"></a>    )</span>
+<span id="cb61-22"><a href="modelling-historical-climate-over-the-study-area.html#cb61-22" tabindex="-1"></a>  }</span>
+<span id="cb61-23"><a href="modelling-historical-climate-over-the-study-area.html#cb61-23" tabindex="-1"></a>)</span></code></pre></div>
+
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-
-
+<a href="building-a-correction-layer-for-climate-predictions.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="analyzing-temperature-and-precipitation-change-over-time.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -340,7 +533,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/vjjan91/nilgiris-resurvey-project/edit/master/%s",
+"link": "https://github.com/vjjan91/nilgiris-resurvey-project/edit/master/04_climate-reconstruction.Rmd",
 "text": "Edit"
 },
 "history": {

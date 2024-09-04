@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Section 2 Preparing historical climate data and geographical covariates | Colonial-era landscape changes has led to grassland bird species declines over the last century</title>
+  <meta name="description" content="Section 2 Preparing historical climate data and geographical covariates | Colonial-era landscape changes has led to grassland bird species declines over the last century" />
+  <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Section 2 Preparing historical climate data and geographical covariates | Colonial-era landscape changes has led to grassland bird species declines over the last century" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta name="github-repo" content="vjjan91/nilgiris-resurvey-project" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Section 2 Preparing historical climate data and geographical covariates | Colonial-era landscape changes has led to grassland bird species declines over the last century" />
+  
+  
+  
+
+<meta name="author" content="Vijay Ramesh" />
+<meta name="author" content="VA Akshay" />
+<meta name="author" content="Pratik Rajan Gupte" />
+<meta name="author" content="Amrutha Rajan" />
+<meta name="author" content="Chandrasekar Das" />
+<meta name="author" content="Priyanka Hari Haran" />
+<meta name="author" content="Ian Lockwood" />
+<meta name="author" content="Ashwini Mohan" />
+<meta name="author" content="Morgan W Tingley" />
+<meta name="author" content="VV Robin" />
+<meta name="author" content="Ruth S DeFries" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="index.html"/>
+<link rel="next" href="building-and-validating-semi-spatial-gams-for-climate.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#attribution"><i class="fa fa-check"></i><b>1.1</b> Attribution</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#data-access"><i class="fa fa-check"></i><b>1.2</b> Data access</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#data-processing"><i class="fa fa-check"></i><b>1.3</b> Data processing</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="preparing-historical-climate-data-and-geographical-covariates.html"><a href="preparing-historical-climate-data-and-geographical-covariates.html"><i class="fa fa-check"></i><b>2</b> Preparing historical climate data and geographical covariates</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="preparing-historical-climate-data-and-geographical-covariates.html"><a href="preparing-historical-climate-data-and-geographical-covariates.html#load-libraries"><i class="fa fa-check"></i><b>2.1</b> Load libraries</a></li>
+<li class="chapter" data-level="2.2" data-path="preparing-historical-climate-data-and-geographical-covariates.html"><a href="preparing-historical-climate-data-and-geographical-covariates.html#reading-raw-historical-climate-data"><i class="fa fa-check"></i><b>2.2</b> Reading raw historical climate data</a></li>
+<li class="chapter" data-level="2.3" data-path="preparing-historical-climate-data-and-geographical-covariates.html"><a href="preparing-historical-climate-data-and-geographical-covariates.html#summarising-historical-climate-data"><i class="fa fa-check"></i><b>2.3</b> Summarising historical climate data</a></li>
+<li class="chapter" data-level="2.4" data-path="preparing-historical-climate-data-and-geographical-covariates.html"><a href="preparing-historical-climate-data-and-geographical-covariates.html#prepare-study-area-spatial-extent"><i class="fa fa-check"></i><b>2.4</b> Prepare study area spatial extent</a></li>
+<li class="chapter" data-level="2.5" data-path="preparing-historical-climate-data-and-geographical-covariates.html"><a href="preparing-historical-climate-data-and-geographical-covariates.html#prepare-spatial-data-for-the-study-area"><i class="fa fa-check"></i><b>2.5</b> Prepare spatial data for the study area</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="preparing-historical-climate-data-and-geographical-covariates.html"><a href="preparing-historical-climate-data-and-geographical-covariates.html#elevation-data"><i class="fa fa-check"></i><b>2.5.1</b> Elevation data</a></li>
+<li class="chapter" data-level="2.5.2" data-path="preparing-historical-climate-data-and-geographical-covariates.html"><a href="preparing-historical-climate-data-and-geographical-covariates.html#distance-to-coast-data"><i class="fa fa-check"></i><b>2.5.2</b> Distance to coast data</a></li>
+<li class="chapter" data-level="2.5.3" data-path="preparing-historical-climate-data-and-geographical-covariates.html"><a href="preparing-historical-climate-data-and-geographical-covariates.html#latitude-data"><i class="fa fa-check"></i><b>2.5.3</b> Latitude data</a></li>
+</ul></li>
+<li class="chapter" data-level="2.6" data-path="preparing-historical-climate-data-and-geographical-covariates.html"><a href="preparing-historical-climate-data-and-geographical-covariates.html#link-predictors-to-climate-data"><i class="fa fa-check"></i><b>2.6</b> Link predictors to climate data</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html"><i class="fa fa-check"></i><b>3</b> Building and validating semi-spatial GAMs for climate</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#load-libraries-1"><i class="fa fa-check"></i><b>3.1</b> Load libraries</a></li>
+<li class="chapter" data-level="3.2" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#prepare-linked-climate-spatial-data-and-spatial-data-for-modelling"><i class="fa fa-check"></i><b>3.2</b> Prepare linked climate-spatial data and spatial data for modelling</a></li>
+<li class="chapter" data-level="3.3" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#fit-candidate-spatial-climate-models"><i class="fa fa-check"></i><b>3.3</b> Fit candidate spatial-climate models</a></li>
+<li class="chapter" data-level="3.4" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#model-predictions-for-modern-climate"><i class="fa fa-check"></i><b>3.4</b> Model predictions for modern climate</a>
+<ul>
+<li class="chapter" data-level="3.4.1" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#average-predictions-over-1970-to-2010"><i class="fa fa-check"></i><b>3.4.1</b> Average predictions over 1970 to 2010</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#get-bioclim-data"><i class="fa fa-check"></i><b>3.5</b> Get BIOCLIM data</a>
+<ul>
+<li class="chapter" data-level="3.5.1" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#temperature-data"><i class="fa fa-check"></i><b>3.5.1</b> Temperature data</a></li>
+<li class="chapter" data-level="3.5.2" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#precipitation-data"><i class="fa fa-check"></i><b>3.5.2</b> Precipitation data</a></li>
+</ul></li>
+<li class="chapter" data-level="3.6" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#compare-spatial-climate-model-predictions-against-bioclim-data"><i class="fa fa-check"></i><b>3.6</b> Compare spatial-climate model predictions against BIOCLIM data</a>
+<ul>
+<li class="chapter" data-level="3.6.1" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#sample-locations"><i class="fa fa-check"></i><b>3.6.1</b> Sample locations</a></li>
+<li class="chapter" data-level="3.6.2" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#link-bioclim-data-and-model-predictions"><i class="fa fa-check"></i><b>3.6.2</b> Link BIOCLIM data and model predictions</a></li>
+</ul></li>
+<li class="chapter" data-level="3.7" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#error-between-model-prediction-and-chelsa-data"><i class="fa fa-check"></i><b>3.7</b> Error between model prediction and CHELSA data</a></li>
+<li class="chapter" data-level="3.8" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#gam-predictions-at-survey-sites"><i class="fa fa-check"></i><b>3.8</b> GAM predictions at survey sites</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="building-a-correction-layer-for-climate-predictions.html"><a href="building-a-correction-layer-for-climate-predictions.html"><i class="fa fa-check"></i><b>4</b> Building a correction layer for climate predictions</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="building-a-correction-layer-for-climate-predictions.html"><a href="building-a-correction-layer-for-climate-predictions.html#setup"><i class="fa fa-check"></i><b>4.1</b> Setup</a></li>
+<li class="chapter" data-level="4.2" data-path="building-a-correction-layer-for-climate-predictions.html"><a href="building-a-correction-layer-for-climate-predictions.html#plot-model-error"><i class="fa fa-check"></i><b>4.2</b> Plot model error</a></li>
+<li class="chapter" data-level="4.3" data-path="building-a-correction-layer-for-climate-predictions.html"><a href="building-a-correction-layer-for-climate-predictions.html#compare-climate-predictions-at-survey-sites"><i class="fa fa-check"></i><b>4.3</b> Compare climate predictions at survey sites</a></li>
+<li class="chapter" data-level="4.4" data-path="building-a-correction-layer-for-climate-predictions.html"><a href="building-a-correction-layer-for-climate-predictions.html#visualise-model-predictions-as-proportion-of-remote-sensing-data"><i class="fa fa-check"></i><b>4.4</b> Visualise model predictions as proportion of remote sensing data</a>
+<ul>
+<li class="chapter" data-level="4.4.1" data-path="building-a-correction-layer-for-climate-predictions.html"><a href="building-a-correction-layer-for-climate-predictions.html#temperature-scaling-layer"><i class="fa fa-check"></i><b>4.4.1</b> Temperature scaling layer</a></li>
+</ul></li>
+<li class="chapter" data-level="4.5" data-path="building-a-correction-layer-for-climate-predictions.html"><a href="building-a-correction-layer-for-climate-predictions.html#precipitation-scaling-layer"><i class="fa fa-check"></i><b>4.5</b> Precipitation scaling layer</a></li>
+<li class="chapter" data-level="4.6" data-path="building-a-correction-layer-for-climate-predictions.html"><a href="building-a-correction-layer-for-climate-predictions.html#save-climate-scaling-layers"><i class="fa fa-check"></i><b>4.6</b> Save climate scaling layers</a></li>
+<li class="chapter" data-level="4.7" data-path="building-a-correction-layer-for-climate-predictions.html"><a href="building-a-correction-layer-for-climate-predictions.html#seasonal-mean-temperature-correction-layer"><i class="fa fa-check"></i><b>4.7</b> Seasonal mean temperature correction layer</a></li>
+<li class="chapter" data-level="4.8" data-path="building-a-correction-layer-for-climate-predictions.html"><a href="building-a-correction-layer-for-climate-predictions.html#seasonal-total-rainfall-correction-layer"><i class="fa fa-check"></i><b>4.8</b> Seasonal total rainfall correction layer</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="modelling-historical-climate-over-the-study-area.html"><a href="modelling-historical-climate-over-the-study-area.html"><i class="fa fa-check"></i><b>5</b> Modelling historical climate over the study area</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="modelling-historical-climate-over-the-study-area.html"><a href="modelling-historical-climate-over-the-study-area.html#setup-with-libraries-and-data"><i class="fa fa-check"></i><b>5.1</b> Setup with libraries and data</a></li>
+<li class="chapter" data-level="5.2" data-path="modelling-historical-climate-over-the-study-area.html"><a href="modelling-historical-climate-over-the-study-area.html#model-climate-as-a-function-of-geographic-variables"><i class="fa fa-check"></i><b>5.2</b> Model climate as a function of geographic variables</a></li>
+<li class="chapter" data-level="5.3" data-path="modelling-historical-climate-over-the-study-area.html"><a href="modelling-historical-climate-over-the-study-area.html#obtaining-model-predictions-over-the-study-area"><i class="fa fa-check"></i><b>5.3</b> Obtaining model predictions over the study area</a></li>
+<li class="chapter" data-level="5.4" data-path="modelling-historical-climate-over-the-study-area.html"><a href="modelling-historical-climate-over-the-study-area.html#scaling-predicted-historical-climate"><i class="fa fa-check"></i><b>5.4</b> Scaling predicted historical climate</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html"><i class="fa fa-check"></i><b>6</b> Analyzing temperature and precipitation change over time</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html#load-necessary-libraries"><i class="fa fa-check"></i><b>6.1</b> Load necessary libraries</a></li>
+<li class="chapter" data-level="6.2" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html#plot-change-in-climate-as-percentages."><i class="fa fa-check"></i><b>6.2</b> Plot change in climate as percentages.</a></li>
+<li class="chapter" data-level="6.3" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html#load-list-of-resurvey-locationshistorical-sites-of-occurrence"><i class="fa fa-check"></i><b>6.3</b> Load list of resurvey locations/historical sites of occurrence</a></li>
+<li class="chapter" data-level="6.4" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html#load-the-climate-rasters"><i class="fa fa-check"></i><b>6.4</b> Load the climate rasters</a></li>
+<li class="chapter" data-level="6.5" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html#combine-site-climate-and-terrain-data"><i class="fa fa-check"></i><b>6.5</b> Combine site climate and terrain data</a></li>
+<li class="chapter" data-level="6.6" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html#plot-all-reconstructed-climate-over-time-colouring-by-elevation-and-grouping-by-site.-each-line-represents-one-modern-site-code."><i class="fa fa-check"></i><b>6.6</b> Plot all reconstructed climate over time colouring by elevation and grouping by site. Each line represents one modern site code.</a></li>
+<li class="chapter" data-level="6.7" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html#test-for-climate-change-over-time"><i class="fa fa-check"></i><b>6.7</b> Test for climate change over time</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html"><i class="fa fa-check"></i><b>7</b> Land cover classification and change detection</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#load-necessary-libraries-1"><i class="fa fa-check"></i><b>7.1</b> Load necessary libraries</a></li>
+<li class="chapter" data-level="7.2" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#processing-digitized-shapefiles-from-the-1848-map"><i class="fa fa-check"></i><b>7.2</b> Processing digitized shapefiles from the 1848 map</a></li>
+<li class="chapter" data-level="7.3" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#rasterization-of-the-1848-shapefiles"><i class="fa fa-check"></i><b>7.3</b> Rasterization of the 1848 shapefiles</a></li>
+<li class="chapter" data-level="7.4" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#load-the-2018-satellite-image"><i class="fa fa-check"></i><b>7.4</b> Load the 2018 satellite image</a></li>
+<li class="chapter" data-level="7.5" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#subsume-plantations-into-one-category-for-2018"><i class="fa fa-check"></i><b>7.5</b> Subsume plantations into one category for 2018</a></li>
+<li class="chapter" data-level="7.6" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#write-the-shapefiles-and-rasters-to-file"><i class="fa fa-check"></i><b>7.6</b> Write the shapefiles and rasters to file</a></li>
+<li class="chapter" data-level="7.7" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#area-wise-comparisons-of-land-cover-change"><i class="fa fa-check"></i><b>7.7</b> Area-wise comparisons of land cover change</a></li>
+<li class="chapter" data-level="7.8" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#barplots-of-land-cover-change"><i class="fa fa-check"></i><b>7.8</b> Barplots of land cover change</a></li>
+<li class="chapter" data-level="7.9" data-path="land-cover-classification-and-change-detection.html"><a href="land-cover-classification-and-change-detection.html#validating-the-2018-sentinel-2-classification"><i class="fa fa-check"></i><b>7.9</b> Validating the 2018 Sentinel-2 classification</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html"><i class="fa fa-check"></i><b>8</b> Grassland contractions &amp; forest expansions</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#load-necessary-libraries-2"><i class="fa fa-check"></i><b>8.1</b> Load necessary libraries</a></li>
+<li class="chapter" data-level="8.2" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#load-processed-land-cover-rasters"><i class="fa fa-check"></i><b>8.2</b> Load processed land cover rasters</a></li>
+<li class="chapter" data-level="8.3" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#visualize-forests-across-the-two-time-periods"><i class="fa fa-check"></i><b>8.3</b> Visualize forests across the two time periods</a></li>
+<li class="chapter" data-level="8.4" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#visualize-grassland-area-across-the-two-time-periods"><i class="fa fa-check"></i><b>8.4</b> Visualize grassland area across the two time periods</a></li>
+<li class="chapter" data-level="8.5" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#comparing-if-forests-have-increased-in-locations-where-grasslands-were-formerly-found"><i class="fa fa-check"></i><b>8.5</b> Comparing if forests have increased in locations where grasslands were formerly found?</a></li>
+<li class="chapter" data-level="8.6" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#have-forests-expanded-across-elevations"><i class="fa fa-check"></i><b>8.6</b> Have forests expanded across elevations?</a></li>
+<li class="chapter" data-level="8.7" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#how-do-grassland-patches-vary-by-elevation-across-time-periods"><i class="fa fa-check"></i><b>8.7</b> How do grassland patches vary by elevation across time periods?</a></li>
+<li class="chapter" data-level="8.8" data-path="grassland-contractions-forest-expansions.html"><a href="grassland-contractions-forest-expansions.html#comparing-if-plantations-have-increased-in-locations-where-grasslands-were-formerly-found"><i class="fa fa-check"></i><b>8.8</b> Comparing if plantations have increased in locations where grasslands were formerly found?</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html"><i class="fa fa-check"></i><b>9</b> Visualizing time series of change</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#load-necessary-libraries-3"><i class="fa fa-check"></i><b>9.1</b> Load necessary libraries</a></li>
+<li class="chapter" data-level="9.2" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#load-processed-land-cover-rasters-1"><i class="fa fa-check"></i><b>9.2</b> Load processed land cover rasters</a></li>
+<li class="chapter" data-level="9.3" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#loading-data-from-the-1910-map"><i class="fa fa-check"></i><b>9.3</b> Loading data from the 1910 map</a></li>
+<li class="chapter" data-level="9.4" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#rasterizing-of-the-1910-data"><i class="fa fa-check"></i><b>9.4</b> Rasterizing of the 1910 data</a></li>
+<li class="chapter" data-level="9.5" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#loading-the-1973-and-1995-data"><i class="fa fa-check"></i><b>9.5</b> Loading the 1973 and 1995 data</a></li>
+<li class="chapter" data-level="9.6" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#rasterization-of-the-1973-and-1995-data"><i class="fa fa-check"></i><b>9.6</b> Rasterization of the 1973 and 1995 data</a></li>
+<li class="chapter" data-level="9.7" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#visualization-of-landscape-change-over-time"><i class="fa fa-check"></i><b>9.7</b> Visualization of landscape change over time</a></li>
+<li class="chapter" data-level="9.8" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#subsume-plantations-into-one-category-for-1973-1995-and-2018"><i class="fa fa-check"></i><b>9.8</b> Subsume plantations into one category for 1973, 1995, and 2018</a></li>
+<li class="chapter" data-level="9.9" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#creating-smaller-regions-of-interest-for-comparison"><i class="fa fa-check"></i><b>9.9</b> Creating smaller regions of interest for comparison</a></li>
+<li class="chapter" data-level="9.10" data-path="visualizing-time-series-of-change.html"><a href="visualizing-time-series-of-change.html#comparisons-only-above-1400-meters-in-elevation"><i class="fa fa-check"></i><b>9.10</b> Comparisons only above 1400 meters in elevation</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="exploratory-analysis-of-occurrence-data.html"><a href="exploratory-analysis-of-occurrence-data.html"><i class="fa fa-check"></i><b>10</b> Exploratory analysis of occurrence data</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="exploratory-analysis-of-occurrence-data.html"><a href="exploratory-analysis-of-occurrence-data.html#load-necessary-libraries-4"><i class="fa fa-check"></i><b>10.1</b> Load necessary libraries</a></li>
+<li class="chapter" data-level="10.2" data-path="exploratory-analysis-of-occurrence-data.html"><a href="exploratory-analysis-of-occurrence-data.html#load-the-historical-occurrence-data-and-explore-patterns"><i class="fa fa-check"></i><b>10.2</b> Load the historical occurrence data and explore patterns</a></li>
+<li class="chapter" data-level="10.3" data-path="exploratory-analysis-of-occurrence-data.html"><a href="exploratory-analysis-of-occurrence-data.html#examining-historical-data-by-locality"><i class="fa fa-check"></i><b>10.3</b> Examining historical data by locality</a></li>
+<li class="chapter" data-level="10.4" data-path="exploratory-analysis-of-occurrence-data.html"><a href="exploratory-analysis-of-occurrence-data.html#visualizations-of-historical-data"><i class="fa fa-check"></i><b>10.4</b> Visualizations of historical data</a></li>
+<li class="chapter" data-level="10.5" data-path="exploratory-analysis-of-occurrence-data.html"><a href="exploratory-analysis-of-occurrence-data.html#examining-species-specific-counts-by-locality"><i class="fa fa-check"></i><b>10.5</b> Examining species specific counts by locality</a></li>
+<li class="chapter" data-level="10.6" data-path="exploratory-analysis-of-occurrence-data.html"><a href="exploratory-analysis-of-occurrence-data.html#load-modern-occurrence-data-and-explore-patterns"><i class="fa fa-check"></i><b>10.6</b> Load modern occurrence data and explore patterns</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html"><i class="fa fa-check"></i><b>11</b> Species relative abundances over time</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#load-necessary-libraries-5"><i class="fa fa-check"></i><b>11.1</b> Load necessary libraries</a></li>
+<li class="chapter" data-level="11.2" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#load-list-of-resurvey-locations"><i class="fa fa-check"></i><b>11.2</b> Load list of resurvey locations</a></li>
+<li class="chapter" data-level="11.3" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#calibrating-historical-data-to-modern-survey-data-for-relative-abundance-calculations"><i class="fa fa-check"></i><b>11.3</b> Calibrating historical data to modern survey data for relative abundance calculations</a></li>
+<li class="chapter" data-level="11.4" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#calculating-species-relative-abundance-for-the-historical-data-1850-1900-and-1900-1950"><i class="fa fa-check"></i><b>11.4</b> Calculating species relative abundance for the historical data (1850-1900 and 1900-1950)</a></li>
+<li class="chapter" data-level="11.5" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#load-the-modern-occurrence-data"><i class="fa fa-check"></i><b>11.5</b> Load the modern occurrence data</a></li>
+<li class="chapter" data-level="11.6" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#calculate-dirichlet-distributions-of-relative-abundance"><i class="fa fa-check"></i><b>11.6</b> Calculate dirichlet distributions of relative abundance</a></li>
+<li class="chapter" data-level="11.7" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#boxplot-visualization-of-overall-relative-abundance-across-time-periods"><i class="fa fa-check"></i><b>11.7</b> Boxplot visualization of overall relative abundance across time periods</a></li>
+<li class="chapter" data-level="11.8" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#species-relative-abundances-at-the-site-level"><i class="fa fa-check"></i><b>11.8</b> Species relative abundances at the site-level</a></li>
+<li class="chapter" data-level="11.9" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#visualizing-differences-in-relative-abundance-over-time-at-the-site-level"><i class="fa fa-check"></i><b>11.9</b> Visualizing differences in relative abundance over time at the site level</a></li>
+<li class="chapter" data-level="11.10" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#writing-results-to-file"><i class="fa fa-check"></i><b>11.10</b> Writing results to file</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><i class="fa fa-check"></i><b>12</b> Examining changes in relative abundance over time as a function of species habitat affiliation</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#load-necessary-libraries-6"><i class="fa fa-check"></i><b>12.1</b> Load necessary libraries</a></li>
+<li class="chapter" data-level="12.2" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#load-data-on-species-relative-abundances"><i class="fa fa-check"></i><b>12.2</b> Load data on species relative abundances</a></li>
+<li class="chapter" data-level="12.3" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#load-species-trait-data"><i class="fa fa-check"></i><b>12.3</b> Load species trait data</a></li>
+<li class="chapter" data-level="12.4" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#visualizing-relative-abundance-change-by-species-across-time-periods-for-grassland-bird-species"><i class="fa fa-check"></i><b>12.4</b> Visualizing relative abundance change by species across time periods for grassland bird species</a></li>
+<li class="chapter" data-level="12.5" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#rank-abundance-plots-of-relative-abundance-by-species-trait-across-time-periods"><i class="fa fa-check"></i><b>12.5</b> Rank abundance plots of relative abundance by species trait across time periods</a></li>
+<li class="chapter" data-level="12.6" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#are-there-significant-decreases-in-relative-abundance-by-time-periods-across-habitat-affiliations"><i class="fa fa-check"></i><b>12.6</b> Are there significant decreases in relative abundance by time periods across habitat affiliations?</a></li>
+<li class="chapter" data-level="12.7" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#forest-birds"><i class="fa fa-check"></i><b>12.7</b> Forest birds</a></li>
+<li class="chapter" data-level="12.8" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#grassland-birds"><i class="fa fa-check"></i><b>12.8</b> Grassland birds</a></li>
+<li class="chapter" data-level="12.9" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#generalist-birds"><i class="fa fa-check"></i><b>12.9</b> Generalist birds</a></li>
+<li class="chapter" data-level="12.10" data-path="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html"><a href="examining-changes-in-relative-abundance-over-time-as-a-function-of-species-habitat-affiliation.html#creating-a-combined-figure-for-the-above-three-models"><i class="fa fa-check"></i><b>12.10</b> Creating a combined figure for the above three models</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./"><em>Colonial-era landscape changes has led to grassland bird species declines over the last century</em></a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="preparing-historical-climate-data-and-geographical-covariates" class="section level1 hasAnchor" number="2">
+<h1><span class="header-section-number">Section 2</span> Preparing historical climate data and geographical covariates<a href="preparing-historical-climate-data-and-geographical-covariates.html#preparing-historical-climate-data-and-geographical-covariates" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>The overall aim is to prepare historical climate data associated with specific locations, and to link the data to geoghraphical covariates.
+This will prepare the data for a semi-spatial statistical model that will be used to predict historical climatic conditions across the study area.</p>
+<div id="load-libraries" class="section level2 hasAnchor" number="2.1">
+<h2><span class="header-section-number">2.1</span> Load libraries<a href="preparing-historical-climate-data-and-geographical-covariates.html#load-libraries" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb1-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb1-2" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb1-3"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb1-3" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
+<span id="cb1-4"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb1-4" tabindex="-1"></a><span class="fu">library</span>(sf)</span></code></pre></div>
+</div>
+<div id="reading-raw-historical-climate-data" class="section level2 hasAnchor" number="2.2">
+<h2><span class="header-section-number">2.2</span> Reading raw historical climate data<a href="preparing-historical-climate-data-and-geographical-covariates.html#reading-raw-historical-climate-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>We first read in historical climate data from the Western Ghats, and convert them to a format suitable for further processing.</p>
+<p><strong>NOTE:</strong> Need to add text explaining historical climate data sourcing.</p>
+<p>Read data and add date. Please contact the lead author for a copy of this data. We will add this to Zenodo as a release upon publication.</p>
+<p>The climate data are in the form of delimited text files with four columns for the daily total precipitation, minimum temperature, maximum temperature, and wind speed.
+Each file represents readings associated with a particular location, with coordinates indicated by the file name. We read the coordinates from the file names to assign them to each dataset.
+The number of rows represents the number of days of data, with a start date of 1st of January 1870, and an end date of 31st December 2018.</p>
+<p>We further classify each daily reading by the year and month, and assign each day to one of two seasons: rainy (June through November) or dry (December through May).
+We combine the data and filter for the southern Western Ghats as our area of interest based on the latitudinal range <span class="math display">\[9, 12\]</span>, and write them to file.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-1" tabindex="-1"></a><span class="co"># List the climate data files and read them in, assigning column names</span></span>
+<span id="cb2-2"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-2" tabindex="-1"></a>clim_files <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="st">&quot;data/climate/historical&quot;</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-3"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-3" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">map</span>(clim_files, read_delim,</span>
+<span id="cb2-4"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-4" tabindex="-1"></a>  <span class="at">delim =</span> <span class="st">&quot; &quot;</span>, <span class="at">col_names =</span> <span class="fu">c</span>(<span class="st">&quot;ppt&quot;</span>, <span class="st">&quot;tmin&quot;</span>, <span class="st">&quot;tmax&quot;</span>, <span class="st">&quot;wind&quot;</span>)</span>
+<span id="cb2-5"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-5" tabindex="-1"></a>)</span>
+<span id="cb2-6"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-6" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-7" tabindex="-1"></a><span class="co"># Prepare a sequence of dates</span></span>
+<span id="cb2-8"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-8" tabindex="-1"></a>seq_date <span class="ot">&lt;-</span> <span class="fu">seq</span>(</span>
+<span id="cb2-9"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-9" tabindex="-1"></a>  <span class="fu">ymd</span>(<span class="st">&quot;1870-01-01&quot;</span>),</span>
+<span id="cb2-10"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-10" tabindex="-1"></a>  <span class="fu">ymd</span>(<span class="st">&quot;2018-12-31&quot;</span>),</span>
+<span id="cb2-11"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-11" tabindex="-1"></a>  <span class="at">by =</span> <span class="st">&quot;days&quot;</span></span>
+<span id="cb2-12"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-12" tabindex="-1"></a>)</span>
+<span id="cb2-13"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-13" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-14" tabindex="-1"></a><span class="co"># Read the coordinates from each file name</span></span>
+<span id="cb2-15"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-15" tabindex="-1"></a><span class="co"># for each date, add the year and month, as well as the season</span></span>
+<span id="cb2-16"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-16" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">map2</span>(</span>
+<span id="cb2-17"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-17" tabindex="-1"></a>  data, clim_files,</span>
+<span id="cb2-18"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-18" tabindex="-1"></a>  <span class="cf">function</span>(df, clf) {</span>
+<span id="cb2-19"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-19" tabindex="-1"></a>    <span class="co"># get the coordinates</span></span>
+<span id="cb2-20"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-20" tabindex="-1"></a>    coords <span class="ot">&lt;-</span> <span class="fu">str_extract_all</span>(clf, <span class="st">&quot;</span><span class="sc">\\</span><span class="st">d+</span><span class="sc">\\</span><span class="st">.</span><span class="sc">\\</span><span class="st">d+&quot;</span>)[[<span class="dv">1</span>]]</span>
+<span id="cb2-21"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-21" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb2-22"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-22" tabindex="-1"></a>      df,</span>
+<span id="cb2-23"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-23" tabindex="-1"></a>      <span class="co"># add the date, year, and month, and season</span></span>
+<span id="cb2-24"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-24" tabindex="-1"></a>      <span class="co"># dry season is december to may 12 - 5</span></span>
+<span id="cb2-25"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-25" tabindex="-1"></a>      <span class="at">date =</span> seq_date,</span>
+<span id="cb2-26"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-26" tabindex="-1"></a>      <span class="at">year =</span> <span class="fu">year</span>(date),</span>
+<span id="cb2-27"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-27" tabindex="-1"></a>      <span class="at">month =</span> <span class="fu">month</span>(date),</span>
+<span id="cb2-28"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-28" tabindex="-1"></a>      <span class="at">season =</span> <span class="fu">if_else</span>(<span class="fu">between</span>(month, <span class="dv">6</span>, <span class="dv">11</span>), <span class="st">&quot;rainy&quot;</span>, <span class="st">&quot;dry&quot;</span>),</span>
+<span id="cb2-29"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-29" tabindex="-1"></a></span>
+<span id="cb2-30"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-30" tabindex="-1"></a>      <span class="co"># convert coordinates</span></span>
+<span id="cb2-31"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-31" tabindex="-1"></a>      <span class="at">x =</span> <span class="fu">as.numeric</span>(coords[<span class="dv">2</span>]),</span>
+<span id="cb2-32"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-32" tabindex="-1"></a>      <span class="at">y =</span> <span class="fu">as.numeric</span>(coords[<span class="dv">1</span>])</span>
+<span id="cb2-33"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-33" tabindex="-1"></a>    )</span>
+<span id="cb2-34"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-34" tabindex="-1"></a>  }</span>
+<span id="cb2-35"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-35" tabindex="-1"></a>)</span>
+<span id="cb2-36"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-36" tabindex="-1"></a></span>
+<span id="cb2-37"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-37" tabindex="-1"></a><span class="co"># combine all data into a single dataframe</span></span>
+<span id="cb2-38"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-38" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(data)</span>
+<span id="cb2-39"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-39" tabindex="-1"></a></span>
+<span id="cb2-40"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-40" tabindex="-1"></a><span class="co"># Check that the number of unique coordinates corresponds to the number of</span></span>
+<span id="cb2-41"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-41" tabindex="-1"></a><span class="co"># data files (since one data file per location)</span></span>
+<span id="cb2-42"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-42" tabindex="-1"></a>assertthat<span class="sc">::</span><span class="fu">assert_that</span>(</span>
+<span id="cb2-43"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-43" tabindex="-1"></a>  <span class="fu">nrow</span>(</span>
+<span id="cb2-44"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-44" tabindex="-1"></a>    <span class="fu">distinct</span>(data, x, y)</span>
+<span id="cb2-45"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-45" tabindex="-1"></a>  ) <span class="sc">==</span> <span class="fu">length</span>(clim_files),</span>
+<span id="cb2-46"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-46" tabindex="-1"></a>  <span class="at">msg =</span> <span class="st">&quot;error in some weather station coordinates&quot;</span></span>
+<span id="cb2-47"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-47" tabindex="-1"></a>)</span>
+<span id="cb2-48"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-48" tabindex="-1"></a></span>
+<span id="cb2-49"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-49" tabindex="-1"></a><span class="co"># Filter for southern western ghats</span></span>
+<span id="cb2-50"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-50" tabindex="-1"></a><span class="co"># y &lt; 12 and y &gt; 9</span></span>
+<span id="cb2-51"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-51" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">filter</span>(</span>
+<span id="cb2-52"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-52" tabindex="-1"></a>  data,</span>
+<span id="cb2-53"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-53" tabindex="-1"></a>  <span class="fu">between</span>(y, <span class="dv">9</span>, <span class="dv">12</span>)</span>
+<span id="cb2-54"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-54" tabindex="-1"></a>)</span>
+<span id="cb2-55"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-55" tabindex="-1"></a></span>
+<span id="cb2-56"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-56" tabindex="-1"></a><span class="co"># save data</span></span>
+<span id="cb2-57"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-57" tabindex="-1"></a><span class="fu">write_csv</span>(</span>
+<span id="cb2-58"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-58" tabindex="-1"></a>  data,</span>
+<span id="cb2-59"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-59" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">&quot;results/climate/data_clim_daily.csv&quot;</span></span>
+<span id="cb2-60"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb2-60" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="summarising-historical-climate-data" class="section level2 hasAnchor" number="2.3">
+<h2><span class="header-section-number">2.3</span> Summarising historical climate data<a href="preparing-historical-climate-data-and-geographical-covariates.html#summarising-historical-climate-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>We summarise the historical climate data for each location by calculating the mean daily temperature from the minimum and maximum temperature, and then calculating the monthly total precipitation, mean temperature, and the standard deviation of the mean temperature. The coordinates, year, month, and season are preserved as identifying variables.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb3-1" tabindex="-1"></a><span class="co"># Get daily mean temperature</span></span>
+<span id="cb3-2"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb3-2" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">mutate</span>(</span>
+<span id="cb3-3"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb3-3" tabindex="-1"></a>  data,</span>
+<span id="cb3-4"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb3-4" tabindex="-1"></a>  <span class="at">tmean =</span> (tmax <span class="sc">+</span> tmin) <span class="sc">/</span> <span class="dv">2</span></span>
+<span id="cb3-5"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb3-5" tabindex="-1"></a>)</span>
+<span id="cb3-6"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb3-6" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb3-7" tabindex="-1"></a><span class="co"># Group data by coordinate and select precipitation and mean daily temp.</span></span>
+<span id="cb3-8"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb3-8" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">group_by</span>(</span>
+<span id="cb3-9"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb3-9" tabindex="-1"></a>  data,</span>
+<span id="cb3-10"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb3-10" tabindex="-1"></a>  x, y, month, year, season,</span>
+<span id="cb3-11"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb3-11" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb3-12"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb3-12" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb3-13"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb3-13" tabindex="-1"></a>    ppt, tmean</span>
+<span id="cb3-14"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb3-14" tabindex="-1"></a>  )</span>
+<span id="cb3-15"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb3-15" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb3-16" tabindex="-1"></a><span class="co"># Summarise monthly total precip. and mean and SD of temp. mean</span></span>
+<span id="cb3-17"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb3-17" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">summarise</span>(</span>
+<span id="cb3-18"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb3-18" tabindex="-1"></a>  data,</span>
+<span id="cb3-19"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb3-19" tabindex="-1"></a>  <span class="at">ppt =</span> <span class="fu">sum</span>(ppt),</span>
+<span id="cb3-20"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb3-20" tabindex="-1"></a>  <span class="at">t_mean =</span> <span class="fu">mean</span>(tmean),</span>
+<span id="cb3-21"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb3-21" tabindex="-1"></a>  <span class="at">t_sd =</span> <span class="fu">sd</span>(tmean)</span>
+<span id="cb3-22"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb3-22" tabindex="-1"></a>)</span>
+<span id="cb3-23"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb3-23" tabindex="-1"></a></span>
+<span id="cb3-24"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb3-24" tabindex="-1"></a><span class="co"># save summary</span></span>
+<span id="cb3-25"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb3-25" tabindex="-1"></a><span class="fu">write_csv</span>(</span>
+<span id="cb3-26"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb3-26" tabindex="-1"></a>  data,</span>
+<span id="cb3-27"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb3-27" tabindex="-1"></a>  <span class="st">&quot;results/climate/data_monthly_climate.csv&quot;</span></span>
+<span id="cb3-28"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb3-28" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="prepare-study-area-spatial-extent" class="section level2 hasAnchor" number="2.4">
+<h2><span class="header-section-number">2.4</span> Prepare study area spatial extent<a href="preparing-historical-climate-data-and-geographical-covariates.html#prepare-study-area-spatial-extent" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>We prepare a spatial polygon for the extent of our area of interest. All operations are with reference to the subset of historical climate data from the southern Western Ghats.</p>
+<p>First collecting the unique locations associated with the data, we prepare a bounding box that covers all points, and then add a 25km buffer (transforming coordinates as appropriate into the UTM 43N coordinate reference system for buffer creation to ensure accurate buffer distances).</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb4-1" tabindex="-1"></a><span class="co"># Get unique coordinates and create an `sf` points object</span></span>
+<span id="cb4-2"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb4-2" tabindex="-1"></a>coords <span class="ot">&lt;-</span> <span class="fu">ungroup</span>(data) <span class="sc">|&gt;</span></span>
+<span id="cb4-3"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb4-3" tabindex="-1"></a>  <span class="fu">distinct</span>(x, y) <span class="sc">|&gt;</span></span>
+<span id="cb4-4"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb4-4" tabindex="-1"></a>  <span class="fu">mutate_all</span>(</span>
+<span id="cb4-5"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb4-5" tabindex="-1"></a>    as.numeric</span>
+<span id="cb4-6"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb4-6" tabindex="-1"></a>  )</span>
+<span id="cb4-7"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb4-7" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb4-8" tabindex="-1"></a><span class="co"># Create `sf` spatial object and assign WGS 84 CRS as standard</span></span>
+<span id="cb4-9"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb4-9" tabindex="-1"></a>coord_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(</span>
+<span id="cb4-10"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb4-10" tabindex="-1"></a>  coords,</span>
+<span id="cb4-11"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb4-11" tabindex="-1"></a>  <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">&quot;x&quot;</span>, <span class="st">&quot;y&quot;</span>),</span>
+<span id="cb4-12"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb4-12" tabindex="-1"></a>  <span class="at">crs =</span> <span class="dv">4326</span></span>
+<span id="cb4-13"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb4-13" tabindex="-1"></a>)</span>
+<span id="cb4-14"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb4-14" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb4-15" tabindex="-1"></a><span class="co"># Create a bounding box, transform to UTM 43N CRS, and add a 25km buffer</span></span>
+<span id="cb4-16"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb4-16" tabindex="-1"></a>ext <span class="ot">&lt;-</span> <span class="fu">st_bbox</span>(coord_sf) <span class="sc">|&gt;</span></span>
+<span id="cb4-17"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb4-17" tabindex="-1"></a>  <span class="fu">st_as_sfc</span>() <span class="sc">|&gt;</span></span>
+<span id="cb4-18"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb4-18" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="dv">32643</span>) <span class="sc">|&gt;</span></span>
+<span id="cb4-19"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb4-19" tabindex="-1"></a>  <span class="fu">st_buffer</span>(<span class="dv">25000</span>) <span class="sc">|&gt;</span></span>
+<span id="cb4-20"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb4-20" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="dv">4326</span>)</span></code></pre></div>
+</div>
+<div id="prepare-spatial-data-for-the-study-area" class="section level2 hasAnchor" number="2.5">
+<h2><span class="header-section-number">2.5</span> Prepare spatial data for the study area<a href="preparing-historical-climate-data-and-geographical-covariates.html#prepare-spatial-data-for-the-study-area" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>We use the buffered spatial extent of the study area to subset (or crop) raster spatial data. We save these cropped data for further use as they are smaller and easier to work with than the full datasets.</p>
+<div id="elevation-data" class="section level3 hasAnchor" number="2.5.1">
+<h3><span class="header-section-number">2.5.1</span> Elevation data<a href="preparing-historical-climate-data-and-geographical-covariates.html#elevation-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>We read in elevation data and crop the raster to the buffered study area.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb5-1" tabindex="-1"></a><span class="co"># Load elevation raster and crop by buffered study area extent</span></span>
+<span id="cb5-2"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb5-2" tabindex="-1"></a>elevation <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">&quot;data/elevation/alt&quot;</span>)</span>
+<span id="cb5-3"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb5-3" tabindex="-1"></a>elevation_hills <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">crop</span>(elevation, <span class="fu">as</span>(ext, <span class="st">&quot;Spatial&quot;</span>))</span>
+<span id="cb5-4"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb5-4" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb5-5" tabindex="-1"></a><span class="co"># Save the smaller cropped elevation data in spatial TIF format</span></span>
+<span id="cb5-6"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb5-6" tabindex="-1"></a>terra<span class="sc">::</span><span class="fu">writeRaster</span>(</span>
+<span id="cb5-7"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb5-7" tabindex="-1"></a>  elevation_hills,</span>
+<span id="cb5-8"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb5-8" tabindex="-1"></a>  <span class="st">&quot;results/elevation/raster_elevation.tif&quot;</span>,</span>
+<span id="cb5-9"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb5-9" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span></span>
+<span id="cb5-10"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb5-10" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="distance-to-coast-data" class="section level3 hasAnchor" number="2.5.2">
+<h3><span class="header-section-number">2.5.2</span> Distance to coast data<a href="preparing-historical-climate-data-and-geographical-covariates.html#distance-to-coast-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>We prepare a synthetic raster layer for the distance of points in the study area from the coastline.
+Reading in vector spatial data for the boundary of India, we</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb6-1" tabindex="-1"></a><span class="co"># Load coastline and re-load elevation</span></span>
+<span id="cb6-2"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb6-2" tabindex="-1"></a>coast <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">&quot;data/landcover/India_Boundary.shp&quot;</span>)</span>
+<span id="cb6-3"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb6-3" tabindex="-1"></a>coast_line <span class="ot">&lt;-</span> <span class="fu">st_cast</span>(coast, <span class="st">&quot;MULTILINESTRING&quot;</span>)</span>
+<span id="cb6-4"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb6-4" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb6-5" tabindex="-1"></a>elev <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">&quot;results/elevation/raster_elevation.tif&quot;</span>)</span>
+<span id="cb6-6"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb6-6" tabindex="-1"></a>elev_utm <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">project</span>(elev, <span class="st">&quot;epsg:32643&quot;</span>)</span></code></pre></div>
+<p>We resample the elevation raster from 30m to 600m as this is the resolution of interest (converting to a UTM CRS when passing the resolution in metres). The resampled raster is also in UTM 43N projection, and we covert that WGS 84 for future use.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb7-1" tabindex="-1"></a><span class="co"># Resample the elevation raster to 600 m from 30m</span></span>
+<span id="cb7-2"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb7-2" tabindex="-1"></a>elev_utm_600 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(<span class="fu">ext</span>(elev_utm), <span class="at">resolution =</span> <span class="dv">600</span>)</span>
+<span id="cb7-3"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb7-3" tabindex="-1"></a>elev_utm_600 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">resample</span>(</span>
+<span id="cb7-4"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb7-4" tabindex="-1"></a>  elev_utm, elev_utm_600</span>
+<span id="cb7-5"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb7-5" tabindex="-1"></a>)</span>
+<span id="cb7-6"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb7-6" tabindex="-1"></a><span class="fu">crs</span>(elev_utm_600) <span class="ot">&lt;-</span> <span class="st">&quot;epsg:32643&quot;</span></span>
+<span id="cb7-7"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb7-7" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb7-8" tabindex="-1"></a><span class="co"># recast to 4326</span></span>
+<span id="cb7-9"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb7-9" tabindex="-1"></a>elev_600 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">project</span>(elev_utm_600, <span class="st">&quot;epsg:4326&quot;</span>)</span></code></pre></div>
+<p>We prepare the distance-to-coast raster by calculating the distance between each cell in the 600m resolution elevation raster and the cost vector data; we refer to this as the coast raster on occasion.
+We mask (set to <code>NA</code>) all cells in the coast raster that are not on land.
+<strong>Note that</strong> this operation takes a long time to run!</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb8-1" tabindex="-1"></a><span class="co"># Coast raster is a distance raster to the India land boundary vector</span></span>
+<span id="cb8-2"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb8-2" tabindex="-1"></a><span class="co"># masked by the same vector; this sets all cells in the sea to zero</span></span>
+<span id="cb8-3"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb8-3" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb8-4" tabindex="-1"></a><span class="co"># </span><span class="al">NOTE</span><span class="co">: this code takes a very long time to run!</span></span>
+<span id="cb8-5"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb8-5" tabindex="-1"></a>coast_raster <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">distance</span>(elev_600, terra<span class="sc">::</span><span class="fu">vect</span>(coast_line))</span>
+<span id="cb8-6"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb8-6" tabindex="-1"></a>coast_raster <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">mask</span>(coast_raster, terra<span class="sc">::</span><span class="fu">vect</span>(coast))</span></code></pre></div>
+</div>
+<div id="latitude-data" class="section level3 hasAnchor" number="2.5.3">
+<h3><span class="header-section-number">2.5.3</span> Latitude data<a href="preparing-historical-climate-data-and-geographical-covariates.html#latitude-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>We prepare a raster containing the latitude of each cell of the 600m resolution elevation raster in order to use this as a latitude predictor.</p>
+<p><strong>Note</strong> the use of <code>terra::deepcopy()</code> to make a copy of the elevation raster; this is to prevent the values of the elevation raster chaning when the copy’s values are re-assigned. See the help for <code>terra::deepcopy()</code> for more.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb9-1" tabindex="-1"></a><span class="co"># Make a deep copy of the elevation data, and assign the Y coordinate</span></span>
+<span id="cb9-2"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb9-2" tabindex="-1"></a><span class="co"># of each cell as the latitude</span></span>
+<span id="cb9-3"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb9-3" tabindex="-1"></a><span class="co"># </span><span class="al">NOTE</span><span class="co">: using terra::deepcopy() is a MUST to prevent reassignment of values</span></span>
+<span id="cb9-4"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb9-4" tabindex="-1"></a><span class="co"># in elev_600</span></span>
+<span id="cb9-5"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb9-5" tabindex="-1"></a>lat_raster <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">deepcopy</span>(elev_600)</span>
+<span id="cb9-6"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb9-6" tabindex="-1"></a>terra<span class="sc">::</span><span class="fu">values</span>(lat_raster) <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">yFromCell</span>(</span>
+<span id="cb9-7"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb9-7" tabindex="-1"></a>  lat_raster,</span>
+<span id="cb9-8"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb9-8" tabindex="-1"></a>  <span class="at">cell =</span> <span class="fu">seq_along</span>(<span class="fu">values</span>(lat_raster))</span>
+<span id="cb9-9"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb9-9" tabindex="-1"></a>)</span></code></pre></div>
+<p>We combine the three data rasters into layers of a stack, and save them for later use.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb10-1" tabindex="-1"></a><span class="co"># Stack each data layer into a single stack</span></span>
+<span id="cb10-2"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb10-2" tabindex="-1"></a>stack <span class="ot">&lt;-</span> <span class="fu">c</span>(coast_raster, elev_600, lat_raster)</span>
+<span id="cb10-3"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb10-3" tabindex="-1"></a><span class="fu">names</span>(stack) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;coast&quot;</span>, <span class="st">&quot;elev&quot;</span>, <span class="st">&quot;lat&quot;</span>)</span>
+<span id="cb10-4"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb10-4" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb10-5" tabindex="-1"></a>terra<span class="sc">::</span><span class="fu">writeRaster</span>(</span>
+<span id="cb10-6"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb10-6" tabindex="-1"></a>  stack,</span>
+<span id="cb10-7"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb10-7" tabindex="-1"></a>  <span class="st">&quot;results/climate/raster_gam_stack.tif&quot;</span>,</span>
+<span id="cb10-8"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb10-8" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span></span>
+<span id="cb10-9"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb10-9" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+</div>
+<div id="link-predictors-to-climate-data" class="section level2 hasAnchor" number="2.6">
+<h2><span class="header-section-number">2.6</span> Link predictors to climate data<a href="preparing-historical-climate-data-and-geographical-covariates.html#link-predictors-to-climate-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Here we link the geographical predictors — elevation, distance from the coast, and latitude — to the monthly weather data locations, in order to model the relationship between them.</p>
+<p>This is to help us get a statistical model that can be used to predict historical climate over the entire study area, in different historical periods.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-1" tabindex="-1"></a><span class="co"># Extract the elevation, distance from the coast, and latitude</span></span>
+<span id="cb11-2"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-2" tabindex="-1"></a><span class="co"># at each historical climate location</span></span>
+<span id="cb11-3"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-3" tabindex="-1"></a>coords <span class="ot">&lt;-</span> <span class="fu">mutate</span>(</span>
+<span id="cb11-4"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-4" tabindex="-1"></a>  coords,</span>
+<span id="cb11-5"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-5" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-6" tabindex="-1"></a>  <span class="co"># extract elevation</span></span>
+<span id="cb11-7"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-7" tabindex="-1"></a>  <span class="at">elev =</span> terra<span class="sc">::</span><span class="fu">extract</span>(</span>
+<span id="cb11-8"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-8" tabindex="-1"></a>    elevation_hills,</span>
+<span id="cb11-9"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-9" tabindex="-1"></a>    <span class="fu">st_coordinates</span>(coord_sf)</span>
+<span id="cb11-10"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-10" tabindex="-1"></a>  )<span class="sc">$</span>alt,</span>
+<span id="cb11-11"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-11" tabindex="-1"></a></span>
+<span id="cb11-12"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-12" tabindex="-1"></a>  <span class="co"># get distance to coastline</span></span>
+<span id="cb11-13"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-13" tabindex="-1"></a>  <span class="at">coast =</span> <span class="fu">as.numeric</span>(</span>
+<span id="cb11-14"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-14" tabindex="-1"></a>    <span class="fu">st_distance</span>(coord_sf, coast_line)</span>
+<span id="cb11-15"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-15" tabindex="-1"></a>  ),</span>
+<span id="cb11-16"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-16" tabindex="-1"></a></span>
+<span id="cb11-17"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-17" tabindex="-1"></a>  <span class="co"># get latitude</span></span>
+<span id="cb11-18"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-18" tabindex="-1"></a>  <span class="at">lat =</span> y</span>
+<span id="cb11-19"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-19" tabindex="-1"></a>)</span>
+<span id="cb11-20"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-20" tabindex="-1"></a></span>
+<span id="cb11-21"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-21" tabindex="-1"></a><span class="co"># Link by coordinates to the monthly climate data summary</span></span>
+<span id="cb11-22"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-22" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">left_join</span>(</span>
+<span id="cb11-23"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-23" tabindex="-1"></a>  data,</span>
+<span id="cb11-24"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-24" tabindex="-1"></a>  coords</span>
+<span id="cb11-25"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-25" tabindex="-1"></a>)</span>
+<span id="cb11-26"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-26" tabindex="-1"></a></span>
+<span id="cb11-27"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-27" tabindex="-1"></a><span class="co"># Bin data into 10 year intervals</span></span>
+<span id="cb11-28"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-28" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">mutate</span>(</span>
+<span id="cb11-29"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-29" tabindex="-1"></a>  data,</span>
+<span id="cb11-30"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-30" tabindex="-1"></a>  <span class="at">year_bin =</span> <span class="fu">floor</span>(year <span class="sc">/</span> <span class="dv">10</span>) <span class="sc">*</span> <span class="dv">10</span></span>
+<span id="cb11-31"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-31" tabindex="-1"></a>)</span>
+<span id="cb11-32"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-32" tabindex="-1"></a></span>
+<span id="cb11-33"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-33" tabindex="-1"></a><span class="co"># Save data</span></span>
+<span id="cb11-34"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-34" tabindex="-1"></a><span class="fu">write_csv</span>(</span>
+<span id="cb11-35"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-35" tabindex="-1"></a>  data,</span>
+<span id="cb11-36"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-36" tabindex="-1"></a>  <span class="st">&quot;results/climate/data_for_gam.csv&quot;</span></span>
+<span id="cb11-37"><a href="preparing-historical-climate-data-and-geographical-covariates.html#cb11-37" tabindex="-1"></a>)</span></code></pre></div>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="building-and-validating-semi-spatial-gams-for-climate.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": false,
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/vjjan91/nilgiris-resurvey-project/edit/master/01_preparing-climate-data.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

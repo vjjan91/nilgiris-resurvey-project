@@ -39,7 +39,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="reconstructing-climate-data.html"/>
+<link rel="prev" href="modelling-historical-climate-over-the-study-area.html"/>
 <link rel="next" href="land-cover-classification-and-change-detection.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
@@ -152,67 +152,62 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#data-access"><i class="fa fa-check"></i><b>1.2</b> Data access</a></li>
 <li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#data-processing"><i class="fa fa-check"></i><b>1.3</b> Data processing</a></li>
 </ul></li>
-<li class="chapter" data-level="2" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html"><i class="fa fa-check"></i><b>2</b> Prepare Climate Data for Interpolation</a>
+<li class="chapter" data-level="2" data-path="preparing-historical-climate-data-and-geographical-covariates.html"><a href="preparing-historical-climate-data-and-geographical-covariates.html"><i class="fa fa-check"></i><b>2</b> Preparing historical climate data and geographical covariates</a>
 <ul>
-<li class="chapter" data-level="2.1" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#load-libraries"><i class="fa fa-check"></i><b>2.1</b> Load libraries</a></li>
-<li class="chapter" data-level="2.2" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#prepare-climate-data"><i class="fa fa-check"></i><b>2.2</b> Prepare climate data</a></li>
-<li class="chapter" data-level="2.3" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#summarise-by-month"><i class="fa fa-check"></i><b>2.3</b> Summarise by month</a></li>
-<li class="chapter" data-level="2.4" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#prepare-for-spatial-data"><i class="fa fa-check"></i><b>2.4</b> Prepare for spatial data</a></li>
-<li class="chapter" data-level="2.5" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#prepare-spatial-data"><i class="fa fa-check"></i><b>2.5</b> Prepare spatial data</a></li>
-<li class="chapter" data-level="2.6" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#prepare-coastline-data"><i class="fa fa-check"></i><b>2.6</b> Prepare coastline data</a></li>
-<li class="chapter" data-level="2.7" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#resample-raster-to-600m"><i class="fa fa-check"></i><b>2.7</b> Resample raster to 600m</a></li>
-<li class="chapter" data-level="2.8" data-path="prepare-climate-data-for-interpolation.html"><a href="prepare-climate-data-for-interpolation.html#link-predictors-to-climate-data"><i class="fa fa-check"></i><b>2.8</b> Link predictors to climate data</a></li>
+<li class="chapter" data-level="2.1" data-path="preparing-historical-climate-data-and-geographical-covariates.html"><a href="preparing-historical-climate-data-and-geographical-covariates.html#load-libraries"><i class="fa fa-check"></i><b>2.1</b> Load libraries</a></li>
+<li class="chapter" data-level="2.2" data-path="preparing-historical-climate-data-and-geographical-covariates.html"><a href="preparing-historical-climate-data-and-geographical-covariates.html#reading-raw-historical-climate-data"><i class="fa fa-check"></i><b>2.2</b> Reading raw historical climate data</a></li>
+<li class="chapter" data-level="2.3" data-path="preparing-historical-climate-data-and-geographical-covariates.html"><a href="preparing-historical-climate-data-and-geographical-covariates.html#summarising-historical-climate-data"><i class="fa fa-check"></i><b>2.3</b> Summarising historical climate data</a></li>
+<li class="chapter" data-level="2.4" data-path="preparing-historical-climate-data-and-geographical-covariates.html"><a href="preparing-historical-climate-data-and-geographical-covariates.html#prepare-study-area-spatial-extent"><i class="fa fa-check"></i><b>2.4</b> Prepare study area spatial extent</a></li>
+<li class="chapter" data-level="2.5" data-path="preparing-historical-climate-data-and-geographical-covariates.html"><a href="preparing-historical-climate-data-and-geographical-covariates.html#prepare-spatial-data-for-the-study-area"><i class="fa fa-check"></i><b>2.5</b> Prepare spatial data for the study area</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="preparing-historical-climate-data-and-geographical-covariates.html"><a href="preparing-historical-climate-data-and-geographical-covariates.html#elevation-data"><i class="fa fa-check"></i><b>2.5.1</b> Elevation data</a></li>
+<li class="chapter" data-level="2.5.2" data-path="preparing-historical-climate-data-and-geographical-covariates.html"><a href="preparing-historical-climate-data-and-geographical-covariates.html#distance-to-coast-data"><i class="fa fa-check"></i><b>2.5.2</b> Distance to coast data</a></li>
+<li class="chapter" data-level="2.5.3" data-path="preparing-historical-climate-data-and-geographical-covariates.html"><a href="preparing-historical-climate-data-and-geographical-covariates.html#latitude-data"><i class="fa fa-check"></i><b>2.5.3</b> Latitude data</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html"><i class="fa fa-check"></i><b>3</b> Validating semi-spatial GAMs for climate</a>
-<ul>
-<li class="chapter" data-level="3.1" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#load-libraries-1"><i class="fa fa-check"></i><b>3.1</b> Load libraries</a></li>
-<li class="chapter" data-level="3.2" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#load-data-prepared-for-the-gam-and-the-stack-predictor-raster."><i class="fa fa-check"></i><b>3.2</b> Load data prepared for the GAM, and the stack predictor raster.</a></li>
-<li class="chapter" data-level="3.3" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#prepare-data-covariates-and-raster"><i class="fa fa-check"></i><b>3.3</b> Prepare data covariates and raster</a></li>
-<li class="chapter" data-level="3.4" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#pivot-longer-to-separate-by-variable."><i class="fa fa-check"></i><b>3.4</b> Pivot longer to separate by variable.</a></li>
-<li class="chapter" data-level="3.5" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#split-the-data-by-variable."><i class="fa fa-check"></i><b>3.5</b> Split the data by variable.</a></li>
-<li class="chapter" data-level="3.6" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#fit-candidate-models"><i class="fa fa-check"></i><b>3.6</b> Fit candidate models</a>
-<ul>
-<li class="chapter" data-level="3.6.1" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#save-model-data."><i class="fa fa-check"></i><b>3.6.1</b> Save model data.</a></li>
+<li class="chapter" data-level="2.6" data-path="preparing-historical-climate-data-and-geographical-covariates.html"><a href="preparing-historical-climate-data-and-geographical-covariates.html#link-predictors-to-climate-data"><i class="fa fa-check"></i><b>2.6</b> Link predictors to climate data</a></li>
 </ul></li>
-<li class="chapter" data-level="3.7" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#predict-over-static-environment"><i class="fa fa-check"></i><b>3.7</b> Predict over static environment</a></li>
-<li class="chapter" data-level="3.8" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#average-predictions-over-1970-to-2010."><i class="fa fa-check"></i><b>3.8</b> Average predictions over 1970 to 2010.</a></li>
-<li class="chapter" data-level="3.9" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#get-bioclim-data"><i class="fa fa-check"></i><b>3.9</b> Get BIOCLIM data</a></li>
-<li class="chapter" data-level="3.10" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#get-precipitation-data"><i class="fa fa-check"></i><b>3.10</b> Get precipitation data</a></li>
-<li class="chapter" data-level="3.11" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#get-sample-coordinates"><i class="fa fa-check"></i><b>3.11</b> Get sample coordinates</a></li>
-<li class="chapter" data-level="3.12" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#compare-bioclim-and-model-predictions"><i class="fa fa-check"></i><b>3.12</b> Compare BIOCLIM and model predictions</a></li>
-<li class="chapter" data-level="3.13" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#link-with-gam-predictions"><i class="fa fa-check"></i><b>3.13</b> Link with GAM predictions</a></li>
-<li class="chapter" data-level="3.14" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#get-gam-predictions-at-chelsa-sample-locations."><i class="fa fa-check"></i><b>3.14</b> Get GAM predictions at chelsa sample locations.</a></li>
-<li class="chapter" data-level="3.15" data-path="validating-semi-spatial-gams-for-climate.html"><a href="validating-semi-spatial-gams-for-climate.html#gam-predictions-at-survey-sites"><i class="fa fa-check"></i><b>3.15</b> GAM predictions at survey sites</a></li>
-</ul></li>
-<li class="chapter" data-level="4" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html"><i class="fa fa-check"></i><b>4</b> GAM error in predicting climate</a>
+<li class="chapter" data-level="3" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html"><i class="fa fa-check"></i><b>3</b> Building and validating semi-spatial GAMs for climate</a>
 <ul>
-<li class="chapter" data-level="4.1" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#load-libraries-2"><i class="fa fa-check"></i><b>4.1</b> Load libraries</a></li>
-<li class="chapter" data-level="4.2" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#load-data"><i class="fa fa-check"></i><b>4.2</b> Load data</a></li>
-<li class="chapter" data-level="4.3" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#plot-model-error"><i class="fa fa-check"></i><b>4.3</b> Plot model error</a></li>
-<li class="chapter" data-level="4.4" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#compare-climate-predictions-at-survey-sites"><i class="fa fa-check"></i><b>4.4</b> Compare climate predictions at survey sites</a></li>
-<li class="chapter" data-level="4.5" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#plot-gam-prediction-residuals"><i class="fa fa-check"></i><b>4.5</b> Plot GAM prediction residuals</a></li>
-<li class="chapter" data-level="4.6" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#load-processed-bioclim-data"><i class="fa fa-check"></i><b>4.6</b> Load processed BIOCLIM data</a></li>
-<li class="chapter" data-level="4.7" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#get-prediction-as-fraction-of-bioclim-layers"><i class="fa fa-check"></i><b>4.7</b> Get prediction as fraction of BIOCLIM layers</a></li>
-<li class="chapter" data-level="4.8" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#temperature-fractions"><i class="fa fa-check"></i><b>4.8</b> Temperature fractions</a></li>
-<li class="chapter" data-level="4.9" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#precipitation-fractions"><i class="fa fa-check"></i><b>4.9</b> Precipitation fractions</a></li>
-<li class="chapter" data-level="4.10" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#save-climate-correction-layers"><i class="fa fa-check"></i><b>4.10</b> Save climate correction layers</a></li>
-<li class="chapter" data-level="4.11" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#seasonal-mean-temperature-correction-layer"><i class="fa fa-check"></i><b>4.11</b> Seasonal mean temperature correction layer</a></li>
-<li class="chapter" data-level="4.12" data-path="gam-error-in-predicting-climate.html"><a href="gam-error-in-predicting-climate.html#seasonal-total-rainfall-correction-layer"><i class="fa fa-check"></i><b>4.12</b> Seasonal total rainfall correction layer</a></li>
-</ul></li>
-<li class="chapter" data-level="5" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html"><i class="fa fa-check"></i><b>5</b> Reconstructing climate data</a>
+<li class="chapter" data-level="3.1" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#load-libraries-1"><i class="fa fa-check"></i><b>3.1</b> Load libraries</a></li>
+<li class="chapter" data-level="3.2" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#prepare-linked-climate-spatial-data-and-spatial-data-for-modelling"><i class="fa fa-check"></i><b>3.2</b> Prepare linked climate-spatial data and spatial data for modelling</a></li>
+<li class="chapter" data-level="3.3" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#fit-candidate-spatial-climate-models"><i class="fa fa-check"></i><b>3.3</b> Fit candidate spatial-climate models</a></li>
+<li class="chapter" data-level="3.4" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#model-predictions-for-modern-climate"><i class="fa fa-check"></i><b>3.4</b> Model predictions for modern climate</a>
 <ul>
-<li class="chapter" data-level="5.1" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#load-libraries-3"><i class="fa fa-check"></i><b>5.1</b> Load libraries</a></li>
-<li class="chapter" data-level="5.2" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#load-data-prepared-for-the-gam-and-the-stack-predictor-raster.-1"><i class="fa fa-check"></i><b>5.2</b> Load data prepared for the GAM, and the stack predictor raster.</a></li>
-<li class="chapter" data-level="5.3" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#prepare-data-covariates-and-raster."><i class="fa fa-check"></i><b>5.3</b> Prepare data covariates and raster.</a></li>
-<li class="chapter" data-level="5.4" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#pivot-longer-to-separate-by-variable.-1"><i class="fa fa-check"></i><b>5.4</b> Pivot longer to separate by variable.</a></li>
-<li class="chapter" data-level="5.5" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#split-data-by-variable-season-and-year-bin"><i class="fa fa-check"></i><b>5.5</b> Split data by variable, season, and year bin</a></li>
-<li class="chapter" data-level="5.6" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#fit-chosen-gams"><i class="fa fa-check"></i><b>5.6</b> Fit chosen GAMs</a></li>
-<li class="chapter" data-level="5.7" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#assign-formula-to-variable."><i class="fa fa-check"></i><b>5.7</b> Assign formula to variable.</a></li>
-<li class="chapter" data-level="5.8" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#fit-gams"><i class="fa fa-check"></i><b>5.8</b> Fit GAMs</a></li>
-<li class="chapter" data-level="5.9" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#save-model-data.-1"><i class="fa fa-check"></i><b>5.9</b> Save model data.</a></li>
-<li class="chapter" data-level="5.10" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#predict-over-static-environment-1"><i class="fa fa-check"></i><b>5.10</b> Predict over static environment</a></li>
-<li class="chapter" data-level="5.11" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#apply-correction-layers"><i class="fa fa-check"></i><b>5.11</b> Apply correction layers</a></li>
-<li class="chapter" data-level="5.12" data-path="reconstructing-climate-data.html"><a href="reconstructing-climate-data.html#link-correction-layers-with-predictions"><i class="fa fa-check"></i><b>5.12</b> Link correction layers with predictions</a></li>
+<li class="chapter" data-level="3.4.1" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#average-predictions-over-1970-to-2010"><i class="fa fa-check"></i><b>3.4.1</b> Average predictions over 1970 to 2010</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#get-bioclim-data"><i class="fa fa-check"></i><b>3.5</b> Get BIOCLIM data</a>
+<ul>
+<li class="chapter" data-level="3.5.1" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#temperature-data"><i class="fa fa-check"></i><b>3.5.1</b> Temperature data</a></li>
+<li class="chapter" data-level="3.5.2" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#precipitation-data"><i class="fa fa-check"></i><b>3.5.2</b> Precipitation data</a></li>
+</ul></li>
+<li class="chapter" data-level="3.6" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#compare-spatial-climate-model-predictions-against-bioclim-data"><i class="fa fa-check"></i><b>3.6</b> Compare spatial-climate model predictions against BIOCLIM data</a>
+<ul>
+<li class="chapter" data-level="3.6.1" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#sample-locations"><i class="fa fa-check"></i><b>3.6.1</b> Sample locations</a></li>
+<li class="chapter" data-level="3.6.2" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#link-bioclim-data-and-model-predictions"><i class="fa fa-check"></i><b>3.6.2</b> Link BIOCLIM data and model predictions</a></li>
+</ul></li>
+<li class="chapter" data-level="3.7" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#error-between-model-prediction-and-chelsa-data"><i class="fa fa-check"></i><b>3.7</b> Error between model prediction and CHELSA data</a></li>
+<li class="chapter" data-level="3.8" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#gam-predictions-at-survey-sites"><i class="fa fa-check"></i><b>3.8</b> GAM predictions at survey sites</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="building-a-correction-layer-for-climate-predictions.html"><a href="building-a-correction-layer-for-climate-predictions.html"><i class="fa fa-check"></i><b>4</b> Building a correction layer for climate predictions</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="building-a-correction-layer-for-climate-predictions.html"><a href="building-a-correction-layer-for-climate-predictions.html#setup"><i class="fa fa-check"></i><b>4.1</b> Setup</a></li>
+<li class="chapter" data-level="4.2" data-path="building-a-correction-layer-for-climate-predictions.html"><a href="building-a-correction-layer-for-climate-predictions.html#plot-model-error"><i class="fa fa-check"></i><b>4.2</b> Plot model error</a></li>
+<li class="chapter" data-level="4.3" data-path="building-a-correction-layer-for-climate-predictions.html"><a href="building-a-correction-layer-for-climate-predictions.html#compare-climate-predictions-at-survey-sites"><i class="fa fa-check"></i><b>4.3</b> Compare climate predictions at survey sites</a></li>
+<li class="chapter" data-level="4.4" data-path="building-a-correction-layer-for-climate-predictions.html"><a href="building-a-correction-layer-for-climate-predictions.html#visualise-model-predictions-as-proportion-of-remote-sensing-data"><i class="fa fa-check"></i><b>4.4</b> Visualise model predictions as proportion of remote sensing data</a>
+<ul>
+<li class="chapter" data-level="4.4.1" data-path="building-a-correction-layer-for-climate-predictions.html"><a href="building-a-correction-layer-for-climate-predictions.html#temperature-scaling-layer"><i class="fa fa-check"></i><b>4.4.1</b> Temperature scaling layer</a></li>
+</ul></li>
+<li class="chapter" data-level="4.5" data-path="building-a-correction-layer-for-climate-predictions.html"><a href="building-a-correction-layer-for-climate-predictions.html#precipitation-scaling-layer"><i class="fa fa-check"></i><b>4.5</b> Precipitation scaling layer</a></li>
+<li class="chapter" data-level="4.6" data-path="building-a-correction-layer-for-climate-predictions.html"><a href="building-a-correction-layer-for-climate-predictions.html#save-climate-scaling-layers"><i class="fa fa-check"></i><b>4.6</b> Save climate scaling layers</a></li>
+<li class="chapter" data-level="4.7" data-path="building-a-correction-layer-for-climate-predictions.html"><a href="building-a-correction-layer-for-climate-predictions.html#seasonal-mean-temperature-correction-layer"><i class="fa fa-check"></i><b>4.7</b> Seasonal mean temperature correction layer</a></li>
+<li class="chapter" data-level="4.8" data-path="building-a-correction-layer-for-climate-predictions.html"><a href="building-a-correction-layer-for-climate-predictions.html#seasonal-total-rainfall-correction-layer"><i class="fa fa-check"></i><b>4.8</b> Seasonal total rainfall correction layer</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="modelling-historical-climate-over-the-study-area.html"><a href="modelling-historical-climate-over-the-study-area.html"><i class="fa fa-check"></i><b>5</b> Modelling historical climate over the study area</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="modelling-historical-climate-over-the-study-area.html"><a href="modelling-historical-climate-over-the-study-area.html#setup-with-libraries-and-data"><i class="fa fa-check"></i><b>5.1</b> Setup with libraries and data</a></li>
+<li class="chapter" data-level="5.2" data-path="modelling-historical-climate-over-the-study-area.html"><a href="modelling-historical-climate-over-the-study-area.html#model-climate-as-a-function-of-geographic-variables"><i class="fa fa-check"></i><b>5.2</b> Model climate as a function of geographic variables</a></li>
+<li class="chapter" data-level="5.3" data-path="modelling-historical-climate-over-the-study-area.html"><a href="modelling-historical-climate-over-the-study-area.html#obtaining-model-predictions-over-the-study-area"><i class="fa fa-check"></i><b>5.3</b> Obtaining model predictions over the study area</a></li>
+<li class="chapter" data-level="5.4" data-path="modelling-historical-climate-over-the-study-area.html"><a href="modelling-historical-climate-over-the-study-area.html#scaling-predicted-historical-climate"><i class="fa fa-check"></i><b>5.4</b> Scaling predicted historical climate</a></li>
 </ul></li>
 <li class="chapter" data-level="6" data-path="analyzing-temperature-and-precipitation-change-over-time.html"><a href="analyzing-temperature-and-precipitation-change-over-time.html"><i class="fa fa-check"></i><b>6</b> Analyzing temperature and precipitation change over time</a>
 <ul>
@@ -273,11 +268,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="11.1" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#load-necessary-libraries-5"><i class="fa fa-check"></i><b>11.1</b> Load necessary libraries</a></li>
 <li class="chapter" data-level="11.2" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#load-list-of-resurvey-locations"><i class="fa fa-check"></i><b>11.2</b> Load list of resurvey locations</a></li>
-<li class="chapter" data-level="11.3" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#for-the-historical-occurrence-data-we-will-choose-data-from-two-time-periods-1850-1900-1900-1950."><i class="fa fa-check"></i><b>11.3</b> For the historical occurrence data, we will choose data from two time periods: 1850-1900 &amp; 1900-1950.</a></li>
-<li class="chapter" data-level="11.4" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#load-the-modern-occurrence-data"><i class="fa fa-check"></i><b>11.4</b> Load the modern occurrence data</a></li>
-<li class="chapter" data-level="11.5" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#calculate-dirichlet-distributions-of-relative-abundance"><i class="fa fa-check"></i><b>11.5</b> Calculate dirichlet distributions of relative abundance</a></li>
-<li class="chapter" data-level="11.6" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#calibrating-historical-data-to-modern-survey-data-for-relative-abundance-calculations"><i class="fa fa-check"></i><b>11.6</b> Calibrating historical data to modern survey data for relative abundance calculations</a></li>
-<li class="chapter" data-level="11.7" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#boxplot-visualization-of-overall-relative-abundance-across-timeperiods"><i class="fa fa-check"></i><b>11.7</b> Boxplot visualization of overall relative abundance across timeperiods</a></li>
+<li class="chapter" data-level="11.3" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#calibrating-historical-data-to-modern-survey-data-for-relative-abundance-calculations"><i class="fa fa-check"></i><b>11.3</b> Calibrating historical data to modern survey data for relative abundance calculations</a></li>
+<li class="chapter" data-level="11.4" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#calculating-species-relative-abundance-for-the-historical-data-1850-1900-and-1900-1950"><i class="fa fa-check"></i><b>11.4</b> Calculating species relative abundance for the historical data (1850-1900 and 1900-1950)</a></li>
+<li class="chapter" data-level="11.5" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#load-the-modern-occurrence-data"><i class="fa fa-check"></i><b>11.5</b> Load the modern occurrence data</a></li>
+<li class="chapter" data-level="11.6" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#calculate-dirichlet-distributions-of-relative-abundance"><i class="fa fa-check"></i><b>11.6</b> Calculate dirichlet distributions of relative abundance</a></li>
+<li class="chapter" data-level="11.7" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#boxplot-visualization-of-overall-relative-abundance-across-time-periods"><i class="fa fa-check"></i><b>11.7</b> Boxplot visualization of overall relative abundance across time periods</a></li>
 <li class="chapter" data-level="11.8" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#species-relative-abundances-at-the-site-level"><i class="fa fa-check"></i><b>11.8</b> Species relative abundances at the site-level</a></li>
 <li class="chapter" data-level="11.9" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#visualizing-differences-in-relative-abundance-over-time-at-the-site-level"><i class="fa fa-check"></i><b>11.9</b> Visualizing differences in relative abundance over time at the site level</a></li>
 <li class="chapter" data-level="11.10" data-path="species-relative-abundances-over-time.html"><a href="species-relative-abundances-over-time.html#writing-results-to-file"><i class="fa fa-check"></i><b>11.10</b> Writing results to file</a></li>
@@ -317,49 +312,76 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>In this script, we will process the reconstructed climate data and analyze trends in climate over time</p>
 <div id="load-necessary-libraries" class="section level2 hasAnchor" number="6.1">
 <h2><span class="header-section-number">6.1</span> Load necessary libraries<a href="analyzing-temperature-and-precipitation-change-over-time.html#load-necessary-libraries" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-1" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
-<span id="cb63-2"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-2" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
-<span id="cb63-3"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-3" tabindex="-1"></a><span class="fu">library</span>(stringi)</span>
-<span id="cb63-4"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-4" tabindex="-1"></a><span class="fu">library</span>(glue)</span>
-<span id="cb63-5"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-5" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
-<span id="cb63-6"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-6" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb63-7"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-7" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
-<span id="cb63-8"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-8" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
-<span id="cb63-9"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-9" tabindex="-1"></a></span>
-<span id="cb63-10"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-10" tabindex="-1"></a><span class="co"># for plotting</span></span>
-<span id="cb63-11"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-11" tabindex="-1"></a><span class="fu">library</span>(viridis)</span>
-<span id="cb63-12"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-12" tabindex="-1"></a><span class="fu">library</span>(colorspace)</span>
-<span id="cb63-13"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-13" tabindex="-1"></a><span class="fu">library</span>(tmap)</span>
-<span id="cb63-14"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-14" tabindex="-1"></a><span class="fu">library</span>(scales)</span>
-<span id="cb63-15"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-15" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb63-16"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-16" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
-<span id="cb63-17"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-17" tabindex="-1"></a></span>
-<span id="cb63-18"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-18" tabindex="-1"></a><span class="co"># for GLMMS</span></span>
-<span id="cb63-19"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-19" tabindex="-1"></a><span class="fu">library</span>(mgcv)</span></code></pre></div>
-<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-1" tabindex="-1"></a><span class="co"># load nilgiris</span></span>
-<span id="cb64-2"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-2" tabindex="-1"></a>hills <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">&quot;data/landcover/Nil_Ana_Pal.shp&quot;</span>)</span>
-<span id="cb64-3"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-3" tabindex="-1"></a></span>
-<span id="cb64-4"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-4" tabindex="-1"></a><span class="co"># get reconstructions</span></span>
-<span id="cb64-5"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-5" tabindex="-1"></a>climate_reconstructed <span class="ot">&lt;-</span> <span class="fu">list.files</span>(</span>
-<span id="cb64-6"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-6" tabindex="-1"></a>  <span class="st">&quot;results/climate&quot;</span>,</span>
-<span id="cb64-7"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-7" tabindex="-1"></a>  <span class="at">pattern =</span> <span class="st">&quot;raster_reconstructed&quot;</span>,</span>
-<span id="cb64-8"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-8" tabindex="-1"></a>  <span class="at">full.names =</span> T</span>
-<span id="cb64-9"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-9" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
-<span id="cb64-10"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-10" tabindex="-1"></a>  <span class="fu">lapply</span>(rast)</span>
-<span id="cb64-11"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-11" tabindex="-1"></a></span>
-<span id="cb64-12"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-12" tabindex="-1"></a><span class="co"># get differences with respect to first reconstruction</span></span>
-<span id="cb64-13"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-13" tabindex="-1"></a>climate_change <span class="ot">&lt;-</span> <span class="fu">lapply</span>(climate_reconstructed, <span class="cf">function</span>(le) {</span>
-<span id="cb64-14"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-14" tabindex="-1"></a>  le <span class="ot">&lt;-</span> le <span class="sc">/</span> le[[<span class="dv">1</span>]]</span>
-<span id="cb64-15"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-15" tabindex="-1"></a>  le <span class="ot">&lt;-</span> le[[<span class="sc">-</span><span class="dv">1</span>]]</span>
-<span id="cb64-16"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-16" tabindex="-1"></a>  le <span class="ot">&lt;-</span> le <span class="sc">-</span> <span class="dv">1</span></span>
-<span id="cb64-17"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-17" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">crop</span>(</span>
-<span id="cb64-18"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-18" tabindex="-1"></a>    le, <span class="fu">vect</span>(hills)</span>
-<span id="cb64-19"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-19" tabindex="-1"></a>  )</span>
-<span id="cb64-20"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-20" tabindex="-1"></a>})</span></code></pre></div>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb62-1" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
+<span id="cb62-2"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb62-2" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb62-3"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb62-3" tabindex="-1"></a><span class="fu">library</span>(stringi)</span>
+<span id="cb62-4"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb62-4" tabindex="-1"></a><span class="fu">library</span>(glue)</span>
+<span id="cb62-5"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb62-5" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
+<span id="cb62-6"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb62-6" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb62-7"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb62-7" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb62-8"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb62-8" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
+<span id="cb62-9"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb62-9" tabindex="-1"></a></span>
+<span id="cb62-10"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb62-10" tabindex="-1"></a><span class="co"># for plotting</span></span>
+<span id="cb62-11"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb62-11" tabindex="-1"></a><span class="fu">library</span>(viridis)</span>
+<span id="cb62-12"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb62-12" tabindex="-1"></a><span class="fu">library</span>(colorspace)</span>
+<span id="cb62-13"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb62-13" tabindex="-1"></a><span class="fu">library</span>(tmap)</span>
+<span id="cb62-14"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb62-14" tabindex="-1"></a><span class="fu">library</span>(scales)</span>
+<span id="cb62-15"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb62-15" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb62-16"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb62-16" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb62-17"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb62-17" tabindex="-1"></a></span>
+<span id="cb62-18"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb62-18" tabindex="-1"></a><span class="co"># for GLMMS</span></span>
+<span id="cb62-19"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb62-19" tabindex="-1"></a><span class="fu">library</span>(mgcv)</span></code></pre></div>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-1" tabindex="-1"></a><span class="co"># load nilgiris</span></span>
+<span id="cb63-2"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-2" tabindex="-1"></a>hills <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">&quot;data/landcover/Nil_Ana_Pal.shp&quot;</span>)</span>
+<span id="cb63-3"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-3" tabindex="-1"></a></span>
+<span id="cb63-4"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-4" tabindex="-1"></a><span class="co"># get reconstructions</span></span>
+<span id="cb63-5"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-5" tabindex="-1"></a>climate_reconstructed <span class="ot">&lt;-</span> <span class="fu">list.files</span>(</span>
+<span id="cb63-6"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-6" tabindex="-1"></a>  <span class="st">&quot;results/climate&quot;</span>,</span>
+<span id="cb63-7"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-7" tabindex="-1"></a>  <span class="at">pattern =</span> <span class="st">&quot;raster_reconstructed&quot;</span>,</span>
+<span id="cb63-8"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-8" tabindex="-1"></a>  <span class="at">full.names =</span> T</span>
+<span id="cb63-9"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-9" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb63-10"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-10" tabindex="-1"></a>  <span class="fu">lapply</span>(rast)</span>
+<span id="cb63-11"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-11" tabindex="-1"></a></span>
+<span id="cb63-12"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-12" tabindex="-1"></a><span class="co"># get differences with respect to first reconstruction</span></span>
+<span id="cb63-13"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-13" tabindex="-1"></a>climate_change <span class="ot">&lt;-</span> <span class="fu">lapply</span>(climate_reconstructed, <span class="cf">function</span>(le) {</span>
+<span id="cb63-14"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-14" tabindex="-1"></a>  le <span class="ot">&lt;-</span> le <span class="sc">/</span> le[[<span class="dv">1</span>]]</span>
+<span id="cb63-15"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-15" tabindex="-1"></a>  le <span class="ot">&lt;-</span> le[[<span class="sc">-</span><span class="dv">1</span>]]</span>
+<span id="cb63-16"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-16" tabindex="-1"></a>  le <span class="ot">&lt;-</span> le <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb63-17"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-17" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">crop</span>(</span>
+<span id="cb63-18"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-18" tabindex="-1"></a>    le, <span class="fu">vect</span>(hills)</span>
+<span id="cb63-19"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-19" tabindex="-1"></a>  )</span>
+<span id="cb63-20"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb63-20" tabindex="-1"></a>})</span></code></pre></div>
 </div>
 <div id="plot-change-in-climate-as-percentages." class="section level2 hasAnchor" number="6.2">
 <h2><span class="header-section-number">6.2</span> Plot change in climate as percentages.<a href="analyzing-temperature-and-precipitation-change-over-time.html#plot-change-in-climate-as-percentages." class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb65-1" tabindex="-1"></a>ppt_dry_change <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(climate_change[[<span class="dv">1</span>]]) <span class="sc">+</span></span>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-1" tabindex="-1"></a>ppt_dry_change <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(climate_change[[<span class="dv">1</span>]]) <span class="sc">+</span></span>
+<span id="cb64-2"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-2" tabindex="-1"></a>  <span class="fu">tm_raster</span>(</span>
+<span id="cb64-3"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-3" tabindex="-1"></a>    <span class="at">palette =</span> colorspace<span class="sc">::</span><span class="fu">diverging_hcl</span>(</span>
+<span id="cb64-4"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-4" tabindex="-1"></a>      <span class="dv">31</span>,</span>
+<span id="cb64-5"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-5" tabindex="-1"></a>      <span class="at">palette =</span> <span class="st">&quot;Blue-Yellow&quot;</span>,</span>
+<span id="cb64-6"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-6" tabindex="-1"></a>      <span class="at">rev =</span> T</span>
+<span id="cb64-7"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-7" tabindex="-1"></a>    ),</span>
+<span id="cb64-8"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-8" tabindex="-1"></a>    <span class="at">style =</span> <span class="st">&quot;cont&quot;</span>, <span class="at">midpoint =</span> <span class="dv">0</span>,</span>
+<span id="cb64-9"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-9" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;% difference, dry season ppt.&quot;</span>,</span>
+<span id="cb64-10"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-10" tabindex="-1"></a>    <span class="at">legend.is.portrait =</span> F</span>
+<span id="cb64-11"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-11" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb64-12"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-12" tabindex="-1"></a>  <span class="fu">tm_shape</span>(hills) <span class="sc">+</span></span>
+<span id="cb64-13"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-13" tabindex="-1"></a>  <span class="fu">tm_borders</span>() <span class="sc">+</span></span>
+<span id="cb64-14"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-14" tabindex="-1"></a>  <span class="fu">tm_legend</span>(</span>
+<span id="cb64-15"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-15" tabindex="-1"></a>    <span class="at">legend.outside =</span> T,</span>
+<span id="cb64-16"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-16" tabindex="-1"></a>    <span class="at">legend.outside.position =</span> <span class="st">&quot;bottom&quot;</span>,</span>
+<span id="cb64-17"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-17" tabindex="-1"></a>    <span class="at">legend.outside.size =</span> .<span class="dv">1</span></span>
+<span id="cb64-18"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-18" tabindex="-1"></a>  )</span>
+<span id="cb64-19"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-19" tabindex="-1"></a></span>
+<span id="cb64-20"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-20" tabindex="-1"></a><span class="fu">tmap_save</span>(</span>
+<span id="cb64-21"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-21" tabindex="-1"></a>  ppt_dry_change,</span>
+<span id="cb64-22"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-22" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">&quot;figs/fig_ppt_dry_change.png&quot;</span></span>
+<span id="cb64-23"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb64-23" tabindex="-1"></a>)</span></code></pre></div>
+<div class="float">
+<img src="figs/fig_ppt_dry_change.png" alt="Decadal changes in dry season precipitation over the last century" />
+<div class="figcaption">Decadal changes in dry season precipitation over the last century</div>
+</div>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb65-1" tabindex="-1"></a>ppt_wet_change <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(climate_change[[<span class="dv">2</span>]]) <span class="sc">+</span></span>
 <span id="cb65-2"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb65-2" tabindex="-1"></a>  <span class="fu">tm_raster</span>(</span>
 <span id="cb65-3"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb65-3" tabindex="-1"></a>    <span class="at">palette =</span> colorspace<span class="sc">::</span><span class="fu">diverging_hcl</span>(</span>
 <span id="cb65-4"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb65-4" tabindex="-1"></a>      <span class="dv">31</span>,</span>
@@ -367,7 +389,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb65-6"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb65-6" tabindex="-1"></a>      <span class="at">rev =</span> T</span>
 <span id="cb65-7"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb65-7" tabindex="-1"></a>    ),</span>
 <span id="cb65-8"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb65-8" tabindex="-1"></a>    <span class="at">style =</span> <span class="st">&quot;cont&quot;</span>, <span class="at">midpoint =</span> <span class="dv">0</span>,</span>
-<span id="cb65-9"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb65-9" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;% difference, dry season ppt.&quot;</span>,</span>
+<span id="cb65-9"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb65-9" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;% difference, wet season ppt.&quot;</span>,</span>
 <span id="cb65-10"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb65-10" tabindex="-1"></a>    <span class="at">legend.is.portrait =</span> F</span>
 <span id="cb65-11"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb65-11" tabindex="-1"></a>  ) <span class="sc">+</span></span>
 <span id="cb65-12"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb65-12" tabindex="-1"></a>  <span class="fu">tm_shape</span>(hills) <span class="sc">+</span></span>
@@ -379,48 +401,47 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb65-18"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb65-18" tabindex="-1"></a>  )</span>
 <span id="cb65-19"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb65-19" tabindex="-1"></a></span>
 <span id="cb65-20"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb65-20" tabindex="-1"></a><span class="fu">tmap_save</span>(</span>
-<span id="cb65-21"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb65-21" tabindex="-1"></a>  ppt_dry_change,</span>
-<span id="cb65-22"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb65-22" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">&quot;figs/fig_ppt_dry_change.png&quot;</span></span>
+<span id="cb65-21"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb65-21" tabindex="-1"></a>  ppt_wet_change,</span>
+<span id="cb65-22"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb65-22" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">&quot;figs/fig_ppt_wet_change.png&quot;</span></span>
 <span id="cb65-23"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb65-23" tabindex="-1"></a>)</span></code></pre></div>
-<div class="float">
-<img src="figs/fig_ppt_dry_change.png" alt="Decadal changes in dry season precipitation over the last century" />
-<div class="figcaption">Decadal changes in dry season precipitation over the last century</div>
-</div>
-<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-1" tabindex="-1"></a>ppt_wet_change <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(climate_change[[<span class="dv">2</span>]]) <span class="sc">+</span></span>
-<span id="cb66-2"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-2" tabindex="-1"></a>  <span class="fu">tm_raster</span>(</span>
-<span id="cb66-3"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-3" tabindex="-1"></a>    <span class="at">palette =</span> colorspace<span class="sc">::</span><span class="fu">diverging_hcl</span>(</span>
-<span id="cb66-4"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-4" tabindex="-1"></a>      <span class="dv">31</span>,</span>
-<span id="cb66-5"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-5" tabindex="-1"></a>      <span class="at">palette =</span> <span class="st">&quot;Blue-Yellow&quot;</span>,</span>
-<span id="cb66-6"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-6" tabindex="-1"></a>      <span class="at">rev =</span> T</span>
-<span id="cb66-7"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-7" tabindex="-1"></a>    ),</span>
-<span id="cb66-8"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-8" tabindex="-1"></a>    <span class="at">style =</span> <span class="st">&quot;cont&quot;</span>, <span class="at">midpoint =</span> <span class="dv">0</span>,</span>
-<span id="cb66-9"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-9" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;% difference, wet season ppt.&quot;</span>,</span>
-<span id="cb66-10"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-10" tabindex="-1"></a>    <span class="at">legend.is.portrait =</span> F</span>
-<span id="cb66-11"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-11" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb66-12"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-12" tabindex="-1"></a>  <span class="fu">tm_shape</span>(hills) <span class="sc">+</span></span>
-<span id="cb66-13"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-13" tabindex="-1"></a>  <span class="fu">tm_borders</span>() <span class="sc">+</span></span>
-<span id="cb66-14"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-14" tabindex="-1"></a>  <span class="fu">tm_legend</span>(</span>
-<span id="cb66-15"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-15" tabindex="-1"></a>    <span class="at">legend.outside =</span> T,</span>
-<span id="cb66-16"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-16" tabindex="-1"></a>    <span class="at">legend.outside.position =</span> <span class="st">&quot;bottom&quot;</span>,</span>
-<span id="cb66-17"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-17" tabindex="-1"></a>    <span class="at">legend.outside.size =</span> .<span class="dv">1</span></span>
-<span id="cb66-18"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-18" tabindex="-1"></a>  )</span>
-<span id="cb66-19"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-19" tabindex="-1"></a></span>
-<span id="cb66-20"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-20" tabindex="-1"></a><span class="fu">tmap_save</span>(</span>
-<span id="cb66-21"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-21" tabindex="-1"></a>  ppt_wet_change,</span>
-<span id="cb66-22"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-22" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">&quot;figs/fig_ppt_wet_change.png&quot;</span></span>
-<span id="cb66-23"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-23" tabindex="-1"></a>)</span></code></pre></div>
 <div class="float">
 <img src="figs/fig_ppt_wet_change.png" alt="Decadal changes in rainy season precipitation over the last century" />
 <div class="figcaption">Decadal changes in rainy season precipitation over the last century</div>
 </div>
-<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb67-1" tabindex="-1"></a>temp_dry_change <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(climate_change[[<span class="dv">3</span>]]) <span class="sc">+</span></span>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-1" tabindex="-1"></a>temp_dry_change <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(climate_change[[<span class="dv">3</span>]]) <span class="sc">+</span></span>
+<span id="cb66-2"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-2" tabindex="-1"></a>  <span class="fu">tm_raster</span>(</span>
+<span id="cb66-3"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-3" tabindex="-1"></a>    <span class="at">palette =</span> colorspace<span class="sc">::</span><span class="fu">diverging_hcl</span>(</span>
+<span id="cb66-4"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-4" tabindex="-1"></a>      <span class="dv">31</span>,</span>
+<span id="cb66-5"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-5" tabindex="-1"></a>      <span class="at">rev =</span> F</span>
+<span id="cb66-6"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-6" tabindex="-1"></a>    ),</span>
+<span id="cb66-7"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-7" tabindex="-1"></a>    <span class="at">style =</span> <span class="st">&quot;cont&quot;</span>, <span class="at">midpoint =</span> <span class="dv">0</span>,</span>
+<span id="cb66-8"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-8" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;% difference, dry season temp.&quot;</span>,</span>
+<span id="cb66-9"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-9" tabindex="-1"></a>    <span class="at">legend.is.portrait =</span> F</span>
+<span id="cb66-10"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-10" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb66-11"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-11" tabindex="-1"></a>  <span class="fu">tm_shape</span>(hills) <span class="sc">+</span></span>
+<span id="cb66-12"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-12" tabindex="-1"></a>  <span class="fu">tm_borders</span>() <span class="sc">+</span></span>
+<span id="cb66-13"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-13" tabindex="-1"></a>  <span class="fu">tm_legend</span>(</span>
+<span id="cb66-14"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-14" tabindex="-1"></a>    <span class="at">legend.outside =</span> T,</span>
+<span id="cb66-15"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-15" tabindex="-1"></a>    <span class="at">legend.outside.position =</span> <span class="st">&quot;bottom&quot;</span>,</span>
+<span id="cb66-16"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-16" tabindex="-1"></a>    <span class="at">legend.outside.size =</span> .<span class="dv">1</span></span>
+<span id="cb66-17"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-17" tabindex="-1"></a>  )</span>
+<span id="cb66-18"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-18" tabindex="-1"></a></span>
+<span id="cb66-19"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-19" tabindex="-1"></a><span class="fu">tmap_save</span>(</span>
+<span id="cb66-20"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-20" tabindex="-1"></a>  temp_dry_change,</span>
+<span id="cb66-21"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-21" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">&quot;figs/fig_temp_dry_change.png&quot;</span></span>
+<span id="cb66-22"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb66-22" tabindex="-1"></a>)</span></code></pre></div>
+<div class="float">
+<img src="figs/fig_temp_dry_change.png" alt="Decadal change in dry season temperatures over the last century" />
+<div class="figcaption">Decadal change in dry season temperatures over the last century</div>
+</div>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb67-1" tabindex="-1"></a>temp_wet_change <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(climate_change[[<span class="dv">4</span>]]) <span class="sc">+</span></span>
 <span id="cb67-2"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb67-2" tabindex="-1"></a>  <span class="fu">tm_raster</span>(</span>
 <span id="cb67-3"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb67-3" tabindex="-1"></a>    <span class="at">palette =</span> colorspace<span class="sc">::</span><span class="fu">diverging_hcl</span>(</span>
 <span id="cb67-4"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb67-4" tabindex="-1"></a>      <span class="dv">31</span>,</span>
 <span id="cb67-5"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb67-5" tabindex="-1"></a>      <span class="at">rev =</span> F</span>
 <span id="cb67-6"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb67-6" tabindex="-1"></a>    ),</span>
 <span id="cb67-7"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb67-7" tabindex="-1"></a>    <span class="at">style =</span> <span class="st">&quot;cont&quot;</span>, <span class="at">midpoint =</span> <span class="dv">0</span>,</span>
-<span id="cb67-8"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb67-8" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;% difference, dry season temp.&quot;</span>,</span>
+<span id="cb67-8"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb67-8" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;% difference, wet season temp.&quot;</span>,</span>
 <span id="cb67-9"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb67-9" tabindex="-1"></a>    <span class="at">legend.is.portrait =</span> F</span>
 <span id="cb67-10"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb67-10" tabindex="-1"></a>  ) <span class="sc">+</span></span>
 <span id="cb67-11"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb67-11" tabindex="-1"></a>  <span class="fu">tm_shape</span>(hills) <span class="sc">+</span></span>
@@ -432,35 +453,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb67-17"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb67-17" tabindex="-1"></a>  )</span>
 <span id="cb67-18"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb67-18" tabindex="-1"></a></span>
 <span id="cb67-19"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb67-19" tabindex="-1"></a><span class="fu">tmap_save</span>(</span>
-<span id="cb67-20"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb67-20" tabindex="-1"></a>  temp_dry_change,</span>
-<span id="cb67-21"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb67-21" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">&quot;figs/fig_temp_dry_change.png&quot;</span></span>
+<span id="cb67-20"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb67-20" tabindex="-1"></a>  temp_wet_change,</span>
+<span id="cb67-21"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb67-21" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">&quot;figs/fig_temp_wet_change.png&quot;</span></span>
 <span id="cb67-22"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb67-22" tabindex="-1"></a>)</span></code></pre></div>
-<div class="float">
-<img src="figs/fig_temp_dry_change.png" alt="Decadal change in dry season temperatures over the last century" />
-<div class="figcaption">Decadal change in dry season temperatures over the last century</div>
-</div>
-<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-1" tabindex="-1"></a>temp_wet_change <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(climate_change[[<span class="dv">4</span>]]) <span class="sc">+</span></span>
-<span id="cb68-2"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-2" tabindex="-1"></a>  <span class="fu">tm_raster</span>(</span>
-<span id="cb68-3"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-3" tabindex="-1"></a>    <span class="at">palette =</span> colorspace<span class="sc">::</span><span class="fu">diverging_hcl</span>(</span>
-<span id="cb68-4"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-4" tabindex="-1"></a>      <span class="dv">31</span>,</span>
-<span id="cb68-5"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-5" tabindex="-1"></a>      <span class="at">rev =</span> F</span>
-<span id="cb68-6"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-6" tabindex="-1"></a>    ),</span>
-<span id="cb68-7"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-7" tabindex="-1"></a>    <span class="at">style =</span> <span class="st">&quot;cont&quot;</span>, <span class="at">midpoint =</span> <span class="dv">0</span>,</span>
-<span id="cb68-8"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-8" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;% difference, wet season temp.&quot;</span>,</span>
-<span id="cb68-9"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-9" tabindex="-1"></a>    <span class="at">legend.is.portrait =</span> F</span>
-<span id="cb68-10"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-10" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb68-11"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-11" tabindex="-1"></a>  <span class="fu">tm_shape</span>(hills) <span class="sc">+</span></span>
-<span id="cb68-12"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-12" tabindex="-1"></a>  <span class="fu">tm_borders</span>() <span class="sc">+</span></span>
-<span id="cb68-13"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-13" tabindex="-1"></a>  <span class="fu">tm_legend</span>(</span>
-<span id="cb68-14"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-14" tabindex="-1"></a>    <span class="at">legend.outside =</span> T,</span>
-<span id="cb68-15"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-15" tabindex="-1"></a>    <span class="at">legend.outside.position =</span> <span class="st">&quot;bottom&quot;</span>,</span>
-<span id="cb68-16"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-16" tabindex="-1"></a>    <span class="at">legend.outside.size =</span> .<span class="dv">1</span></span>
-<span id="cb68-17"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-17" tabindex="-1"></a>  )</span>
-<span id="cb68-18"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-18" tabindex="-1"></a></span>
-<span id="cb68-19"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-19" tabindex="-1"></a><span class="fu">tmap_save</span>(</span>
-<span id="cb68-20"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-20" tabindex="-1"></a>  temp_wet_change,</span>
-<span id="cb68-21"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-21" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">&quot;figs/fig_temp_wet_change.png&quot;</span></span>
-<span id="cb68-22"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-22" tabindex="-1"></a>)</span></code></pre></div>
 <div class="float">
 <img src="figs/fig_temp_wet_change.png" alt="Decadal change in wet season temperatures over the last century" />
 <div class="figcaption">Decadal change in wet season temperatures over the last century</div>
@@ -468,150 +463,150 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="load-list-of-resurvey-locationshistorical-sites-of-occurrence" class="section level2 hasAnchor" number="6.3">
 <h2><span class="header-section-number">6.3</span> Load list of resurvey locations/historical sites of occurrence<a href="analyzing-temperature-and-precipitation-change-over-time.html#load-list-of-resurvey-locationshistorical-sites-of-occurrence" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-1" tabindex="-1"></a><span class="co"># load list of resurvey locations and add elevation as a variable</span></span>
-<span id="cb69-2"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-2" tabindex="-1"></a><span class="co"># remove the modern resurvey locations only (ie. ASFQ)</span></span>
-<span id="cb69-3"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-3" tabindex="-1"></a>sites <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;data/list-of-resurvey-locations.csv&quot;</span>)</span>
-<span id="cb69-4"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-4" tabindex="-1"></a></span>
-<span id="cb69-5"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-5" tabindex="-1"></a><span class="co"># set missing historical site code to NA</span></span>
-<span id="cb69-6"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-6" tabindex="-1"></a>sites <span class="ot">&lt;-</span> <span class="fu">mutate</span>(sites,</span>
-<span id="cb69-7"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-7" tabindex="-1"></a>  <span class="at">historical_site_code =</span> <span class="fu">if_else</span>(</span>
-<span id="cb69-8"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-8" tabindex="-1"></a>    historical_site_code <span class="sc">==</span> <span class="st">&quot;&quot;</span>, <span class="cn">NA_character_</span>, historical_site_code</span>
-<span id="cb69-9"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-9" tabindex="-1"></a>  ),</span>
-<span id="cb69-10"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-10" tabindex="-1"></a>  <span class="at">site_name =</span> <span class="fu">if_else</span>(</span>
-<span id="cb69-11"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-11" tabindex="-1"></a>    site_name <span class="sc">==</span> <span class="st">&quot;&quot;</span>, <span class="cn">NA_character_</span>, site_name</span>
-<span id="cb69-12"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-12" tabindex="-1"></a>  )</span>
-<span id="cb69-13"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-13" tabindex="-1"></a>)</span>
-<span id="cb69-14"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-14" tabindex="-1"></a></span>
-<span id="cb69-15"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-15" tabindex="-1"></a><span class="co"># remove sites with historical site code missing</span></span>
-<span id="cb69-16"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-16" tabindex="-1"></a>sites <span class="ot">&lt;-</span> <span class="fu">filter</span>(sites, <span class="sc">!</span><span class="fu">is.na</span>(historical_site_code))</span>
-<span id="cb69-17"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-17" tabindex="-1"></a></span>
-<span id="cb69-18"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-18" tabindex="-1"></a><span class="co"># convert to sf object and transform</span></span>
-<span id="cb69-19"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-19" tabindex="-1"></a>sites <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(sites, <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">&quot;longitude&quot;</span>, <span class="st">&quot;latitude&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb69-20"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-20" tabindex="-1"></a>  <span class="st">`</span><span class="at">st_crs&lt;-</span><span class="st">`</span>(<span class="dv">4326</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb69-21"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-21" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="dv">32643</span>)</span>
-<span id="cb69-22"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-22" tabindex="-1"></a></span>
-<span id="cb69-23"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-23" tabindex="-1"></a><span class="co"># add an outline of the nilgiris shapefile (contains areas below 1400 m)</span></span>
-<span id="cb69-24"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-24" tabindex="-1"></a>nil <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">&quot;data/landcover/Nil_Ana_Pal.shp&quot;</span>)</span>
-<span id="cb69-25"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-25" tabindex="-1"></a>nil <span class="ot">&lt;-</span> nil[<span class="dv">2</span>, ]</span>
-<span id="cb69-26"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-26" tabindex="-1"></a>nil <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(nil, <span class="dv">32643</span>)</span>
-<span id="cb69-27"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-27" tabindex="-1"></a>buffer <span class="ot">&lt;-</span> <span class="fu">st_buffer</span>(nil, <span class="fl">3e4</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb69-28"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-28" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="dv">4326</span>)</span>
-<span id="cb69-29"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-29" tabindex="-1"></a></span>
-<span id="cb69-30"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-30" tabindex="-1"></a><span class="co"># add the elevation raster</span></span>
-<span id="cb69-31"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-31" tabindex="-1"></a>alt <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="st">&quot;data/elevation/alt/&quot;</span>)</span>
-<span id="cb69-32"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-32" tabindex="-1"></a></span>
-<span id="cb69-33"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-33" tabindex="-1"></a><span class="co"># this layer is not added to github as a result of its large size and can be downloaded from SRTM (Farr et al. (2007))</span></span>
-<span id="cb69-34"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-34" tabindex="-1"></a>alt.hills <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">crop</span>(alt, <span class="fu">as</span>(buffer, <span class="st">&quot;Spatial&quot;</span>))</span>
-<span id="cb69-35"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-35" tabindex="-1"></a><span class="fu">rm</span>(alt)</span>
-<span id="cb69-36"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-36" tabindex="-1"></a><span class="fu">gc</span>()</span>
-<span id="cb69-37"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-37" tabindex="-1"></a></span>
-<span id="cb69-38"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-38" tabindex="-1"></a><span class="co"># get slope and aspect</span></span>
-<span id="cb69-39"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-39" tabindex="-1"></a>slopeData <span class="ot">&lt;-</span> <span class="fu">terrain</span>(<span class="at">x =</span> alt.hills, <span class="at">v =</span> <span class="fu">c</span>(<span class="st">&quot;slope&quot;</span>, <span class="st">&quot;aspect&quot;</span>))</span>
-<span id="cb69-40"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-40" tabindex="-1"></a><span class="co"># use c() on terra object to combine as a stack</span></span>
-<span id="cb69-41"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-41" tabindex="-1"></a>elevData <span class="ot">&lt;-</span> <span class="fu">c</span>(alt.hills, slopeData)</span>
-<span id="cb69-42"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-42" tabindex="-1"></a><span class="fu">rm</span>(alt.hills)</span>
-<span id="cb69-43"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-43" tabindex="-1"></a><span class="fu">gc</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-1" tabindex="-1"></a><span class="co"># load list of resurvey locations and add elevation as a variable</span></span>
+<span id="cb68-2"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-2" tabindex="-1"></a><span class="co"># remove the modern resurvey locations only (ie. ASFQ)</span></span>
+<span id="cb68-3"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-3" tabindex="-1"></a>sites <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;data/list-of-resurvey-locations.csv&quot;</span>)</span>
+<span id="cb68-4"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-4" tabindex="-1"></a></span>
+<span id="cb68-5"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-5" tabindex="-1"></a><span class="co"># set missing historical site code to NA</span></span>
+<span id="cb68-6"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-6" tabindex="-1"></a>sites <span class="ot">&lt;-</span> <span class="fu">mutate</span>(sites,</span>
+<span id="cb68-7"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-7" tabindex="-1"></a>  <span class="at">historical_site_code =</span> <span class="fu">if_else</span>(</span>
+<span id="cb68-8"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-8" tabindex="-1"></a>    historical_site_code <span class="sc">==</span> <span class="st">&quot;&quot;</span>, <span class="cn">NA_character_</span>, historical_site_code</span>
+<span id="cb68-9"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-9" tabindex="-1"></a>  ),</span>
+<span id="cb68-10"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-10" tabindex="-1"></a>  <span class="at">site_name =</span> <span class="fu">if_else</span>(</span>
+<span id="cb68-11"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-11" tabindex="-1"></a>    site_name <span class="sc">==</span> <span class="st">&quot;&quot;</span>, <span class="cn">NA_character_</span>, site_name</span>
+<span id="cb68-12"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-12" tabindex="-1"></a>  )</span>
+<span id="cb68-13"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-13" tabindex="-1"></a>)</span>
+<span id="cb68-14"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-14" tabindex="-1"></a></span>
+<span id="cb68-15"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-15" tabindex="-1"></a><span class="co"># remove sites with historical site code missing</span></span>
+<span id="cb68-16"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-16" tabindex="-1"></a>sites <span class="ot">&lt;-</span> <span class="fu">filter</span>(sites, <span class="sc">!</span><span class="fu">is.na</span>(historical_site_code))</span>
+<span id="cb68-17"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-17" tabindex="-1"></a></span>
+<span id="cb68-18"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-18" tabindex="-1"></a><span class="co"># convert to sf object and transform</span></span>
+<span id="cb68-19"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-19" tabindex="-1"></a>sites <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(sites, <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">&quot;longitude&quot;</span>, <span class="st">&quot;latitude&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb68-20"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-20" tabindex="-1"></a>  <span class="st">`</span><span class="at">st_crs&lt;-</span><span class="st">`</span>(<span class="dv">4326</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb68-21"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-21" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="dv">32643</span>)</span>
+<span id="cb68-22"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-22" tabindex="-1"></a></span>
+<span id="cb68-23"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-23" tabindex="-1"></a><span class="co"># add an outline of the nilgiris shapefile (contains areas below 1400 m)</span></span>
+<span id="cb68-24"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-24" tabindex="-1"></a>nil <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">&quot;data/landcover/Nil_Ana_Pal.shp&quot;</span>)</span>
+<span id="cb68-25"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-25" tabindex="-1"></a>nil <span class="ot">&lt;-</span> nil[<span class="dv">2</span>, ]</span>
+<span id="cb68-26"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-26" tabindex="-1"></a>nil <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(nil, <span class="dv">32643</span>)</span>
+<span id="cb68-27"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-27" tabindex="-1"></a>buffer <span class="ot">&lt;-</span> <span class="fu">st_buffer</span>(nil, <span class="fl">3e4</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb68-28"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-28" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="dv">4326</span>)</span>
+<span id="cb68-29"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-29" tabindex="-1"></a></span>
+<span id="cb68-30"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-30" tabindex="-1"></a><span class="co"># add the elevation raster</span></span>
+<span id="cb68-31"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-31" tabindex="-1"></a>alt <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="st">&quot;data/elevation/alt/&quot;</span>)</span>
+<span id="cb68-32"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-32" tabindex="-1"></a></span>
+<span id="cb68-33"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-33" tabindex="-1"></a><span class="co"># this layer is not added to github as a result of its large size and can be downloaded from SRTM (Farr et al. (2007))</span></span>
+<span id="cb68-34"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-34" tabindex="-1"></a>alt.hills <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">crop</span>(alt, <span class="fu">as</span>(buffer, <span class="st">&quot;Spatial&quot;</span>))</span>
+<span id="cb68-35"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-35" tabindex="-1"></a><span class="fu">rm</span>(alt)</span>
+<span id="cb68-36"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-36" tabindex="-1"></a><span class="fu">gc</span>()</span>
+<span id="cb68-37"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-37" tabindex="-1"></a></span>
+<span id="cb68-38"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-38" tabindex="-1"></a><span class="co"># get slope and aspect</span></span>
+<span id="cb68-39"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-39" tabindex="-1"></a>slopeData <span class="ot">&lt;-</span> <span class="fu">terrain</span>(<span class="at">x =</span> alt.hills, <span class="at">v =</span> <span class="fu">c</span>(<span class="st">&quot;slope&quot;</span>, <span class="st">&quot;aspect&quot;</span>))</span>
+<span id="cb68-40"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-40" tabindex="-1"></a><span class="co"># use c() on terra object to combine as a stack</span></span>
+<span id="cb68-41"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-41" tabindex="-1"></a>elevData <span class="ot">&lt;-</span> <span class="fu">c</span>(alt.hills, slopeData)</span>
+<span id="cb68-42"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-42" tabindex="-1"></a><span class="fu">rm</span>(alt.hills)</span>
+<span id="cb68-43"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb68-43" tabindex="-1"></a><span class="fu">gc</span>()</span></code></pre></div>
 </div>
 <div id="load-the-climate-rasters" class="section level2 hasAnchor" number="6.4">
 <h2><span class="header-section-number">6.4</span> Load the climate rasters<a href="analyzing-temperature-and-precipitation-change-over-time.html#load-the-climate-rasters" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Note that there are four rasters: temperature and precipitation for both dry season and rainy season respectively. The dry season refers to the months of December to May while the rainy season refers to the months of June to November. Each raster corresponds to mean monthly value across a single decade (1870-1890 and so on). In other words, ppt_dry_1870 would refer to the mean monthly precipitation between December to May for the time-period 1870 to 1880.</p>
-<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-1" tabindex="-1"></a><span class="co"># use previously loaded climate reconstruction data</span></span>
-<span id="cb70-2"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-2" tabindex="-1"></a>climate_reconstructed</span>
-<span id="cb70-3"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-3" tabindex="-1"></a></span>
-<span id="cb70-4"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-4" tabindex="-1"></a><span class="co"># crop each reconstruction to the previously prepared buffer</span></span>
-<span id="cb70-5"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-5" tabindex="-1"></a><span class="co"># and transform/assign the crs of the site data</span></span>
-<span id="cb70-6"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-6" tabindex="-1"></a>climate_reconst_nilgiris <span class="ot">&lt;-</span> <span class="fu">map</span>(</span>
-<span id="cb70-7"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-7" tabindex="-1"></a>  climate_reconstructed, <span class="cf">function</span>(cl) {</span>
-<span id="cb70-8"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-8" tabindex="-1"></a>    cl <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">project</span>(cl, <span class="fu">crs</span>(sites))</span>
-<span id="cb70-9"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-9" tabindex="-1"></a>  }</span>
-<span id="cb70-10"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-10" tabindex="-1"></a>)</span>
-<span id="cb70-11"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-11" tabindex="-1"></a></span>
-<span id="cb70-12"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-12" tabindex="-1"></a><span class="co"># extract the above data for each of the resurvye locations</span></span>
-<span id="cb70-13"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-13" tabindex="-1"></a><span class="co"># use explicit namespacing of extract from terra, i.e., terra::extract</span></span>
-<span id="cb70-14"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-14" tabindex="-1"></a>climate_reconst_sites <span class="ot">&lt;-</span> <span class="fu">lapply</span>(climate_reconst_nilgiris, <span class="cf">function</span>(cl) {</span>
-<span id="cb70-15"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-15" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">extract</span>(cl, <span class="fu">as</span>(sites, <span class="st">&quot;SpatVector&quot;</span>))</span>
-<span id="cb70-16"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-16" tabindex="-1"></a>})</span>
-<span id="cb70-17"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-17" tabindex="-1"></a></span>
-<span id="cb70-18"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-18" tabindex="-1"></a><span class="co"># extract elevation, aspect, slope at sites</span></span>
-<span id="cb70-19"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-19" tabindex="-1"></a><span class="co"># first transform elevation data to UTM 43N</span></span>
-<span id="cb70-20"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-20" tabindex="-1"></a>terrain_nilgiris <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">project</span>(elevData, <span class="fu">crs</span>(sites))</span>
-<span id="cb70-21"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-21" tabindex="-1"></a>terrain_sites <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>(terrain_nilgiris, <span class="fu">as</span>(sites, <span class="st">&quot;SpatVector&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-1" tabindex="-1"></a><span class="co"># use previously loaded climate reconstruction data</span></span>
+<span id="cb69-2"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-2" tabindex="-1"></a>climate_reconstructed</span>
+<span id="cb69-3"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-3" tabindex="-1"></a></span>
+<span id="cb69-4"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-4" tabindex="-1"></a><span class="co"># crop each reconstruction to the previously prepared buffer</span></span>
+<span id="cb69-5"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-5" tabindex="-1"></a><span class="co"># and transform/assign the crs of the site data</span></span>
+<span id="cb69-6"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-6" tabindex="-1"></a>climate_reconst_nilgiris <span class="ot">&lt;-</span> <span class="fu">map</span>(</span>
+<span id="cb69-7"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-7" tabindex="-1"></a>  climate_reconstructed, <span class="cf">function</span>(cl) {</span>
+<span id="cb69-8"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-8" tabindex="-1"></a>    cl <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">project</span>(cl, <span class="fu">crs</span>(sites))</span>
+<span id="cb69-9"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-9" tabindex="-1"></a>  }</span>
+<span id="cb69-10"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-10" tabindex="-1"></a>)</span>
+<span id="cb69-11"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-11" tabindex="-1"></a></span>
+<span id="cb69-12"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-12" tabindex="-1"></a><span class="co"># extract the above data for each of the resurvye locations</span></span>
+<span id="cb69-13"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-13" tabindex="-1"></a><span class="co"># use explicit namespacing of extract from terra, i.e., terra::extract</span></span>
+<span id="cb69-14"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-14" tabindex="-1"></a>climate_reconst_sites <span class="ot">&lt;-</span> <span class="fu">lapply</span>(climate_reconst_nilgiris, <span class="cf">function</span>(cl) {</span>
+<span id="cb69-15"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-15" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">extract</span>(cl, <span class="fu">as</span>(sites, <span class="st">&quot;SpatVector&quot;</span>))</span>
+<span id="cb69-16"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-16" tabindex="-1"></a>})</span>
+<span id="cb69-17"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-17" tabindex="-1"></a></span>
+<span id="cb69-18"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-18" tabindex="-1"></a><span class="co"># extract elevation, aspect, slope at sites</span></span>
+<span id="cb69-19"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-19" tabindex="-1"></a><span class="co"># first transform elevation data to UTM 43N</span></span>
+<span id="cb69-20"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-20" tabindex="-1"></a>terrain_nilgiris <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">project</span>(elevData, <span class="fu">crs</span>(sites))</span>
+<span id="cb69-21"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb69-21" tabindex="-1"></a>terrain_sites <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>(terrain_nilgiris, <span class="fu">as</span>(sites, <span class="st">&quot;SpatVector&quot;</span>))</span></code></pre></div>
 </div>
 <div id="combine-site-climate-and-terrain-data" class="section level2 hasAnchor" number="6.5">
 <h2><span class="header-section-number">6.5</span> Combine site climate and terrain data<a href="analyzing-temperature-and-precipitation-change-over-time.html#combine-site-climate-and-terrain-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-1" tabindex="-1"></a><span class="co"># merge all extracted climate data at sites</span></span>
-<span id="cb71-2"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-2" tabindex="-1"></a>climate_reconst_sites <span class="ot">&lt;-</span> <span class="fu">reduce</span>(climate_reconst_sites, left_join)</span>
-<span id="cb71-3"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-3" tabindex="-1"></a></span>
-<span id="cb71-4"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-4" tabindex="-1"></a><span class="co"># now convert to long format</span></span>
-<span id="cb71-5"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-5" tabindex="-1"></a>climate_reconst_sites <span class="ot">&lt;-</span> <span class="fu">pivot_longer</span>(</span>
-<span id="cb71-6"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-6" tabindex="-1"></a>  climate_reconst_sites,</span>
-<span id="cb71-7"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-7" tabindex="-1"></a>  <span class="at">cols =</span> <span class="sc">!</span>ID,</span>
-<span id="cb71-8"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-8" tabindex="-1"></a>  <span class="at">names_to =</span> <span class="st">&quot;climate_measure&quot;</span></span>
-<span id="cb71-9"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-9" tabindex="-1"></a>)</span>
-<span id="cb71-10"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-10" tabindex="-1"></a></span>
-<span id="cb71-11"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-11" tabindex="-1"></a><span class="co"># split season and year column</span></span>
-<span id="cb71-12"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-12" tabindex="-1"></a>climate_reconst_sites <span class="ot">&lt;-</span> <span class="fu">separate_wider_regex</span>(</span>
-<span id="cb71-13"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-13" tabindex="-1"></a>  climate_reconst_sites,</span>
-<span id="cb71-14"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-14" tabindex="-1"></a>  <span class="at">cols =</span> climate_measure,</span>
-<span id="cb71-15"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-15" tabindex="-1"></a>  <span class="at">patterns =</span> <span class="fu">c</span>(</span>
-<span id="cb71-16"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-16" tabindex="-1"></a>    <span class="at">climate_measure =</span> <span class="st">&quot;.*&quot;</span>, <span class="st">&quot;_&quot;</span>,</span>
-<span id="cb71-17"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-17" tabindex="-1"></a>    <span class="at">season =</span> <span class="st">&quot;dry|rainy&quot;</span>, <span class="st">&quot;_&quot;</span>,</span>
-<span id="cb71-18"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-18" tabindex="-1"></a>    <span class="at">year =</span> <span class="st">&quot;</span><span class="sc">\\</span><span class="st">d{4}&quot;</span></span>
-<span id="cb71-19"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-19" tabindex="-1"></a>  )</span>
-<span id="cb71-20"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-20" tabindex="-1"></a>)</span>
-<span id="cb71-21"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-21" tabindex="-1"></a></span>
-<span id="cb71-22"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-22" tabindex="-1"></a><span class="co"># join with terrain data</span></span>
-<span id="cb71-23"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-23" tabindex="-1"></a>clim_terrain_sites <span class="ot">&lt;-</span> <span class="fu">left_join</span>(</span>
-<span id="cb71-24"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-24" tabindex="-1"></a>  climate_reconst_sites, terrain_sites</span>
-<span id="cb71-25"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-25" tabindex="-1"></a>)</span>
-<span id="cb71-26"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-26" tabindex="-1"></a></span>
-<span id="cb71-27"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-27" tabindex="-1"></a><span class="co"># add site data - first drop</span></span>
-<span id="cb71-28"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-28" tabindex="-1"></a>sites <span class="ot">&lt;-</span> <span class="fu">st_drop_geometry</span>(sites) <span class="sc">%&gt;%</span></span>
-<span id="cb71-29"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-29" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ID =</span> <span class="fu">seq</span>(<span class="fu">nrow</span>(sites))) <span class="sc">%&gt;%</span></span>
-<span id="cb71-30"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-30" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span>
-<span id="cb71-31"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-31" tabindex="-1"></a></span>
-<span id="cb71-32"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-32" tabindex="-1"></a><span class="co"># join with site data</span></span>
-<span id="cb71-33"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-33" tabindex="-1"></a>clim_terrain_sites <span class="ot">&lt;-</span> <span class="fu">left_join</span>(</span>
-<span id="cb71-34"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-34" tabindex="-1"></a>  clim_terrain_sites,</span>
-<span id="cb71-35"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-35" tabindex="-1"></a>  sites</span>
-<span id="cb71-36"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-36" tabindex="-1"></a>)</span>
-<span id="cb71-37"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-37" tabindex="-1"></a></span>
-<span id="cb71-38"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-38" tabindex="-1"></a><span class="co"># make factors numerics</span></span>
-<span id="cb71-39"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-39" tabindex="-1"></a>clim_terrain_sites <span class="ot">&lt;-</span> <span class="fu">mutate</span>(</span>
-<span id="cb71-40"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-40" tabindex="-1"></a>  clim_terrain_sites,</span>
-<span id="cb71-41"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-41" tabindex="-1"></a>  <span class="at">year =</span> <span class="fu">as.numeric</span>(year),</span>
-<span id="cb71-42"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-42" tabindex="-1"></a>  <span class="at">alt =</span> <span class="fu">as.numeric</span>(<span class="fu">as.character</span>(alt))</span>
-<span id="cb71-43"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-43" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-1" tabindex="-1"></a><span class="co"># merge all extracted climate data at sites</span></span>
+<span id="cb70-2"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-2" tabindex="-1"></a>climate_reconst_sites <span class="ot">&lt;-</span> <span class="fu">reduce</span>(climate_reconst_sites, left_join)</span>
+<span id="cb70-3"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-3" tabindex="-1"></a></span>
+<span id="cb70-4"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-4" tabindex="-1"></a><span class="co"># now convert to long format</span></span>
+<span id="cb70-5"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-5" tabindex="-1"></a>climate_reconst_sites <span class="ot">&lt;-</span> <span class="fu">pivot_longer</span>(</span>
+<span id="cb70-6"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-6" tabindex="-1"></a>  climate_reconst_sites,</span>
+<span id="cb70-7"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-7" tabindex="-1"></a>  <span class="at">cols =</span> <span class="sc">!</span>ID,</span>
+<span id="cb70-8"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-8" tabindex="-1"></a>  <span class="at">names_to =</span> <span class="st">&quot;climate_measure&quot;</span></span>
+<span id="cb70-9"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-9" tabindex="-1"></a>)</span>
+<span id="cb70-10"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-10" tabindex="-1"></a></span>
+<span id="cb70-11"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-11" tabindex="-1"></a><span class="co"># split season and year column</span></span>
+<span id="cb70-12"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-12" tabindex="-1"></a>climate_reconst_sites <span class="ot">&lt;-</span> <span class="fu">separate_wider_regex</span>(</span>
+<span id="cb70-13"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-13" tabindex="-1"></a>  climate_reconst_sites,</span>
+<span id="cb70-14"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-14" tabindex="-1"></a>  <span class="at">cols =</span> climate_measure,</span>
+<span id="cb70-15"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-15" tabindex="-1"></a>  <span class="at">patterns =</span> <span class="fu">c</span>(</span>
+<span id="cb70-16"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-16" tabindex="-1"></a>    <span class="at">climate_measure =</span> <span class="st">&quot;.*&quot;</span>, <span class="st">&quot;_&quot;</span>,</span>
+<span id="cb70-17"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-17" tabindex="-1"></a>    <span class="at">season =</span> <span class="st">&quot;dry|rainy&quot;</span>, <span class="st">&quot;_&quot;</span>,</span>
+<span id="cb70-18"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-18" tabindex="-1"></a>    <span class="at">year =</span> <span class="st">&quot;</span><span class="sc">\\</span><span class="st">d{4}&quot;</span></span>
+<span id="cb70-19"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-19" tabindex="-1"></a>  )</span>
+<span id="cb70-20"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-20" tabindex="-1"></a>)</span>
+<span id="cb70-21"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-21" tabindex="-1"></a></span>
+<span id="cb70-22"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-22" tabindex="-1"></a><span class="co"># join with terrain data</span></span>
+<span id="cb70-23"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-23" tabindex="-1"></a>clim_terrain_sites <span class="ot">&lt;-</span> <span class="fu">left_join</span>(</span>
+<span id="cb70-24"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-24" tabindex="-1"></a>  climate_reconst_sites, terrain_sites</span>
+<span id="cb70-25"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-25" tabindex="-1"></a>)</span>
+<span id="cb70-26"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-26" tabindex="-1"></a></span>
+<span id="cb70-27"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-27" tabindex="-1"></a><span class="co"># add site data - first drop</span></span>
+<span id="cb70-28"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-28" tabindex="-1"></a>sites <span class="ot">&lt;-</span> <span class="fu">st_drop_geometry</span>(sites) <span class="sc">%&gt;%</span></span>
+<span id="cb70-29"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-29" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ID =</span> <span class="fu">seq</span>(<span class="fu">nrow</span>(sites))) <span class="sc">%&gt;%</span></span>
+<span id="cb70-30"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-30" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span>
+<span id="cb70-31"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-31" tabindex="-1"></a></span>
+<span id="cb70-32"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-32" tabindex="-1"></a><span class="co"># join with site data</span></span>
+<span id="cb70-33"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-33" tabindex="-1"></a>clim_terrain_sites <span class="ot">&lt;-</span> <span class="fu">left_join</span>(</span>
+<span id="cb70-34"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-34" tabindex="-1"></a>  clim_terrain_sites,</span>
+<span id="cb70-35"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-35" tabindex="-1"></a>  sites</span>
+<span id="cb70-36"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-36" tabindex="-1"></a>)</span>
+<span id="cb70-37"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-37" tabindex="-1"></a></span>
+<span id="cb70-38"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-38" tabindex="-1"></a><span class="co"># make factors numerics</span></span>
+<span id="cb70-39"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-39" tabindex="-1"></a>clim_terrain_sites <span class="ot">&lt;-</span> <span class="fu">mutate</span>(</span>
+<span id="cb70-40"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-40" tabindex="-1"></a>  clim_terrain_sites,</span>
+<span id="cb70-41"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-41" tabindex="-1"></a>  <span class="at">year =</span> <span class="fu">as.numeric</span>(year),</span>
+<span id="cb70-42"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-42" tabindex="-1"></a>  <span class="at">alt =</span> <span class="fu">as.numeric</span>(<span class="fu">as.character</span>(alt))</span>
+<span id="cb70-43"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb70-43" tabindex="-1"></a>)</span></code></pre></div>
 </div>
 <div id="plot-all-reconstructed-climate-over-time-colouring-by-elevation-and-grouping-by-site.-each-line-represents-one-modern-site-code." class="section level2 hasAnchor" number="6.6">
 <h2><span class="header-section-number">6.6</span> Plot all reconstructed climate over time colouring by elevation and grouping by site. Each line represents one modern site code.<a href="analyzing-temperature-and-precipitation-change-over-time.html#plot-all-reconstructed-climate-over-time-colouring-by-elevation-and-grouping-by-site.-each-line-represents-one-modern-site-code." class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-1" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
-<span id="cb72-2"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-2" tabindex="-1"></a>  clim_terrain_sites,</span>
-<span id="cb72-3"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-3" tabindex="-1"></a>  <span class="fu">aes</span>(</span>
-<span id="cb72-4"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-4" tabindex="-1"></a>    <span class="at">x =</span> year, <span class="at">y =</span> value,</span>
-<span id="cb72-5"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-5" tabindex="-1"></a>    <span class="at">col =</span> alt, <span class="at">group =</span> modern_site_code</span>
-<span id="cb72-6"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-6" tabindex="-1"></a>  )</span>
-<span id="cb72-7"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-7" tabindex="-1"></a>) <span class="sc">+</span></span>
-<span id="cb72-8"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-8" tabindex="-1"></a>  <span class="fu">geom_line</span>(</span>
-<span id="cb72-9"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-9" tabindex="-1"></a>    <span class="at">position =</span> <span class="fu">position_jitter</span>(<span class="at">width =</span> <span class="fl">0.2</span>)</span>
-<span id="cb72-10"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-10" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb72-11"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-11" tabindex="-1"></a>  <span class="fu">scale_colour_binned_sequential</span>(</span>
-<span id="cb72-12"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-12" tabindex="-1"></a>    <span class="at">palette =</span> <span class="st">&quot;Batlow&quot;</span></span>
-<span id="cb72-13"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-13" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb72-14"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-14" tabindex="-1"></a>  <span class="fu">facet_grid</span>(</span>
-<span id="cb72-15"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-15" tabindex="-1"></a>    <span class="at">rows =</span> <span class="fu">vars</span>(climate_measure),</span>
-<span id="cb72-16"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-16" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">vars</span>(season),</span>
-<span id="cb72-17"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-17" tabindex="-1"></a>    <span class="at">scales =</span> <span class="st">&quot;free_y&quot;</span>,</span>
-<span id="cb72-18"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-18" tabindex="-1"></a>    <span class="at">labeller =</span> label_both</span>
-<span id="cb72-19"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-19" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb72-20"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-20" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb72-21"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-21" tabindex="-1"></a>    <span class="at">colour =</span> <span class="st">&quot;Elev. (m)&quot;</span></span>
-<span id="cb72-22"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-22" tabindex="-1"></a>  )</span>
-<span id="cb72-23"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-23" tabindex="-1"></a></span>
-<span id="cb72-24"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-24" tabindex="-1"></a><span class="fu">ggsave</span>(</span>
-<span id="cb72-25"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-25" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">&quot;figs/fig_clim_reconst_site_elev.png&quot;</span>,</span>
-<span id="cb72-26"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-26" tabindex="-1"></a>  <span class="at">dpi =</span> <span class="dv">150</span></span>
-<span id="cb72-27"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-27" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-1" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb71-2"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-2" tabindex="-1"></a>  clim_terrain_sites,</span>
+<span id="cb71-3"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-3" tabindex="-1"></a>  <span class="fu">aes</span>(</span>
+<span id="cb71-4"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-4" tabindex="-1"></a>    <span class="at">x =</span> year, <span class="at">y =</span> value,</span>
+<span id="cb71-5"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-5" tabindex="-1"></a>    <span class="at">col =</span> alt, <span class="at">group =</span> modern_site_code</span>
+<span id="cb71-6"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-6" tabindex="-1"></a>  )</span>
+<span id="cb71-7"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-7" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb71-8"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-8" tabindex="-1"></a>  <span class="fu">geom_line</span>(</span>
+<span id="cb71-9"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-9" tabindex="-1"></a>    <span class="at">position =</span> <span class="fu">position_jitter</span>(<span class="at">width =</span> <span class="fl">0.2</span>)</span>
+<span id="cb71-10"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-10" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb71-11"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-11" tabindex="-1"></a>  <span class="fu">scale_colour_binned_sequential</span>(</span>
+<span id="cb71-12"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-12" tabindex="-1"></a>    <span class="at">palette =</span> <span class="st">&quot;Batlow&quot;</span></span>
+<span id="cb71-13"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-13" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb71-14"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-14" tabindex="-1"></a>  <span class="fu">facet_grid</span>(</span>
+<span id="cb71-15"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-15" tabindex="-1"></a>    <span class="at">rows =</span> <span class="fu">vars</span>(climate_measure),</span>
+<span id="cb71-16"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-16" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">vars</span>(season),</span>
+<span id="cb71-17"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-17" tabindex="-1"></a>    <span class="at">scales =</span> <span class="st">&quot;free_y&quot;</span>,</span>
+<span id="cb71-18"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-18" tabindex="-1"></a>    <span class="at">labeller =</span> label_both</span>
+<span id="cb71-19"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-19" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb71-20"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-20" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb71-21"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-21" tabindex="-1"></a>    <span class="at">colour =</span> <span class="st">&quot;Elev. (m)&quot;</span></span>
+<span id="cb71-22"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-22" tabindex="-1"></a>  )</span>
+<span id="cb71-23"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-23" tabindex="-1"></a></span>
+<span id="cb71-24"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-24" tabindex="-1"></a><span class="fu">ggsave</span>(</span>
+<span id="cb71-25"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-25" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">&quot;figs/fig_clim_reconst_site_elev.png&quot;</span>,</span>
+<span id="cb71-26"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-26" tabindex="-1"></a>  <span class="at">dpi =</span> <span class="dv">150</span></span>
+<span id="cb71-27"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb71-27" tabindex="-1"></a>)</span></code></pre></div>
 <div class="float">
 <img src="figs/fig_clim_reconst_site_elev.png" alt="Reconstructed climate as a function of elevation across the last century" />
 <div class="figcaption">Reconstructed climate as a function of elevation across the last century</div>
@@ -622,33 +617,33 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Run a GLMM for the value over time, with measure, season, historical site code, and modern land cover type as random effects.</p>
 <p>All terrain covariates are fixed effects, and time is the main fixed effect of interest.</p>
 <p>Save/report this model fit.</p>
-<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb73-1" tabindex="-1"></a><span class="co"># set site code and landcover as factors</span></span>
-<span id="cb73-2"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb73-2" tabindex="-1"></a>clim_terrain_sites<span class="sc">$</span>historical_site_code <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(clim_terrain_sites<span class="sc">$</span>historical_site_code)</span>
-<span id="cb73-3"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb73-3" tabindex="-1"></a>clim_terrain_sites<span class="sc">$</span>modern_landCover_type <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(clim_terrain_sites<span class="sc">$</span>modern_landCover_type)</span>
-<span id="cb73-4"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb73-4" tabindex="-1"></a></span>
-<span id="cb73-5"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb73-5" tabindex="-1"></a><span class="co"># split by measure</span></span>
-<span id="cb73-6"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb73-6" tabindex="-1"></a>clim_terrain_sites <span class="ot">&lt;-</span> <span class="fu">nest</span>(</span>
-<span id="cb73-7"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb73-7" tabindex="-1"></a>  clim_terrain_sites,</span>
-<span id="cb73-8"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb73-8" tabindex="-1"></a>  <span class="at">.by =</span> climate_measure</span>
-<span id="cb73-9"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb73-9" tabindex="-1"></a>)</span>
-<span id="cb73-10"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb73-10" tabindex="-1"></a></span>
-<span id="cb73-11"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb73-11" tabindex="-1"></a><span class="co"># run model</span></span>
-<span id="cb73-12"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb73-12" tabindex="-1"></a>clim_terrain_sites <span class="ot">&lt;-</span> <span class="fu">mutate</span>(</span>
-<span id="cb73-13"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb73-13" tabindex="-1"></a>  clim_terrain_sites,</span>
-<span id="cb73-14"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb73-14" tabindex="-1"></a>  <span class="at">model_fit =</span> <span class="fu">map</span>(</span>
-<span id="cb73-15"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb73-15" tabindex="-1"></a>    data,</span>
-<span id="cb73-16"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb73-16" tabindex="-1"></a>    <span class="cf">function</span>(df) {</span>
-<span id="cb73-17"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb73-17" tabindex="-1"></a>      <span class="fu">gam</span>(</span>
-<span id="cb73-18"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb73-18" tabindex="-1"></a>        value <span class="sc">~</span> year <span class="sc">+</span> alt <span class="sc">+</span> slope <span class="sc">+</span> aspect <span class="sc">+</span> season <span class="sc">+</span></span>
-<span id="cb73-19"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb73-19" tabindex="-1"></a>          <span class="fu">s</span>(historical_site_code, <span class="at">bs =</span> <span class="st">&quot;re&quot;</span>) <span class="sc">+</span></span>
-<span id="cb73-20"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb73-20" tabindex="-1"></a>          <span class="fu">s</span>(modern_landCover_type, <span class="at">bs =</span> <span class="st">&quot;re&quot;</span>),</span>
-<span id="cb73-21"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb73-21" tabindex="-1"></a>        <span class="at">data =</span> df</span>
-<span id="cb73-22"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb73-22" tabindex="-1"></a>      )</span>
-<span id="cb73-23"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb73-23" tabindex="-1"></a>    }</span>
-<span id="cb73-24"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb73-24" tabindex="-1"></a>  )</span>
-<span id="cb73-25"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb73-25" tabindex="-1"></a>)</span>
-<span id="cb73-26"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb73-26" tabindex="-1"></a></span>
-<span id="cb73-27"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb73-27" tabindex="-1"></a><span class="fu">map</span>(clim_terrain_sites<span class="sc">$</span>model_fit, summary)</span></code></pre></div>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-1" tabindex="-1"></a><span class="co"># set site code and landcover as factors</span></span>
+<span id="cb72-2"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-2" tabindex="-1"></a>clim_terrain_sites<span class="sc">$</span>historical_site_code <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(clim_terrain_sites<span class="sc">$</span>historical_site_code)</span>
+<span id="cb72-3"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-3" tabindex="-1"></a>clim_terrain_sites<span class="sc">$</span>modern_landCover_type <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(clim_terrain_sites<span class="sc">$</span>modern_landCover_type)</span>
+<span id="cb72-4"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-4" tabindex="-1"></a></span>
+<span id="cb72-5"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-5" tabindex="-1"></a><span class="co"># split by measure</span></span>
+<span id="cb72-6"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-6" tabindex="-1"></a>clim_terrain_sites <span class="ot">&lt;-</span> <span class="fu">nest</span>(</span>
+<span id="cb72-7"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-7" tabindex="-1"></a>  clim_terrain_sites,</span>
+<span id="cb72-8"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-8" tabindex="-1"></a>  <span class="at">.by =</span> climate_measure</span>
+<span id="cb72-9"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-9" tabindex="-1"></a>)</span>
+<span id="cb72-10"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-10" tabindex="-1"></a></span>
+<span id="cb72-11"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-11" tabindex="-1"></a><span class="co"># run model</span></span>
+<span id="cb72-12"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-12" tabindex="-1"></a>clim_terrain_sites <span class="ot">&lt;-</span> <span class="fu">mutate</span>(</span>
+<span id="cb72-13"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-13" tabindex="-1"></a>  clim_terrain_sites,</span>
+<span id="cb72-14"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-14" tabindex="-1"></a>  <span class="at">model_fit =</span> <span class="fu">map</span>(</span>
+<span id="cb72-15"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-15" tabindex="-1"></a>    data,</span>
+<span id="cb72-16"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-16" tabindex="-1"></a>    <span class="cf">function</span>(df) {</span>
+<span id="cb72-17"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-17" tabindex="-1"></a>      <span class="fu">gam</span>(</span>
+<span id="cb72-18"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-18" tabindex="-1"></a>        value <span class="sc">~</span> year <span class="sc">+</span> alt <span class="sc">+</span> slope <span class="sc">+</span> aspect <span class="sc">+</span> season <span class="sc">+</span></span>
+<span id="cb72-19"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-19" tabindex="-1"></a>          <span class="fu">s</span>(historical_site_code, <span class="at">bs =</span> <span class="st">&quot;re&quot;</span>) <span class="sc">+</span></span>
+<span id="cb72-20"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-20" tabindex="-1"></a>          <span class="fu">s</span>(modern_landCover_type, <span class="at">bs =</span> <span class="st">&quot;re&quot;</span>),</span>
+<span id="cb72-21"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-21" tabindex="-1"></a>        <span class="at">data =</span> df</span>
+<span id="cb72-22"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-22" tabindex="-1"></a>      )</span>
+<span id="cb72-23"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-23" tabindex="-1"></a>    }</span>
+<span id="cb72-24"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-24" tabindex="-1"></a>  )</span>
+<span id="cb72-25"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-25" tabindex="-1"></a>)</span>
+<span id="cb72-26"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-26" tabindex="-1"></a></span>
+<span id="cb72-27"><a href="analyzing-temperature-and-precipitation-change-over-time.html#cb72-27" tabindex="-1"></a><span class="fu">map</span>(clim_terrain_sites<span class="sc">$</span>model_fit, summary)</span></code></pre></div>
 
 </div>
 </div>
@@ -657,7 +652,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           </div>
         </div>
       </div>
-<a href="reconstructing-climate-data.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="modelling-historical-climate-over-the-study-area.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 <a href="land-cover-classification-and-change-detection.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
