@@ -167,7 +167,7 @@ terra::writeRaster(model_pred, "results/climate/data_gam_pred.tif")
 model_pred <- terra::rast("results/climate/data_gam_pred.tif")
 ```
 
-### Average predictions over 1970 to 2010
+## Average predictions over 1970 to 2010
 
 We combine the model predictions with the appropriate identifier variables (decade, season, climate variable, and model formulation) in the nested climate data dataframe, and get the average predicted values for each variable in each season.
 
@@ -227,7 +227,7 @@ In this section, we acquire remotely sensed cliamte variables for the study area
 
 First, we obtained bio-climatic data from CHELSA. We do not upload the rasters to GitHub as they are very large in size and these can be downloaded from this link: https://envicloud.wsl.ch/#/?prefix=chelsa%2Fchelsa_V1
 
-### Temperature data
+## Temperature data
 
 We process monthly minimum and maximum CHELSA temperature data to get the mean monthly temperature in the dry and wet season as previously defined.
 
@@ -304,7 +304,7 @@ terra::writeRaster(
 )
 ```
 
-### Precipitation data
+## Precipitation data
 
 We process total monthly precipitation data from CHELSA to get the mean monthly temperature in the dry and wet seasons in millimetres.
 
@@ -342,7 +342,7 @@ terra::writeRaster(
 
 ## Compare spatial-climate model predictions against BIOCLIM data
 
-### Sample locations
+## Sample locations
 
 First we draw 10,000 randomly selected coordinates from the extent of the study area, and use these to compare the model predictions against CHELSA-derived data.
 We will further stratify these into 10 arbitrary groups at a later stage.
@@ -386,7 +386,7 @@ write_csv(
 )
 ```
 
-### Link BIOCLIM data and model predictions
+## Link BIOCLIM data and model predictions
 
 Next we link the remote-sensing-derived BIOCLIM data at the sampled locations with the predicted values from our spatial-climate GAMs.
 

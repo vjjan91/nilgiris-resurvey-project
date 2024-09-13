@@ -10,9 +10,7 @@ We then use these differences to create a 'correction layer', that allows us to 
 
 The assumption is that the correction layer is applicable to historical climate model predictions.
 
-## Setup
-
-We load the libraries and the data.
+## Load libraries
 
 ```{r}
 library(tidyverse)
@@ -260,7 +258,7 @@ gam_validation_data <- mutate(
 )
 ```
 
-### Temperature scaling layer
+## Temperature scaling layer
 
 We plot the scaling layer for temperature. The general pattern is that all models overestimate temperature in hilly regions of the study area; higher elevations have a higher ratio of prediction to CHELSA in all models.
 In contrast, lower elevations have a prediction to CHELSA ratio close to 1.0 in all models, i.e., the model prediction is relatively good in the non-hilly areas.

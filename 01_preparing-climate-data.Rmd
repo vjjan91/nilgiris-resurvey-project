@@ -18,15 +18,9 @@ library(sf)
 
 ## Reading raw historical climate data
 
-We first read in historical climate data from the Western Ghats, and convert them to a format suitable for further processing.
+We first read in historical climate data from the Western Ghats, and convert them to a format suitable for further processing. This data was obtained from IIT Guwahati and the Indian Meteorological Department. Please contact the lead author for a copy of this data. We will add this to Zenodo as a release upon publication.
 
-**NOTE:** Need to add text explaining historical climate data sourcing.
-
-Read data and add date. Please contact the lead author for a copy of this data. We will add this to Zenodo as a release upon publication.
-
-The climate data are in the form of delimited text files with four columns for the daily total precipitation, minimum temperature, maximum temperature, and wind speed.
-Each file represents readings associated with a particular location, with coordinates indicated by the file name. We read the coordinates from the file names to assign them to each dataset.
-The number of rows represents the number of days of data, with a start date of 1st of January 1870, and an end date of 31st December 2018.
+The climate data are in the form of delimited text files with four columns for the daily total precipitation, minimum temperature, maximum temperature, and wind speed. Each file represents readings associated with a particular location, with coordinates indicated by the file name. We read the coordinates from the file names to assign them to each dataset. The number of rows represents the number of days of data, with a start date of 1st of January 1870, and an end date of 31st December 2018.
 
 We further classify each daily reading by the year and month, and assign each day to one of two seasons: rainy (June through November) or dry (December through May).
 We combine the data and filter for the southern Western Ghats as our area of interest based on the latitudinal range \[9, 12\], and write them to file.
@@ -162,7 +156,7 @@ ext <- st_bbox(coord_sf) |>
 
 We use the buffered spatial extent of the study area to subset (or crop) raster spatial data. We save these cropped data for further use as they are smaller and easier to work with than the full datasets.
 
-### Elevation data
+## Elevation data
 
 We read in elevation data and crop the raster to the buffered study area.
 
@@ -179,7 +173,7 @@ terra::writeRaster(
 )
 ```
 
-### Distance to coast data
+## Distance to coast data
 
 We prepare a synthetic raster layer for the distance of points in the study area from the coastline.
 Reading in vector spatial data for the boundary of India, we 
@@ -220,7 +214,7 @@ coast_raster <- terra::distance(elev_600, terra::vect(coast_line))
 coast_raster <- terra::mask(coast_raster, terra::vect(coast))
 ```
 
-### Latitude data
+## Latitude data
 
 We prepare a raster containing the latitude of each cell of the 600m resolution elevation raster in order to use this as a latitude predictor.
 

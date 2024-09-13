@@ -9,7 +9,7 @@ Here we use the model formulation chosen in the previous section to model climat
 We use one model formula (henceforth, model) for each climate variable in each season.
 We model historical climate for 30 year periods, as this is about the temporal resolution of interest.
 
-## Setup with libraries and data
+## Load libraries
 
 ```{r}
 # for data
@@ -22,6 +22,8 @@ library(mgcv)
 # for rasters
 library(terra)
 ```
+
+## Read in data 
 
 ```{r}
 # Read in geographical covariates of weather data locations
