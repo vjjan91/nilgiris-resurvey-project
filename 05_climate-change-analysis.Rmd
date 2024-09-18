@@ -324,6 +324,83 @@ ggsave(
 
 ![Reconstructed climate as a function of elevation across the last century](figs/fig_clim_reconst_site_elev.png)
 
+### Alternative figure for temperature change over time
+
+```{r}
+# get the mean proportional change in climate variables at sites
+# binned by elevation (200m bins), separated by season
+clim_prop_change <- clim_terrain_sites %>%
+  mutate(
+    elev_bin = plyr::round_any(alt, 200)
+  ) %>%
+  group_by(
+    climate_measure, season, modern_site_code, elev_bin
+  ) %>%
+  mutate(
+    prop_change = (value - first(value)) / first(value)
+  )
+
+# nest by climate variable for more visible colour scales
+clim_prop_change <- ungroup(clim_prop_change) %>%
+  nest(.by = "climate_measure")
+
+# function for plotting
+fn_plot <- function(df) {
+  ggplot(df) +
+    stat_summary_2d(
+      aes(as.factor(year), as.factor(elev_bin), z = prop_change),
+      col = "grey", linewidth = 0.1
+    ) +
+    facet_grid(
+      cols = vars(season),
+      labeller = labeller(
+        season = c(
+          dry = "Dry", rainy = "Rainy"
+        )
+      )
+    ) +
+    scale_fill_continuous_diverging(
+      palette = "Blue-Red 2",
+      labels = function(x) {
+        scales::percent(x)
+      }
+    ) +
+    theme_bw() +
+    theme(
+      legend.position = "top",
+      legend.key.height = unit(3, "mm"),
+      legend.key.width = unit(20, "mm"),
+      axis.text.x = element_text(
+        angle = 45, hjust = 0.75
+      )
+    ) +
+    labs(
+      x = "Decade", y = "Elevation bin (m)",
+      fill = "Difference (%)"
+    )
+}
+
+clim_prop_change <- mutate(
+  clim_prop_change,
+  plots = map(data, fn_plot)
+)
+
+fig_elev_bin_change <- wrap_plots(
+  clim_prop_change$plots,
+  ncol = 1
+) &
+  plot_annotation(
+    tag_levels = c("A", 1)
+  )
+
+ggsave(
+  fig_elev_bin_change,
+  filename = "figs/fig_elev_bin_clim_change.png",
+  dpi = 300
+)
+```
+
+
 ## Test for climate change over time
 
 Run a GLMM for the value over time, with measure, season, historical site code, and modern land cover type as random effects.
