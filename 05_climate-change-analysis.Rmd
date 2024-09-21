@@ -288,6 +288,12 @@ clim_terrain_sites <- mutate(
   year = as.numeric(year),
   alt = as.numeric(as.character(alt))
 )
+
+# save climate at sites
+readr::write_csv(
+  clim_terrain_sites,
+  "data/results/clim_terrain_sites.csv"
+)
 ```
 
 ## Plot all reconstructed climate over time colouring by elevation and grouping by site. Each line represents one modern site code.
@@ -385,18 +391,18 @@ clim_prop_change <- mutate(
   plots = map(data, fn_plot)
 )
 
-fig_elev_bin_change <- wrap_plots(
+# save plots
+walk2(
   clim_prop_change$plots,
-  ncol = 1
-) &
-  plot_annotation(
-    tag_levels = c("A", 1)
-  )
-
-ggsave(
-  fig_elev_bin_change,
-  filename = "figs/fig_elev_bin_clim_change.png",
-  dpi = 300
+  clim_prop_change$climate_measure,
+  function(x, y) {
+    ggsave(
+      x,
+      filename = glue("figs/fig_elev_bin_{y}_change.png"),
+      height = 4, width = 7,
+      dpi = 300
+    )
+  }
 )
 ```
 
