@@ -330,7 +330,7 @@ ggsave(
 
 ![Reconstructed climate as a function of elevation across the last century](figs/fig_clim_reconst_site_elev.png)
 
-### Alternative figure for temperature change over time
+## Alternative figure for temperature change over time
 
 ```{r}
 # get the mean proportional change in climate variables at sites
@@ -406,6 +406,7 @@ walk2(
 )
 ```
 
+![Differences in mean monthly temperatures between the earliest decade and future decades revealed ~10% difference in temperatures across elevations over time](figs/fig_elev_bin_t_mean_change.png)
 
 ## Test for climate change over time
 
