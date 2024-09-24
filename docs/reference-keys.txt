@@ -27,7 +27,7 @@ link-bioclim-data-and-model-predictions
 error-between-model-prediction-and-chelsa-data
 gam-predictions-at-survey-sites
 building-a-correction-layer-for-climate-predictions
-setup
+load-libraries-2
 plot-model-error
 compare-climate-predictions-at-survey-sites
 visualise-model-predictions-as-proportion-of-remote-sensing-data
@@ -37,7 +37,8 @@ save-climate-scaling-layers
 seasonal-mean-temperature-correction-layer
 seasonal-total-rainfall-correction-layer
 modelling-historical-climate-over-the-study-area
-setup-with-libraries-and-data
+load-libraries-3
+read-in-data
 model-climate-as-a-function-of-geographic-variables
 obtaining-model-predictions-over-the-study-area
 scaling-predicted-historical-climate
@@ -48,6 +49,7 @@ load-list-of-resurvey-locationshistorical-sites-of-occurrence
 load-the-climate-rasters
 combine-site-climate-and-terrain-data
 plot-all-reconstructed-climate-over-time-colouring-by-elevation-and-grouping-by-site.-each-line-represents-one-modern-site-code.
+alternative-figure-for-temperature-change-over-time
 test-for-climate-change-over-time
 land-cover-classification-and-change-detection
 load-necessary-libraries-1
