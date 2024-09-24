@@ -4,6 +4,7 @@
 
 # Ignore large data files
 data/elevation
+data/climate/chelsa
 
 # Session Data files
 .RData
