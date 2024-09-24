@@ -4,9 +4,6 @@
 
 # Ignore large data files
 data/elevation
-data/climate
-data/historical_data/images
-data/spatial
 
 # Session Data files
 .RData
