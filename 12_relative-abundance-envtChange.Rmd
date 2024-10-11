@@ -277,23 +277,14 @@ glmm_habitat <- left_join(glmm_data, trait_dat, by = "common_name")
 glmm_grassland <-  glmm_habitat %>%
   filter(Habitat.type == "Grassland")
 
-grass_corr <- glmm_grassland[,c(6:11,16:19)] %>%
-  distinct()
-pairs.panels(grass_corr)
-
 # excluded water_bodies from this model because there is no specific biological reasoning for inclusion of that land cover
 m1 <- glmmTMB(relAbunChange ~ shola_grassland_z + t_mean_dry_2010_z+
                 (1|common_name) + (1|historical_site_code) ,
               family=gaussian(),
                data = glmm_grassland)
 
-trial <- glm(relAbunChange ~ shola_grassland_z + t_mean_dry_2010_z, 
-              family=gaussian(),
-               data = glmm_grassland)
-
 summary(m1)
-summary(trial)
-plot_model(trial, type = "std")
+plot_model(m1, type = "std")
 plot(ggpredict(m1))
 
 # Family: gaussian  ( identity )
@@ -325,142 +316,6 @@ plot(ggpredict(m1))
 # ---
 # Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-grass_clim <- glmmTMB(relAbunChange ~ t_mean_dry_2010_z + 
-                        ppt_dry_2010_z+
-                         (1|common_name) + (1|historical_site_code),
-                      data = glmm_grassland,
-                      family = gaussian())
-
-summary(grass_clim)
-
-#  Family: gaussian  ( identity )
-# Formula:          relAbunChange ~ t_mean_dry_2010_z + (1 | scientific_name)
-# Data: glmm_grassland
-# 
-#      AIC      BIC   logLik deviance df.resid 
-#  -1569.8  -1556.2    788.9  -1577.8      216 
-# 
-# Random effects:
-# 
-# Conditional model:
-#  Groups          Name        Variance  Std.Dev.
-#  scientific_name (Intercept) 2.462e-06 0.001569
-#  Residual                    4.329e-05 0.006579
-# Number of obs: 220, groups:  scientific_name, 11
-# 
-# Dispersion estimate for gaussian family (sigma^2): 4.33e-05 
-# 
-# Conditional model:
-#                     Estimate Std. Error z value Pr(>|z|)    
-# (Intercept)       -0.0060539  0.0006485  -9.335  < 2e-16 ***
-# t_mean_dry_2010_z -0.0011852  0.0004437  -2.671  0.00756 ** 
-# ---
-# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-plot_model(grass_clim, type = "std")
-plot(ggpredict(grass_clim))
-
-
-## forest birds
-glmm_forest <-  glmm_habitat %>%
-  filter(Habitat.type == "Forest")
-
-forest_lc <- glmmTMB(relAbunChange ~ shola_forest + settlements + agriculture + shola_grassland + plantations + 
-                 (1|scientific_name),
-               data = glmm_forest,
-               family = gaussian())
-
-summary(forest_lc)
-plot_model(forest_lc, type = "std")
-plot(ggpredict(forest_lc))
-
-# Family: gaussian  ( identity )
-# Formula:          
-# relAbunChange ~ shola_forest + settlements + agriculture + shola_grassland +  
-#     plantations + (1 | scientific_name)
-# Data: glmm_forest
-# 
-#      AIC      BIC   logLik deviance df.resid 
-#  -7408.6  -7367.8   3712.3  -7424.6     1192 
-# 
-# Random effects:
-# 
-# Conditional model:
-#  Groups          Name        Variance  Std.Dev.
-#  scientific_name (Intercept) 0.0000683 0.008264
-#  Residual                    0.0001055 0.010271
-# Number of obs: 1200, groups:  scientific_name, 60
-# 
-# Dispersion estimate for gaussian family (sigma^2): 0.000106 
-# 
-# Conditional model:
-#                   Estimate Std. Error z value Pr(>|z|)  
-# (Intercept)     -0.0001258  0.0023677  -0.053   0.9576  
-# shola_forest     0.0834370  0.0331885   2.514   0.0119 *
-# settlements      0.0742442  0.0318597   2.330   0.0198 *
-# agriculture      0.0790708  0.0328792   2.405   0.0162 *
-# shola_grassland  0.0823694  0.0340991   2.416   0.0157 *
-# plantations      0.0816160  0.0339054   2.407   0.0161 *
-# ---
-# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-forest_clim <- glmmTMB(relAbunChange ~ t_mean_dry_2010_z + (1|scientific_name),
-                      data = glmm_forest,
-                      family = gaussian())
-
-summary(forest_clim) # no significance
-
-## generalist birds
-glmm_generalist <-  glmm_habitat %>%
-  filter(Habitat.type == "Generalist")
-
-generalist_lc <- glmmTMB(relAbunChange ~ shola_forest + 
-                            shola_grassland + settlements 
-                          + agriculture + plantations + 
-                 (1|scientific_name),
-               data = glmm_generalist,
-               family = gaussian())
-
-summary(generalist_lc) # positive association with increasing grasslands?
-plot_model(generalist_lc, type = "std")
-plot(ggpredict(generalist_lc))
-
-# Family: gaussian  ( identity )
-# Formula:          relAbunChange ~ shola_forest + shola_grassland + settlements +  
-#     agriculture + plantations + (1 | scientific_name)
-# Data: glmm_generalist
-# 
-#      AIC      BIC   logLik deviance df.resid 
-#  -2372.3  -2340.0   1194.2  -2388.3      412 
-# 
-# Random effects:
-# 
-# Conditional model:
-#  Groups          Name        Variance  Std.Dev.
-#  scientific_name (Intercept) 0.0002147 0.01465 
-#  Residual                    0.0001686 0.01298 
-# Number of obs: 420, groups:  scientific_name, 21
-# 
-# Dispersion estimate for gaussian family (sigma^2): 0.000169 
-# 
-# Conditional model:
-#                  Estimate Std. Error z value Pr(>|z|)  
-# (Intercept)      0.004161   0.005533   0.752   0.4521  
-# shola_forest    -0.146017   0.070912  -2.059   0.0395 *
-# shola_grassland -0.138994   0.072858  -1.908   0.0564 .
-# settlements     -0.110810   0.068073  -1.628   0.1036  
-# agriculture     -0.129803   0.070251  -1.848   0.0646 .
-# plantations     -0.137885   0.072444  -1.903   0.0570 .
-# ---
-# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-generalist_clim <- glmmTMB(relAbunChange ~ t_mean_dry_2010_z + 
-                        (1|scientific_name),
-                      data = glmm_generalist,
-                      family = gaussian())
-
-
-summary(generalist_clim) # non-significant
 ```
 
 
