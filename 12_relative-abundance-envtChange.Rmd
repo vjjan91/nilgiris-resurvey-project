@@ -59,7 +59,7 @@ sites_sf = st_as_sf(
   crs = 4326
 ) |> 
   st_transform(32643) |> 
-  st_buffer(500)
+  st_buffer(1000)
 ```
 
 ## Extract land cover data across locations from the 1848 and the 2018 rasters
@@ -245,16 +245,16 @@ glmm_data <- left_join(relAbun_wide,lc_glmm,
 
 ## scale the climate data
 glmm_data <- glmm_data %>%
-  mutate(water_bodies_z = rescale(water_bodies)) %>%
-  mutate(plantations_z = rescale(plantations)) %>%
-  mutate(agriculture_z = rescale(agriculture)) %>%
-  mutate(settlements_z = rescale(settlements)) %>%
-  mutate(shola_forest_z = rescale(shola_forest)) %>%
-  mutate(shola_grassland_z = rescale(shola_grassland)) %>%
-  mutate(t_mean_dry_2010_z = rescale(t_mean_dry_2010)) %>%
-  mutate(t_mean_rainy_2010_z = rescale(t_mean_rainy_2010)) %>%
-  mutate(ppt_dry_2010_z = rescale(ppt_dry_2010)) %>%
-  mutate(ppt_rainy_2010_z = rescale(ppt_rainy_2010)) 
+   mutate(water_bodies_z = scale_z(water_bodies)) %>%
+  mutate(plantations_z = scale_z(plantations)) %>%
+   mutate(agriculture_z = scale_z(agriculture)) %>%
+   mutate(settlements_z = scale_z(settlements)) %>%
+   mutate(shola_forest_z = scale_z(shola_forest)) %>%
+   mutate(shola_grassland_z = scale_z(shola_grassland)) %>%
+  mutate(t_mean_dry_2010_z = scale_z(t_mean_dry_2010)) %>%
+  mutate(t_mean_rainy_2010_z = scale_z(t_mean_rainy_2010)) %>%
+  mutate(ppt_dry_2010_z = scale_z(ppt_dry_2010)) %>%
+  mutate(ppt_rainy_2010_z = scale_z(ppt_rainy_2010)) 
 ```
 
 ## Test for correlations between covariates
@@ -277,15 +277,23 @@ glmm_habitat <- left_join(glmm_data, trait_dat, by = "common_name")
 glmm_grassland <-  glmm_habitat %>%
   filter(Habitat.type == "Grassland")
 
+grass_corr <- glmm_grassland[,c(6:11,16:19)] %>%
+  distinct()
+pairs.panels(grass_corr)
+
 # excluded water_bodies from this model because there is no specific biological reasoning for inclusion of that land cover
-m1 <- glmmTMB(relAbunChange ~ shola_grassland_z + plantations_z + 
-                settlements_z + agriculture_z + shola_forest_z +
-                (1|common_name) + (1|historical_site_code),
+m1 <- glmmTMB(relAbunChange ~ shola_grassland_z + t_mean_dry_2010_z+
+                (1|common_name) + (1|historical_site_code) ,
+              family=gaussian(),
+               data = glmm_grassland)
+
+trial <- glm(relAbunChange ~ shola_grassland_z + t_mean_dry_2010_z, 
               family=gaussian(),
                data = glmm_grassland)
 
 summary(m1)
-plot_model(m1, type = "std")
+summary(trial)
+plot_model(trial, type = "std")
 plot(ggpredict(m1))
 
 # Family: gaussian  ( identity )
