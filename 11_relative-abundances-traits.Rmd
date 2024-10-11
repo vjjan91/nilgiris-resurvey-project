@@ -70,7 +70,7 @@ spCount <- rel_abun_trait[,c(1,7)] %>%
   group_by(Habitat.type) %>%
   count()
 
-# Based on the above criteria, 60 species were classified as forest birds, 11 species were classified as grassland birds, 21 species were classified as generalist species.  
+# Based on the above criteria, 57 species were classified as forest birds, 9 species were classified as grassland birds, 19 species were classified as generalist species.  
 
 # visualization by habitat affiliation
 rel_abun_trait$Habitat.type <- factor(rel_abun_trait$Habitat.type, levels=c("Forest", "Grassland", "Generalist"))
@@ -246,24 +246,24 @@ summary(beta_overall)
 # 
 # Standardized weighted residuals 2:
 #     Min      1Q  Median      3Q     Max 
-# -1.6016 -0.6260  0.0348  0.5935  2.2619 
+# -1.6072 -0.6239  0.0363  0.5933  2.2608 
 # 
 # Coefficients (mean model with logit link):
 #                      Estimate Std. Error z value Pr(>|z|)    
-# (Intercept)          -4.40434    0.09398 -46.862  < 2e-16 ***
-# time_period1900-1950  0.05902    0.11975   0.493  0.62213    
-# time_period2021      -0.35622    0.12634  -2.819  0.00481 ** 
+# (Intercept)          -4.40464    0.09400 -46.858  < 2e-16 ***
+# time_period1900-1950  0.05946    0.11976   0.496  0.61955    
+# time_period2021      -0.35576    0.12635  -2.816  0.00487 ** 
 # 
 # Phi coefficients (precision model with identity link):
 #       Estimate Std. Error z value Pr(>|z|)    
-# (phi)   82.654      8.336   9.916   <2e-16 ***
+# (phi)   82.643      8.335   9.916   <2e-16 ***
 # ---
 # Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
 # 
 # Type of estimator: ML (maximum likelihood)
 # Log-likelihood: 900.3 on 4 Df
-# Pseudo R-squared: 0.06377
-# Number of iterations: 37 (BFGS) + 2 (Fisher scoring)  
+# Pseudo R-squared: 0.06369
+# Number of iterations: 27 (BFGS) + 2 (Fisher scoring)   
 
 # plot predicted model estimates
 fig_beta_overall <- ggpredict(beta_overall) %>%
@@ -295,24 +295,24 @@ summary(beta_forest)
 # 
 # Standardized weighted residuals 2:
 #     Min      1Q  Median      3Q     Max 
-# -1.7736 -0.5996  0.0489  0.6125  1.6589 
+# -1.7656 -0.6266  0.0411  0.6117  1.6570 
 # 
 # Coefficients (mean model with logit link):
 #                      Estimate Std. Error z value Pr(>|z|)    
-# (Intercept)          -4.40403    0.11160 -39.463   <2e-16 ***
-# time_period1900-1950  0.04901    0.14370   0.341   0.7330    
-# time_period2021      -0.36760    0.15220  -2.415   0.0157 *  
+# (Intercept)          -4.41007    0.11088 -39.775   <2e-16 ***
+# time_period1900-1950  0.03768    0.14288   0.264   0.7920    
+# time_period2021      -0.38336    0.15140  -2.532   0.0113 *  
 # 
 # Phi coefficients (precision model with identity link):
 #       Estimate Std. Error z value Pr(>|z|)    
-# (phi)    91.11      11.18   8.153 3.56e-16 ***
+# (phi)    91.14      11.11   8.207 2.27e-16 ***
 # ---
 # Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
 # 
 # Type of estimator: ML (maximum likelihood)
-# Log-likelihood: 593.6 on 4 Df
-# Pseudo R-squared: 0.06394
-# Number of iterations: 56 (BFGS) + 2 (Fisher scoring) 
+# Log-likelihood: 606.9 on 4 Df
+# Pseudo R-squared: 0.06694
+# Number of iterations: 41 (BFGS) + 2 (Fisher scoring)
 
 # plot predicted model estimates
 fig_beta_forest <- ggpredict(beta_forest) %>%
@@ -343,24 +343,24 @@ summary(beta_grassland)
 # 
 # Standardized weighted residuals 2:
 #     Min      1Q  Median      3Q     Max 
-# -2.3576 -0.6218 -0.2741  0.8230  1.9671 
+# -2.4981 -0.5467 -0.2712  0.8361  1.9378 
 # 
 # Coefficients (mean model with logit link):
 #                      Estimate Std. Error z value Pr(>|z|)    
-# (Intercept)           -4.3664     0.2410 -18.116  < 2e-16 ***
-# time_period1900-1950  -0.1619     0.3251  -0.498  0.61836    
-# time_period2021       -1.2296     0.3826  -3.214  0.00131 ** 
+# (Intercept)           -4.3039     0.2515 -17.110  < 2e-16 ***
+# time_period1900-1950  -0.1100     0.3373  -0.326  0.74437    
+# time_period2021       -1.2402     0.4019  -3.086  0.00203 ** 
 # 
 # Phi coefficients (precision model with identity link):
-#       Estimate Std. Error z value Pr(>|z|)    
-# (phi)   113.11      33.79   3.348 0.000815 ***
+#       Estimate Std. Error z value Pr(>|z|)   
+# (phi)   108.97      34.13   3.193  0.00141 **
 # ---
 # Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
 # 
 # Type of estimator: ML (maximum likelihood)
-# Log-likelihood: 119.4 on 4 Df
-# Pseudo R-squared: 0.4981
-# Number of iterations: 429 (BFGS) + 3 (Fisher scoring)
+# Log-likelihood: 105.4 on 4 Df
+# Pseudo R-squared: 0.5011
+# Number of iterations: 267 (BFGS) + 3 (Fisher scoring) 
 
 # plot predicted model estimates
 fig_beta_grassland <- ggpredict(beta_grassland) %>%
@@ -376,7 +376,7 @@ ggsave(fig_beta_grassland, filename = "figs/fig_beta_relAbundance_grasslandBirds
 dev.off()
 ```
 
-![Beta regressions revealed a significant decline in relative abundance in 2021 when compared to historical time periods. The model's explanatory power was high (R2 = 0.49)](figs/fig_beta_relAbundance_grasslandBirds.png)
+![Beta regressions revealed a significant decline in relative abundance in 2021 when compared to historical time periods. The model's explanatory power was high (R2 = 0.50)](figs/fig_beta_relAbundance_grasslandBirds.png)
 
 ## Generalist birds
 ```{r}
@@ -391,24 +391,24 @@ summary(beta_generalist)
 # 
 # Standardized weighted residuals 2:
 #     Min      1Q  Median      3Q     Max 
-# -2.0332 -0.2366  0.0311  0.5283  2.2859 
+# -2.0314 -0.2392  0.0282  0.5294  2.2863 
 # 
 # Coefficients (mean model with logit link):
 #                      Estimate Std. Error z value Pr(>|z|)    
-# (Intercept)           -4.4833     0.2183 -20.536   <2e-16 ***
-# time_period1900-1950   0.1819     0.2680   0.678    0.498    
-# time_period2021        0.1425     0.2692   0.529    0.596    
+# (Intercept)           -4.4843     0.2183 -20.543   <2e-16 ***
+# time_period1900-1950   0.1826     0.2680   0.681    0.496    
+# time_period2021        0.1440     0.2691   0.535    0.593    
 # 
 # Phi coefficients (precision model with identity link):
 #       Estimate Std. Error z value Pr(>|z|)    
-# (phi)    67.54      14.54   4.646 3.39e-06 ***
+# (phi)    67.62      14.55   4.647 3.38e-06 ***
 # ---
 # Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
 # 
 # Type of estimator: ML (maximum likelihood)
 # Log-likelihood: 193.8 on 4 Df
-# Pseudo R-squared: 0.01342
-# Number of iterations: 60 (BFGS) + 2 (Fisher scoring)
+# Pseudo R-squared: 0.01358
+# Number of iterations: 38 (BFGS) + 2 (Fisher scoring) 
 
 # plot predicted model estimates
 fig_beta_generalist <- ggpredict(beta_generalist) %>%
