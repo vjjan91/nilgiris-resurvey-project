@@ -159,7 +159,7 @@ climate_change_names = lapply(climate_change, function(ra) {
   })
 }) |> unlist()
 
-# get mean change within 500m buffer of resurvey locs
+# get mean change within 1000m buffer of resurvey locs
 climate_change_sites = lapply(
   climate_change, function(ra) {
     terra::extract(
