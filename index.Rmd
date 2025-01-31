@@ -1,17 +1,17 @@
 --- 
 knit: "bookdown::render_book"
-title: "_Colonial-era landscape changes has led to grassland bird species declines over the last century_"
+title: "_Colonial-era landscape changes are concomitant with grassland bird species declines over the last century_"
 author:
     - Vijay Ramesh
-    - VA Akshay
+    - Priyanka Hari Haran
     - Pratik Rajan Gupte
+    - Ashwini V. Mohan
+    - VA Akshay
     - Amrutha Rajan
     - Chandrasekar Das
-    - Priyanka Hari Haran
     - Ian Lockwood
-    - Ashwini Mohan
-    - Morgan W Tingley
     - VV Robin
+    - Morgan W Tingley
     - Ruth S DeFries
 date: "Last compiled on `r format(Sys.time(), '%d %B, %Y')`"
 site: bookdown::bookdown_site
