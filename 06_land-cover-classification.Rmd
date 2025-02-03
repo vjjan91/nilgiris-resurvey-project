@@ -13,6 +13,7 @@ In this script, we will process land cover polygons and rasters for multiple tim
 library(sf)
 library(raster)
 library(terra)
+library(tmap)
 library(stars)
 library(dplyr)
 library(tidyverse)
@@ -126,7 +127,7 @@ rast1848 <- terra::rasterize(vect1848, emptyRast, "name")
 
 ## Load the 2018 satellite image
 
-The 2018 satellite image was obtained from Sentinel-2. Cloud-free days (1% cloud cover) were chosen from March 2018 and a composite was created. We then utilized groundtruthing points from [@arasumani2019] and used a Random Forests classifier (n = 1000 trees; Kappa statistic = 93.9%, overall accuracy of 94.8% was obtained on test data) to obtain a classified image with seven land cover classes (similar to the 1848 map). For more details on the classification, please visit this link: 
+The 2018 satellite image was obtained from Sentinel-2. Cloud-free days (1% cloud cover) were chosen from March 2018 and a composite was created. We then utilized groundtruthing points from [@arasumani2019] and used a Random Forests classifier (n = 1000 trees; Kappa statistic = 93.9%, overall accuracy of 94.8% was obtained on test data) to obtain a classified image with seven land cover classes (similar to the 1848 map). For more details on the classification, please visit this link: https://code.earthengine.google.com/49e2de4f9cd84c8587fc0596d3d5aec3 
 
 ```{r}
 ## load the raster
