@@ -5,7 +5,7 @@ editor_options:
 
 # Building a correction layer for climate predictions
 
-In this section we focus on quantifying the error over the entire study site between model-predicted climate and climate measures derived from remote sensing data (from BIOCLIM, and referred to as CHELSA data).
+In this script, we focus on quantifying the error over the entire study site between model-predicted climate and climate measures derived from remote sensing data (from BIOCLIM, and referred to as CHELSA data).
 We then use these differences to create a 'correction layer', that allows us to scale the model predictions for historical data.
 
 The assumption is that the correction layer is applicable to historical climate model predictions.
