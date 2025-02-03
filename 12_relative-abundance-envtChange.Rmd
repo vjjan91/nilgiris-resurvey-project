@@ -51,7 +51,7 @@ sites <- distinct(sites, modern_site_code, historical_site_code, longitude, lati
 sites <- sites[-c(1:50),]
 ```
 
-## Create spatial data within a 500m buffer around each site
+## Create spatial data within a 1000m buffer around each site
 ```{r}
 # make spatial data from sites, with a 500m buffer
 sites_sf = st_as_sf(
@@ -195,9 +195,9 @@ relAbun <- read.csv("results/species-relative-abundance-siteLevel.csv")
 trait_dat <- read.csv("data/species-trait-dat.csv")
 ```
 
-## Is there a significant association between change in relative abundance and change in an environmental covariate across time periods?
+## Is there a significant association between change in relative abundance and change in land cover across time periods?
 
-We will first prepare the dataframes necessary for running linear mixed models.
+We will first prepare the dataframes necessary for running linear mixed models. 
 ```{r}
 ## preparing the relative abundance dataframe for a mixed effects model
 names(relAbun) <- c("common_name","historical_site_code","year","relAbundance")
@@ -239,7 +239,6 @@ clim_change_glmm <- clim_change_dat %>%
 ## dataframe for glmm
 glmm_data <- left_join(relAbun_wide,lc_glmm,
                        by = "historical_site_code") %>%
-  left_join(., clim_change_glmm, by = "historical_site_code") %>%
   as.data.frame() %>%
   replace(is.na(.), 0)
 
@@ -250,38 +249,32 @@ glmm_data <- glmm_data %>%
    mutate(agriculture_z = scale_z(agriculture)) %>%
    mutate(settlements_z = scale_z(settlements)) %>%
    mutate(shola_forest_z = scale_z(shola_forest)) %>%
-   mutate(shola_grassland_z = scale_z(shola_grassland)) %>%
-  mutate(t_mean_dry_2010_z = scale_z(t_mean_dry_2010)) %>%
-  mutate(t_mean_rainy_2010_z = scale_z(t_mean_rainy_2010)) %>%
-  mutate(ppt_dry_2010_z = scale_z(ppt_dry_2010)) %>%
-  mutate(ppt_rainy_2010_z = scale_z(ppt_rainy_2010)) 
+   mutate(shola_grassland_z = scale_z(shola_grassland)) 
 ```
 
 ## Test for correlations between covariates
 ```{r}
 library(psych)
-for_corr <- glmm_data[,c(16:25)] %>%
+for_corr <- glmm_data[,c(12:17)] %>%
   distinct()
 
 pairs.panels(for_corr)
 
-# correlative analyses suggests that t_mean_dry2010 is highly correlated with t_mean_rainy2010 and ppt_mean_rainy2010
-# for future analyses, we will only include t_mean_dry2010 and ppt_mean_dry2010
 ```
 
 ## Running generalized linear mixed effect models for specific habitat affiliations
 ```{r}
 glmm_habitat <- left_join(glmm_data, trait_dat, by = "common_name") 
 
-## grassland birds
-glmm_grassland <-  glmm_habitat %>%
-  filter(Habitat.type == "Grassland")
-
-# linear mixed model
-m1 <- glmmTMB(relAbunChange ~ shola_grassland_z + t_mean_dry_2010_z+
-                (1|common_name) + (1|historical_site_code) ,
+## all birds model
+m1 <- glmmTMB(relAbunChange ~ shola_grassland_z +
+                shola_forest_z +
+                agriculture_z +
+                plantations_z +
+                settlements_z +
+                (1|common_name) + (1|historical_site_code),
               family=gaussian(),
-               data = glmm_grassland)
+               data = glmm_habitat)
 
 summary(m1)
 plot_model(m1, type = "std")
@@ -289,32 +282,76 @@ plot(ggpredict(m1))
 
 # Family: gaussian  ( identity )
 # Formula:          
-# relAbunChange ~ shola_grassland_z + t_mean_dry_2010_z + (1 |  
-#     common_name) + (1 | historical_site_code)
+# relAbunChange ~ shola_grassland_z + shola_forest_z + agriculture_z +  
+#     plantations_z + settlements_z + (1 | common_name) + (1 |  
+#     historical_site_code)
+# Data: glmm_habitat
+# 
+#      AIC      BIC   logLik deviance df.resid 
+# -11053.6 -11003.9   5535.8 -11071.6     1831 
+# 
+# Random effects:
+# 
+# Conditional model:
+#  Groups               Name        Variance  Std.Dev. 
+#  common_name          (Intercept) 9.793e-05 9.896e-03
+#  historical_site_code (Intercept) 6.316e-14 2.513e-07
+#  Residual                         1.239e-04 1.113e-02
+# Number of obs: 1840, groups:  common_name, 92; historical_site_code, 20
+# 
+# Dispersion estimate for gaussian family (sigma^2): 0.000124 
+# 
+# Conditional model:
+#                    Estimate Std. Error z value Pr(>|z|)
+# (Intercept)       4.061e-11  1.064e-03       0        1
+# shola_grassland_z 1.619e-10  1.587e-03       0        1
+# shola_forest_z    1.346e-10  2.148e-03       0        1
+# agriculture_z     1.054e-10  1.756e-03       0        1
+# plantations_z     1.634e-10  2.278e-03       0        1
+# settlements_z     4.717e-11  1.132e-03       0        1
+
+
+## grassland birds
+glmm_grassland <-  glmm_habitat %>%
+  filter(Habitat.type == "Grassland")
+
+# linear mixed model
+m2 <- glmmTMB(relAbunChange ~ shola_grassland_z +
+                (1|common_name) + (1|historical_site_code) ,
+              family=gaussian(),
+               data = glmm_grassland)
+
+summary(m2)
+plot_model(m2, type = "std")
+plot(ggpredict(m2))
+
+# Family: gaussian  ( identity )
+# Formula:          
+# relAbunChange ~ shola_grassland_z + (1 | common_name) + (1 |  
+#     historical_site_code)
 # Data: glmm_grassland
 # 
 #      AIC      BIC   logLik deviance df.resid 
-#  -1353.8  -1334.6    682.9  -1365.8      174 
+#  -1352.7  -1336.8    681.4  -1362.7      175 
 # 
 # Random effects:
 # 
 # Conditional model:
 #  Groups               Name        Variance  Std.Dev.
-#  common_name          (Intercept) 2.010e-06 0.001418
-#  historical_site_code (Intercept) 2.244e-06 0.001498
-#  Residual                         2.666e-05 0.005163
+#  common_name          (Intercept) 2.034e-06 0.001426
+#  historical_site_code (Intercept) 3.103e-06 0.001761
+#  Residual                         2.665e-05 0.005163
 # Number of obs: 180, groups:  common_name, 9; historical_site_code, 20
 # 
 # Dispersion estimate for gaussian family (sigma^2): 2.67e-05 
 # 
 # Conditional model:
 #                     Estimate Std. Error z value Pr(>|z|)    
-# (Intercept)       -0.0052244  0.0006955  -7.512 5.82e-14 ***
-# shola_grassland_z  0.0001461  0.0005151   0.284    0.777    
-# t_mean_dry_2010_z -0.0009301  0.0005151  -1.806    0.071 .  
+# (Intercept)       -0.0052244  0.0007275  -7.182 6.89e-13 ***
+# shola_grassland_z  0.0002718  0.0005508   0.493    0.622    
 # ---
 # Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-# 
+
 
 # Above, we asked if grassland species are declining relative to other species, and we found that there was no association between changes in land cover and climate on grassland bird species abundance, indicating that both grassland habitat loss and temperature increase have been uniform across locations suggesting a regional-scale process and not local-scale. 
 ```
