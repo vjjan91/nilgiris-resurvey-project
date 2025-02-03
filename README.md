@@ -40,3 +40,4 @@ We describe what each script (`.Rmd`) of this repository is intended to achieve 
 
 -   *12_relative-abundance-envtChange.Rmd:* Here, we test if change in grassland area is significantly associated with a change in grassland bird relative abundance over time.  
 
+*Please note that all historical data will be archived on Zenodo upon publication and can be accessed freely. 
