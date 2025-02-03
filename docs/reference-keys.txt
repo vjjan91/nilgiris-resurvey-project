@@ -110,3 +110,16 @@ forest-birds
 grassland-birds
 generalist-birds
 creating-a-combined-figure-for-the-above-three-models
+species-relative-abundance-as-a-function-of-environmental-changes
+load-necessary-libraries-7
+load-processed-land-cover-rasters-2
+load-modern-resurvey-locations
+create-spatial-data-within-a-1000m-buffer-around-each-site
+extract-land-cover-data-across-locations-from-the-1848-and-the-2018-rasters
+calculate-change-in-proportions-of-land-cover-between-time-periods
+calculate-change-in-climate-values-at-sampling-sites
+load-species-relative-abundance
+load-species-trait-data-1
+is-there-a-significant-association-between-change-in-relative-abundance-and-change-in-land-cover-across-time-periods
+test-for-correlations-between-covariates
+running-generalized-linear-mixed-effect-models-for-specific-habitat-affiliations
