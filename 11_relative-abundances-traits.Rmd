@@ -95,7 +95,7 @@ dev.off()
 ![Relative abundance of grassland bird species was significantly different between 1850-1900 and 2021 and was lower in the modern period compared to the historical period](figs/fig_relAbun_habitat_landscapeLevel.png)
 
 
-## Visualizing relative abundance change by species across time periods for grassland bird species 
+## Visualizing relative abundance change by species across time periods for grassland birds
 
 Based on the above statistical analyses, we found that the mean relative abundance of grassland bird species were significantly lower in 2021 compared to the previous two historical time periods. Here, we assess how relative abundance varies by species between the historical and modern time period. 
 
@@ -103,7 +103,9 @@ Based on the above statistical analyses, we found that the mean relative abundan
 ## grassland birds
 grassland <- rel_abun_trait %>%
   filter(Habitat.type == "Grassland") %>%
-  dplyr::select(common_name, time_period, relative_abundance) %>% pivot_wider(., names_from = time_period, values_from = relative_abundance)
+  dplyr::select(common_name, time_period, relative_abundance) %>% pivot_wider(., names_from = time_period,                                                             values_from = relative_abundance) %>%
+  mutate(change = `2021`- `1850-1900`) %>%
+  mutate(Habitat.type = "Grassland")
 
 # 1850-1900 vs. 2021
 fig_grassland_1850v2021 <- ggplot(data=grassland,aes(x=`2021`,y=`1850-1900`)) +
