@@ -53,7 +53,7 @@ sites <- sites[-c(1:50),]
 
 ## Create spatial data within a 1000m buffer around each site
 ```{r}
-# make spatial data from sites, with a 500m buffer
+# make spatial data from sites, with a 1000m buffer
 sites_sf = st_as_sf(
   sites, coords = c("longitude", "latitude"),
   crs = 4326
@@ -206,6 +206,10 @@ pivot_1850 <- relAbun %>%
   filter(year == 1850) %>%
   pivot_wider(., names_from = "year", values_from = "relAbundance")
 
+pivot_1900 <- relAbun %>%
+  filter(year == 1900) %>%
+  pivot_wider(., names_from = "year", values_from = "relAbundance")
+
 pivot_2021 <- relAbun %>%
   filter(year == 2021) %>%
   pivot_wider(., names_from = "year", values_from = "relAbundance")
@@ -214,6 +218,7 @@ pivot_2021 <- relAbun %>%
 # positive value implies gain in relative abundance in 2021 compared to 1850, while negative value implies loss in relative abundance in 2021 compared to 1850
 
 relAbun_wide <- full_join(pivot_1850, pivot_2021, by=c("common_name","historical_site_code")) %>%
+  full_join(., pivot_1900) %>%
   mutate("relAbunChange" = (`2021` - `1850`))
 
 ## prepare the land cover data
@@ -259,7 +264,6 @@ for_corr <- glmm_data[,c(12:17)] %>%
   distinct()
 
 pairs.panels(for_corr)
-
 ```
 
 ## Running generalized linear mixed effect models for specific habitat affiliations
@@ -356,4 +360,158 @@ plot(ggpredict(m2))
 # Above, we asked if grassland species are declining relative to other species, and we found that there was no association between changes in land cover and climate on grassland bird species abundance, indicating that both grassland habitat loss and temperature increase have been uniform across locations suggesting a regional-scale process and not local-scale. 
 ```
 
+## Additional analysis to test for significant differences in relative abundances by species across habitat types
+
+```{r}
+## grassland birds
+grassland_birds <- left_join(relAbun, trait_dat, by = "common_name") %>%
+  filter(Habitat.type == "Grassland")
+
+plots <- list()
+
+for (i in 1:length(unique(grassland_birds$common_name))) {
+  
+  a <- unique(grassland_birds$common_name)[i]
+
+  # subset data for plotting
+  sp <- grassland_birds[grassland_birds$common_name == a, ]
+  
+  p <- sp %>%
+  ggbetweenstats(x = year,
+                         y = relAbundance,
+                         xlab = "Time Period",
+                         ylab = "Relative Abundance", 
+                         pairwise.display = "significant",
+                         package = "ggsci",
+                         palette = "default_jco",
+                         title = a,
+                 violin.args = list(width=0),
+    plotgrid.args = list(nrow = 3),
+ggplot.component = list(theme(text = element_text(family = "Century Gothic", size = 15, face = "bold"),plot.title = element_text(family = "Century Gothic",
+      size = 18, face = "bold"),
+      plot.subtitle = element_text(family = "Century Gothic", 
+      size = 15, face = "bold",color="#1b2838"),
+      axis.title = element_text(family = "Century Gothic",
+      size = 15, face = "bold"))))
+  
+   ## save plot object
+  plots[[i]] <- p
+}
+
+# save as a single pdf
+cairo_pdf(
+  filename = "figs/grassland-bird-relative-abundance-by-TimePeriod.pdf",
+  width = 13, height = 12,
+  onefile = TRUE
+)
+plots
+dev.off()
+
+## forest birds
+forest_birds <- left_join(relAbun, trait_dat, by = "common_name") %>%
+  filter(Habitat.type == "Forest")
+
+plots <- list()
+
+for (i in 1:length(unique(forest_birds$common_name))) {
+  
+  a <- unique(forest_birds$common_name)[i]
+
+  # subset data for plotting
+  sp <- forest_birds[forest_birds$common_name == a, ]
+  
+  p <- sp %>%
+  ggbetweenstats(x = year,
+                         y = relAbundance,
+                         xlab = "Time Period",
+                         ylab = "Relative Abundance", 
+                         pairwise.display = "significant",
+                         package = "ggsci",
+                         palette = "default_jco",
+                         title = a,
+                 violin.args = list(width=0),
+    plotgrid.args = list(nrow = 3),
+ggplot.component = list(theme(text = element_text(family = "Century Gothic", size = 15, face = "bold"),plot.title = element_text(family = "Century Gothic",
+      size = 18, face = "bold"),
+      plot.subtitle = element_text(family = "Century Gothic", 
+      size = 15, face = "bold",color="#1b2838"),
+      axis.title = element_text(family = "Century Gothic",
+      size = 15, face = "bold"))))
+  
+   ## save plot object
+  plots[[i]] <- p
+}
+
+# save as a single pdf
+cairo_pdf(
+  filename = "figs/forest-bird-relative-abundance-by-TimePeriod.pdf",
+  width = 13, height = 12,
+  onefile = TRUE
+)
+plots
+dev.off()
+
+## generalist birds
+generalist_birds <- left_join(relAbun, trait_dat, by = "common_name") %>%
+  filter(Habitat.type == "Generalist")
+
+plots <- list()
+
+for (i in 1:length(unique(generalist_birds$common_name))) {
+  
+  a <- unique(generalist_birds$common_name)[i]
+
+  # subset data for plotting
+  sp <- generalist_birds[generalist_birds$common_name == a, ]
+  
+  p <- sp %>%
+  ggbetweenstats(x = year,
+                         y = relAbundance,
+                         xlab = "Time Period",
+                         ylab = "Relative Abundance", 
+                         pairwise.display = "significant",
+                         package = "ggsci",
+                         palette = "default_jco",
+                         title = a,
+                 violin.args = list(width=0),
+    plotgrid.args = list(nrow = 3),
+ggplot.component = list(theme(text = element_text(family = "Century Gothic", size = 15, face = "bold"),plot.title = element_text(family = "Century Gothic",
+      size = 18, face = "bold"),
+      plot.subtitle = element_text(family = "Century Gothic", 
+      size = 15, face = "bold",color="#1b2838"),
+      axis.title = element_text(family = "Century Gothic",
+      size = 15, face = "bold"))))
+  
+   ## save plot object
+  plots[[i]] <- p
+}
+
+# save as a single pdf
+cairo_pdf(
+  filename = "figs/generalist-bird-relative-abundance-by-TimePeriod.pdf",
+  width = 13, height = 12,
+  onefile = TRUE
+)
+plots
+dev.off()
+```
+
+## Summary of relative abundance changes by species as a function of habitat affiliation
+
+Above, we performed an ANOVA to test if there are significant differences in species-specific means of relative abundances.
+
+_For grassland bird species (n=9)_
+8/9 species showed a significant difference and a decrease in relative abundance between historical and modern survey periods. No differences were observed across time periods for the Pied Bushchat
+
+_For Forest birds:(n=57)_
+27 bird species showed a significant decrease in relative abundance in the modern survey period when compared to either one of the historical time periods.
+22 bird species showed no differences in relative abundances across time periods/remained stable.
+8 bird species showed a significant increase in relative abundance in the modern survey period when compared to either historical survey periods. 
+**~52.6% of birds have remained stable and/or increase in relative abundance over time.**
+
+_For generalist birds (n=19):_
+10 birds showed no significant differences in relative abundance across time periods.
+4 bird species showed significant increase in the modern survey period compared to either one of the historical time periods.
+5 birds showed a significant decrease in relative abundance in the modern survey period compared to either one of the historical survey periods. 
+**~73.6% of birds remained stable or increased in relative abundance over time**
 
