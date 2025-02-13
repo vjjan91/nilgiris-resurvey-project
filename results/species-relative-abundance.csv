@@ -1,4 +1,4 @@
-common_name,1850-1900,1900-1950,2021,increase_decrease
+common_name,1850-1900,1900-1950,2021,Change in abundance (modern vs. historical)
 Alpine Swift,0.003564818,0.001739945,0.003597793,Decrease
 Ashy Drongo,0.000889443,0.010476071,0.003993514,Stable/Increase
 Ashy Prinia,0.007168449,0.026299276,0.016321974,Stable/Increase
@@ -23,13 +23,11 @@ Common Iora,0.006262664,0.005242891,0.005569808,Stable/Increase
 Common Rosefinch,0.00535754,0.008759699,0.001590336,Decrease
 Common Tailorbird,0.001786796,0.010515345,0.005183829,Stable/Increase
 Crimson-backed Sunbird,0.011581758,0.008723953,0.026264197,Stable/Increase
-Dark-fronted babbler,0.005374479,0.006970413,0.000396038,
 Eurasian Hoopoe,0.007139688,0.003535514,0.003158409,Decrease
 Golden-fronted Leafbird,0.008928869,0.001751491,0.001182058,Decrease
 Gray Junglefowl,0.027654832,0.015810467,0.033305999,Stable/Increase
 Gray Wagtail,0.000896025,0.008768182,0.004772661,Stable/Increase
 Gray-bellied Cuckoo,0.00448763,0.001761273,0.00079327,Decrease
-Gray-headed Bulbul,0.003562905,0.001734946,0.000400001,
 Gray-headed Canary-Flycatcher,0.006248479,0.017426471,0.016663278,Stable/Increase
 Greater Coucal,0.005363382,0.005268004,0.007910647,Stable/Increase
 Greater Flameback,0.013394674,0.008705145,0.001995609,Decrease
@@ -40,11 +38,9 @@ Indian Blackbird,0.035691293,0.026331668,0.030995179,Stable/Increase
 Indian Blue Robin,0.008950171,0.003452593,0.012313886,Stable/Increase
 Indian Golden Oriole,0.002683787,0.003488577,0.000397244,Decrease
 Indian Scimitar-Babbler,0.033095915,0.026385834,0.033345556,Stable/Increase
-Indian White-eye,0.020533201,0.043889025,0.00039519,
 Indian Yellow Tit,0.016860192,0.001755569,0.001598174,Decrease
 Jungle Bush-Quail,0.004472776,0.001745976,0.000400548,Decrease
 Jungle Myna,0.020530219,0.010452899,0.01670274,Stable/Increase
-Jungle babbler,0.003552567,0.001732567,0.000395833,
 Large Hawk-Cuckoo,0.00266182,0.003457599,0.000401433,Decrease
 Large-billed Crow,0.005347504,0.008807609,0.076319903,Stable/Increase
 Lesser Yellownape,0.000877662,0.007026477,0.000402623,Decrease
@@ -62,9 +58,7 @@ Nilgiri Sholakili,0.012494048,0.014019034,0.009566809,Stable/Increase
 Nilgiri Thrush,0.008001983,0.00880697,0.001596145,Decrease
 Nilgiri Wood-Pigeon,0.013379745,0.01221131,0.009130197,Stable/Increase
 Orange Minivet,0.021496752,0.02098858,0.00556248,Stable/Increase
-Oriental Magpie-Robin,0.000880703,0.007027725,0.000402657,
 Oriental Skylark,0.003533885,0.010524731,0.000396273,Decrease
-Painted Bush-Quail,0.048234366,0.012189324,0.000410644,
 Painted Spurfowl,0.004461624,0.001778157,0.000396469,Decrease
 Pied Bushchat,0.023247872,0.05267649,0.008788136,Stable/Increase
 Pied Cuckoo,0.004471104,0.003516033,0.00039133,Decrease
@@ -75,7 +69,6 @@ Red Avadavat,0.020576092,0.003486555,0.00039202,Decrease
 Red Spurfowl,0.043738356,0.010417454,0.003980508,Decrease
 Red-vented Bulbul,0.005336395,0.00694653,0.010336158,Stable/Increase
 Red-whiskered Bulbul,0.021434219,0.035107443,0.138182042,Stable/Increase
-Rufous babbler,0.008958189,0.005252288,0.000401756,
 Scaly-breasted Munia,0.010740955,0.01581087,0.000398802,Decrease
 Small Minivet,0.001795833,0.006975417,0.000394155,Decrease
 Southern Hill Myna,0.005352545,0.003475241,0.003964225,Stable/Increase
