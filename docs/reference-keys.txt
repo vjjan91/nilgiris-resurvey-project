@@ -107,7 +107,6 @@ analysis-to-test-for-significant-differences-in-relative-abundances-by-species-a
 summary-of-relative-abundance-changes-by-species-as-a-function-of-habitat-affiliation
 has-relative-abundance-increased-or-decreased-for-each-species-over-time
 box-plots-of-relative-abundance-by-species-trait-across-time-periods
-create-a-visualization-of-rank-abundances-by-species-habitat-affiliation-as-a-function-of-time-period
 are-there-significant-decreases-in-relative-abundance-by-time-periods-across-habitat-affiliations
 forest-birds
 grassland-birds
