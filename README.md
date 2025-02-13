@@ -1,4 +1,4 @@
-## *Colonial-era landscape changes are concomitant with grassland bird species declines over the last century*  
+## *Grassland bird species decline with colonial-era landscape change in a tropical montane ecosystem*  
 
 <!-- badges: start -->
 
