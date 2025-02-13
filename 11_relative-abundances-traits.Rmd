@@ -437,15 +437,6 @@ dev.off()
 
 ![Grassland bird species suffered the largest decline in relative abundance, while forest and generalist bird species showed increases in relative abundance over time](figs/fig_boxPlot_grassland.png)
 
-## Create a visualization of rank abundances by species habitat affiliation as a function of time period
-```{r}
-trial <- grass_rank %>%
-  mutate(status = )
-```
-
-
-
-
 ## Are there significant decreases in relative abundance by time periods across habitat affiliations?
 
 We will run beta regressions to answer the above question as the data is bounded between zero and 1. 

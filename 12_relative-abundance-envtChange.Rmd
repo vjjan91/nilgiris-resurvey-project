@@ -357,6 +357,6 @@ plot(ggpredict(m2))
 # Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 
-# Above, we asked if grassland species are declining relative to other species, and we found that there was no association between changes in land cover and climate on grassland bird species abundance, indicating that both grassland habitat loss and temperature increase have been uniform across locations suggesting a regional-scale process and not local-scale. 
+# Above, we asked if grassland species are declining relative to other species, and we found that there was no association between changes in land cover and climate on grassland bird species abundance, indicating that both grassland habitat loss and has been uniform across locations suggesting a regional-scale process and not local-scale. 
 ```
 
