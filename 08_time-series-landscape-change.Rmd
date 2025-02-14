@@ -289,7 +289,7 @@ legend("bottom",
 dev.off()
 ```
 
-![Landscape change over time with the inclusion of data across 1848, 1910, 1973, 1995 and 2018 revealed similar conclusions as before](figs/fig_landCover_timeSeries.png)
+![Landscape change over time with the inclusion of data across 1848, 1910, 1973, 1995 and 2018 revealed similar conclusions as before](figs/FigS1.png)
 
 ## Subsume plantations into one category for 1973, 1995, and 2018
 
@@ -480,9 +480,9 @@ legend("bottom",
 dev.off()
 ```
 
-![Comparing changes across the south-western quandrant of the map over time](figs/fig_landCover_timeSeries_southWesternRegion.png)
+![Comparing changes across the south-western quandrant of the map over time](figs/FigS2.png)
 
-![Comparing changes across the western Nilgiris over time](figs/fig_landCover_timeSeries_westernRegion.png)
+![Comparing changes across the western Nilgiris over time](figs/FigS3.png)
 
 ## Comparisons only above 1400 meters in elevation 
 

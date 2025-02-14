@@ -152,7 +152,7 @@ relAbunCalib <- full_join(relAbunHist, relAbun2021) %>%
   rename(., "modern" = "bayes_mean_2021") %>%
   rename(., common_name = species)
 
-# regressing 1850s data vs. 2021
+# regressing 1850-1950 data vs. 2021
 fig_hist_v_mod_rel <- ggplot(data=relAbunCalib,aes(x=modern,y=historical)) +
    scale_y_log10() +
   geom_abline(slope=1, intercept=0,linetype="dashed") +
@@ -172,7 +172,7 @@ ggsave(fig_hist_v_mod_rel, filename = "figs/fig_historical_vs_modern_relAbun.png
 dev.off()
 ```
 
-![Historical vs. modern species relative abundance suggests high correlations, implying that they are comparable to one another](figs/fig_historical_vs_modern_relAbun.png)
+![Historical vs. modern species relative abundance suggests high correlations, implying that they are comparable to one another](figs/FigS4.png)
 
 ## Calculating species relative abundance for the historical data (1850-1900 and 1900-1950)
 ```{r}
@@ -192,7 +192,7 @@ spp_count <- hist_occ %>%
   count() # total of 179 species
 
 sppMinThree <- spp_count %>%
-  filter(n >= 3) # total of 92 species
+  filter(n >= 3) 
 # please note, we include ~four species that were collected from a single historical location Apus melba, Apus melba, Brachypodius priocephalus, Phylloscopus tytleri, Picus chlorolophus
 
 # filter historical data
