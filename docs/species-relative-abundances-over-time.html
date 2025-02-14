@@ -457,7 +457,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb109-86"><a href="species-relative-abundances-over-time.html#cb109-86" tabindex="-1"></a>  <span class="fu">rename</span>(., <span class="st">&quot;modern&quot;</span> <span class="ot">=</span> <span class="st">&quot;bayes_mean_2021&quot;</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb109-87"><a href="species-relative-abundances-over-time.html#cb109-87" tabindex="-1"></a>  <span class="fu">rename</span>(., <span class="at">common_name =</span> species)</span>
 <span id="cb109-88"><a href="species-relative-abundances-over-time.html#cb109-88" tabindex="-1"></a></span>
-<span id="cb109-89"><a href="species-relative-abundances-over-time.html#cb109-89" tabindex="-1"></a><span class="co"># regressing 1850s data vs. 2021</span></span>
+<span id="cb109-89"><a href="species-relative-abundances-over-time.html#cb109-89" tabindex="-1"></a><span class="co"># regressing 1850-1950 data vs. 2021</span></span>
 <span id="cb109-90"><a href="species-relative-abundances-over-time.html#cb109-90" tabindex="-1"></a>fig_hist_v_mod_rel <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data=</span>relAbunCalib,<span class="fu">aes</span>(<span class="at">x=</span>modern,<span class="at">y=</span>historical)) <span class="sc">+</span></span>
 <span id="cb109-91"><a href="species-relative-abundances-over-time.html#cb109-91" tabindex="-1"></a>   <span class="fu">scale_y_log10</span>() <span class="sc">+</span></span>
 <span id="cb109-92"><a href="species-relative-abundances-over-time.html#cb109-92" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">slope=</span><span class="dv">1</span>, <span class="at">intercept=</span><span class="dv">0</span>,<span class="at">linetype=</span><span class="st">&quot;dashed&quot;</span>) <span class="sc">+</span></span>
@@ -476,7 +476,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb109-105"><a href="species-relative-abundances-over-time.html#cb109-105" tabindex="-1"></a><span class="fu">ggsave</span>(fig_hist_v_mod_rel, <span class="at">filename =</span> <span class="st">&quot;figs/fig_historical_vs_modern_relAbun.png&quot;</span>, <span class="at">width =</span> <span class="dv">15</span>, <span class="at">height =</span> <span class="dv">10</span>, <span class="at">device =</span> <span class="fu">png</span>(), <span class="at">units =</span> <span class="st">&quot;in&quot;</span>, <span class="at">dpi =</span> <span class="dv">300</span>)</span>
 <span id="cb109-106"><a href="species-relative-abundances-over-time.html#cb109-106" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
 <div class="float">
-<img src="figs/fig_historical_vs_modern_relAbun.png" alt="Historical vs. modern species relative abundance suggests high correlations, implying that they are comparable to one another" />
+<img src="figs/FigS4.png" alt="Historical vs. modern species relative abundance suggests high correlations, implying that they are comparable to one another" />
 <div class="figcaption">Historical vs. modern species relative abundance suggests high correlations, implying that they are comparable to one another</div>
 </div>
 </div>
@@ -498,7 +498,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb110-14"><a href="species-relative-abundances-over-time.html#cb110-14" tabindex="-1"></a>  <span class="fu">count</span>() <span class="co"># total of 179 species</span></span>
 <span id="cb110-15"><a href="species-relative-abundances-over-time.html#cb110-15" tabindex="-1"></a></span>
 <span id="cb110-16"><a href="species-relative-abundances-over-time.html#cb110-16" tabindex="-1"></a>sppMinThree <span class="ot">&lt;-</span> spp_count <span class="sc">%&gt;%</span></span>
-<span id="cb110-17"><a href="species-relative-abundances-over-time.html#cb110-17" tabindex="-1"></a>  <span class="fu">filter</span>(n <span class="sc">&gt;=</span> <span class="dv">3</span>) <span class="co"># total of 92 species</span></span>
+<span id="cb110-17"><a href="species-relative-abundances-over-time.html#cb110-17" tabindex="-1"></a>  <span class="fu">filter</span>(n <span class="sc">&gt;=</span> <span class="dv">3</span>) </span>
 <span id="cb110-18"><a href="species-relative-abundances-over-time.html#cb110-18" tabindex="-1"></a><span class="co"># please note, we include ~four species that were collected from a single historical location Apus melba, Apus melba, Brachypodius priocephalus, Phylloscopus tytleri, Picus chlorolophus</span></span>
 <span id="cb110-19"><a href="species-relative-abundances-over-time.html#cb110-19" tabindex="-1"></a></span>
 <span id="cb110-20"><a href="species-relative-abundances-over-time.html#cb110-20" tabindex="-1"></a><span class="co"># filter historical data</span></span>
