@@ -242,12 +242,14 @@ _For Forest birds:(n=57)_
 27 bird species showed a significant decrease in relative abundance in the modern survey period when compared to either one of the historical time periods.
 22 bird species showed no differences in relative abundances across time periods/remained stable.
 8 bird species showed a significant increase in relative abundance in the modern survey period when compared to either historical survey periods. 
+
 **~52.6% of birds have remained stable and/or increase in relative abundance over time.**
 
 _For generalist birds (n=19):_
 10 birds showed no significant differences in relative abundance across time periods.
 4 bird species showed significant increase in the modern survey period compared to either one of the historical time periods.
 5 birds showed a significant decrease in relative abundance in the modern survey period compared to either one of the historical survey periods. 
+
 **~73.6% of birds remained stable or increased in relative abundance over time**
 
 ## Has relative abundance increased or decreased for each species over time?
@@ -258,19 +260,29 @@ Based on the above plots and levels of significance for decrease in relative abu
 ## loading the average relative species abundances file
 ## this file now has a column indicating if a species increased or decreased in relative abundance
 
-mean_relAbun <- read.csv("results/species-relative-abundance.csv")
-names(mean_relAbun) <- c("common_name","1850-1900","1900-1950","2021","increase_decrease")
+relAbun_landscape <- read.csv("results/species-relative-abundance.csv")
+names(relAbun_landscape) <- c("common_name","1850-1900","1900-1950","2021","increase_decrease")
+relAbun_landscape <- relAbun_landscape %>%
+  left_join(., trait_dat, by="common_name") %>%
+   filter(Habitat.type != "Wetland") %>% # remove wetland birds
+  ungroup()
 
 ## merge the above file with species trait data
-mean_relAbun <- mean_relAbun %>%
-   left_join(., trait_dat, by="common_name") %>%
+mean_relAbun <- relAbun %>%
+  dplyr::select(common_name, historical_site_code,
+                year, relAbundance, Habitat.type) %>%
+  group_by(common_name, year) %>%
+  mutate(meanRelAbun = mean(relAbundance)) %>%
+  dplyr::select(common_name, year, meanRelAbun) %>%
+  distinct() %>%
+  left_join(., trait_dat, by="common_name") %>%
    filter(Habitat.type != "Wetland") %>% # remove wetland birds
   ungroup()
 
 ## summary pie chart
 fig_relAbun_pieChart <- ggpiestats(
   # arguments relevant for `ggpiestats()`
-  data = mean_relAbun,
+  data = relAbun_landscape,
   x = increase_decrease,
   y = Habitat.type,
   digits.perc = 0,
@@ -287,18 +299,43 @@ dev.off()
 
 ## Now that we have a summary pie chart showcasing the number of species that increased/remained stable and decreased in relative abundance over time, we can plot the relative abundance for the year 2021 as rank abundance plots
 
-## separately for grassland, forest and generalist birds
+## add increase_decrease column
+mean_relAbun <- left_join(mean_relAbun, relAbun_landscape[,c(1,5)])
 
-fig_rankAbund_grass <- mean_relAbun %>%
+## separately for grassland, forest and generalist birds
+fig_linePlot_grass <- mean_relAbun %>%
   filter(Habitat.type == "Grassland") %>%
-  ggplot(., aes(x = common_name, y = `2021`, fill = increase_decrease)) +
-   geom_bar(stat = "identity", position = "dodge", width = 0.9)+
-  scale_fill_manual("Increase/Decrease", values = c("#D95F02",'#1B9E77')) +
-  theme_bw() +
+  ggplot(., aes(x = year, y = meanRelAbun, group = common_name, 
+                color = increase_decrease)) +
+  geom_line(alpha = 0.9) +
+  geom_point(size = 2) +
+   geom_label_repel(data = . %>% filter(year == "1850"),
+                   aes(label = common_name),
+                   hjust = 1,
+                   direction = "y",
+                   nudge_x = -0.1,
+                   size = 3,
+                   box.padding = 0.5,
+                   point.padding = 0.3,
+                   segment.color = 'lightgrey',
+                   max.overlaps = Inf,
+                   force = 10,
+                   label.padding = 0.15,
+                   label.r = 0.15,
+                   fill = "white",
+                   label.size = 0.3,
+                   family = "Century Gothic") + 
+  scale_x_discrete() +
+  scale_y_continuous(limits = c(0, 0.04)) +
+  scale_color_manual(values = c("decrease" = "#D95F02", 
+                               "stable/increase" = "#1B9E77")) +
   labs(
-    x = "\nCommon Name",
-    y = "Relative Abundance\n"
+    x = "Year",
+    y = "Mean Relative Abundance",
+    title = "Change in Species Relative Abundance (1850-2021)",
+    color = "Trend"
   ) +
+  theme_bw() +
   theme(
     axis.title = element_text(
       family = "Century Gothic",
@@ -307,58 +344,161 @@ fig_rankAbund_grass <- mean_relAbun %>%
     axis.text = element_text(family = "Century Gothic", 
                              size = 12),
     axis.text.x = element_text(angle = 90, vjust = 0.5, 
-                               hjust = 1),
-    aspect.ratio = 2/1)
+                               hjust = 1))
 
-ggsave(fig_rankAbund_grass, filename = "figs/fig_rankAbundance_grassland.svg", width = 15, height = 12, device = svg(), units = "in", dpi = 300)
+ggsave(fig_linePlot_grass, filename = "figs/fig_linePlot_grassland.svg", width = 9, height = 10, device = svg(), units = "in", dpi = 300)
 dev.off()
 
 ## forest birds
-fig_rankAbund_forest <- mean_relAbun %>%
+fig_linePlot_forest <- mean_relAbun %>%
   filter(Habitat.type == "Forest") %>%
-  ggplot(., aes(x = common_name, y = `2021`, fill = increase_decrease)) +
-   geom_bar(stat = "identity", position = "dodge", width = 0.9)+
-  scale_fill_manual("Increase/Decrease", values = c("#D95F02",'#1B9E77')) +
-  theme_bw() +
+  ggplot(., aes(x = year, y = meanRelAbun, group = common_name, 
+                color = increase_decrease)) +
+  geom_line(alpha = 0.9) +
+  geom_point(size = 2) +
+  # Labels for "decrease" (left side)
+  geom_label_repel(data = . %>% 
+                    filter(year == "1850", 
+                           increase_decrease == "decrease"),
+                  aes(label = common_name),
+                  hjust = 1,
+                  direction = "y",
+                  nudge_x = -1.2,
+                  size = 2.5,
+                  box.padding = 1.2,
+                  point.padding = 0.5,
+                  segment.color = 'lightgrey',
+                  segment.curvature = 0,
+                  force = 50,
+                  min.segment.length = 0,
+                  max.overlaps = Inf,
+                  family = "Century Gothic",
+                  fill = "white",
+                  label.padding = 0.15,
+                  label.r = 0.15,
+                  label.size = 0.3,
+                  ylim = c(0, 0.04)) +
+  # Labels for "stable/increase" (right side)
+  geom_label_repel(data = . %>% 
+                    filter(year == "2021", 
+                           increase_decrease == "stable/increase"),
+                  aes(label = common_name),
+                  hjust = 0,
+                  direction = "y",
+                  nudge_x = 1.2,
+                  size = 2.5,
+                  box.padding = 1.2,
+                  point.padding = 0.5,
+                  segment.color = 'lightgrey',
+                  segment.curvature = 0,
+                  force = 50,
+                  min.segment.length = 0,
+                  max.overlaps = Inf,
+                  family = "Century Gothic",
+                  fill = "white",
+                  label.padding = 0.15,
+                  label.r = 0.15,
+                  label.size = 0.3,
+                  ylim = c(0, 0.04)) +
+  scale_x_discrete(expand = expansion(mult = c(1, 1))) +
+  scale_y_continuous(limits = c(0, 0.04)) +
+  scale_color_manual(values = c("decrease" = "#D95F02", 
+                               "stable/increase" = "#1B9E77")) +
   labs(
-    x = "\nCommon Name",
-    y = "Relative Abundance\n"
+    x = "Year",
+    y = "Mean Relative Abundance",
+    title = "Change in Species Relative Abundance (1850-2021)",
+    color = "Trend"
   ) +
+  theme_bw() +
   theme(
     axis.title = element_text(
       family = "Century Gothic",
       size = 14, face = "bold"
     ),
     axis.text = element_text(family = "Century Gothic", 
-                             size = 12),
+                            size = 12),
     axis.text.x = element_text(angle = 90, vjust = 0.5, 
-                               hjust = 1))
+                              hjust = 1))
 
-ggsave(fig_rankAbund_forest, filename = "figs/fig_rankAbundance_forest.svg", width = 22, height = 12, device = svg(), units = "in", dpi = 300)
+
+ggsave(fig_linePlot_forest, filename = "figs/fig_linePlot_forest.svg", width = 15, height = 10, device = svg(), units = "in", dpi = 300)
 dev.off()
 
 ## generalist birds
-fig_rankAbund_generalist <- mean_relAbun %>%
+# please note that the y-lim was modified when compared to grassland and forest birds 
+fig_linePlot_generalist <- mean_relAbun %>%
   filter(Habitat.type == "Generalist") %>%
-  ggplot(., aes(x = common_name, y = `2021`, fill = increase_decrease)) +
-   geom_bar(stat = "identity", position = "dodge", width = 0.9)+
-  scale_fill_manual("Increase/Decrease", values = c("#D95F02",'#1B9E77')) +
-  theme_bw() +
+  ggplot(., aes(x = year, y = meanRelAbun, group = common_name, 
+                color = increase_decrease)) +
+  geom_line(alpha = 0.9) +
+  geom_point(size = 2) +
+  # Labels for "decrease" (left side)
+  geom_label_repel(data = . %>% 
+                    filter(year == "1850", 
+                           increase_decrease == "decrease"),
+                  aes(label = common_name),
+                  hjust = 1,
+                  direction = "y",
+                  nudge_x = -1.2,
+                  size = 2.5,
+                  box.padding = 1.2,
+                  point.padding = 0.5,
+                  segment.color = 'lightgrey',
+                  segment.curvature = 0,
+                  force = 50,
+                  min.segment.length = 0,
+                  max.overlaps = Inf,
+                  family = "Century Gothic",
+                  fill = "white",
+                  label.padding = 0.15,
+                  label.r = 0.15,
+                  label.size = 0.3,
+                  ylim = c(0, 0.04)) +
+  # Labels for "stable/increase" (right side)
+  geom_label_repel(data = . %>% 
+                    filter(year == "2021", 
+                           increase_decrease == "stable/increase"),
+                  aes(label = common_name),
+                  hjust = 0,
+                  direction = "y",
+                  nudge_x = 1.2,
+                  size = 2.5,
+                  box.padding = 1.2,
+                  point.padding = 0.5,
+                  segment.color = 'lightgrey',
+                  segment.curvature = 0,
+                  force = 50,
+                  min.segment.length = 0,
+                  max.overlaps = Inf,
+                  family = "Century Gothic",
+                  fill = "white",
+                  label.padding = 0.15,
+                  label.r = 0.15,
+                  label.size = 0.3,
+                  ylim = c(0, 0.04)) +
+  scale_x_discrete(expand = expansion(mult = c(1, 1))) +
+  scale_y_continuous(limits = c(0, 0.04)) +
+  scale_color_manual(values = c("decrease" = "#D95F02", 
+                               "stable/increase" = "#1B9E77")) +
   labs(
-    x = "\nCommon Name",
-    y = "Relative Abundance\n"
+    x = "Year",
+    y = "Mean Relative Abundance",
+    title = "Change in Species Relative Abundance (1850-2021)",
+    color = "Trend"
   ) +
+  theme_bw() +
   theme(
     axis.title = element_text(
       family = "Century Gothic",
       size = 14, face = "bold"
     ),
     axis.text = element_text(family = "Century Gothic", 
-                             size = 12),
+                            size = 12),
     axis.text.x = element_text(angle = 90, vjust = 0.5, 
-                               hjust = 1))
+                              hjust = 1))
 
-ggsave(fig_rankAbund_generalist, filename = "figs/fig_rankAbundance_generalist.svg", width = 15, height = 12, device = svg(), units = "in", dpi = 300)
+ggsave(fig_linePlot_generalist, filename = "figs/fig_linePlot_generalist.svg", width = 12, height = 9, device = svg(), units = "in", dpi = 300)
 dev.off()
 ```
 
@@ -367,8 +507,8 @@ dev.off()
 ```{r}
 # grassland birds
 fig_boxPlot_grass <- ggplot(grassland_birds, aes(x = common_name, y = relAbundance, fill = factor(year))) +
-  geom_col(stat = "identity")+
-  #geom_boxplot(alpha=0.7)+
+  #geom_col()+
+  geom_boxplot(alpha=0.7)+
   scale_fill_manual(values = c("#2c7fb8",'#025a05',"#e34a33")) +
   theme_bw() +
   labs(
