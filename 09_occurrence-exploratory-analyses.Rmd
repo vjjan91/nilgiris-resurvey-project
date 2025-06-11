@@ -38,6 +38,7 @@ spp_count <- hist_occ %>%
 
 sppMinThree <- spp_count %>%
   filter(n >= 3) # total of 92 species
+
 # please note, we include ~four species that were collected from a single historical location Apus melba, Apus melba, Brachypodius priocephalus, Phylloscopus tytleri, Picus chlorolophus
 
 # filter historical data
