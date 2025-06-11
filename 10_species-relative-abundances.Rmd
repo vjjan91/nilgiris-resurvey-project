@@ -72,6 +72,14 @@ hist_occ <- read.csv("data/historical-occurrence-data.csv")
 hist_occ <- hist_occ %>%
   filter(year <= 1950)
 
+# total species count across historical data
+spp_count <- hist_occ %>%
+  group_by(scientific_name, common_name) %>%
+  count() # total of 179 species
+
+sppMinThree <- spp_count %>%
+  filter(n >= 3) # total of 92 species
+
 ## read in modern occurrence data
 mod_occ <- read.csv("data/modern-occurrence-data.csv") %>%
   filter(!is.na(historical_site_code)) # 2301 observations of 103 bird species
@@ -154,14 +162,15 @@ relAbunCalib <- full_join(relAbunHist, relAbun2021) %>%
 
 # regressing 1850-1950 data vs. 2021
 fig_hist_v_mod_rel <- ggplot(data=relAbunCalib,aes(x=modern,y=historical)) +
-   scale_y_log10() +
+    scale_y_log10() +
   geom_abline(slope=1, intercept=0,linetype="dashed") +
-  scale_x_log10() +
+    scale_x_log10() +
   labs(y = "Historical Relative abundance", 
        x = "Modern Relative abundance") +
    geom_point(shape = 21, colour = "black", fill = "white", size = 2, stroke = 1)+
    geom_smooth(method="lm", se=TRUE, fullrange=FALSE, level=0.95,linetype="solid")+
   stat_regline_equation(aes(label = ..rr.label..)) +
+  #geom_text_repel(aes(label = common_name),family = "Century Gothic", fontface = "italic") +
   theme_bw() +
   theme(axis.text = element_text(family = "Century Gothic", size = 13),
         legend.title = element_text(family = "Century Gothic"),
@@ -174,7 +183,7 @@ dev.off()
 
 ![Historical vs. modern species relative abundance suggests high correlations, implying that they are comparable to one another](figs/FigS4.png)
 
-## Calculating species relative abundance for the historical data (1850-1900 and 1900-1950)
+## Calculating species relative abundance for the historical data (1850-1900 and 1900-1950)   
 ```{r}
 ## read in historical occurrence data
 hist_occ <- read.csv("data/historical-occurrence-data.csv")
@@ -193,6 +202,7 @@ spp_count <- hist_occ %>%
 
 sppMinThree <- spp_count %>%
   filter(n >= 3) 
+
 # please note, we include ~four species that were collected from a single historical location Apus melba, Apus melba, Brachypodius priocephalus, Phylloscopus tytleri, Picus chlorolophus
 
 # filter historical data
@@ -344,7 +354,7 @@ fig_relAbun_over_time <- ggbetweenstats(
   violin.args = list(width = 0),
   pairwise.comparisons = T) +
   scale_y_log10() +
-  scale_color_manual(values = c("#9EB0FFFF", "#122C39FF","#D5857DFF")) +   
+  #scale_color_manual(values = c("#9EB0FFFF", "#122C39FF","#D5857DFF")) +   
   theme(plot.title = element_text(family = "Century Gothic",
       size = 18, face = "bold"),
     axis.title = element_text(family = "Century Gothic",
@@ -395,7 +405,8 @@ site_level_relAbun <- full_join(hist_pre1900,
   ungroup() %>%
   complete(common_name, historical_site_code, 
            fill = list(`1850-1900` = 0, 
-     `1900-1950` = 0,                                                     `2021` = 0))
+     `1900-1950` = 0,
+     `2021` = 0))
 
 ## site-level relative abundance for 1850-1900 data
 relSpAbund_1850_1900 <- c()
@@ -530,6 +541,7 @@ dev.off()
 
 ## Writing results to file
 ```{r}
+# please be aware that if you are rerunning analysis, the file below is modified and a column is added manually
 write.csv(relAbun, "results/species-relative-abundance.csv", row.names = F)
 write.csv(relSpAbund, "results/species-relative-abundance-siteLevel.csv", row.names = F)
 ```
