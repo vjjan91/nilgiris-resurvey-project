@@ -9,7 +9,7 @@ This repository contains code and analysis for a manuscript that examines how a 
 
 This manuscript is published in *Global Change Biology*. Please reach out to the repository owner if you have questions.  
 
-![](figs/figure1.png)
+![a) The Nilgiri hills of the Western Ghats-Sri Lanka biodiversity hotspot is the focus of our study. Shown here is the rare historical map of the Nilgiri hills, along with representative locations where land cover transitions occurred between historical (1848, colored in violet) and modern (2018, colored in red) time periods. Images of land cover were taken by Vijay Ramesh, Chandrasekar Das and Wikimedia Commons (captured by Jaseem Hamza). b) A timeline of key events that shaped the landscape of the Nilgiri hills alongside our data sources (colored in orange) is shown here.](figs/figure1.png)
 
 ### [Readable version](https://vjjan91.github.io/nilgiris-resurvey-project/)
 
