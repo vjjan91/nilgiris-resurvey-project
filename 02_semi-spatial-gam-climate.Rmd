@@ -15,7 +15,6 @@ The climate data extend into the modern period, allowing predictions from the ca
 ## Load libraries
 
 ```{r}
-# Load libraries
 library(tidyverse)
 library(sf)
 library(readxl)
@@ -60,7 +59,7 @@ We pivot the data to long format, and then nest the data by season and decade, g
 
 While there is no specific reason to believe that the relationship between climate and geographical predictors has changed over the past 150 years, splitting the data by decade may help adjust for long-term climate system effects within certain time-periods that could be drowned out by the overall effect of geographical predictors.
 
-We subset the data for the decades between 1970 and 2010 for which reliable comparator spatial climate datasets are available from remote sensing.
+We subset the data for the decades between 1970 and 2010 for which reliable comparative spatial climate datasets are available from remote sensing.
 
 ```{r}
 # Pivot to long format, remove unnecessary variables,
@@ -225,7 +224,7 @@ data_pred |>
 
 In this section, we acquire remotely sensed cliamte variables for the study area, which will serve as a comparator for the values generated from fitted model predictions, and will help to pick the most appropriate model formulation to reconstruct historical climate for which remotely sensed data are not available.
 
-First, we obtained bio-climatic data from CHELSA. We do not upload the rasters to GitHub as they are very large in size and these can be downloaded from this link: https://envicloud.wsl.ch/#/?prefix=chelsa%2Fchelsa_V1
+First, we obtained bio-climatic data from CHELSA. We do not upload the rasters to GitHub as they are very large in size and these can be downloaded from this [link](https://chelsa-climate.org/bioclim/).  
 
 ## Temperature data
 
@@ -341,8 +340,6 @@ terra::writeRaster(
 ```
 
 ## Compare spatial-climate model predictions against BIOCLIM data
-
-## Sample locations
 
 First we draw 10,000 randomly selected coordinates from the extent of the study area, and use these to compare the model predictions against CHELSA-derived data.
 We will further stratify these into 10 arbitrary groups at a later stage.
@@ -483,7 +480,6 @@ data_gam_validate <- mutate(
 )
 
 # Extract the predicted values
-# TODO: check why this is being done again
 data_gam_validate <- data_gam_validate |>
   mutate(
     pred_val = pred_val$lyr1

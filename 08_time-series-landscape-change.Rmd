@@ -31,7 +31,7 @@ rast2018 <- terra::rast("results/landcover/2018.tif")
 ## Loading data from the 1910 map
 ```{r}
 # list all shapefiles in the directory
-nil1910 <- list.files("data/landcover/1910-nilgiris/", full.names = T, recursive = T, pattern=".shp$")
+nil1910 <- list.files("data/landcover/1910-nilgiris/", full.names = T, recursive = T, pattern = ".shp$")
 
 # create vector files
 ag1910 <- st_read(nil1910[1]) # type: multipolygon
@@ -50,27 +50,27 @@ waterBodies1910 <- st_read(nil1910[6]) # type: polygon
 # attribute names need to be consistent across shapefiles
 
 # first, we will remove empty geometries
-plantations1910 <- plantations1910[!st_is_empty(plantations1910),]
+plantations1910 <- plantations1910[!st_is_empty(plantations1910), ]
 
 # fixing attribute tables to ensure they are consistent across shapefiles
-ag1910 <- ag1910[,-3]
-plantations1910 <- plantations1910[,-3]
-settlements1910 <- settlements1910[,-3]
-sholaForest1910 <- sholaForest1910[,-3]
-sholaGrassland1910 <- sholaGrassland1910[,-3]
-waterBodies1910 <- waterBodies1910[,-3]
+ag1910 <- ag1910[, -3]
+plantations1910 <- plantations1910[, -3]
+settlements1910 <- settlements1910[, -3]
+sholaForest1910 <- sholaForest1910[, -3]
+sholaGrassland1910 <- sholaGrassland1910[, -3]
+waterBodies1910 <- waterBodies1910[, -3]
 
-names(ag1910) <- c("id", "name","geometry")
+names(ag1910) <- c("id", "name", "geometry")
 ag1910$name <- "agriculture"
-names(plantations1910) <- c("id", "name","geometry")
+names(plantations1910) <- c("id", "name", "geometry")
 plantations1910$name <- "plantations"
-names(settlements1910) <- c("id", "name","geometry")
+names(settlements1910) <- c("id", "name", "geometry")
 settlements1910$name <- "settlements"
-names(sholaForest1910) <- c("id", "name","geometry")
+names(sholaForest1910) <- c("id", "name", "geometry")
 sholaForest1910$name <- "shola_forest"
-names(sholaGrassland1910) <- c("id", "name","geometry")
+names(sholaGrassland1910) <- c("id", "name", "geometry")
 sholaGrassland1910$name <- "shola_grassland"
-names(waterBodies1910) <- c("id", "name","geometry")
+names(waterBodies1910) <- c("id", "name", "geometry")
 waterBodies1910$name <- "water_bodies"
 
 # transform to UTM 43N
@@ -82,7 +82,7 @@ sholaGrassland1910 <- st_transform(sholaGrassland1910, 32643)
 waterBodies1910 <- st_transform(waterBodies1910, 32643)
 
 # creating a single simple feature collection
-nil1910 <- rbind(ag1910, plantations1910, settlements1910,sholaForest1910, sholaGrassland1910,waterBodies1910)
+nil1910 <- rbind(ag1910, plantations1910, settlements1910, sholaForest1910, sholaGrassland1910, waterBodies1910)
 ```
 
 ## Rasterizing of the 1910 data
@@ -96,7 +96,7 @@ rast1910 <- terra::rasterize(vect1910, emptyRast, "name")
 ## we need to mask the raster with the 1848 raster
 ## we use terra::mask as there are empty/no_data values in 1848
 
-## prior to masking, we need to crop and reset extents 
+## prior to masking, we need to crop and reset extents
 ## note, we are resetting the extent to match the 1848 raster
 rast1910 <- crop(rast1910, rast1848)
 
@@ -119,12 +119,16 @@ rast1910 <- mask(rast1910, rast1848)
 rast1910 <- as.factor(rast1910)
 
 ## create a dataframe with names of classes and their corresponding values
-landcover_reclass <- data.frame(ID = 0:5,
-                              name = c("agriculture",                                                        "plantations",
-                                  "settlements",
-                                  "shola_forest",
-                                  "shola_grassland",
-                                  "water_bodies"))
+landcover_reclass <- data.frame(
+  ID = 0:5,
+  name = c(
+    "agriculture", "plantations",
+    "settlements",
+    "shola_forest",
+    "shola_grassland",
+    "water_bodies"
+  )
+)
 
 levels(rast1910) <- landcover_reclass
 ```
@@ -162,8 +166,8 @@ nil1995 <- nil1995 %>%
   ))
 
 # renaming for ease of visualization
-names(nil1973) <- c("id","area","geometry","name")
-names(nil1995) <- c("id","area","geometry","name")
+names(nil1973) <- c("id", "area", "geometry", "name")
+names(nil1995) <- c("id", "area", "geometry", "name")
 ```
 
 ## Rasterization of the 1973 and 1995 data
@@ -192,14 +196,18 @@ rast1973 <- mask(rast1973, rast1848)
 rast1973 <- as.factor(rast1973)
 
 ## create a dataframe with names of classes and their corresponding values
-landcover_class <- data.frame(ID = c(0,2:7),
-                              name = c("agriculture",
-                                       "settlements",
-                                        "shola_forest",
-                                    "shola_grassland",
-                                    "tea_plantations",
-                                  "timber_plantations",
-                                      "water_bodies"))
+landcover_class <- data.frame(
+  ID = c(0, 2:7),
+  name = c(
+    "agriculture",
+    "settlements",
+    "shola_forest",
+    "shola_grassland",
+    "tea_plantations",
+    "timber_plantations",
+    "water_bodies"
+  )
+)
 
 levels(rast1973) <- landcover_class
 
@@ -233,59 +241,74 @@ levels(rast1995) <- landcover_class
 ```{r}
 ## side-by-side visualization
 colors1848 <- c(
-  '#be4fc4', # agriculture, violetish
-  '#c17111', # plantations, brownish
-  '#b0a69d', # settlements, grayish
-  '#025a05', # shola forests, dark green
-  '#cbb315', # shola grasslands, yellowish
-  '#2035df'  # waterbodies, royal blue
+  "#be4fc4", # agriculture, violetish
+  "#c17111", # plantations, brownish
+  "#b0a69d", # settlements, grayish
+  "#025a05", # shola forests, dark green
+  "#cbb315", # shola grasslands, yellowish
+  "#2035df" # waterbodies, royal blue
 )
 
 colors1973 <- c(
-  '#be4fc4', # agriculture, violetish
-  '#b0a69d', # settlements, grayish
-  '#025a05', # shola forests, dark green
-  '#cbb315', # shola grasslands, yellowish
-  '#04a310', # tea plantations, light green
-  '#c17111', # timber plantations, brownish
-  '#2035df'  # waterbodies, royal blue
+  "#be4fc4", # agriculture, violetish
+  "#b0a69d", # settlements, grayish
+  "#025a05", # shola forests, dark green
+  "#cbb315", # shola grasslands, yellowish
+  "#04a310", # tea plantations, light green
+  "#c17111", # timber plantations, brownish
+  "#2035df" # waterbodies, royal blue
 )
 
 colors2018 <- c(
-  '#be4fc4', # agriculture, violetish
- '#025a05', # shola forests, dark green
-  '#cbb315', # shola grasslands, yellowish
-  '#c17111', # timber plantations, brownish
-  '#b0a69d', # settlements, grayish
- '#04a310', # tea plantations, light green
-  '#2035df'  # waterbodies, royal blue
+  "#be4fc4", # agriculture, violetish
+  "#025a05", # shola forests, dark green
+  "#cbb315", # shola grasslands, yellowish
+  "#c17111", # timber plantations, brownish
+  "#b0a69d", # settlements, grayish
+  "#04a310", # tea plantations, light green
+  "#2035df" # waterbodies, royal blue
 )
 
 ## saving a high resolution visualization
-png(filename = "figs/fig_landCover_timeSeries.png", 
-    width = 15, height = 10, units = "in", res = 300)
+png(
+  filename = "figs/fig_landCover_timeSeries.png",
+  width = 15, height = 10, units = "in", res = 300
+)
 
-par(mfrow = c(2,3))
-plot(rast1848, col = colors1848, main = "1848",
-     legend = FALSE)
-plot(rast1910, col = colors1848, main = "1910",
-     legend = FALSE)
-plot(rast1973, col = colors1973, main = "1973",
-     legend = FALSE)
-plot(rast1995, col = colors1973, main = "1995",
-     legend = FALSE)
-plot(rast2018, col=colors2018, main = "2018", 
-     legend=FALSE)
+par(mfrow = c(2, 3))
+plot(rast1848,
+  col = colors1848, main = "1848",
+  legend = FALSE
+)
+plot(rast1910,
+  col = colors1848, main = "1910",
+  legend = FALSE
+)
+plot(rast1973,
+  col = colors1973, main = "1973",
+  legend = FALSE
+)
+plot(rast1995,
+  col = colors1973, main = "1995",
+  legend = FALSE
+)
+plot(rast2018,
+  col = colors2018, main = "2018",
+  legend = FALSE
+)
 
 # add custom legend
-par(mar = c(0, 0, 0, 0), 
-     new = TRUE)
-plot(0, 0, type = 'l', bty = 'n', xaxt = 'n', yaxt = 'n')
+par(
+  mar = c(0, 0, 0, 0),
+  new = TRUE
+)
+plot(0, 0, type = "l", bty = "n", xaxt = "n", yaxt = "n")
 legend("bottom",
-       legend=landcover_class$name, fill=colors1973, 
-       cex = 0.8, 
-       title="land cover classes",
-       ncol = 2)
+  legend = landcover_class$name, fill = colors1973,
+  cex = 0.8,
+  title = "land cover classes",
+  ncol = 2
+)
 dev.off()
 ```
 
@@ -314,60 +337,75 @@ rast1995_reclassified <- terra::classify(
 )
 
 ## create a dataframe with names of classes and their corresponding values
-landcover_reclass <- data.frame(ID = 1:6,
-                              name = c("agriculture", 
-                                       "settlements",
-                                       "shola_forest",
-                                   "shola_grassland",
-                                      "plantations",
-                                      "water_bodies"))
+landcover_reclass <- data.frame(
+  ID = 1:6,
+  name = c(
+    "agriculture",
+    "settlements",
+    "shola_forest",
+    "shola_grassland",
+    "plantations",
+    "water_bodies"
+  )
+)
 
 levels(rast1973_reclassified) <- landcover_reclass
 levels(rast1995_reclassified) <- landcover_reclass
 
 ## side-by-side visualization
 colors1973reclass <- c(
-  '#be4fc4', # agriculture, violetish
-  '#b0a69d', # settlements, grayish
-  '#025a05', # shola forests, dark green
-  '#cbb315', # shola grasslands, yellowish
-  '#c17111', # plantations, brownish
-  '#2035df'  # waterbodies, royal blue
+  "#be4fc4", # agriculture, violetish
+  "#b0a69d", # settlements, grayish
+  "#025a05", # shola forests, dark green
+  "#cbb315", # shola grasslands, yellowish
+  "#c17111", # plantations, brownish
+  "#2035df" # waterbodies, royal blue
 )
 
 colors2018reclass <- c(
-  '#be4fc4', # agriculture, violetish
-  '#025a05', # shola forests, dark green
-  '#cbb315', # shola grasslands, yellowish
-  '#c17111', # plantations, brownish
-  '#b0a69d', # settlements, grayish
-  '#2035df'  # waterbodies, royal blue
+  "#be4fc4", # agriculture, violetish
+  "#025a05", # shola forests, dark green
+  "#cbb315", # shola grasslands, yellowish
+  "#c17111", # plantations, brownish
+  "#b0a69d", # settlements, grayish
+  "#2035df" # waterbodies, royal blue
 )
 
 ## saving a high resolution visualization
-png(filename = "figs/fig_landCover_timeSeries_reclassified.png", 
-    width = 15, height = 10, units = "in", res = 300)
+png(
+  filename = "figs/fig_landCover_timeSeries_reclassified.png",
+  width = 15, height = 10, units = "in", res = 300
+)
 
-par(mfrow = c(2,3))
-plot(rast1848, col = colors1848, main = "1848",
-     legend = FALSE)
-plot(rast1910, col = colors1848, main = "1910",
-     legend = FALSE)
-plot(rast1973_reclassified, col = colors1973reclass, main = "1973",legend = FALSE)
-plot(rast1995_reclassified, col = colors1973reclass, main = "1995",legend = FALSE)
-plot(rast2018, col=colors2018reclass, main = "2018", 
-     legend=FALSE)
+par(mfrow = c(2, 3))
+plot(rast1848,
+  col = colors1848, main = "1848",
+  legend = FALSE
+)
+plot(rast1910,
+  col = colors1848, main = "1910",
+  legend = FALSE
+)
+plot(rast1973_reclassified, col = colors1973reclass, main = "1973", legend = FALSE)
+plot(rast1995_reclassified, col = colors1973reclass, main = "1995", legend = FALSE)
+plot(rast2018,
+  col = colors2018reclass, main = "2018",
+  legend = FALSE
+)
 
 # add custom legend
-par(mar = c(0, 0, 0, 0), 
-     new = TRUE)
-plot(0, 0, type = 'l', bty = 'n', xaxt = 'n', yaxt = 'n')
+par(
+  mar = c(0, 0, 0, 0),
+  new = TRUE
+)
+plot(0, 0, type = "l", bty = "n", xaxt = "n", yaxt = "n")
 legend("bottom",
-       legend=landcover_reclass$name,
-       fill=colors1973reclass, 
-       cex = 0.8, 
-       title="land cover classes",
-       ncol = 2)
+  legend = landcover_reclass$name,
+  fill = colors1973reclass,
+  cex = 0.8,
+  title = "land cover classes",
+  ncol = 2
+)
 dev.off()
 ```
 
@@ -378,105 +416,143 @@ dev.off()
 While comparing a time series of landscape change shows how different land cover types have expanded or contracted over time, the broader regions of interest are slightly different across time periods. Here, I subset rasters by cropping smaller extents, prior to visualization.
 ```{r}
 ## south-western quadrant
-sw1848 <- crop(rast1848, c(666000,675000,
-                        1240050,1255000))
-sw1910 <- crop(rast1910, c(666000,675000,
-                        1240050,1255000))
-sw1973 <- crop(rast1973_reclassified, c(666000,675000,
-                        1240050,1255000))
-sw1995 <- crop(rast1995_reclassified, c(666000,675000,
-                        1240050,1255000))
-sw2018 <- crop(rast2018, c(666000,675000,
-                        1240050,1255000))
+sw1848 <- crop(rast1848, c(
+  666000, 675000,
+  1240050, 1255000
+))
+sw1910 <- crop(rast1910, c(
+  666000, 675000,
+  1240050, 1255000
+))
+sw1973 <- crop(rast1973_reclassified, c(
+  666000, 675000,
+  1240050, 1255000
+))
+sw1995 <- crop(rast1995_reclassified, c(
+  666000, 675000,
+  1240050, 1255000
+))
+sw2018 <- crop(rast2018, c(
+  666000, 675000,
+  1240050, 1255000
+))
 
 ## saving a high resolution visualization
-png(filename = "figs/fig_landCover_timeSeries_southWesternRegion.png",
-    width = 15, height = 10, units = "in", res = 300)
+png(
+  filename = "figs/fig_landCover_timeSeries_southWesternRegion.png",
+  width = 15, height = 10, units = "in", res = 300
+)
 
-par(mfrow = c(2,3))
-plot(sw1848, col = c('#be4fc4', # agriculture, violetish
-  '#b0a69d', # settlements, grayish
-  '#025a05', # shola forests, dark green
-  '#cbb315', # shola grasslands, yellowish
-  '#2035df'  # waterbodies, royal blue
-),main = "1848", legend = FALSE)
+par(mfrow = c(2, 3))
+plot(sw1848, col = c(
+  "#be4fc4", # agriculture, violetish
+  "#b0a69d", # settlements, grayish
+  "#025a05", # shola forests, dark green
+  "#cbb315", # shola grasslands, yellowish
+  "#2035df" # waterbodies, royal blue
+), main = "1848", legend = FALSE)
 plot(sw1910, col = c(
-  '#b0a69d', # settlements, grayish
-  '#025a05', # shola forests, dark green
-  '#cbb315', # shola grasslands, yellowish
-  '#2035df'  # waterbodies, royal blue
+  "#b0a69d", # settlements, grayish
+  "#025a05", # shola forests, dark green
+  "#cbb315", # shola grasslands, yellowish
+  "#2035df" # waterbodies, royal blue
 ), main = "1910", legend = FALSE)
-plot(sw1973, col = c('#be4fc4', # agriculture, violetish
-  '#025a05', # shola forests, dark green
-  '#cbb315', # shola grasslands, yellowish
-  '#c17111', # plantations, brownish
-  '#2035df'  # waterbodies, royal blue
-), main = "1973",legend = FALSE)
-plot(sw1995, col = c('#be4fc4', # agriculture, violetish
-                     '#b0a69d', # settlements, grayish
-   '#025a05', # shola forests, dark green
-  '#cbb315', # shola grasslands, yellowish
-  '#c17111', # plantations, brownish
-  '#2035df'  # waterbodies, royal blue
-), main = "1995",legend = FALSE)
-plot(sw2018, col=colors2018reclass, main = "2018", 
-     legend=FALSE)
+plot(sw1973, col = c(
+  "#be4fc4", # agriculture, violetish
+  "#025a05", # shola forests, dark green
+  "#cbb315", # shola grasslands, yellowish
+  "#c17111", # plantations, brownish
+  "#2035df" # waterbodies, royal blue
+), main = "1973", legend = FALSE)
+plot(sw1995, col = c(
+  "#be4fc4", # agriculture, violetish
+  "#b0a69d", # settlements, grayish
+  "#025a05", # shola forests, dark green
+  "#cbb315", # shola grasslands, yellowish
+  "#c17111", # plantations, brownish
+  "#2035df" # waterbodies, royal blue
+), main = "1995", legend = FALSE)
+plot(sw2018,
+  col = colors2018reclass, main = "2018",
+  legend = FALSE
+)
 
 # add custom legend
-par(mar = c(0, 0, 0, 0), 
-     new = TRUE)
-plot(0, 0, type = 'l', bty = 'n', xaxt = 'n', yaxt = 'n')
+par(
+  mar = c(0, 0, 0, 0),
+  new = TRUE
+)
+plot(0, 0, type = "l", bty = "n", xaxt = "n", yaxt = "n")
 legend("bottom",
-       legend=landcover_reclass$name,
-       fill=colors1973reclass, 
-       cex = 0.8, 
-       title="land cover classes",
-       ncol = 2)
+  legend = landcover_reclass$name,
+  fill = colors1973reclass,
+  cex = 0.8,
+  title = "land cover classes",
+  ncol = 2
+)
 dev.off()
 
 # western quadrant
-w1848 <- crop(rast1848, c(665000,680000,
-                        1255000,1265000))
-w1910 <- crop(rast1910, c(665000,680000,
-                        1255000,1265000))
-w1973 <- crop(rast1973_reclassified, c(665000,680000,
-                        1255000,1265000))
-w1995 <- crop(rast1995_reclassified, c(665000,680000,
-                        1255000,1265000))
-w2018 <- crop(rast2018, c(665000,680000,
-                        1255000,1265000))
+w1848 <- crop(rast1848, c(
+  665000, 680000,
+  1255000, 1265000
+))
+w1910 <- crop(rast1910, c(
+  665000, 680000,
+  1255000, 1265000
+))
+w1973 <- crop(rast1973_reclassified, c(
+  665000, 680000,
+  1255000, 1265000
+))
+w1995 <- crop(rast1995_reclassified, c(
+  665000, 680000,
+  1255000, 1265000
+))
+w2018 <- crop(rast2018, c(
+  665000, 680000,
+  1255000, 1265000
+))
 
 ## saving a high resolution visualization
-png(filename = "figs/fig_landCover_timeSeries_westernRegion.png",
-    width = 15, height = 10, units = "in", res = 300)
+png(
+  filename = "figs/fig_landCover_timeSeries_westernRegion.png",
+  width = 15, height = 10, units = "in", res = 300
+)
 
-par(mfrow = c(2,3))
-plot(w1848, col = c('#be4fc4', # agriculture, violetish
-   '#025a05', # shola forests, dark green
-  '#cbb315' # shola grasslands, yellowish
-),main = "1848", legend = FALSE)
+par(mfrow = c(2, 3))
+plot(w1848, col = c(
+  "#be4fc4", # agriculture, violetish
+  "#025a05", # shola forests, dark green
+  "#cbb315" # shola grasslands, yellowish
+), main = "1848", legend = FALSE)
 plot(w1910, col = c(
-  '#be4fc4',
-  '#b0a69d', # settlements, grayish
-  '#025a05', # shola forests, dark green
-  '#cbb315', # shola grasslands, yellowish
-  '#2035df'  # waterbodies, royal blue
+  "#be4fc4",
+  "#b0a69d", # settlements, grayish
+  "#025a05", # shola forests, dark green
+  "#cbb315", # shola grasslands, yellowish
+  "#2035df" # waterbodies, royal blue
 ), main = "1910", legend = FALSE)
-plot(w1973, col = colors1973reclass, main = "1973",legend = FALSE)
-plot(w1995, col = colors1973reclass, main = "1995",legend = FALSE)
-plot(w2018, col=colors2018reclass, main = "2018", 
-     legend=FALSE)
+plot(w1973, col = colors1973reclass, main = "1973", legend = FALSE)
+plot(w1995, col = colors1973reclass, main = "1995", legend = FALSE)
+plot(w2018,
+  col = colors2018reclass, main = "2018",
+  legend = FALSE
+)
 
 # add custom legend
-par(mar = c(0, 0, 0, 0), 
-     new = TRUE)
-plot(0, 0, type = 'l', bty = 'n', xaxt = 'n', yaxt = 'n')
+par(
+  mar = c(0, 0, 0, 0),
+  new = TRUE
+)
+plot(0, 0, type = "l", bty = "n", xaxt = "n", yaxt = "n")
 legend("bottom",
-       legend=landcover_reclass$name,
-       fill=colors1973reclass, 
-       cex = 0.8, 
-       title="land cover classes",
-       ncol = 2)
+  legend = landcover_reclass$name,
+  fill = colors1973reclass,
+  cex = 0.8,
+  title = "land cover classes",
+  ncol = 2
+)
 dev.off()
 ```
 
@@ -494,28 +570,37 @@ rast1910high <- mask(rast1910, rast1973_reclassified)
 rast2018high <- mask(rast2018, rast1973_reclassified)
 
 ## saving a high resolution visualization
-png(filename = "figs/fig_landCover_timeSeries_above1400meters.png",
-    width = 15, height = 10, units = "in", res = 300)
+png(
+  filename = "figs/fig_landCover_timeSeries_above1400meters.png",
+  width = 15, height = 10, units = "in", res = 300
+)
 
-par(mfrow = c(2,3))
-plot(rast1848high, col = colors1848, 
-     main = "1848", legend = FALSE)
-plot(rast1910high, col = colors1848, 
-     main = "1910", legend = FALSE)
-plot(rast1973_reclassified, col = colors1973reclass, main = "1973",legend = FALSE)
-plot(rast1995_reclassified, col = colors1973reclass, main = "1995",legend = FALSE)
-plot(rast2018high, col=colors2018reclass, main = "2018", legend=FALSE)
+par(mfrow = c(2, 3))
+plot(rast1848high,
+  col = colors1848,
+  main = "1848", legend = FALSE
+)
+plot(rast1910high,
+  col = colors1848,
+  main = "1910", legend = FALSE
+)
+plot(rast1973_reclassified, col = colors1973reclass, main = "1973", legend = FALSE)
+plot(rast1995_reclassified, col = colors1973reclass, main = "1995", legend = FALSE)
+plot(rast2018high, col = colors2018reclass, main = "2018", legend = FALSE)
 
 # add custom legend
-par(mar = c(0, 0, 0, 0), 
-     new = TRUE)
-plot(0, 0, type = 'l', bty = 'n', xaxt = 'n', yaxt = 'n')
+par(
+  mar = c(0, 0, 0, 0),
+  new = TRUE
+)
+plot(0, 0, type = "l", bty = "n", xaxt = "n", yaxt = "n")
 legend("bottom",
-       legend=landcover_reclass$name,
-       fill=colors1973reclass, 
-       cex = 0.8, 
-       title="land cover classes",
-       ncol = 2)
+  legend = landcover_reclass$name,
+  fill = colors1973reclass,
+  cex = 0.8,
+  title = "land cover classes",
+  ncol = 2
+)
 dev.off()
 ```
 

@@ -56,7 +56,7 @@ collector <- hist_occ %>%
   group_by(collectedBy) %>%
   count()
 
-# 37 unique collectors/ornithologists who collected museum specimens in this time period, with the maximum number of records by William Davison, followed by R G Wardlaw-Ramsay. 
+# 37 unique collectors/ornithologists who collected museum specimens in this time period, with the maximum number of records by William Davison, followed by R G Wardlaw-Ramsay.
 ```
 
 ## Examining historical data by locality
@@ -81,7 +81,7 @@ prop_count <- spp_loc %>%
 
 ## Visualizations of historical data
 ```{r}
-fig_loc_timePeriod <- ggplot(occ_locality, aes(x = reorder(historical_site_code,-n), y = n, fill = historical_site_code)) +
+fig_loc_timePeriod <- ggplot(occ_locality, aes(x = reorder(historical_site_code, -n), y = n, fill = historical_site_code)) +
   geom_bar(stat = "identity", position = position_dodge(), fill = "#883107", alpha = 0.9) +
   geom_text(aes(label = n, hjust = "middle", vjust = -0.5),
     position = position_dodge(), angle = 0, size = 5
@@ -145,9 +145,9 @@ mod_occ <- read.csv("data/modern-occurrence-data.csv") %>%
 
 # ensure the data is comparable with historical data
 mod_occ <- mod_occ %>%
-  filter(!is.na(species_code)) %>% 
+  filter(!is.na(species_code)) %>%
   filter(common_name %in% hist_occ$common_name) %>%
-  filter(historical_site_code %in% hist_occ$historical_site_code) 
+  filter(historical_site_code %in% hist_occ$historical_site_code)
 
 # total observations of species in the modern surveys
 modOcc_spp <- mod_occ %>%
@@ -160,7 +160,7 @@ mod_occ_loc <- mod_occ %>%
   count()
 
 # figure of species by locality
-fig_modSpp_loc <- ggplot(mod_occ_loc, aes(x = reorder(historical_site_code,-n), y = n, fill = historical_site_code)) +
+fig_modSpp_loc <- ggplot(mod_occ_loc, aes(x = reorder(historical_site_code, -n), y = n, fill = historical_site_code)) +
   geom_bar(stat = "identity", position = position_dodge(), fill = "#883107", alpha = 0.9) +
   geom_text(aes(label = n, hjust = "middle", vjust = -0.5),
     position = position_dodge(), angle = 0, size = 5

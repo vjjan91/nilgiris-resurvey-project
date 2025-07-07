@@ -29,7 +29,7 @@ library(exactextractr)
 We will be loading shapefiles that were digitized by Amrutha Rajan for the 1848 historical map.
 ```{r}
 # list all shapefiles in the directory
-nil1848 <- list.files("data/landcover/1848-nilgiris/", full.names = T, recursive = T, pattern=".shp$")
+nil1848 <- list.files("data/landcover/1848-nilgiris/", full.names = T, recursive = T, pattern = ".shp$")
 
 # create vector files
 ag1848 <- st_read(nil1848[1]) # type: multipolygon; 6 empty geometries
@@ -37,7 +37,7 @@ noData1848 <- st_read(nil1848[2]) # type: multipolygon
 plantations1848 <- st_read(nil1848[3]) # type: polygon & multipolygon; 1 empty geometry
 roads1848 <- st_read(nil1848[4]) # type: linestring
 settlements1848 <- st_read(nil1848[5]) # type: polygon & multipolygon; 3 geometries empty
-sholaForest1848 <- st_read(nil1848[6]) # type: polygon & multippolygon; 6 geometries empty  
+sholaForest1848 <- st_read(nil1848[6]) # type: polygon & multippolygon; 6 geometries empty
 sholaGrassland1848 <- st_read(nil1848[7]) # type: multipolygon
 swamps1848 <- st_read(nil1848[8]) # type: polygon & multipolygon; eight geometries are empty
 waterBodies1848 <- st_read(nil1848[9]) # type: multipolygon
@@ -53,32 +53,32 @@ waterBodies1848 <- st_read(nil1848[9]) # type: multipolygon
 # first, we will remove empty geometries
 ag1848 <- ag1848[!st_is_empty(ag1848), ]
 noData1848 <- noData1848[!st_is_empty(noData1848), ]
-plantations1848 <- plantations1848[!st_is_empty(plantations1848),]
-roads1848 <- roads1848[!st_is_empty(roads1848),]
-settlements1848 <- settlements1848[!st_is_empty(settlements1848),]
-sholaForest1848 <- sholaForest1848[!st_is_empty(sholaForest1848),]
-sholaGrassland1848 <- sholaGrassland1848[!st_is_empty(sholaGrassland1848),]
-swamps1848 <- swamps1848[!st_is_empty(swamps1848),]
-waterBodies1848 <- waterBodies1848[!st_is_empty(waterBodies1848),]
+plantations1848 <- plantations1848[!st_is_empty(plantations1848), ]
+roads1848 <- roads1848[!st_is_empty(roads1848), ]
+settlements1848 <- settlements1848[!st_is_empty(settlements1848), ]
+sholaForest1848 <- sholaForest1848[!st_is_empty(sholaForest1848), ]
+sholaGrassland1848 <- sholaGrassland1848[!st_is_empty(sholaGrassland1848), ]
+swamps1848 <- swamps1848[!st_is_empty(swamps1848), ]
+waterBodies1848 <- waterBodies1848[!st_is_empty(waterBodies1848), ]
 
 # fixing attribute tables to ensure they are consistent across shapefiles
-names(ag1848) <- c("id", "name","geometry")
+names(ag1848) <- c("id", "name", "geometry")
 ag1848$name <- "agriculture"
-names(noData1848) <- c("id", "name","geometry")
+names(noData1848) <- c("id", "name", "geometry")
 noData1848$name <- "no_data"
-names(plantations1848) <- c("id", "name","geometry")
+names(plantations1848) <- c("id", "name", "geometry")
 plantations1848$name <- "plantations"
-names(roads1848) <- c("id", "name","geometry")
+names(roads1848) <- c("id", "name", "geometry")
 roads1848$name <- "roads"
-names(settlements1848) <- c("id", "name","geometry")
+names(settlements1848) <- c("id", "name", "geometry")
 settlements1848$name <- "settlements"
-names(sholaForest1848) <- c("id", "name","geometry")
+names(sholaForest1848) <- c("id", "name", "geometry")
 sholaForest1848$name <- "shola_forest"
-names(sholaGrassland1848) <- c("id", "name","geometry")
+names(sholaGrassland1848) <- c("id", "name", "geometry")
 sholaGrassland1848$name <- "shola_grassland"
-names(swamps1848) <- c("id", "name","geometry")
+names(swamps1848) <- c("id", "name", "geometry")
 swamps1848$name <- "swamps"
-names(waterBodies1848) <- c("id", "name","geometry")
+names(waterBodies1848) <- c("id", "name", "geometry")
 waterBodies1848$name <- "water_bodies"
 
 # Note: the roads shapefile is a linestring while the other geometry types are polygon/multipolygon
@@ -95,19 +95,22 @@ swamps1848 <- st_transform(swamps1848, 32643)
 waterBodies1848 <- st_transform(waterBodies1848, 32643)
 
 # creating a single simple feature collection
-nil1848 <- rbind(ag1848, plantations1848, settlements1848,
+nil1848 <- rbind(
+  ag1848, plantations1848, settlements1848,
   sholaForest1848, sholaGrassland1848, swamps1848,
-  waterBodies1848)
+  waterBodies1848
+)
 
 # subsuming swamps under grasslands
 nil1848 <- nil1848 %>%
   mutate(name = case_when(
     name == "swamps" ~ "shola_grassland",
-    .default = as.character(name)))
+    .default = as.character(name)
+  ))
 
 # crop the 1848 shapefiles to within the 1400m contour only
 nil1848 <- st_buffer(nil1848, dist = 0)
-nil1848 <- nil1848[,-c(3:5)]
+nil1848 <- nil1848[, -c(3:5)]
 
 # Create a common boundary for clipping files from another time period (2018)(see below)
 all1848 <- st_buffer(st_union(nil1848), dist = 0)
@@ -142,14 +145,18 @@ rast2018 <- as.factor(rast2018)
 ## with each number from classification process (done in GEE)
 
 ## create a dataframe with names of classes and their corresponding values
-landcover_class <- data.frame(ID = 1:7,
-                              name = c( "agriculture",
-                                           "shola_forest",
-                                           "shola_grassland",
-                                           "timber_plantations",
-                                           "settlements",
-                                           "tea_plantations",
-                                           "water_bodies"))
+landcover_class <- data.frame(
+  ID = 1:7,
+  name = c(
+    "agriculture",
+    "shola_forest",
+    "shola_grassland",
+    "timber_plantations",
+    "settlements",
+    "tea_plantations",
+    "water_bodies"
+  )
+)
 levels(rast2018) <- landcover_class
 
 ## resample the 1848 raster to the 2018 raster to match spatial res
@@ -159,44 +166,53 @@ rast1848 <- resample(rast1848, rast2018, method = "near")
 
 # visualization of the two rasters
 colors2018 <- c(
-  '#be4fc4', # agriculture, violetish
-  '#025a05',# shola forests, dark green
-  '#cbb315', # shola grasslands, yellowish
-  '#c17111', # timber plantations, brownish
-  '#b0a69d', # settlements, grayish
-   '#04a310',# tea plantations, light green
-  '#2035df'  # waterbodies, royal blue
+  "#be4fc4", # agriculture, violetish
+  "#025a05", # shola forests, dark green
+  "#cbb315", # shola grasslands, yellowish
+  "#c17111", # timber plantations, brownish
+  "#b0a69d", # settlements, grayish
+  "#04a310", # tea plantations, light green
+  "#2035df" # waterbodies, royal blue
 )
 
 ## side-by-side visualization
 colors1848 <- c(
-  '#be4fc4', # agriculture, violetish
-  '#c17111', # plantations, brownish
-  '#b0a69d', # settlements, grayish
-  '#025a05',# shola forests, dark green
-  '#cbb315', # shola grasslands, yellowish
-  '#2035df'  # waterbodies, royal blue
+  "#be4fc4", # agriculture, violetish
+  "#c17111", # plantations, brownish
+  "#b0a69d", # settlements, grayish
+  "#025a05", # shola forests, dark green
+  "#cbb315", # shola grasslands, yellowish
+  "#2035df" # waterbodies, royal blue
 )
 
 ## saving a high resolution visualization
-png(filename = "figs/fig_landCover_1848_vs_2018.png", 
-    width = 12, height = 7, units = "in", res = 300)
+png(
+  filename = "figs/fig_landCover_1848_vs_2018.png",
+  width = 12, height = 7, units = "in", res = 300
+)
 
-par(mfrow = c(1,2))
-plot(rast1848, col = colors1848, main = "1848",
-     legend = FALSE)
-plot(rast2018, col=colors2018, main = "2018", 
-     legend=FALSE)
+par(mfrow = c(1, 2))
+plot(rast1848,
+  col = colors1848, main = "1848",
+  legend = FALSE
+)
+plot(rast2018,
+  col = colors2018, main = "2018",
+  legend = FALSE
+)
 
 # add custom legend
-par(mar = c(0, 0, 0, 0), 
-     new = TRUE)
-plot(0, 0, type = 'l', bty = 'n', xaxt = 'n', yaxt = 'n')
+par(
+  mar = c(0, 0, 0, 0),
+  new = TRUE
+)
+plot(0, 0, type = "l", bty = "n", xaxt = "n", yaxt = "n")
 legend("bottom",
-       legend=landcover_class$name, fill=colors2018, 
-       cex = 0.8, 
-       title="land cover classes",
-       ncol = 2)
+  legend = landcover_class$name, fill = colors2018,
+  cex = 0.8,
+  title = "land cover classes",
+  ncol = 2
+)
 dev.off()
 ```
 
@@ -215,44 +231,57 @@ rast2018_reclassified <- terra::classify(
 )
 
 ## create a dataframe with names of classes and their corresponding values
-landcover_reclass <- data.frame(ID = 1:6,
-                              name = c("agriculture",
-                                           "shola_forest",
-                                           "shola_grassland",
-                                           "plantations",
-                                           "settlements",
-                                           "water_bodies"))
+landcover_reclass <- data.frame(
+  ID = 1:6,
+  name = c(
+    "agriculture",
+    "shola_forest",
+    "shola_grassland",
+    "plantations",
+    "settlements",
+    "water_bodies"
+  )
+)
 
 levels(rast2018_reclassified) <- landcover_reclass
 
 ## side-by-side visualization
 colors2018reclass <- c(
-  '#be4fc4', # agriculture, violetish
-  '#025a05',# shola forests, dark green
-  '#cbb315', # shola grasslands, yellowish
-  '#c17111', # plantations, brownish
-  '#b0a69d', # settlements, grayish
-  '#2035df'  # waterbodies, royal blue
+  "#be4fc4", # agriculture, violetish
+  "#025a05", # shola forests, dark green
+  "#cbb315", # shola grasslands, yellowish
+  "#c17111", # plantations, brownish
+  "#b0a69d", # settlements, grayish
+  "#2035df" # waterbodies, royal blue
 )
 
-png(filename = "figs/fig_landCover_1848_vs_2018reclassified.png", 
-    width = 12, height = 7, units = "in", res = 300)
+png(
+  filename = "figs/fig_landCover_1848_vs_2018reclassified.png",
+  width = 12, height = 7, units = "in", res = 300
+)
 
-par(mfrow = c(1,2))
-plot(rast1848, col = colors1848, main = "1848",
-     legend = FALSE)
-plot(rast2018_reclassified, col=colors2018reclass, main = "2018", 
-     legend=FALSE)
+par(mfrow = c(1, 2))
+plot(rast1848,
+  col = colors1848, main = "1848",
+  legend = FALSE
+)
+plot(rast2018_reclassified,
+  col = colors2018reclass, main = "2018",
+  legend = FALSE
+)
 
 # add custom legend
-par(mar = c(0, 0, 0, 0), 
-     new = TRUE)
-plot(0, 0, type = 'l', bty = 'n', xaxt = 'n', yaxt = 'n')
+par(
+  mar = c(0, 0, 0, 0),
+  new = TRUE
+)
+plot(0, 0, type = "l", bty = "n", xaxt = "n", yaxt = "n")
 legend("bottom",
-       legend=landcover_reclass$name, fill=colors2018reclass, 
-       cex = 0.8, 
-       title="land cover classes",
-       ncol = 2)
+  legend = landcover_reclass$name, fill = colors2018reclass,
+  cex = 0.8,
+  title = "land cover classes",
+  ncol = 2
+)
 dev.off()
 ```
 
@@ -263,8 +292,9 @@ dev.off()
 Please note that the processed rasters above have been resampled to a resolution of 10 metres.  
 ```{r}
 # vectors
-st_write(nil1848, "results/landcover/1848.shp", 
-         driver = "ESRI Shapefile")
+st_write(nil1848, "results/landcover/1848.shp",
+  driver = "ESRI Shapefile"
+)
 
 # rasters
 terra::writeRaster(rast1848, "results/landcover/1848.tif")
@@ -272,7 +302,8 @@ terra::writeRaster(rast2018, "results/landcover/2018.tif")
 terra::writeRaster(rast2018_reclassified, "results/landcover/2018reclassified.tif")
 ```
 
-## Area-wise comparisons of land cover change
+## Area-wise comparisons of land cover change  
+
 ```{r}
 # area-wise calculations for the 2018 raster (the below objects will be used to compare overall areas, alongside the 1848 map)
 sz2018 <- cellSize(rast2018, unit = "m")
@@ -293,15 +324,16 @@ area1848SqKm <- (area1848$area / 1000000)
 area1848 <- cbind(area1848, area1848SqKm)
 ```
 
-## Barplots of land cover change
+## Barplots of land cover change  
+
 ```{r}
 # Joining all dataframes to create a single one for plotting and visualization
 
-names(area1848) <- c("class", "areaInMeters","sumArea")
-names(area2018) <- c("class", "areaInMeters","sumArea")
+names(area1848) <- c("class", "areaInMeters", "sumArea")
+names(area2018) <- c("class", "areaInMeters", "sumArea")
 
 areaCalc <- purrr::reduce(list(
-  area1848, 
+  area1848,
   area2018
 ), dplyr::full_join, by = "class")
 
@@ -317,35 +349,54 @@ areaCalc <- areaCalc %>% drop_na()
 write.csv(areaCalc, "results/totalArea-by-landCover-timePeriod.csv", row.names = F)
 
 # make plot
-fig_area <- ggplot(areaCalc, aes(x = class, 
-                                 y = Area, fill = class)) + 
-  geom_bar(stat = "identity", 
-           position = position_dodge()) + 
-  scale_fill_manual(values = c('#be4fc4', '#d73027',  '#b0a69d',
-                              '#025a05','#cbb315', '#04a310',
-                                '#c17111', '#2035df' ))+
-    geom_text(aes(label = round(Area), hjust = "middle", 
-                vjust = -0.5), family = "Century Gothic",
-    position = position_dodge(), angle = 0, 
-    size = 5) +
-  facet_wrap(~Year, scales ="free_x") +
+fig_area <- ggplot(areaCalc, aes(
+  x = class,
+  y = Area, fill = class
+)) +
+  geom_bar(
+    stat = "identity",
+    position = position_dodge()
+  ) +
+  scale_fill_manual(values = c(
+    "#be4fc4", "#d73027", "#b0a69d",
+    "#025a05", "#cbb315", "#04a310",
+    "#c17111", "#2035df"
+  )) +
+  geom_text(
+    aes(
+      label = round(Area), hjust = "middle",
+      vjust = -0.5
+    ),
+    family = "Century Gothic",
+    position = position_dodge(), angle = 0,
+    size = 5
+  ) +
+  facet_wrap(~Year, scales = "free_x") +
   theme_bw() +
   labs(
     x = "\nLand cover type",
     y = "Area in sq.km. \n"
   ) +
-  theme(text = element_text(size=14,  family="Century Gothic"),
+  theme(
+    text = element_text(size = 14, family = "Century Gothic"),
     axis.title = element_text(
       family = "Century Gothic",
-      size = 14, face = "bold"),
-    axis.text = element_text(family = "Century Gothic", 
-                             size = 14),
-    axis.text.x = element_text(angle = 90, vjust = 0.5, 
-                               hjust = 1),
-    legend.position = "none")
+      size = 14, face = "bold"
+    ),
+    axis.text = element_text(
+      family = "Century Gothic",
+      size = 14
+    ),
+    axis.text.x = element_text(
+      angle = 90, vjust = 0.5,
+      hjust = 1
+    ),
+    legend.position = "none"
+  )
 
 ggsave(fig_area,
-  filename = "figs/fig_totalArea_landCover.png", width = 15, height = 13, device = png(), units = "in", dpi = 600)
+  filename = "figs/fig_totalArea_landCover.png", width = 15, height = 13, device = png(), units = "in", dpi = 600
+)
 dev.off()
 
 # get percentArea occupied by each land cover class
@@ -359,9 +410,11 @@ percentArea <- areaCalc %>%
 # plot figure
 fig_percent_area <- ggplot(percentArea, aes(x = class, y = percentArea, fill = class)) +
   geom_bar(stat = "identity", position = position_dodge()) +
-   scale_fill_manual(values = c('#be4fc4', '#d73027',  '#b0a69d',
-                              '#025a05','#cbb315', '#04a310',
-                                '#c17111', '#2035df' ))+
+  scale_fill_manual(values = c(
+    "#be4fc4", "#d73027", "#b0a69d",
+    "#025a05", "#cbb315", "#04a310",
+    "#c17111", "#2035df"
+  )) +
   geom_text(aes(label = round(percentArea, digits = 1), hjust = "middle", vjust = -0.5), position = position_dodge(), family = "Century Gothic", angle = 0, size = 5) +
   facet_wrap(~Year, scales = "free_x") +
   theme_bw() +
@@ -369,15 +422,21 @@ fig_percent_area <- ggplot(percentArea, aes(x = class, y = percentArea, fill = c
     x = "\nLand cover type",
     y = "Percent Area \n"
   ) +
-  theme(text = element_text(size=14,  family="Century Gothic"),
+  theme(
+    text = element_text(size = 14, family = "Century Gothic"),
     axis.title = element_text(
       family = "Century Gothic",
       size = 14, face = "bold"
-    ),axis.text = element_text(family = "Century Gothic", 
-                               size = 14),
-    axis.text.x = element_text(angle = 90, 
-                               vjust = 0.5, hjust = 1),
-    legend.position = "none")
+    ), axis.text = element_text(
+      family = "Century Gothic",
+      size = 14
+    ),
+    axis.text.x = element_text(
+      angle = 90,
+      vjust = 0.5, hjust = 1
+    ),
+    legend.position = "none"
+  )
 
 ggsave(fig_percent_area, filename = "figs/fig_percentArea_landCover.png", width = 14, height = 13, device = png(), units = "in", dpi = 500)
 dev.off()
@@ -405,10 +464,10 @@ nil2017 <- nil2017 %>%
   ))
 
 # remove older column
-nil2017 <- nil2017[,-3]
+nil2017 <- nil2017[, -3]
 
 # renaming for ease of visualization
-names(nil2017) <- c("id","area","geometry","name")
+names(nil2017) <- c("id", "area", "geometry", "name")
 
 ## note that the spatial resolution of Landsat is at 30 m spatial resolution
 vect2017 <- terra::vect(nil2017)
@@ -423,33 +482,40 @@ rast2018 <- mask(rast2018, rast2017)
 
 # visualizing the two classifications
 colors2017 <- c(
-  '#be4fc4', # agriculture, violetish
-  '#b0a69d', # settlements, grayish
-   '#025a05', # shola forests, dark green
-  '#cbb315', # shola grasslands, yellowish
-   '#04a310', # tea plantations, light green
-  '#c17111', # timber plantations, brownish
-  '#2035df'  # waterbodies, royal blue
+  "#be4fc4", # agriculture, violetish
+  "#b0a69d", # settlements, grayish
+  "#025a05", # shola forests, dark green
+  "#cbb315", # shola grasslands, yellowish
+  "#04a310", # tea plantations, light green
+  "#c17111", # timber plantations, brownish
+  "#2035df" # waterbodies, royal blue
 )
 
 ## saving a high resolution visualization
-png(filename = "figs/fig_landCover_2018_vs_2017.png", 
-    width = 12, height = 7, units = "in", res = 300)
+png(
+  filename = "figs/fig_landCover_2018_vs_2017.png",
+  width = 12, height = 7, units = "in", res = 300
+)
 
-par(mfrow = c(1,2))
-plot(rast2018, col = colors2018, main = "2018 Sentinel classification",
-     legend = FALSE)
-plot(rast2017, col=colors2017, main = "2017 Landsat classification", legend=FALSE)
+par(mfrow = c(1, 2))
+plot(rast2018,
+  col = colors2018, main = "2018 Sentinel classification",
+  legend = FALSE
+)
+plot(rast2017, col = colors2017, main = "2017 Landsat classification", legend = FALSE)
 
 # add custom legend
-par(mar = c(0, 0, 0, 0), 
-     new = TRUE)
-plot(0, 0, type = 'l', bty = 'n', xaxt = 'n', yaxt = 'n')
+par(
+  mar = c(0, 0, 0, 0),
+  new = TRUE
+)
+plot(0, 0, type = "l", bty = "n", xaxt = "n", yaxt = "n")
 legend("bottom",
-       legend=landcover_class$name, fill=colors2018, 
-       cex = 0.8, 
-       title="land cover classes",
-       ncol = 2)
+  legend = landcover_class$name, fill = colors2018,
+  cex = 0.8,
+  title = "land cover classes",
+  ncol = 2
+)
 dev.off()
 
 ## area-wise calculations
@@ -464,11 +530,11 @@ area2017SqKm <- (area2017$area / 1000000)
 area2017 <- cbind(area2017, area2017SqKm)
 
 # Joining all dataframes to create a single one for plotting and visualization
-names(area2017) <- c("class", "areaInMeters","sumArea")
-names(area2018) <- c("class", "areaInMeters","sumArea")
+names(area2017) <- c("class", "areaInMeters", "sumArea")
+names(area2018) <- c("class", "areaInMeters", "sumArea")
 
 areaCalc <- purrr::reduce(list(
-  area2017, 
+  area2017,
   area2018
 ), dplyr::full_join, by = "class")
 
@@ -482,4 +548,3 @@ write.csv(areaCalc, "results/totalArea-by-landCover-2018-vs-2017.csv", row.names
 ```
 
 ![Comparing the 2018 Sentinel classification to the 2017 Landsat classification of the same area revealed no major differences](figs/fig_landCover_2018_vs_2017.png)
-

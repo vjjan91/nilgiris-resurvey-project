@@ -84,6 +84,7 @@ tmap_save(
 
 ![Decadal changes in dry season precipitation over the last century](figs/fig_ppt_dry_change.png)
 
+
 ```{r}
 ppt_wet_change <- tm_shape(climate_change[[2]]) +
   tm_raster(
@@ -112,6 +113,7 @@ tmap_save(
 
 ![Decadal changes in rainy season precipitation over the last century](figs/fig_ppt_wet_change.png)
 
+
 ```{r}
 temp_dry_change <- tm_shape(climate_change[[3]]) +
   tm_raster(
@@ -139,6 +141,7 @@ tmap_save(
 
 ![Decadal change in dry season temperatures over the last century](figs/fig_temp_dry_change.png)
 
+
 ```{r}
 temp_wet_change <- tm_shape(climate_change[[4]]) +
   tm_raster(
@@ -165,6 +168,7 @@ tmap_save(
 ```
 
 ![Decadal change in wet season temperatures over the last century](figs/fig_temp_wet_change.png)
+
 
 ## Load list of resurvey locations/historical sites of occurrence
 
@@ -445,4 +449,3 @@ clim_terrain_sites <- mutate(
 
 map(clim_terrain_sites$model_fit, summary)
 ```
-

@@ -32,8 +32,8 @@ library(emmeans)
 library(scales)
 
 # function to z-transform data
-scale_z <- function(x){
-  (x - mean(x, na.rm=TRUE))/sd(x, na.rm=TRUE)
+scale_z <- function(x) {
+  (x - mean(x, na.rm = TRUE)) / sd(x, na.rm = TRUE)
 }
 ```
 
@@ -48,23 +48,24 @@ lc_2018 <- terra::rast("results/landcover/2018reclassified.tif")
 # load sites
 sites <- read_csv("data/list-of-resurvey-locations.csv")
 sites <- distinct(sites, modern_site_code, historical_site_code, longitude, latitude)
-sites <- sites[-c(1:50),]
+sites <- sites[-c(1:50), ]
 ```
 
 ## Create spatial data within a 1000m buffer around each site
 ```{r}
 # make spatial data from sites, with a 1000m buffer
-sites_sf = st_as_sf(
-  sites, coords = c("longitude", "latitude"),
+sites_sf <- st_as_sf(
+  sites,
+  coords = c("longitude", "latitude"),
   crs = 4326
-) |> 
-  st_transform(32643) |> 
+) |>
+  st_transform(32643) |>
   st_buffer(1000)
 ```
 
 ## Extract land cover data across locations from the 1848 and the 2018 rasters
 ```{r}
-# first, we will polygonize the rasters 
+# first, we will polygonize the rasters
 vect1848 <- as.polygons(lc_1848)
 vect2018 <- as.polygons(lc_2018)
 
@@ -77,12 +78,12 @@ lc_sites <- lapply(
 
 # calculate total area for each lc type for sites based on historical site code for each time period
 lc_sites <- lapply(lc_sites, function(df) {
-  df |> 
+  df |>
     mutate(
       area = as.numeric(st_area(df))
-    ) |> 
-    st_drop_geometry() |> 
-    group_by(modern_site_code, name) |> 
+    ) |>
+    st_drop_geometry() |>
+    group_by(modern_site_code, name) |>
     summarise(total_area = sum(area))
 })
 
@@ -90,10 +91,10 @@ lc_sites <- lapply(lc_sites, function(df) {
 lc_sites <- Map(
   lc_sites, c(1848, 2018),
   f = function(df, y) {
-    df$year = y
+    df$year <- y
     df
   }
-) |> 
+) |>
   bind_rows()
 
 # calculate proportion of land cover
@@ -103,7 +104,7 @@ lc_sites <- lc_sites %>%
 
 lc_sites <- lc_sites %>%
   group_by(modern_site_code, name, year) %>%
-  mutate(lcProp = total_area/site_total)
+  mutate(lcProp = total_area / site_total)
 ```
 
 ## Calculate change in proportions of land cover between time periods
@@ -111,69 +112,72 @@ lc_sites <- lc_sites %>%
 For this calculation, we essentially subtract the proportion of each land cover between time periods to obtain the change
 ```{r}
 # get lc change sites
-lc_change_dat <- lc_sites |> 
+lc_change_dat <- lc_sites |>
   pivot_wider(
     id_cols = c("modern_site_code", "name"),
     names_from = c("year"),
     values_from = "lcProp",
     values_fn = mean
-  ) |> 
+  ) |>
   rename(
     year_1848 = `1848`,
     year_2018 = `2018`
   ) %>%
-  left_join(., sites_sf, by="modern_site_code") %>%
+  left_join(., sites_sf, by = "modern_site_code") %>%
   replace(is.na(.), 0) %>%
   mutate("lc_prop_change" = (year_2018 - year_1848))
 
 # save as is for further processing
 write_csv(
-  lc_change_dat, file = "results/lc_change.csv"
+  lc_change_dat,
+  file = "results/lc_change.csv"
 )
 ```
 
 ## Calculate change in climate values at sampling sites
 ```{r}
 # load climate data
-raster_temp = list.files("results/climate/", pattern = "t_mean", full.names = T) |> 
+raster_temp <- list.files("results/climate/", pattern = "t_mean", full.names = T) |>
   lapply(rast)
 
-raster_rain = list.files("results/climate/", pattern = "ppt", full.names = T) |> 
+raster_rain <- list.files("results/climate/", pattern = "ppt", full.names = T) |>
   lapply(rast)
 
 # get difference between first and last files
-climate_change = lapply(
+climate_change <- lapply(
   list(raster_temp, raster_rain),
   function(le) {
     lapply(le, function(le2) {
       le2[[length(names(le2))]] - le2[[1]]
     })
   }
-) |> 
+) |>
   Reduce(f = c) # convert to single list
 
 # get raster names
-climate_change_names = lapply(climate_change, function(ra) {
+climate_change_names <- lapply(climate_change, function(ra) {
   lapply(ra, function(r) {
-    r |> names() |> stringr::str_extract("(.*?)(?=_\\d+)")
+    r |>
+      names() |>
+      stringr::str_extract("(.*?)(?=_\\d+)")
   })
 }) |> unlist()
 
 # get mean change within 1000m buffer of resurvey locs
-climate_change_sites = lapply(
+climate_change_sites <- lapply(
   climate_change, function(ra) {
     terra::extract(
-      ra, 
+      ra,
       y = terra::vect(
-        sites_sf |> 
+        sites_sf |>
           st_transform(4326)
       ), fun = mean
-    )  
+    )
   }
 )
 
 # combine all metrics
-climate_change_sites = Reduce(f = left_join, x = climate_change_sites)
+climate_change_sites <- Reduce(f = left_join, x = climate_change_sites)
 
 # attach to sampling sites
 sites <- mutate(sites, ID = seq(nrow(sites)))
@@ -181,7 +185,8 @@ clim_change_dat <- left_join(sites, climate_change_sites)
 
 # save site data
 write_csv(
-  clim_change_dat, file = "results/climate_change.csv"
+  clim_change_dat,
+  file = "results/climate_change.csv"
 )
 ```
 
@@ -200,7 +205,7 @@ trait_dat <- read.csv("data/species-trait-dat.csv")
 We will first prepare the dataframes necessary for running linear mixed models. 
 ```{r}
 ## preparing the relative abundance dataframe for a mixed effects model
-names(relAbun) <- c("common_name","historical_site_code","year","relAbundance")
+names(relAbun) <- c("common_name", "historical_site_code", "year", "relAbundance")
 
 pivot_1850 <- relAbun %>%
   filter(year == 1850) %>%
@@ -217,7 +222,7 @@ pivot_2021 <- relAbun %>%
 # calculate difference between modern and historical time periods
 # positive value implies gain in relative abundance in 2021 compared to 1850, while negative value implies loss in relative abundance in 2021 compared to 1850
 
-relAbun_wide <- full_join(pivot_1850, pivot_2021, by=c("common_name","historical_site_code")) %>%
+relAbun_wide <- full_join(pivot_1850, pivot_2021, by = c("common_name", "historical_site_code")) %>%
   full_join(., pivot_1900) %>%
   mutate("relAbunChange" = (`2021` - `1850`))
 
@@ -226,13 +231,15 @@ relAbun_wide <- full_join(pivot_1850, pivot_2021, by=c("common_name","historical
 
 lc_meanChange <- lc_change_dat %>%
   group_by(historical_site_code, name) %>%
-  summarise(lc_prop_change = mean(lc_prop_change)) 
+  summarise(lc_prop_change = mean(lc_prop_change))
 
 ## make land cover data wider
 lc_glmm <- lc_meanChange %>%
-  pivot_wider(id_cols = historical_site_code, 
-              names_from = name, 
-              values_from = lc_prop_change)
+  pivot_wider(
+    id_cols = historical_site_code,
+    names_from = name,
+    values_from = lc_prop_change
+  )
 
 ## join all three dataframes together
 ## prepare climate change data
@@ -242,25 +249,26 @@ clim_change_glmm <- clim_change_dat %>%
   summarise(across(everything(), mean))
 
 ## dataframe for glmm
-glmm_data <- left_join(relAbun_wide,lc_glmm,
-                       by = "historical_site_code") %>%
+glmm_data <- left_join(relAbun_wide, lc_glmm,
+  by = "historical_site_code"
+) %>%
   as.data.frame() %>%
   replace(is.na(.), 0)
 
 ## scale the climate data
 glmm_data <- glmm_data %>%
-   mutate(water_bodies_z = scale_z(water_bodies)) %>%
+  mutate(water_bodies_z = scale_z(water_bodies)) %>%
   mutate(plantations_z = scale_z(plantations)) %>%
-   mutate(agriculture_z = scale_z(agriculture)) %>%
-   mutate(settlements_z = scale_z(settlements)) %>%
-   mutate(shola_forest_z = scale_z(shola_forest)) %>%
-   mutate(shola_grassland_z = scale_z(shola_grassland)) 
+  mutate(agriculture_z = scale_z(agriculture)) %>%
+  mutate(settlements_z = scale_z(settlements)) %>%
+  mutate(shola_forest_z = scale_z(shola_forest)) %>%
+  mutate(shola_grassland_z = scale_z(shola_grassland))
 ```
 
 ## Test for correlations between covariates
 ```{r}
 library(psych)
-for_corr <- glmm_data[,c(12:17)] %>%
+for_corr <- glmm_data[, c(12:17)] %>%
   distinct()
 
 pairs.panels(for_corr)
@@ -268,43 +276,45 @@ pairs.panels(for_corr)
 
 ## Running generalized linear mixed effect models for specific habitat affiliations
 ```{r}
-glmm_habitat <- left_join(glmm_data, trait_dat, by = "common_name") 
+glmm_habitat <- left_join(glmm_data, trait_dat, by = "common_name")
 
 ## all birds model
-m1 <- glmmTMB(relAbunChange ~ shola_grassland_z +
-                shola_forest_z +
-                agriculture_z +
-                plantations_z +
-                settlements_z +
-                (1|common_name) + (1|historical_site_code),
-              family=gaussian(),
-               data = glmm_habitat)
+m1 <- glmmTMB(
+  relAbunChange ~ shola_grassland_z +
+    shola_forest_z +
+    agriculture_z +
+    plantations_z +
+    settlements_z +
+    (1 | common_name) + (1 | historical_site_code),
+  family = gaussian(),
+  data = glmm_habitat
+)
 
 summary(m1)
 plot_model(m1, type = "std")
 plot(ggpredict(m1))
 
 # Family: gaussian  ( identity )
-# Formula:          
-# relAbunChange ~ shola_grassland_z + shola_forest_z + agriculture_z +  
-#     plantations_z + settlements_z + (1 | common_name) + (1 |  
+# Formula:
+# relAbunChange ~ shola_grassland_z + shola_forest_z + agriculture_z +
+#     plantations_z + settlements_z + (1 | common_name) + (1 |
 #     historical_site_code)
 # Data: glmm_habitat
-# 
-#      AIC      BIC   logLik deviance df.resid 
-# -11053.6 -11003.9   5535.8 -11071.6     1831 
-# 
+#
+#      AIC      BIC   logLik deviance df.resid
+# -11053.6 -11003.9   5535.8 -11071.6     1831
+#
 # Random effects:
-# 
+#
 # Conditional model:
-#  Groups               Name        Variance  Std.Dev. 
+#  Groups               Name        Variance  Std.Dev.
 #  common_name          (Intercept) 9.793e-05 9.896e-03
 #  historical_site_code (Intercept) 6.316e-14 2.513e-07
 #  Residual                         1.239e-04 1.113e-02
 # Number of obs: 1840, groups:  common_name, 92; historical_site_code, 20
-# 
-# Dispersion estimate for gaussian family (sigma^2): 0.000124 
-# 
+#
+# Dispersion estimate for gaussian family (sigma^2): 0.000124
+#
 # Conditional model:
 #                    Estimate Std. Error z value Pr(>|z|)
 # (Intercept)       4.061e-11  1.064e-03       0        1
@@ -316,47 +326,48 @@ plot(ggpredict(m1))
 
 
 ## grassland birds
-glmm_grassland <-  glmm_habitat %>%
+glmm_grassland <- glmm_habitat %>%
   filter(Habitat.type == "Grassland")
 
 # linear mixed model
-m2 <- glmmTMB(relAbunChange ~ shola_grassland_z +
-                (1|common_name) + (1|historical_site_code) ,
-              family=gaussian(),
-               data = glmm_grassland)
+m2 <- glmmTMB(
+  relAbunChange ~ shola_grassland_z +
+    (1 | common_name) + (1 | historical_site_code),
+  family = gaussian(),
+  data = glmm_grassland
+)
 
 summary(m2)
 plot_model(m2, type = "std")
 plot(ggpredict(m2))
 
 # Family: gaussian  ( identity )
-# Formula:          
-# relAbunChange ~ shola_grassland_z + (1 | common_name) + (1 |  
+# Formula:
+# relAbunChange ~ shola_grassland_z + (1 | common_name) + (1 |
 #     historical_site_code)
 # Data: glmm_grassland
-# 
-#      AIC      BIC   logLik deviance df.resid 
-#  -1352.7  -1336.8    681.4  -1362.7      175 
-# 
+#
+#      AIC      BIC   logLik deviance df.resid
+#  -1352.7  -1336.8    681.4  -1362.7      175
+#
 # Random effects:
-# 
+#
 # Conditional model:
 #  Groups               Name        Variance  Std.Dev.
 #  common_name          (Intercept) 2.034e-06 0.001426
 #  historical_site_code (Intercept) 3.103e-06 0.001761
 #  Residual                         2.665e-05 0.005163
 # Number of obs: 180, groups:  common_name, 9; historical_site_code, 20
-# 
-# Dispersion estimate for gaussian family (sigma^2): 2.67e-05 
-# 
+#
+# Dispersion estimate for gaussian family (sigma^2): 2.67e-05
+#
 # Conditional model:
-#                     Estimate Std. Error z value Pr(>|z|)    
+#                     Estimate Std. Error z value Pr(>|z|)
 # (Intercept)       -0.0052244  0.0007275  -7.182 6.89e-13 ***
-# shola_grassland_z  0.0002718  0.0005508   0.493    0.622    
+# shola_grassland_z  0.0002718  0.0005508   0.493    0.622
 # ---
 # Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 
-# Above, we asked if grassland species are declining relative to other species, and we found that there was no association between changes in land cover and climate on grassland bird species abundance, indicating that both grassland habitat loss and has been uniform across locations suggesting a regional-scale process and not local-scale. 
+# Above, we asked if grassland species are declining relative to other species, and we found that there was no association between changes in land cover and climate on grassland bird species abundance, indicating that both grassland habitat loss and has been uniform across locations suggesting a regional-scale process and not local-scale.
 ```
-
