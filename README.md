@@ -7,7 +7,9 @@
 
 This repository contains code and analysis for a manuscript that examines how a century of landscape changes relate to bird species populations.   
 
-This manuscript is published in *Global Change Biology*. Please reach out to the repository owner if you have questions.
+This manuscript is published in *Global Change Biology*. Please reach out to the repository owner if you have questions.  
+
+![](figs/figure1.png)
 
 ### [Readable version](https://vjjan91.github.io/nilgiris-resurvey-project/)
 
