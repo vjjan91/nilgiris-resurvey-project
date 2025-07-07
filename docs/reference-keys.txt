@@ -22,7 +22,6 @@ get-bioclim-data
 temperature-data
 precipitation-data
 compare-spatial-climate-model-predictions-against-bioclim-data
-sample-locations
 link-bioclim-data-and-model-predictions
 error-between-model-prediction-and-chelsa-data
 gam-predictions-at-survey-sites

@@ -175,10 +175,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.7" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#temperature-data"><i class="fa fa-check"></i><b>3.7</b> Temperature data</a></li>
 <li class="chapter" data-level="3.8" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#precipitation-data"><i class="fa fa-check"></i><b>3.8</b> Precipitation data</a></li>
 <li class="chapter" data-level="3.9" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#compare-spatial-climate-model-predictions-against-bioclim-data"><i class="fa fa-check"></i><b>3.9</b> Compare spatial-climate model predictions against BIOCLIM data</a></li>
-<li class="chapter" data-level="3.10" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#sample-locations"><i class="fa fa-check"></i><b>3.10</b> Sample locations</a></li>
-<li class="chapter" data-level="3.11" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#link-bioclim-data-and-model-predictions"><i class="fa fa-check"></i><b>3.11</b> Link BIOCLIM data and model predictions</a></li>
-<li class="chapter" data-level="3.12" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#error-between-model-prediction-and-chelsa-data"><i class="fa fa-check"></i><b>3.12</b> Error between model prediction and CHELSA data</a></li>
-<li class="chapter" data-level="3.13" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#gam-predictions-at-survey-sites"><i class="fa fa-check"></i><b>3.13</b> GAM predictions at survey sites</a></li>
+<li class="chapter" data-level="3.10" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#link-bioclim-data-and-model-predictions"><i class="fa fa-check"></i><b>3.10</b> Link BIOCLIM data and model predictions</a></li>
+<li class="chapter" data-level="3.11" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#error-between-model-prediction-and-chelsa-data"><i class="fa fa-check"></i><b>3.11</b> Error between model prediction and CHELSA data</a></li>
+<li class="chapter" data-level="3.12" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#gam-predictions-at-survey-sites"><i class="fa fa-check"></i><b>3.12</b> GAM predictions at survey sites</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="building-a-correction-layer-for-climate-predictions.html"><a href="building-a-correction-layer-for-climate-predictions.html"><i class="fa fa-check"></i><b>4</b> Building a correction layer for climate predictions</a>
 <ul>
@@ -323,12 +322,11 @@ Then, the models are used to predict historical climate over the entire study ar
 <p>The climate data extend into the modern period, allowing predictions from the candidate models to be compared against data from remote sensing, in order to select the best model formulation for each climate variable in each season.</p>
 <div id="load-libraries-1" class="section level2 hasAnchor" number="3.1">
 <h2><span class="header-section-number">3.1</span> Load libraries<a href="building-and-validating-semi-spatial-gams-for-climate.html#load-libraries-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb12-1" tabindex="-1"></a><span class="co"># Load libraries</span></span>
-<span id="cb12-2"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb12-2" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb12-3"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb12-3" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
-<span id="cb12-4"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb12-4" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
-<span id="cb12-5"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb12-5" tabindex="-1"></a><span class="fu">library</span>(mgcv) <span class="co"># for GAMs</span></span>
-<span id="cb12-6"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb12-6" tabindex="-1"></a><span class="fu">library</span>(terra) <span class="co"># for spatial rasters</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb12-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb12-2"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb12-2" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb12-3"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb12-3" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb12-4"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb12-4" tabindex="-1"></a><span class="fu">library</span>(mgcv) <span class="co"># for GAMs</span></span>
+<span id="cb12-5"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb12-5" tabindex="-1"></a><span class="fu">library</span>(terra) <span class="co"># for spatial rasters</span></span></code></pre></div>
 </div>
 <div id="prepare-linked-climate-spatial-data-and-spatial-data-for-modelling" class="section level2 hasAnchor" number="3.2">
 <h2><span class="header-section-number">3.2</span> Prepare linked climate-spatial data and spatial data for modelling<a href="building-and-validating-semi-spatial-gams-for-climate.html#prepare-linked-climate-spatial-data-and-spatial-data-for-modelling" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -357,7 +355,7 @@ Then, the models are used to predict historical climate over the entire study ar
 <span id="cb14-16"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb14-16" tabindex="-1"></a><span class="fu">values</span>(stack[[<span class="st">&quot;coast&quot;</span>]]) <span class="ot">&lt;-</span> <span class="fu">values</span>(stack[[<span class="st">&quot;coast&quot;</span>]]) <span class="sc">/</span> <span class="dv">1000</span></span></code></pre></div>
 <p>We pivot the data to long format, and then nest the data by season and decade, gving us smaller datatsets for which models will be fit separately.</p>
 <p>While there is no specific reason to believe that the relationship between climate and geographical predictors has changed over the past 150 years, splitting the data by decade may help adjust for long-term climate system effects within certain time-periods that could be drowned out by the overall effect of geographical predictors.</p>
-<p>We subset the data for the decades between 1970 and 2010 for which reliable comparator spatial climate datasets are available from remote sensing.</p>
+<p>We subset the data for the decades between 1970 and 2010 for which reliable comparative spatial climate datasets are available from remote sensing.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb15-1" tabindex="-1"></a><span class="co"># Pivot to long format, remove unnecessary variables,</span></span>
 <span id="cb15-2"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb15-2" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">pivot_longer</span>(</span>
 <span id="cb15-3"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb15-3" tabindex="-1"></a>  data,</span>
@@ -488,7 +486,7 @@ Then, the models are used to predict historical climate over the entire study ar
 <div id="get-bioclim-data" class="section level2 hasAnchor" number="3.6">
 <h2><span class="header-section-number">3.6</span> Get BIOCLIM data<a href="building-and-validating-semi-spatial-gams-for-climate.html#get-bioclim-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>In this section, we acquire remotely sensed cliamte variables for the study area, which will serve as a comparator for the values generated from fitted model predictions, and will help to pick the most appropriate model formulation to reconstruct historical climate for which remotely sensed data are not available.</p>
-<p>First, we obtained bio-climatic data from CHELSA. We do not upload the rasters to GitHub as they are very large in size and these can be downloaded from this link: <a href="https://envicloud.wsl.ch/#/?prefix=chelsa%2Fchelsa_V1" class="uri">https://envicloud.wsl.ch/#/?prefix=chelsa%2Fchelsa_V1</a></p>
+<p>First, we obtained bio-climatic data from CHELSA. We do not upload the rasters to GitHub as they are very large in size and these can be downloaded from this <a href="https://chelsa-climate.org/bioclim/">link</a>.</p>
 </div>
 <div id="temperature-data" class="section level2 hasAnchor" number="3.7">
 <h2><span class="header-section-number">3.7</span> Temperature data<a href="building-and-validating-semi-spatial-gams-for-climate.html#temperature-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -599,9 +597,6 @@ Then, the models are used to predict historical climate over the entire study ar
 </div>
 <div id="compare-spatial-climate-model-predictions-against-bioclim-data" class="section level2 hasAnchor" number="3.9">
 <h2><span class="header-section-number">3.9</span> Compare spatial-climate model predictions against BIOCLIM data<a href="building-and-validating-semi-spatial-gams-for-climate.html#compare-spatial-climate-model-predictions-against-bioclim-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-</div>
-<div id="sample-locations" class="section level2 hasAnchor" number="3.10">
-<h2><span class="header-section-number">3.10</span> Sample locations<a href="building-and-validating-semi-spatial-gams-for-climate.html#sample-locations" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>First we draw 10,000 randomly selected coordinates from the extent of the study area, and use these to compare the model predictions against CHELSA-derived data.
 We will further stratify these into 10 arbitrary groups at a later stage.</p>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb27-1" tabindex="-1"></a><span class="co"># get coordinates from terra</span></span>
@@ -638,8 +633,8 @@ We will further stratify these into 10 arbitrary groups at a later stage.</p>
 <span id="cb28-4"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb28-4" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">&quot;results/climate/data_sample_coords_gam_validation.csv&quot;</span></span>
 <span id="cb28-5"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb28-5" tabindex="-1"></a>)</span></code></pre></div>
 </div>
-<div id="link-bioclim-data-and-model-predictions" class="section level2 hasAnchor" number="3.11">
-<h2><span class="header-section-number">3.11</span> Link BIOCLIM data and model predictions<a href="building-and-validating-semi-spatial-gams-for-climate.html#link-bioclim-data-and-model-predictions" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="link-bioclim-data-and-model-predictions" class="section level2 hasAnchor" number="3.10">
+<h2><span class="header-section-number">3.10</span> Link BIOCLIM data and model predictions<a href="building-and-validating-semi-spatial-gams-for-climate.html#link-bioclim-data-and-model-predictions" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Next we link the remote-sensing-derived BIOCLIM data at the sampled locations with the predicted values from our spatial-climate GAMs.</p>
 <div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb29-1" tabindex="-1"></a><span class="co"># Read in the saved data; this allows continuing from this point without</span></span>
 <span id="cb29-2"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb29-2" tabindex="-1"></a><span class="co"># re-running the previous code</span></span>
@@ -722,20 +717,19 @@ We will further stratify these into 10 arbitrary groups at a later stage.</p>
 <span id="cb32-31"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb32-31" tabindex="-1"></a>)</span>
 <span id="cb32-32"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb32-32" tabindex="-1"></a></span>
 <span id="cb32-33"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb32-33" tabindex="-1"></a><span class="co"># Extract the predicted values</span></span>
-<span id="cb32-34"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb32-34" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: check why this is being done again</span></span>
-<span id="cb32-35"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb32-35" tabindex="-1"></a>data_gam_validate <span class="ot">&lt;-</span> data_gam_validate <span class="sc">|&gt;</span></span>
-<span id="cb32-36"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb32-36" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb32-37"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb32-37" tabindex="-1"></a>    <span class="at">pred_val =</span> pred_val<span class="sc">$</span>lyr1</span>
-<span id="cb32-38"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb32-38" tabindex="-1"></a>  )</span>
-<span id="cb32-39"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb32-39" tabindex="-1"></a></span>
-<span id="cb32-40"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb32-40" tabindex="-1"></a><span class="co"># Drop some variables and save data</span></span>
-<span id="cb32-41"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb32-41" tabindex="-1"></a><span class="fu">write_csv</span>(</span>
-<span id="cb32-42"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb32-42" tabindex="-1"></a>  data_gam_validate,</span>
-<span id="cb32-43"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb32-43" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">&quot;results/climate/data_gam_validate_compare.csv&quot;</span></span>
-<span id="cb32-44"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb32-44" tabindex="-1"></a>)</span></code></pre></div>
+<span id="cb32-34"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb32-34" tabindex="-1"></a>data_gam_validate <span class="ot">&lt;-</span> data_gam_validate <span class="sc">|&gt;</span></span>
+<span id="cb32-35"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb32-35" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb32-36"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb32-36" tabindex="-1"></a>    <span class="at">pred_val =</span> pred_val<span class="sc">$</span>lyr1</span>
+<span id="cb32-37"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb32-37" tabindex="-1"></a>  )</span>
+<span id="cb32-38"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb32-38" tabindex="-1"></a></span>
+<span id="cb32-39"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb32-39" tabindex="-1"></a><span class="co"># Drop some variables and save data</span></span>
+<span id="cb32-40"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb32-40" tabindex="-1"></a><span class="fu">write_csv</span>(</span>
+<span id="cb32-41"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb32-41" tabindex="-1"></a>  data_gam_validate,</span>
+<span id="cb32-42"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb32-42" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">&quot;results/climate/data_gam_validate_compare.csv&quot;</span></span>
+<span id="cb32-43"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb32-43" tabindex="-1"></a>)</span></code></pre></div>
 </div>
-<div id="error-between-model-prediction-and-chelsa-data" class="section level2 hasAnchor" number="3.12">
-<h2><span class="header-section-number">3.12</span> Error between model prediction and CHELSA data<a href="building-and-validating-semi-spatial-gams-for-climate.html#error-between-model-prediction-and-chelsa-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="error-between-model-prediction-and-chelsa-data" class="section level2 hasAnchor" number="3.11">
+<h2><span class="header-section-number">3.11</span> Error between model prediction and CHELSA data<a href="building-and-validating-semi-spatial-gams-for-climate.html#error-between-model-prediction-and-chelsa-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>We use mean absolute error (MAE) as a measure of how much the model predictions deviate from the CHELSA data. In order to calculate the mean, we group the data into ten arbitrary groups of 1,000 samples each.</p>
 <p>We calculate MAE as the mean of the absolute differences between the CHELSA data and the model predicted data, and save the data to a local file.
 MAE is calculated for each climate variable, model formulation, and season separately (in addition to the sample group, which is arbitrary).</p>
@@ -769,8 +763,8 @@ MAE is calculated for each climate variable, model formulation, and season separ
 <span id="cb33-28"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb33-28" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">&quot;results/climate/data_gam_comparison_mae.csv&quot;</span></span>
 <span id="cb33-29"><a href="building-and-validating-semi-spatial-gams-for-climate.html#cb33-29" tabindex="-1"></a>)</span></code></pre></div>
 </div>
-<div id="gam-predictions-at-survey-sites" class="section level2 hasAnchor" number="3.13">
-<h2><span class="header-section-number">3.13</span> GAM predictions at survey sites<a href="building-and-validating-semi-spatial-gams-for-climate.html#gam-predictions-at-survey-sites" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="gam-predictions-at-survey-sites" class="section level2 hasAnchor" number="3.12">
+<h2><span class="header-section-number">3.12</span> GAM predictions at survey sites<a href="building-and-validating-semi-spatial-gams-for-climate.html#gam-predictions-at-survey-sites" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>In this section, we get the spatial-climate model predictions at the modern survey site locations (called ‘survey sites’).
 This is a repitition of the steps above for the much smaller subset of survery sites.
 Recall that for each survey site, there will be three candidate model predictions for each climate variable in each season.</p>

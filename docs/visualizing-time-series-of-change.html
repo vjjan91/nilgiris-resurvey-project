@@ -175,10 +175,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.7" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#temperature-data"><i class="fa fa-check"></i><b>3.7</b> Temperature data</a></li>
 <li class="chapter" data-level="3.8" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#precipitation-data"><i class="fa fa-check"></i><b>3.8</b> Precipitation data</a></li>
 <li class="chapter" data-level="3.9" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#compare-spatial-climate-model-predictions-against-bioclim-data"><i class="fa fa-check"></i><b>3.9</b> Compare spatial-climate model predictions against BIOCLIM data</a></li>
-<li class="chapter" data-level="3.10" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#sample-locations"><i class="fa fa-check"></i><b>3.10</b> Sample locations</a></li>
-<li class="chapter" data-level="3.11" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#link-bioclim-data-and-model-predictions"><i class="fa fa-check"></i><b>3.11</b> Link BIOCLIM data and model predictions</a></li>
-<li class="chapter" data-level="3.12" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#error-between-model-prediction-and-chelsa-data"><i class="fa fa-check"></i><b>3.12</b> Error between model prediction and CHELSA data</a></li>
-<li class="chapter" data-level="3.13" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#gam-predictions-at-survey-sites"><i class="fa fa-check"></i><b>3.13</b> GAM predictions at survey sites</a></li>
+<li class="chapter" data-level="3.10" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#link-bioclim-data-and-model-predictions"><i class="fa fa-check"></i><b>3.10</b> Link BIOCLIM data and model predictions</a></li>
+<li class="chapter" data-level="3.11" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#error-between-model-prediction-and-chelsa-data"><i class="fa fa-check"></i><b>3.11</b> Error between model prediction and CHELSA data</a></li>
+<li class="chapter" data-level="3.12" data-path="building-and-validating-semi-spatial-gams-for-climate.html"><a href="building-and-validating-semi-spatial-gams-for-climate.html#gam-predictions-at-survey-sites"><i class="fa fa-check"></i><b>3.12</b> GAM predictions at survey sites</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="building-a-correction-layer-for-climate-predictions.html"><a href="building-a-correction-layer-for-climate-predictions.html"><i class="fa fa-check"></i><b>4</b> Building a correction layer for climate predictions</a>
 <ul>
@@ -339,7 +338,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="loading-data-from-the-1910-map" class="section level2 hasAnchor" number="9.3">
 <h2><span class="header-section-number">9.3</span> Loading data from the 1910 map<a href="visualizing-time-series-of-change.html#loading-data-from-the-1910-map" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="visualizing-time-series-of-change.html#cb93-1" tabindex="-1"></a><span class="co"># list all shapefiles in the directory</span></span>
-<span id="cb93-2"><a href="visualizing-time-series-of-change.html#cb93-2" tabindex="-1"></a>nil1910 <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="st">&quot;data/landcover/1910-nilgiris/&quot;</span>, <span class="at">full.names =</span> T, <span class="at">recursive =</span> T, <span class="at">pattern=</span><span class="st">&quot;.shp$&quot;</span>)</span>
+<span id="cb93-2"><a href="visualizing-time-series-of-change.html#cb93-2" tabindex="-1"></a>nil1910 <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="st">&quot;data/landcover/1910-nilgiris/&quot;</span>, <span class="at">full.names =</span> T, <span class="at">recursive =</span> T, <span class="at">pattern =</span> <span class="st">&quot;.shp$&quot;</span>)</span>
 <span id="cb93-3"><a href="visualizing-time-series-of-change.html#cb93-3" tabindex="-1"></a></span>
 <span id="cb93-4"><a href="visualizing-time-series-of-change.html#cb93-4" tabindex="-1"></a><span class="co"># create vector files</span></span>
 <span id="cb93-5"><a href="visualizing-time-series-of-change.html#cb93-5" tabindex="-1"></a>ag1910 <span class="ot">&lt;-</span> <span class="fu">st_read</span>(nil1910[<span class="dv">1</span>]) <span class="co"># type: multipolygon</span></span>
@@ -358,27 +357,27 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb93-18"><a href="visualizing-time-series-of-change.html#cb93-18" tabindex="-1"></a><span class="co"># attribute names need to be consistent across shapefiles</span></span>
 <span id="cb93-19"><a href="visualizing-time-series-of-change.html#cb93-19" tabindex="-1"></a></span>
 <span id="cb93-20"><a href="visualizing-time-series-of-change.html#cb93-20" tabindex="-1"></a><span class="co"># first, we will remove empty geometries</span></span>
-<span id="cb93-21"><a href="visualizing-time-series-of-change.html#cb93-21" tabindex="-1"></a>plantations1910 <span class="ot">&lt;-</span> plantations1910[<span class="sc">!</span><span class="fu">st_is_empty</span>(plantations1910),]</span>
+<span id="cb93-21"><a href="visualizing-time-series-of-change.html#cb93-21" tabindex="-1"></a>plantations1910 <span class="ot">&lt;-</span> plantations1910[<span class="sc">!</span><span class="fu">st_is_empty</span>(plantations1910), ]</span>
 <span id="cb93-22"><a href="visualizing-time-series-of-change.html#cb93-22" tabindex="-1"></a></span>
 <span id="cb93-23"><a href="visualizing-time-series-of-change.html#cb93-23" tabindex="-1"></a><span class="co"># fixing attribute tables to ensure they are consistent across shapefiles</span></span>
-<span id="cb93-24"><a href="visualizing-time-series-of-change.html#cb93-24" tabindex="-1"></a>ag1910 <span class="ot">&lt;-</span> ag1910[,<span class="sc">-</span><span class="dv">3</span>]</span>
-<span id="cb93-25"><a href="visualizing-time-series-of-change.html#cb93-25" tabindex="-1"></a>plantations1910 <span class="ot">&lt;-</span> plantations1910[,<span class="sc">-</span><span class="dv">3</span>]</span>
-<span id="cb93-26"><a href="visualizing-time-series-of-change.html#cb93-26" tabindex="-1"></a>settlements1910 <span class="ot">&lt;-</span> settlements1910[,<span class="sc">-</span><span class="dv">3</span>]</span>
-<span id="cb93-27"><a href="visualizing-time-series-of-change.html#cb93-27" tabindex="-1"></a>sholaForest1910 <span class="ot">&lt;-</span> sholaForest1910[,<span class="sc">-</span><span class="dv">3</span>]</span>
-<span id="cb93-28"><a href="visualizing-time-series-of-change.html#cb93-28" tabindex="-1"></a>sholaGrassland1910 <span class="ot">&lt;-</span> sholaGrassland1910[,<span class="sc">-</span><span class="dv">3</span>]</span>
-<span id="cb93-29"><a href="visualizing-time-series-of-change.html#cb93-29" tabindex="-1"></a>waterBodies1910 <span class="ot">&lt;-</span> waterBodies1910[,<span class="sc">-</span><span class="dv">3</span>]</span>
+<span id="cb93-24"><a href="visualizing-time-series-of-change.html#cb93-24" tabindex="-1"></a>ag1910 <span class="ot">&lt;-</span> ag1910[, <span class="sc">-</span><span class="dv">3</span>]</span>
+<span id="cb93-25"><a href="visualizing-time-series-of-change.html#cb93-25" tabindex="-1"></a>plantations1910 <span class="ot">&lt;-</span> plantations1910[, <span class="sc">-</span><span class="dv">3</span>]</span>
+<span id="cb93-26"><a href="visualizing-time-series-of-change.html#cb93-26" tabindex="-1"></a>settlements1910 <span class="ot">&lt;-</span> settlements1910[, <span class="sc">-</span><span class="dv">3</span>]</span>
+<span id="cb93-27"><a href="visualizing-time-series-of-change.html#cb93-27" tabindex="-1"></a>sholaForest1910 <span class="ot">&lt;-</span> sholaForest1910[, <span class="sc">-</span><span class="dv">3</span>]</span>
+<span id="cb93-28"><a href="visualizing-time-series-of-change.html#cb93-28" tabindex="-1"></a>sholaGrassland1910 <span class="ot">&lt;-</span> sholaGrassland1910[, <span class="sc">-</span><span class="dv">3</span>]</span>
+<span id="cb93-29"><a href="visualizing-time-series-of-change.html#cb93-29" tabindex="-1"></a>waterBodies1910 <span class="ot">&lt;-</span> waterBodies1910[, <span class="sc">-</span><span class="dv">3</span>]</span>
 <span id="cb93-30"><a href="visualizing-time-series-of-change.html#cb93-30" tabindex="-1"></a></span>
-<span id="cb93-31"><a href="visualizing-time-series-of-change.html#cb93-31" tabindex="-1"></a><span class="fu">names</span>(ag1910) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;name&quot;</span>,<span class="st">&quot;geometry&quot;</span>)</span>
+<span id="cb93-31"><a href="visualizing-time-series-of-change.html#cb93-31" tabindex="-1"></a><span class="fu">names</span>(ag1910) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;name&quot;</span>, <span class="st">&quot;geometry&quot;</span>)</span>
 <span id="cb93-32"><a href="visualizing-time-series-of-change.html#cb93-32" tabindex="-1"></a>ag1910<span class="sc">$</span>name <span class="ot">&lt;-</span> <span class="st">&quot;agriculture&quot;</span></span>
-<span id="cb93-33"><a href="visualizing-time-series-of-change.html#cb93-33" tabindex="-1"></a><span class="fu">names</span>(plantations1910) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;name&quot;</span>,<span class="st">&quot;geometry&quot;</span>)</span>
+<span id="cb93-33"><a href="visualizing-time-series-of-change.html#cb93-33" tabindex="-1"></a><span class="fu">names</span>(plantations1910) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;name&quot;</span>, <span class="st">&quot;geometry&quot;</span>)</span>
 <span id="cb93-34"><a href="visualizing-time-series-of-change.html#cb93-34" tabindex="-1"></a>plantations1910<span class="sc">$</span>name <span class="ot">&lt;-</span> <span class="st">&quot;plantations&quot;</span></span>
-<span id="cb93-35"><a href="visualizing-time-series-of-change.html#cb93-35" tabindex="-1"></a><span class="fu">names</span>(settlements1910) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;name&quot;</span>,<span class="st">&quot;geometry&quot;</span>)</span>
+<span id="cb93-35"><a href="visualizing-time-series-of-change.html#cb93-35" tabindex="-1"></a><span class="fu">names</span>(settlements1910) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;name&quot;</span>, <span class="st">&quot;geometry&quot;</span>)</span>
 <span id="cb93-36"><a href="visualizing-time-series-of-change.html#cb93-36" tabindex="-1"></a>settlements1910<span class="sc">$</span>name <span class="ot">&lt;-</span> <span class="st">&quot;settlements&quot;</span></span>
-<span id="cb93-37"><a href="visualizing-time-series-of-change.html#cb93-37" tabindex="-1"></a><span class="fu">names</span>(sholaForest1910) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;name&quot;</span>,<span class="st">&quot;geometry&quot;</span>)</span>
+<span id="cb93-37"><a href="visualizing-time-series-of-change.html#cb93-37" tabindex="-1"></a><span class="fu">names</span>(sholaForest1910) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;name&quot;</span>, <span class="st">&quot;geometry&quot;</span>)</span>
 <span id="cb93-38"><a href="visualizing-time-series-of-change.html#cb93-38" tabindex="-1"></a>sholaForest1910<span class="sc">$</span>name <span class="ot">&lt;-</span> <span class="st">&quot;shola_forest&quot;</span></span>
-<span id="cb93-39"><a href="visualizing-time-series-of-change.html#cb93-39" tabindex="-1"></a><span class="fu">names</span>(sholaGrassland1910) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;name&quot;</span>,<span class="st">&quot;geometry&quot;</span>)</span>
+<span id="cb93-39"><a href="visualizing-time-series-of-change.html#cb93-39" tabindex="-1"></a><span class="fu">names</span>(sholaGrassland1910) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;name&quot;</span>, <span class="st">&quot;geometry&quot;</span>)</span>
 <span id="cb93-40"><a href="visualizing-time-series-of-change.html#cb93-40" tabindex="-1"></a>sholaGrassland1910<span class="sc">$</span>name <span class="ot">&lt;-</span> <span class="st">&quot;shola_grassland&quot;</span></span>
-<span id="cb93-41"><a href="visualizing-time-series-of-change.html#cb93-41" tabindex="-1"></a><span class="fu">names</span>(waterBodies1910) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;name&quot;</span>,<span class="st">&quot;geometry&quot;</span>)</span>
+<span id="cb93-41"><a href="visualizing-time-series-of-change.html#cb93-41" tabindex="-1"></a><span class="fu">names</span>(waterBodies1910) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;name&quot;</span>, <span class="st">&quot;geometry&quot;</span>)</span>
 <span id="cb93-42"><a href="visualizing-time-series-of-change.html#cb93-42" tabindex="-1"></a>waterBodies1910<span class="sc">$</span>name <span class="ot">&lt;-</span> <span class="st">&quot;water_bodies&quot;</span></span>
 <span id="cb93-43"><a href="visualizing-time-series-of-change.html#cb93-43" tabindex="-1"></a></span>
 <span id="cb93-44"><a href="visualizing-time-series-of-change.html#cb93-44" tabindex="-1"></a><span class="co"># transform to UTM 43N</span></span>
@@ -390,7 +389,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb93-50"><a href="visualizing-time-series-of-change.html#cb93-50" tabindex="-1"></a>waterBodies1910 <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(waterBodies1910, <span class="dv">32643</span>)</span>
 <span id="cb93-51"><a href="visualizing-time-series-of-change.html#cb93-51" tabindex="-1"></a></span>
 <span id="cb93-52"><a href="visualizing-time-series-of-change.html#cb93-52" tabindex="-1"></a><span class="co"># creating a single simple feature collection</span></span>
-<span id="cb93-53"><a href="visualizing-time-series-of-change.html#cb93-53" tabindex="-1"></a>nil1910 <span class="ot">&lt;-</span> <span class="fu">rbind</span>(ag1910, plantations1910, settlements1910,sholaForest1910, sholaGrassland1910,waterBodies1910)</span></code></pre></div>
+<span id="cb93-53"><a href="visualizing-time-series-of-change.html#cb93-53" tabindex="-1"></a>nil1910 <span class="ot">&lt;-</span> <span class="fu">rbind</span>(ag1910, plantations1910, settlements1910, sholaForest1910, sholaGrassland1910, waterBodies1910)</span></code></pre></div>
 </div>
 <div id="rasterizing-of-the-1910-data" class="section level2 hasAnchor" number="9.4">
 <h2><span class="header-section-number">9.4</span> Rasterizing of the 1910 data<a href="visualizing-time-series-of-change.html#rasterizing-of-the-1910-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -403,7 +402,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb94-7"><a href="visualizing-time-series-of-change.html#cb94-7" tabindex="-1"></a><span class="do">## we need to mask the raster with the 1848 raster</span></span>
 <span id="cb94-8"><a href="visualizing-time-series-of-change.html#cb94-8" tabindex="-1"></a><span class="do">## we use terra::mask as there are empty/no_data values in 1848</span></span>
 <span id="cb94-9"><a href="visualizing-time-series-of-change.html#cb94-9" tabindex="-1"></a></span>
-<span id="cb94-10"><a href="visualizing-time-series-of-change.html#cb94-10" tabindex="-1"></a><span class="do">## prior to masking, we need to crop and reset extents </span></span>
+<span id="cb94-10"><a href="visualizing-time-series-of-change.html#cb94-10" tabindex="-1"></a><span class="do">## prior to masking, we need to crop and reset extents</span></span>
 <span id="cb94-11"><a href="visualizing-time-series-of-change.html#cb94-11" tabindex="-1"></a><span class="do">## note, we are resetting the extent to match the 1848 raster</span></span>
 <span id="cb94-12"><a href="visualizing-time-series-of-change.html#cb94-12" tabindex="-1"></a>rast1910 <span class="ot">&lt;-</span> <span class="fu">crop</span>(rast1910, rast1848)</span>
 <span id="cb94-13"><a href="visualizing-time-series-of-change.html#cb94-13" tabindex="-1"></a></span>
@@ -426,14 +425,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb94-30"><a href="visualizing-time-series-of-change.html#cb94-30" tabindex="-1"></a>rast1910 <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(rast1910)</span>
 <span id="cb94-31"><a href="visualizing-time-series-of-change.html#cb94-31" tabindex="-1"></a></span>
 <span id="cb94-32"><a href="visualizing-time-series-of-change.html#cb94-32" tabindex="-1"></a><span class="do">## create a dataframe with names of classes and their corresponding values</span></span>
-<span id="cb94-33"><a href="visualizing-time-series-of-change.html#cb94-33" tabindex="-1"></a>landcover_reclass <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ID =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">5</span>,</span>
-<span id="cb94-34"><a href="visualizing-time-series-of-change.html#cb94-34" tabindex="-1"></a>                              <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;agriculture&quot;</span>,                                                        <span class="st">&quot;plantations&quot;</span>,</span>
-<span id="cb94-35"><a href="visualizing-time-series-of-change.html#cb94-35" tabindex="-1"></a>                                  <span class="st">&quot;settlements&quot;</span>,</span>
-<span id="cb94-36"><a href="visualizing-time-series-of-change.html#cb94-36" tabindex="-1"></a>                                  <span class="st">&quot;shola_forest&quot;</span>,</span>
-<span id="cb94-37"><a href="visualizing-time-series-of-change.html#cb94-37" tabindex="-1"></a>                                  <span class="st">&quot;shola_grassland&quot;</span>,</span>
-<span id="cb94-38"><a href="visualizing-time-series-of-change.html#cb94-38" tabindex="-1"></a>                                  <span class="st">&quot;water_bodies&quot;</span>))</span>
-<span id="cb94-39"><a href="visualizing-time-series-of-change.html#cb94-39" tabindex="-1"></a></span>
-<span id="cb94-40"><a href="visualizing-time-series-of-change.html#cb94-40" tabindex="-1"></a><span class="fu">levels</span>(rast1910) <span class="ot">&lt;-</span> landcover_reclass</span></code></pre></div>
+<span id="cb94-33"><a href="visualizing-time-series-of-change.html#cb94-33" tabindex="-1"></a>landcover_reclass <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb94-34"><a href="visualizing-time-series-of-change.html#cb94-34" tabindex="-1"></a>  <span class="at">ID =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">5</span>,</span>
+<span id="cb94-35"><a href="visualizing-time-series-of-change.html#cb94-35" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(</span>
+<span id="cb94-36"><a href="visualizing-time-series-of-change.html#cb94-36" tabindex="-1"></a>    <span class="st">&quot;agriculture&quot;</span>, <span class="st">&quot;plantations&quot;</span>,</span>
+<span id="cb94-37"><a href="visualizing-time-series-of-change.html#cb94-37" tabindex="-1"></a>    <span class="st">&quot;settlements&quot;</span>,</span>
+<span id="cb94-38"><a href="visualizing-time-series-of-change.html#cb94-38" tabindex="-1"></a>    <span class="st">&quot;shola_forest&quot;</span>,</span>
+<span id="cb94-39"><a href="visualizing-time-series-of-change.html#cb94-39" tabindex="-1"></a>    <span class="st">&quot;shola_grassland&quot;</span>,</span>
+<span id="cb94-40"><a href="visualizing-time-series-of-change.html#cb94-40" tabindex="-1"></a>    <span class="st">&quot;water_bodies&quot;</span></span>
+<span id="cb94-41"><a href="visualizing-time-series-of-change.html#cb94-41" tabindex="-1"></a>  )</span>
+<span id="cb94-42"><a href="visualizing-time-series-of-change.html#cb94-42" tabindex="-1"></a>)</span>
+<span id="cb94-43"><a href="visualizing-time-series-of-change.html#cb94-43" tabindex="-1"></a></span>
+<span id="cb94-44"><a href="visualizing-time-series-of-change.html#cb94-44" tabindex="-1"></a><span class="fu">levels</span>(rast1910) <span class="ot">&lt;-</span> landcover_reclass</span></code></pre></div>
 </div>
 <div id="loading-the-1973-and-1995-data" class="section level2 hasAnchor" number="9.5">
 <h2><span class="header-section-number">9.5</span> Loading the 1973 and 1995 data<a href="visualizing-time-series-of-change.html#loading-the-1973-and-1995-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -468,8 +471,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb95-29"><a href="visualizing-time-series-of-change.html#cb95-29" tabindex="-1"></a>  ))</span>
 <span id="cb95-30"><a href="visualizing-time-series-of-change.html#cb95-30" tabindex="-1"></a></span>
 <span id="cb95-31"><a href="visualizing-time-series-of-change.html#cb95-31" tabindex="-1"></a><span class="co"># renaming for ease of visualization</span></span>
-<span id="cb95-32"><a href="visualizing-time-series-of-change.html#cb95-32" tabindex="-1"></a><span class="fu">names</span>(nil1973) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span>,<span class="st">&quot;area&quot;</span>,<span class="st">&quot;geometry&quot;</span>,<span class="st">&quot;name&quot;</span>)</span>
-<span id="cb95-33"><a href="visualizing-time-series-of-change.html#cb95-33" tabindex="-1"></a><span class="fu">names</span>(nil1995) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span>,<span class="st">&quot;area&quot;</span>,<span class="st">&quot;geometry&quot;</span>,<span class="st">&quot;name&quot;</span>)</span></code></pre></div>
+<span id="cb95-32"><a href="visualizing-time-series-of-change.html#cb95-32" tabindex="-1"></a><span class="fu">names</span>(nil1973) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;area&quot;</span>, <span class="st">&quot;geometry&quot;</span>, <span class="st">&quot;name&quot;</span>)</span>
+<span id="cb95-33"><a href="visualizing-time-series-of-change.html#cb95-33" tabindex="-1"></a><span class="fu">names</span>(nil1995) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;area&quot;</span>, <span class="st">&quot;geometry&quot;</span>, <span class="st">&quot;name&quot;</span>)</span></code></pre></div>
 </div>
 <div id="rasterization-of-the-1973-and-1995-data" class="section level2 hasAnchor" number="9.6">
 <h2><span class="header-section-number">9.6</span> Rasterization of the 1973 and 1995 data<a href="visualizing-time-series-of-change.html#rasterization-of-the-1973-and-1995-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -497,99 +500,118 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb96-22"><a href="visualizing-time-series-of-change.html#cb96-22" tabindex="-1"></a>rast1973 <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(rast1973)</span>
 <span id="cb96-23"><a href="visualizing-time-series-of-change.html#cb96-23" tabindex="-1"></a></span>
 <span id="cb96-24"><a href="visualizing-time-series-of-change.html#cb96-24" tabindex="-1"></a><span class="do">## create a dataframe with names of classes and their corresponding values</span></span>
-<span id="cb96-25"><a href="visualizing-time-series-of-change.html#cb96-25" tabindex="-1"></a>landcover_class <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ID =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">2</span><span class="sc">:</span><span class="dv">7</span>),</span>
-<span id="cb96-26"><a href="visualizing-time-series-of-change.html#cb96-26" tabindex="-1"></a>                              <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;agriculture&quot;</span>,</span>
-<span id="cb96-27"><a href="visualizing-time-series-of-change.html#cb96-27" tabindex="-1"></a>                                       <span class="st">&quot;settlements&quot;</span>,</span>
-<span id="cb96-28"><a href="visualizing-time-series-of-change.html#cb96-28" tabindex="-1"></a>                                        <span class="st">&quot;shola_forest&quot;</span>,</span>
-<span id="cb96-29"><a href="visualizing-time-series-of-change.html#cb96-29" tabindex="-1"></a>                                    <span class="st">&quot;shola_grassland&quot;</span>,</span>
-<span id="cb96-30"><a href="visualizing-time-series-of-change.html#cb96-30" tabindex="-1"></a>                                    <span class="st">&quot;tea_plantations&quot;</span>,</span>
-<span id="cb96-31"><a href="visualizing-time-series-of-change.html#cb96-31" tabindex="-1"></a>                                  <span class="st">&quot;timber_plantations&quot;</span>,</span>
-<span id="cb96-32"><a href="visualizing-time-series-of-change.html#cb96-32" tabindex="-1"></a>                                      <span class="st">&quot;water_bodies&quot;</span>))</span>
-<span id="cb96-33"><a href="visualizing-time-series-of-change.html#cb96-33" tabindex="-1"></a></span>
-<span id="cb96-34"><a href="visualizing-time-series-of-change.html#cb96-34" tabindex="-1"></a><span class="fu">levels</span>(rast1973) <span class="ot">&lt;-</span> landcover_class</span>
-<span id="cb96-35"><a href="visualizing-time-series-of-change.html#cb96-35" tabindex="-1"></a></span>
-<span id="cb96-36"><a href="visualizing-time-series-of-change.html#cb96-36" tabindex="-1"></a><span class="co"># repeating process for 1995 data</span></span>
-<span id="cb96-37"><a href="visualizing-time-series-of-change.html#cb96-37" tabindex="-1"></a><span class="co"># note that the spatial resolution of Landsat TM is at 30 m spatial resolution</span></span>
-<span id="cb96-38"><a href="visualizing-time-series-of-change.html#cb96-38" tabindex="-1"></a>vect1995 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">vect</span>(nil1995)</span>
-<span id="cb96-39"><a href="visualizing-time-series-of-change.html#cb96-39" tabindex="-1"></a>emptyRast <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(<span class="at">res =</span> <span class="dv">30</span>, <span class="at">xmin =</span> <span class="fl">517079.8</span>, <span class="at">xmax =</span> <span class="fl">794369.8</span>, <span class="at">ymin =</span> <span class="fl">922564.6</span>, <span class="at">ymax =</span> <span class="dv">1500035</span>, <span class="at">crs =</span> <span class="st">&quot;+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs&quot;</span>)</span>
-<span id="cb96-40"><a href="visualizing-time-series-of-change.html#cb96-40" tabindex="-1"></a>rast1995 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rasterize</span>(vect1995, emptyRast, <span class="st">&quot;name&quot;</span>)</span>
-<span id="cb96-41"><a href="visualizing-time-series-of-change.html#cb96-41" tabindex="-1"></a></span>
-<span id="cb96-42"><a href="visualizing-time-series-of-change.html#cb96-42" tabindex="-1"></a><span class="do">## crop and mask to the 1848 raster</span></span>
-<span id="cb96-43"><a href="visualizing-time-series-of-change.html#cb96-43" tabindex="-1"></a>rast1995 <span class="ot">&lt;-</span> <span class="fu">crop</span>(rast1995, rast1848)</span>
-<span id="cb96-44"><a href="visualizing-time-series-of-change.html#cb96-44" tabindex="-1"></a></span>
-<span id="cb96-45"><a href="visualizing-time-series-of-change.html#cb96-45" tabindex="-1"></a><span class="do">## extents still do not match for masking</span></span>
-<span id="cb96-46"><a href="visualizing-time-series-of-change.html#cb96-46" tabindex="-1"></a><span class="do">## force set extents</span></span>
-<span id="cb96-47"><a href="visualizing-time-series-of-change.html#cb96-47" tabindex="-1"></a><span class="fu">ext</span>(rast1995) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">660555.3</span>, <span class="fl">719133.3</span>, <span class="dv">1240050</span>, <span class="dv">1277598</span>)</span>
+<span id="cb96-25"><a href="visualizing-time-series-of-change.html#cb96-25" tabindex="-1"></a>landcover_class <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb96-26"><a href="visualizing-time-series-of-change.html#cb96-26" tabindex="-1"></a>  <span class="at">ID =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">2</span><span class="sc">:</span><span class="dv">7</span>),</span>
+<span id="cb96-27"><a href="visualizing-time-series-of-change.html#cb96-27" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(</span>
+<span id="cb96-28"><a href="visualizing-time-series-of-change.html#cb96-28" tabindex="-1"></a>    <span class="st">&quot;agriculture&quot;</span>,</span>
+<span id="cb96-29"><a href="visualizing-time-series-of-change.html#cb96-29" tabindex="-1"></a>    <span class="st">&quot;settlements&quot;</span>,</span>
+<span id="cb96-30"><a href="visualizing-time-series-of-change.html#cb96-30" tabindex="-1"></a>    <span class="st">&quot;shola_forest&quot;</span>,</span>
+<span id="cb96-31"><a href="visualizing-time-series-of-change.html#cb96-31" tabindex="-1"></a>    <span class="st">&quot;shola_grassland&quot;</span>,</span>
+<span id="cb96-32"><a href="visualizing-time-series-of-change.html#cb96-32" tabindex="-1"></a>    <span class="st">&quot;tea_plantations&quot;</span>,</span>
+<span id="cb96-33"><a href="visualizing-time-series-of-change.html#cb96-33" tabindex="-1"></a>    <span class="st">&quot;timber_plantations&quot;</span>,</span>
+<span id="cb96-34"><a href="visualizing-time-series-of-change.html#cb96-34" tabindex="-1"></a>    <span class="st">&quot;water_bodies&quot;</span></span>
+<span id="cb96-35"><a href="visualizing-time-series-of-change.html#cb96-35" tabindex="-1"></a>  )</span>
+<span id="cb96-36"><a href="visualizing-time-series-of-change.html#cb96-36" tabindex="-1"></a>)</span>
+<span id="cb96-37"><a href="visualizing-time-series-of-change.html#cb96-37" tabindex="-1"></a></span>
+<span id="cb96-38"><a href="visualizing-time-series-of-change.html#cb96-38" tabindex="-1"></a><span class="fu">levels</span>(rast1973) <span class="ot">&lt;-</span> landcover_class</span>
+<span id="cb96-39"><a href="visualizing-time-series-of-change.html#cb96-39" tabindex="-1"></a></span>
+<span id="cb96-40"><a href="visualizing-time-series-of-change.html#cb96-40" tabindex="-1"></a><span class="co"># repeating process for 1995 data</span></span>
+<span id="cb96-41"><a href="visualizing-time-series-of-change.html#cb96-41" tabindex="-1"></a><span class="co"># note that the spatial resolution of Landsat TM is at 30 m spatial resolution</span></span>
+<span id="cb96-42"><a href="visualizing-time-series-of-change.html#cb96-42" tabindex="-1"></a>vect1995 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">vect</span>(nil1995)</span>
+<span id="cb96-43"><a href="visualizing-time-series-of-change.html#cb96-43" tabindex="-1"></a>emptyRast <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(<span class="at">res =</span> <span class="dv">30</span>, <span class="at">xmin =</span> <span class="fl">517079.8</span>, <span class="at">xmax =</span> <span class="fl">794369.8</span>, <span class="at">ymin =</span> <span class="fl">922564.6</span>, <span class="at">ymax =</span> <span class="dv">1500035</span>, <span class="at">crs =</span> <span class="st">&quot;+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs&quot;</span>)</span>
+<span id="cb96-44"><a href="visualizing-time-series-of-change.html#cb96-44" tabindex="-1"></a>rast1995 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rasterize</span>(vect1995, emptyRast, <span class="st">&quot;name&quot;</span>)</span>
+<span id="cb96-45"><a href="visualizing-time-series-of-change.html#cb96-45" tabindex="-1"></a></span>
+<span id="cb96-46"><a href="visualizing-time-series-of-change.html#cb96-46" tabindex="-1"></a><span class="do">## crop and mask to the 1848 raster</span></span>
+<span id="cb96-47"><a href="visualizing-time-series-of-change.html#cb96-47" tabindex="-1"></a>rast1995 <span class="ot">&lt;-</span> <span class="fu">crop</span>(rast1995, rast1848)</span>
 <span id="cb96-48"><a href="visualizing-time-series-of-change.html#cb96-48" tabindex="-1"></a></span>
-<span id="cb96-49"><a href="visualizing-time-series-of-change.html#cb96-49" tabindex="-1"></a><span class="co"># resample raster from 1995 to match resolution of 1973 raster</span></span>
-<span id="cb96-50"><a href="visualizing-time-series-of-change.html#cb96-50" tabindex="-1"></a>rast1995 <span class="ot">&lt;-</span> <span class="fu">resample</span>(rast1995, rast1973, <span class="at">method =</span> <span class="st">&quot;near&quot;</span>)</span>
-<span id="cb96-51"><a href="visualizing-time-series-of-change.html#cb96-51" tabindex="-1"></a></span>
-<span id="cb96-52"><a href="visualizing-time-series-of-change.html#cb96-52" tabindex="-1"></a><span class="do">## masking the 1995 raster with the 1848 raster</span></span>
-<span id="cb96-53"><a href="visualizing-time-series-of-change.html#cb96-53" tabindex="-1"></a>rast1995 <span class="ot">&lt;-</span> <span class="fu">mask</span>(rast1995, rast1848)</span>
-<span id="cb96-54"><a href="visualizing-time-series-of-change.html#cb96-54" tabindex="-1"></a></span>
-<span id="cb96-55"><a href="visualizing-time-series-of-change.html#cb96-55" tabindex="-1"></a><span class="do">## convert the raster to a categorical raster</span></span>
-<span id="cb96-56"><a href="visualizing-time-series-of-change.html#cb96-56" tabindex="-1"></a>rast1995 <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(rast1995)</span>
-<span id="cb96-57"><a href="visualizing-time-series-of-change.html#cb96-57" tabindex="-1"></a></span>
-<span id="cb96-58"><a href="visualizing-time-series-of-change.html#cb96-58" tabindex="-1"></a><span class="fu">levels</span>(rast1995) <span class="ot">&lt;-</span> landcover_class</span></code></pre></div>
+<span id="cb96-49"><a href="visualizing-time-series-of-change.html#cb96-49" tabindex="-1"></a><span class="do">## extents still do not match for masking</span></span>
+<span id="cb96-50"><a href="visualizing-time-series-of-change.html#cb96-50" tabindex="-1"></a><span class="do">## force set extents</span></span>
+<span id="cb96-51"><a href="visualizing-time-series-of-change.html#cb96-51" tabindex="-1"></a><span class="fu">ext</span>(rast1995) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">660555.3</span>, <span class="fl">719133.3</span>, <span class="dv">1240050</span>, <span class="dv">1277598</span>)</span>
+<span id="cb96-52"><a href="visualizing-time-series-of-change.html#cb96-52" tabindex="-1"></a></span>
+<span id="cb96-53"><a href="visualizing-time-series-of-change.html#cb96-53" tabindex="-1"></a><span class="co"># resample raster from 1995 to match resolution of 1973 raster</span></span>
+<span id="cb96-54"><a href="visualizing-time-series-of-change.html#cb96-54" tabindex="-1"></a>rast1995 <span class="ot">&lt;-</span> <span class="fu">resample</span>(rast1995, rast1973, <span class="at">method =</span> <span class="st">&quot;near&quot;</span>)</span>
+<span id="cb96-55"><a href="visualizing-time-series-of-change.html#cb96-55" tabindex="-1"></a></span>
+<span id="cb96-56"><a href="visualizing-time-series-of-change.html#cb96-56" tabindex="-1"></a><span class="do">## masking the 1995 raster with the 1848 raster</span></span>
+<span id="cb96-57"><a href="visualizing-time-series-of-change.html#cb96-57" tabindex="-1"></a>rast1995 <span class="ot">&lt;-</span> <span class="fu">mask</span>(rast1995, rast1848)</span>
+<span id="cb96-58"><a href="visualizing-time-series-of-change.html#cb96-58" tabindex="-1"></a></span>
+<span id="cb96-59"><a href="visualizing-time-series-of-change.html#cb96-59" tabindex="-1"></a><span class="do">## convert the raster to a categorical raster</span></span>
+<span id="cb96-60"><a href="visualizing-time-series-of-change.html#cb96-60" tabindex="-1"></a>rast1995 <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(rast1995)</span>
+<span id="cb96-61"><a href="visualizing-time-series-of-change.html#cb96-61" tabindex="-1"></a></span>
+<span id="cb96-62"><a href="visualizing-time-series-of-change.html#cb96-62" tabindex="-1"></a><span class="fu">levels</span>(rast1995) <span class="ot">&lt;-</span> landcover_class</span></code></pre></div>
 </div>
 <div id="visualization-of-landscape-change-over-time" class="section level2 hasAnchor" number="9.7">
 <h2><span class="header-section-number">9.7</span> Visualization of landscape change over time<a href="visualizing-time-series-of-change.html#visualization-of-landscape-change-over-time" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb97-1"><a href="visualizing-time-series-of-change.html#cb97-1" tabindex="-1"></a><span class="do">## side-by-side visualization</span></span>
 <span id="cb97-2"><a href="visualizing-time-series-of-change.html#cb97-2" tabindex="-1"></a>colors1848 <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb97-3"><a href="visualizing-time-series-of-change.html#cb97-3" tabindex="-1"></a>  <span class="st">&#39;#be4fc4&#39;</span>, <span class="co"># agriculture, violetish</span></span>
-<span id="cb97-4"><a href="visualizing-time-series-of-change.html#cb97-4" tabindex="-1"></a>  <span class="st">&#39;#c17111&#39;</span>, <span class="co"># plantations, brownish</span></span>
-<span id="cb97-5"><a href="visualizing-time-series-of-change.html#cb97-5" tabindex="-1"></a>  <span class="st">&#39;#b0a69d&#39;</span>, <span class="co"># settlements, grayish</span></span>
-<span id="cb97-6"><a href="visualizing-time-series-of-change.html#cb97-6" tabindex="-1"></a>  <span class="st">&#39;#025a05&#39;</span>, <span class="co"># shola forests, dark green</span></span>
-<span id="cb97-7"><a href="visualizing-time-series-of-change.html#cb97-7" tabindex="-1"></a>  <span class="st">&#39;#cbb315&#39;</span>, <span class="co"># shola grasslands, yellowish</span></span>
-<span id="cb97-8"><a href="visualizing-time-series-of-change.html#cb97-8" tabindex="-1"></a>  <span class="st">&#39;#2035df&#39;</span>  <span class="co"># waterbodies, royal blue</span></span>
+<span id="cb97-3"><a href="visualizing-time-series-of-change.html#cb97-3" tabindex="-1"></a>  <span class="st">&quot;#be4fc4&quot;</span>, <span class="co"># agriculture, violetish</span></span>
+<span id="cb97-4"><a href="visualizing-time-series-of-change.html#cb97-4" tabindex="-1"></a>  <span class="st">&quot;#c17111&quot;</span>, <span class="co"># plantations, brownish</span></span>
+<span id="cb97-5"><a href="visualizing-time-series-of-change.html#cb97-5" tabindex="-1"></a>  <span class="st">&quot;#b0a69d&quot;</span>, <span class="co"># settlements, grayish</span></span>
+<span id="cb97-6"><a href="visualizing-time-series-of-change.html#cb97-6" tabindex="-1"></a>  <span class="st">&quot;#025a05&quot;</span>, <span class="co"># shola forests, dark green</span></span>
+<span id="cb97-7"><a href="visualizing-time-series-of-change.html#cb97-7" tabindex="-1"></a>  <span class="st">&quot;#cbb315&quot;</span>, <span class="co"># shola grasslands, yellowish</span></span>
+<span id="cb97-8"><a href="visualizing-time-series-of-change.html#cb97-8" tabindex="-1"></a>  <span class="st">&quot;#2035df&quot;</span> <span class="co"># waterbodies, royal blue</span></span>
 <span id="cb97-9"><a href="visualizing-time-series-of-change.html#cb97-9" tabindex="-1"></a>)</span>
 <span id="cb97-10"><a href="visualizing-time-series-of-change.html#cb97-10" tabindex="-1"></a></span>
 <span id="cb97-11"><a href="visualizing-time-series-of-change.html#cb97-11" tabindex="-1"></a>colors1973 <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb97-12"><a href="visualizing-time-series-of-change.html#cb97-12" tabindex="-1"></a>  <span class="st">&#39;#be4fc4&#39;</span>, <span class="co"># agriculture, violetish</span></span>
-<span id="cb97-13"><a href="visualizing-time-series-of-change.html#cb97-13" tabindex="-1"></a>  <span class="st">&#39;#b0a69d&#39;</span>, <span class="co"># settlements, grayish</span></span>
-<span id="cb97-14"><a href="visualizing-time-series-of-change.html#cb97-14" tabindex="-1"></a>  <span class="st">&#39;#025a05&#39;</span>, <span class="co"># shola forests, dark green</span></span>
-<span id="cb97-15"><a href="visualizing-time-series-of-change.html#cb97-15" tabindex="-1"></a>  <span class="st">&#39;#cbb315&#39;</span>, <span class="co"># shola grasslands, yellowish</span></span>
-<span id="cb97-16"><a href="visualizing-time-series-of-change.html#cb97-16" tabindex="-1"></a>  <span class="st">&#39;#04a310&#39;</span>, <span class="co"># tea plantations, light green</span></span>
-<span id="cb97-17"><a href="visualizing-time-series-of-change.html#cb97-17" tabindex="-1"></a>  <span class="st">&#39;#c17111&#39;</span>, <span class="co"># timber plantations, brownish</span></span>
-<span id="cb97-18"><a href="visualizing-time-series-of-change.html#cb97-18" tabindex="-1"></a>  <span class="st">&#39;#2035df&#39;</span>  <span class="co"># waterbodies, royal blue</span></span>
+<span id="cb97-12"><a href="visualizing-time-series-of-change.html#cb97-12" tabindex="-1"></a>  <span class="st">&quot;#be4fc4&quot;</span>, <span class="co"># agriculture, violetish</span></span>
+<span id="cb97-13"><a href="visualizing-time-series-of-change.html#cb97-13" tabindex="-1"></a>  <span class="st">&quot;#b0a69d&quot;</span>, <span class="co"># settlements, grayish</span></span>
+<span id="cb97-14"><a href="visualizing-time-series-of-change.html#cb97-14" tabindex="-1"></a>  <span class="st">&quot;#025a05&quot;</span>, <span class="co"># shola forests, dark green</span></span>
+<span id="cb97-15"><a href="visualizing-time-series-of-change.html#cb97-15" tabindex="-1"></a>  <span class="st">&quot;#cbb315&quot;</span>, <span class="co"># shola grasslands, yellowish</span></span>
+<span id="cb97-16"><a href="visualizing-time-series-of-change.html#cb97-16" tabindex="-1"></a>  <span class="st">&quot;#04a310&quot;</span>, <span class="co"># tea plantations, light green</span></span>
+<span id="cb97-17"><a href="visualizing-time-series-of-change.html#cb97-17" tabindex="-1"></a>  <span class="st">&quot;#c17111&quot;</span>, <span class="co"># timber plantations, brownish</span></span>
+<span id="cb97-18"><a href="visualizing-time-series-of-change.html#cb97-18" tabindex="-1"></a>  <span class="st">&quot;#2035df&quot;</span> <span class="co"># waterbodies, royal blue</span></span>
 <span id="cb97-19"><a href="visualizing-time-series-of-change.html#cb97-19" tabindex="-1"></a>)</span>
 <span id="cb97-20"><a href="visualizing-time-series-of-change.html#cb97-20" tabindex="-1"></a></span>
 <span id="cb97-21"><a href="visualizing-time-series-of-change.html#cb97-21" tabindex="-1"></a>colors2018 <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb97-22"><a href="visualizing-time-series-of-change.html#cb97-22" tabindex="-1"></a>  <span class="st">&#39;#be4fc4&#39;</span>, <span class="co"># agriculture, violetish</span></span>
-<span id="cb97-23"><a href="visualizing-time-series-of-change.html#cb97-23" tabindex="-1"></a> <span class="st">&#39;#025a05&#39;</span>, <span class="co"># shola forests, dark green</span></span>
-<span id="cb97-24"><a href="visualizing-time-series-of-change.html#cb97-24" tabindex="-1"></a>  <span class="st">&#39;#cbb315&#39;</span>, <span class="co"># shola grasslands, yellowish</span></span>
-<span id="cb97-25"><a href="visualizing-time-series-of-change.html#cb97-25" tabindex="-1"></a>  <span class="st">&#39;#c17111&#39;</span>, <span class="co"># timber plantations, brownish</span></span>
-<span id="cb97-26"><a href="visualizing-time-series-of-change.html#cb97-26" tabindex="-1"></a>  <span class="st">&#39;#b0a69d&#39;</span>, <span class="co"># settlements, grayish</span></span>
-<span id="cb97-27"><a href="visualizing-time-series-of-change.html#cb97-27" tabindex="-1"></a> <span class="st">&#39;#04a310&#39;</span>, <span class="co"># tea plantations, light green</span></span>
-<span id="cb97-28"><a href="visualizing-time-series-of-change.html#cb97-28" tabindex="-1"></a>  <span class="st">&#39;#2035df&#39;</span>  <span class="co"># waterbodies, royal blue</span></span>
+<span id="cb97-22"><a href="visualizing-time-series-of-change.html#cb97-22" tabindex="-1"></a>  <span class="st">&quot;#be4fc4&quot;</span>, <span class="co"># agriculture, violetish</span></span>
+<span id="cb97-23"><a href="visualizing-time-series-of-change.html#cb97-23" tabindex="-1"></a>  <span class="st">&quot;#025a05&quot;</span>, <span class="co"># shola forests, dark green</span></span>
+<span id="cb97-24"><a href="visualizing-time-series-of-change.html#cb97-24" tabindex="-1"></a>  <span class="st">&quot;#cbb315&quot;</span>, <span class="co"># shola grasslands, yellowish</span></span>
+<span id="cb97-25"><a href="visualizing-time-series-of-change.html#cb97-25" tabindex="-1"></a>  <span class="st">&quot;#c17111&quot;</span>, <span class="co"># timber plantations, brownish</span></span>
+<span id="cb97-26"><a href="visualizing-time-series-of-change.html#cb97-26" tabindex="-1"></a>  <span class="st">&quot;#b0a69d&quot;</span>, <span class="co"># settlements, grayish</span></span>
+<span id="cb97-27"><a href="visualizing-time-series-of-change.html#cb97-27" tabindex="-1"></a>  <span class="st">&quot;#04a310&quot;</span>, <span class="co"># tea plantations, light green</span></span>
+<span id="cb97-28"><a href="visualizing-time-series-of-change.html#cb97-28" tabindex="-1"></a>  <span class="st">&quot;#2035df&quot;</span> <span class="co"># waterbodies, royal blue</span></span>
 <span id="cb97-29"><a href="visualizing-time-series-of-change.html#cb97-29" tabindex="-1"></a>)</span>
 <span id="cb97-30"><a href="visualizing-time-series-of-change.html#cb97-30" tabindex="-1"></a></span>
 <span id="cb97-31"><a href="visualizing-time-series-of-change.html#cb97-31" tabindex="-1"></a><span class="do">## saving a high resolution visualization</span></span>
-<span id="cb97-32"><a href="visualizing-time-series-of-change.html#cb97-32" tabindex="-1"></a><span class="fu">png</span>(<span class="at">filename =</span> <span class="st">&quot;figs/fig_landCover_timeSeries.png&quot;</span>, </span>
-<span id="cb97-33"><a href="visualizing-time-series-of-change.html#cb97-33" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">15</span>, <span class="at">height =</span> <span class="dv">10</span>, <span class="at">units =</span> <span class="st">&quot;in&quot;</span>, <span class="at">res =</span> <span class="dv">300</span>)</span>
-<span id="cb97-34"><a href="visualizing-time-series-of-change.html#cb97-34" tabindex="-1"></a></span>
-<span id="cb97-35"><a href="visualizing-time-series-of-change.html#cb97-35" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>))</span>
-<span id="cb97-36"><a href="visualizing-time-series-of-change.html#cb97-36" tabindex="-1"></a><span class="fu">plot</span>(rast1848, <span class="at">col =</span> colors1848, <span class="at">main =</span> <span class="st">&quot;1848&quot;</span>,</span>
-<span id="cb97-37"><a href="visualizing-time-series-of-change.html#cb97-37" tabindex="-1"></a>     <span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb97-38"><a href="visualizing-time-series-of-change.html#cb97-38" tabindex="-1"></a><span class="fu">plot</span>(rast1910, <span class="at">col =</span> colors1848, <span class="at">main =</span> <span class="st">&quot;1910&quot;</span>,</span>
-<span id="cb97-39"><a href="visualizing-time-series-of-change.html#cb97-39" tabindex="-1"></a>     <span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb97-40"><a href="visualizing-time-series-of-change.html#cb97-40" tabindex="-1"></a><span class="fu">plot</span>(rast1973, <span class="at">col =</span> colors1973, <span class="at">main =</span> <span class="st">&quot;1973&quot;</span>,</span>
-<span id="cb97-41"><a href="visualizing-time-series-of-change.html#cb97-41" tabindex="-1"></a>     <span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb97-42"><a href="visualizing-time-series-of-change.html#cb97-42" tabindex="-1"></a><span class="fu">plot</span>(rast1995, <span class="at">col =</span> colors1973, <span class="at">main =</span> <span class="st">&quot;1995&quot;</span>,</span>
-<span id="cb97-43"><a href="visualizing-time-series-of-change.html#cb97-43" tabindex="-1"></a>     <span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb97-44"><a href="visualizing-time-series-of-change.html#cb97-44" tabindex="-1"></a><span class="fu">plot</span>(rast2018, <span class="at">col=</span>colors2018, <span class="at">main =</span> <span class="st">&quot;2018&quot;</span>, </span>
-<span id="cb97-45"><a href="visualizing-time-series-of-change.html#cb97-45" tabindex="-1"></a>     <span class="at">legend=</span><span class="cn">FALSE</span>)</span>
-<span id="cb97-46"><a href="visualizing-time-series-of-change.html#cb97-46" tabindex="-1"></a></span>
-<span id="cb97-47"><a href="visualizing-time-series-of-change.html#cb97-47" tabindex="-1"></a><span class="co"># add custom legend</span></span>
-<span id="cb97-48"><a href="visualizing-time-series-of-change.html#cb97-48" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>), </span>
-<span id="cb97-49"><a href="visualizing-time-series-of-change.html#cb97-49" tabindex="-1"></a>     <span class="at">new =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb97-50"><a href="visualizing-time-series-of-change.html#cb97-50" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="at">type =</span> <span class="st">&#39;l&#39;</span>, <span class="at">bty =</span> <span class="st">&#39;n&#39;</span>, <span class="at">xaxt =</span> <span class="st">&#39;n&#39;</span>, <span class="at">yaxt =</span> <span class="st">&#39;n&#39;</span>)</span>
-<span id="cb97-51"><a href="visualizing-time-series-of-change.html#cb97-51" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&quot;bottom&quot;</span>,</span>
-<span id="cb97-52"><a href="visualizing-time-series-of-change.html#cb97-52" tabindex="-1"></a>       <span class="at">legend=</span>landcover_class<span class="sc">$</span>name, <span class="at">fill=</span>colors1973, </span>
-<span id="cb97-53"><a href="visualizing-time-series-of-change.html#cb97-53" tabindex="-1"></a>       <span class="at">cex =</span> <span class="fl">0.8</span>, </span>
-<span id="cb97-54"><a href="visualizing-time-series-of-change.html#cb97-54" tabindex="-1"></a>       <span class="at">title=</span><span class="st">&quot;land cover classes&quot;</span>,</span>
-<span id="cb97-55"><a href="visualizing-time-series-of-change.html#cb97-55" tabindex="-1"></a>       <span class="at">ncol =</span> <span class="dv">2</span>)</span>
-<span id="cb97-56"><a href="visualizing-time-series-of-change.html#cb97-56" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
+<span id="cb97-32"><a href="visualizing-time-series-of-change.html#cb97-32" tabindex="-1"></a><span class="fu">png</span>(</span>
+<span id="cb97-33"><a href="visualizing-time-series-of-change.html#cb97-33" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">&quot;figs/fig_landCover_timeSeries.png&quot;</span>,</span>
+<span id="cb97-34"><a href="visualizing-time-series-of-change.html#cb97-34" tabindex="-1"></a>  <span class="at">width =</span> <span class="dv">15</span>, <span class="at">height =</span> <span class="dv">10</span>, <span class="at">units =</span> <span class="st">&quot;in&quot;</span>, <span class="at">res =</span> <span class="dv">300</span></span>
+<span id="cb97-35"><a href="visualizing-time-series-of-change.html#cb97-35" tabindex="-1"></a>)</span>
+<span id="cb97-36"><a href="visualizing-time-series-of-change.html#cb97-36" tabindex="-1"></a></span>
+<span id="cb97-37"><a href="visualizing-time-series-of-change.html#cb97-37" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">3</span>))</span>
+<span id="cb97-38"><a href="visualizing-time-series-of-change.html#cb97-38" tabindex="-1"></a><span class="fu">plot</span>(rast1848,</span>
+<span id="cb97-39"><a href="visualizing-time-series-of-change.html#cb97-39" tabindex="-1"></a>  <span class="at">col =</span> colors1848, <span class="at">main =</span> <span class="st">&quot;1848&quot;</span>,</span>
+<span id="cb97-40"><a href="visualizing-time-series-of-change.html#cb97-40" tabindex="-1"></a>  <span class="at">legend =</span> <span class="cn">FALSE</span></span>
+<span id="cb97-41"><a href="visualizing-time-series-of-change.html#cb97-41" tabindex="-1"></a>)</span>
+<span id="cb97-42"><a href="visualizing-time-series-of-change.html#cb97-42" tabindex="-1"></a><span class="fu">plot</span>(rast1910,</span>
+<span id="cb97-43"><a href="visualizing-time-series-of-change.html#cb97-43" tabindex="-1"></a>  <span class="at">col =</span> colors1848, <span class="at">main =</span> <span class="st">&quot;1910&quot;</span>,</span>
+<span id="cb97-44"><a href="visualizing-time-series-of-change.html#cb97-44" tabindex="-1"></a>  <span class="at">legend =</span> <span class="cn">FALSE</span></span>
+<span id="cb97-45"><a href="visualizing-time-series-of-change.html#cb97-45" tabindex="-1"></a>)</span>
+<span id="cb97-46"><a href="visualizing-time-series-of-change.html#cb97-46" tabindex="-1"></a><span class="fu">plot</span>(rast1973,</span>
+<span id="cb97-47"><a href="visualizing-time-series-of-change.html#cb97-47" tabindex="-1"></a>  <span class="at">col =</span> colors1973, <span class="at">main =</span> <span class="st">&quot;1973&quot;</span>,</span>
+<span id="cb97-48"><a href="visualizing-time-series-of-change.html#cb97-48" tabindex="-1"></a>  <span class="at">legend =</span> <span class="cn">FALSE</span></span>
+<span id="cb97-49"><a href="visualizing-time-series-of-change.html#cb97-49" tabindex="-1"></a>)</span>
+<span id="cb97-50"><a href="visualizing-time-series-of-change.html#cb97-50" tabindex="-1"></a><span class="fu">plot</span>(rast1995,</span>
+<span id="cb97-51"><a href="visualizing-time-series-of-change.html#cb97-51" tabindex="-1"></a>  <span class="at">col =</span> colors1973, <span class="at">main =</span> <span class="st">&quot;1995&quot;</span>,</span>
+<span id="cb97-52"><a href="visualizing-time-series-of-change.html#cb97-52" tabindex="-1"></a>  <span class="at">legend =</span> <span class="cn">FALSE</span></span>
+<span id="cb97-53"><a href="visualizing-time-series-of-change.html#cb97-53" tabindex="-1"></a>)</span>
+<span id="cb97-54"><a href="visualizing-time-series-of-change.html#cb97-54" tabindex="-1"></a><span class="fu">plot</span>(rast2018,</span>
+<span id="cb97-55"><a href="visualizing-time-series-of-change.html#cb97-55" tabindex="-1"></a>  <span class="at">col =</span> colors2018, <span class="at">main =</span> <span class="st">&quot;2018&quot;</span>,</span>
+<span id="cb97-56"><a href="visualizing-time-series-of-change.html#cb97-56" tabindex="-1"></a>  <span class="at">legend =</span> <span class="cn">FALSE</span></span>
+<span id="cb97-57"><a href="visualizing-time-series-of-change.html#cb97-57" tabindex="-1"></a>)</span>
+<span id="cb97-58"><a href="visualizing-time-series-of-change.html#cb97-58" tabindex="-1"></a></span>
+<span id="cb97-59"><a href="visualizing-time-series-of-change.html#cb97-59" tabindex="-1"></a><span class="co"># add custom legend</span></span>
+<span id="cb97-60"><a href="visualizing-time-series-of-change.html#cb97-60" tabindex="-1"></a><span class="fu">par</span>(</span>
+<span id="cb97-61"><a href="visualizing-time-series-of-change.html#cb97-61" tabindex="-1"></a>  <span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>),</span>
+<span id="cb97-62"><a href="visualizing-time-series-of-change.html#cb97-62" tabindex="-1"></a>  <span class="at">new =</span> <span class="cn">TRUE</span></span>
+<span id="cb97-63"><a href="visualizing-time-series-of-change.html#cb97-63" tabindex="-1"></a>)</span>
+<span id="cb97-64"><a href="visualizing-time-series-of-change.html#cb97-64" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">bty =</span> <span class="st">&quot;n&quot;</span>, <span class="at">xaxt =</span> <span class="st">&quot;n&quot;</span>, <span class="at">yaxt =</span> <span class="st">&quot;n&quot;</span>)</span>
+<span id="cb97-65"><a href="visualizing-time-series-of-change.html#cb97-65" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&quot;bottom&quot;</span>,</span>
+<span id="cb97-66"><a href="visualizing-time-series-of-change.html#cb97-66" tabindex="-1"></a>  <span class="at">legend =</span> landcover_class<span class="sc">$</span>name, <span class="at">fill =</span> colors1973,</span>
+<span id="cb97-67"><a href="visualizing-time-series-of-change.html#cb97-67" tabindex="-1"></a>  <span class="at">cex =</span> <span class="fl">0.8</span>,</span>
+<span id="cb97-68"><a href="visualizing-time-series-of-change.html#cb97-68" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">&quot;land cover classes&quot;</span>,</span>
+<span id="cb97-69"><a href="visualizing-time-series-of-change.html#cb97-69" tabindex="-1"></a>  <span class="at">ncol =</span> <span class="dv">2</span></span>
+<span id="cb97-70"><a href="visualizing-time-series-of-change.html#cb97-70" tabindex="-1"></a>)</span>
+<span id="cb97-71"><a href="visualizing-time-series-of-change.html#cb97-71" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
 <div class="float">
 <img src="figs/FigS1.png" alt="Landscape change over time with the inclusion of data across 1848, 1910, 1973, 1995 and 2018 revealed similar conclusions as before" />
 <div class="figcaption">Landscape change over time with the inclusion of data across 1848, 1910, 1973, 1995 and 2018 revealed similar conclusions as before</div>
@@ -617,61 +639,76 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb98-17"><a href="visualizing-time-series-of-change.html#cb98-17" tabindex="-1"></a>)</span>
 <span id="cb98-18"><a href="visualizing-time-series-of-change.html#cb98-18" tabindex="-1"></a></span>
 <span id="cb98-19"><a href="visualizing-time-series-of-change.html#cb98-19" tabindex="-1"></a><span class="do">## create a dataframe with names of classes and their corresponding values</span></span>
-<span id="cb98-20"><a href="visualizing-time-series-of-change.html#cb98-20" tabindex="-1"></a>landcover_reclass <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ID =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>,</span>
-<span id="cb98-21"><a href="visualizing-time-series-of-change.html#cb98-21" tabindex="-1"></a>                              <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;agriculture&quot;</span>, </span>
-<span id="cb98-22"><a href="visualizing-time-series-of-change.html#cb98-22" tabindex="-1"></a>                                       <span class="st">&quot;settlements&quot;</span>,</span>
-<span id="cb98-23"><a href="visualizing-time-series-of-change.html#cb98-23" tabindex="-1"></a>                                       <span class="st">&quot;shola_forest&quot;</span>,</span>
-<span id="cb98-24"><a href="visualizing-time-series-of-change.html#cb98-24" tabindex="-1"></a>                                   <span class="st">&quot;shola_grassland&quot;</span>,</span>
-<span id="cb98-25"><a href="visualizing-time-series-of-change.html#cb98-25" tabindex="-1"></a>                                      <span class="st">&quot;plantations&quot;</span>,</span>
-<span id="cb98-26"><a href="visualizing-time-series-of-change.html#cb98-26" tabindex="-1"></a>                                      <span class="st">&quot;water_bodies&quot;</span>))</span>
-<span id="cb98-27"><a href="visualizing-time-series-of-change.html#cb98-27" tabindex="-1"></a></span>
-<span id="cb98-28"><a href="visualizing-time-series-of-change.html#cb98-28" tabindex="-1"></a><span class="fu">levels</span>(rast1973_reclassified) <span class="ot">&lt;-</span> landcover_reclass</span>
-<span id="cb98-29"><a href="visualizing-time-series-of-change.html#cb98-29" tabindex="-1"></a><span class="fu">levels</span>(rast1995_reclassified) <span class="ot">&lt;-</span> landcover_reclass</span>
-<span id="cb98-30"><a href="visualizing-time-series-of-change.html#cb98-30" tabindex="-1"></a></span>
-<span id="cb98-31"><a href="visualizing-time-series-of-change.html#cb98-31" tabindex="-1"></a><span class="do">## side-by-side visualization</span></span>
-<span id="cb98-32"><a href="visualizing-time-series-of-change.html#cb98-32" tabindex="-1"></a>colors1973reclass <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb98-33"><a href="visualizing-time-series-of-change.html#cb98-33" tabindex="-1"></a>  <span class="st">&#39;#be4fc4&#39;</span>, <span class="co"># agriculture, violetish</span></span>
-<span id="cb98-34"><a href="visualizing-time-series-of-change.html#cb98-34" tabindex="-1"></a>  <span class="st">&#39;#b0a69d&#39;</span>, <span class="co"># settlements, grayish</span></span>
-<span id="cb98-35"><a href="visualizing-time-series-of-change.html#cb98-35" tabindex="-1"></a>  <span class="st">&#39;#025a05&#39;</span>, <span class="co"># shola forests, dark green</span></span>
-<span id="cb98-36"><a href="visualizing-time-series-of-change.html#cb98-36" tabindex="-1"></a>  <span class="st">&#39;#cbb315&#39;</span>, <span class="co"># shola grasslands, yellowish</span></span>
-<span id="cb98-37"><a href="visualizing-time-series-of-change.html#cb98-37" tabindex="-1"></a>  <span class="st">&#39;#c17111&#39;</span>, <span class="co"># plantations, brownish</span></span>
-<span id="cb98-38"><a href="visualizing-time-series-of-change.html#cb98-38" tabindex="-1"></a>  <span class="st">&#39;#2035df&#39;</span>  <span class="co"># waterbodies, royal blue</span></span>
-<span id="cb98-39"><a href="visualizing-time-series-of-change.html#cb98-39" tabindex="-1"></a>)</span>
-<span id="cb98-40"><a href="visualizing-time-series-of-change.html#cb98-40" tabindex="-1"></a></span>
-<span id="cb98-41"><a href="visualizing-time-series-of-change.html#cb98-41" tabindex="-1"></a>colors2018reclass <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb98-42"><a href="visualizing-time-series-of-change.html#cb98-42" tabindex="-1"></a>  <span class="st">&#39;#be4fc4&#39;</span>, <span class="co"># agriculture, violetish</span></span>
-<span id="cb98-43"><a href="visualizing-time-series-of-change.html#cb98-43" tabindex="-1"></a>  <span class="st">&#39;#025a05&#39;</span>, <span class="co"># shola forests, dark green</span></span>
-<span id="cb98-44"><a href="visualizing-time-series-of-change.html#cb98-44" tabindex="-1"></a>  <span class="st">&#39;#cbb315&#39;</span>, <span class="co"># shola grasslands, yellowish</span></span>
-<span id="cb98-45"><a href="visualizing-time-series-of-change.html#cb98-45" tabindex="-1"></a>  <span class="st">&#39;#c17111&#39;</span>, <span class="co"># plantations, brownish</span></span>
-<span id="cb98-46"><a href="visualizing-time-series-of-change.html#cb98-46" tabindex="-1"></a>  <span class="st">&#39;#b0a69d&#39;</span>, <span class="co"># settlements, grayish</span></span>
-<span id="cb98-47"><a href="visualizing-time-series-of-change.html#cb98-47" tabindex="-1"></a>  <span class="st">&#39;#2035df&#39;</span>  <span class="co"># waterbodies, royal blue</span></span>
-<span id="cb98-48"><a href="visualizing-time-series-of-change.html#cb98-48" tabindex="-1"></a>)</span>
-<span id="cb98-49"><a href="visualizing-time-series-of-change.html#cb98-49" tabindex="-1"></a></span>
-<span id="cb98-50"><a href="visualizing-time-series-of-change.html#cb98-50" tabindex="-1"></a><span class="do">## saving a high resolution visualization</span></span>
-<span id="cb98-51"><a href="visualizing-time-series-of-change.html#cb98-51" tabindex="-1"></a><span class="fu">png</span>(<span class="at">filename =</span> <span class="st">&quot;figs/fig_landCover_timeSeries_reclassified.png&quot;</span>, </span>
-<span id="cb98-52"><a href="visualizing-time-series-of-change.html#cb98-52" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">15</span>, <span class="at">height =</span> <span class="dv">10</span>, <span class="at">units =</span> <span class="st">&quot;in&quot;</span>, <span class="at">res =</span> <span class="dv">300</span>)</span>
+<span id="cb98-20"><a href="visualizing-time-series-of-change.html#cb98-20" tabindex="-1"></a>landcover_reclass <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb98-21"><a href="visualizing-time-series-of-change.html#cb98-21" tabindex="-1"></a>  <span class="at">ID =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>,</span>
+<span id="cb98-22"><a href="visualizing-time-series-of-change.html#cb98-22" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(</span>
+<span id="cb98-23"><a href="visualizing-time-series-of-change.html#cb98-23" tabindex="-1"></a>    <span class="st">&quot;agriculture&quot;</span>,</span>
+<span id="cb98-24"><a href="visualizing-time-series-of-change.html#cb98-24" tabindex="-1"></a>    <span class="st">&quot;settlements&quot;</span>,</span>
+<span id="cb98-25"><a href="visualizing-time-series-of-change.html#cb98-25" tabindex="-1"></a>    <span class="st">&quot;shola_forest&quot;</span>,</span>
+<span id="cb98-26"><a href="visualizing-time-series-of-change.html#cb98-26" tabindex="-1"></a>    <span class="st">&quot;shola_grassland&quot;</span>,</span>
+<span id="cb98-27"><a href="visualizing-time-series-of-change.html#cb98-27" tabindex="-1"></a>    <span class="st">&quot;plantations&quot;</span>,</span>
+<span id="cb98-28"><a href="visualizing-time-series-of-change.html#cb98-28" tabindex="-1"></a>    <span class="st">&quot;water_bodies&quot;</span></span>
+<span id="cb98-29"><a href="visualizing-time-series-of-change.html#cb98-29" tabindex="-1"></a>  )</span>
+<span id="cb98-30"><a href="visualizing-time-series-of-change.html#cb98-30" tabindex="-1"></a>)</span>
+<span id="cb98-31"><a href="visualizing-time-series-of-change.html#cb98-31" tabindex="-1"></a></span>
+<span id="cb98-32"><a href="visualizing-time-series-of-change.html#cb98-32" tabindex="-1"></a><span class="fu">levels</span>(rast1973_reclassified) <span class="ot">&lt;-</span> landcover_reclass</span>
+<span id="cb98-33"><a href="visualizing-time-series-of-change.html#cb98-33" tabindex="-1"></a><span class="fu">levels</span>(rast1995_reclassified) <span class="ot">&lt;-</span> landcover_reclass</span>
+<span id="cb98-34"><a href="visualizing-time-series-of-change.html#cb98-34" tabindex="-1"></a></span>
+<span id="cb98-35"><a href="visualizing-time-series-of-change.html#cb98-35" tabindex="-1"></a><span class="do">## side-by-side visualization</span></span>
+<span id="cb98-36"><a href="visualizing-time-series-of-change.html#cb98-36" tabindex="-1"></a>colors1973reclass <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb98-37"><a href="visualizing-time-series-of-change.html#cb98-37" tabindex="-1"></a>  <span class="st">&quot;#be4fc4&quot;</span>, <span class="co"># agriculture, violetish</span></span>
+<span id="cb98-38"><a href="visualizing-time-series-of-change.html#cb98-38" tabindex="-1"></a>  <span class="st">&quot;#b0a69d&quot;</span>, <span class="co"># settlements, grayish</span></span>
+<span id="cb98-39"><a href="visualizing-time-series-of-change.html#cb98-39" tabindex="-1"></a>  <span class="st">&quot;#025a05&quot;</span>, <span class="co"># shola forests, dark green</span></span>
+<span id="cb98-40"><a href="visualizing-time-series-of-change.html#cb98-40" tabindex="-1"></a>  <span class="st">&quot;#cbb315&quot;</span>, <span class="co"># shola grasslands, yellowish</span></span>
+<span id="cb98-41"><a href="visualizing-time-series-of-change.html#cb98-41" tabindex="-1"></a>  <span class="st">&quot;#c17111&quot;</span>, <span class="co"># plantations, brownish</span></span>
+<span id="cb98-42"><a href="visualizing-time-series-of-change.html#cb98-42" tabindex="-1"></a>  <span class="st">&quot;#2035df&quot;</span> <span class="co"># waterbodies, royal blue</span></span>
+<span id="cb98-43"><a href="visualizing-time-series-of-change.html#cb98-43" tabindex="-1"></a>)</span>
+<span id="cb98-44"><a href="visualizing-time-series-of-change.html#cb98-44" tabindex="-1"></a></span>
+<span id="cb98-45"><a href="visualizing-time-series-of-change.html#cb98-45" tabindex="-1"></a>colors2018reclass <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb98-46"><a href="visualizing-time-series-of-change.html#cb98-46" tabindex="-1"></a>  <span class="st">&quot;#be4fc4&quot;</span>, <span class="co"># agriculture, violetish</span></span>
+<span id="cb98-47"><a href="visualizing-time-series-of-change.html#cb98-47" tabindex="-1"></a>  <span class="st">&quot;#025a05&quot;</span>, <span class="co"># shola forests, dark green</span></span>
+<span id="cb98-48"><a href="visualizing-time-series-of-change.html#cb98-48" tabindex="-1"></a>  <span class="st">&quot;#cbb315&quot;</span>, <span class="co"># shola grasslands, yellowish</span></span>
+<span id="cb98-49"><a href="visualizing-time-series-of-change.html#cb98-49" tabindex="-1"></a>  <span class="st">&quot;#c17111&quot;</span>, <span class="co"># plantations, brownish</span></span>
+<span id="cb98-50"><a href="visualizing-time-series-of-change.html#cb98-50" tabindex="-1"></a>  <span class="st">&quot;#b0a69d&quot;</span>, <span class="co"># settlements, grayish</span></span>
+<span id="cb98-51"><a href="visualizing-time-series-of-change.html#cb98-51" tabindex="-1"></a>  <span class="st">&quot;#2035df&quot;</span> <span class="co"># waterbodies, royal blue</span></span>
+<span id="cb98-52"><a href="visualizing-time-series-of-change.html#cb98-52" tabindex="-1"></a>)</span>
 <span id="cb98-53"><a href="visualizing-time-series-of-change.html#cb98-53" tabindex="-1"></a></span>
-<span id="cb98-54"><a href="visualizing-time-series-of-change.html#cb98-54" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>))</span>
-<span id="cb98-55"><a href="visualizing-time-series-of-change.html#cb98-55" tabindex="-1"></a><span class="fu">plot</span>(rast1848, <span class="at">col =</span> colors1848, <span class="at">main =</span> <span class="st">&quot;1848&quot;</span>,</span>
-<span id="cb98-56"><a href="visualizing-time-series-of-change.html#cb98-56" tabindex="-1"></a>     <span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb98-57"><a href="visualizing-time-series-of-change.html#cb98-57" tabindex="-1"></a><span class="fu">plot</span>(rast1910, <span class="at">col =</span> colors1848, <span class="at">main =</span> <span class="st">&quot;1910&quot;</span>,</span>
-<span id="cb98-58"><a href="visualizing-time-series-of-change.html#cb98-58" tabindex="-1"></a>     <span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb98-59"><a href="visualizing-time-series-of-change.html#cb98-59" tabindex="-1"></a><span class="fu">plot</span>(rast1973_reclassified, <span class="at">col =</span> colors1973reclass, <span class="at">main =</span> <span class="st">&quot;1973&quot;</span>,<span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb98-60"><a href="visualizing-time-series-of-change.html#cb98-60" tabindex="-1"></a><span class="fu">plot</span>(rast1995_reclassified, <span class="at">col =</span> colors1973reclass, <span class="at">main =</span> <span class="st">&quot;1995&quot;</span>,<span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb98-61"><a href="visualizing-time-series-of-change.html#cb98-61" tabindex="-1"></a><span class="fu">plot</span>(rast2018, <span class="at">col=</span>colors2018reclass, <span class="at">main =</span> <span class="st">&quot;2018&quot;</span>, </span>
-<span id="cb98-62"><a href="visualizing-time-series-of-change.html#cb98-62" tabindex="-1"></a>     <span class="at">legend=</span><span class="cn">FALSE</span>)</span>
-<span id="cb98-63"><a href="visualizing-time-series-of-change.html#cb98-63" tabindex="-1"></a></span>
-<span id="cb98-64"><a href="visualizing-time-series-of-change.html#cb98-64" tabindex="-1"></a><span class="co"># add custom legend</span></span>
-<span id="cb98-65"><a href="visualizing-time-series-of-change.html#cb98-65" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>), </span>
-<span id="cb98-66"><a href="visualizing-time-series-of-change.html#cb98-66" tabindex="-1"></a>     <span class="at">new =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb98-67"><a href="visualizing-time-series-of-change.html#cb98-67" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="at">type =</span> <span class="st">&#39;l&#39;</span>, <span class="at">bty =</span> <span class="st">&#39;n&#39;</span>, <span class="at">xaxt =</span> <span class="st">&#39;n&#39;</span>, <span class="at">yaxt =</span> <span class="st">&#39;n&#39;</span>)</span>
-<span id="cb98-68"><a href="visualizing-time-series-of-change.html#cb98-68" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&quot;bottom&quot;</span>,</span>
-<span id="cb98-69"><a href="visualizing-time-series-of-change.html#cb98-69" tabindex="-1"></a>       <span class="at">legend=</span>landcover_reclass<span class="sc">$</span>name,</span>
-<span id="cb98-70"><a href="visualizing-time-series-of-change.html#cb98-70" tabindex="-1"></a>       <span class="at">fill=</span>colors1973reclass, </span>
-<span id="cb98-71"><a href="visualizing-time-series-of-change.html#cb98-71" tabindex="-1"></a>       <span class="at">cex =</span> <span class="fl">0.8</span>, </span>
-<span id="cb98-72"><a href="visualizing-time-series-of-change.html#cb98-72" tabindex="-1"></a>       <span class="at">title=</span><span class="st">&quot;land cover classes&quot;</span>,</span>
-<span id="cb98-73"><a href="visualizing-time-series-of-change.html#cb98-73" tabindex="-1"></a>       <span class="at">ncol =</span> <span class="dv">2</span>)</span>
-<span id="cb98-74"><a href="visualizing-time-series-of-change.html#cb98-74" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
+<span id="cb98-54"><a href="visualizing-time-series-of-change.html#cb98-54" tabindex="-1"></a><span class="do">## saving a high resolution visualization</span></span>
+<span id="cb98-55"><a href="visualizing-time-series-of-change.html#cb98-55" tabindex="-1"></a><span class="fu">png</span>(</span>
+<span id="cb98-56"><a href="visualizing-time-series-of-change.html#cb98-56" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">&quot;figs/fig_landCover_timeSeries_reclassified.png&quot;</span>,</span>
+<span id="cb98-57"><a href="visualizing-time-series-of-change.html#cb98-57" tabindex="-1"></a>  <span class="at">width =</span> <span class="dv">15</span>, <span class="at">height =</span> <span class="dv">10</span>, <span class="at">units =</span> <span class="st">&quot;in&quot;</span>, <span class="at">res =</span> <span class="dv">300</span></span>
+<span id="cb98-58"><a href="visualizing-time-series-of-change.html#cb98-58" tabindex="-1"></a>)</span>
+<span id="cb98-59"><a href="visualizing-time-series-of-change.html#cb98-59" tabindex="-1"></a></span>
+<span id="cb98-60"><a href="visualizing-time-series-of-change.html#cb98-60" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">3</span>))</span>
+<span id="cb98-61"><a href="visualizing-time-series-of-change.html#cb98-61" tabindex="-1"></a><span class="fu">plot</span>(rast1848,</span>
+<span id="cb98-62"><a href="visualizing-time-series-of-change.html#cb98-62" tabindex="-1"></a>  <span class="at">col =</span> colors1848, <span class="at">main =</span> <span class="st">&quot;1848&quot;</span>,</span>
+<span id="cb98-63"><a href="visualizing-time-series-of-change.html#cb98-63" tabindex="-1"></a>  <span class="at">legend =</span> <span class="cn">FALSE</span></span>
+<span id="cb98-64"><a href="visualizing-time-series-of-change.html#cb98-64" tabindex="-1"></a>)</span>
+<span id="cb98-65"><a href="visualizing-time-series-of-change.html#cb98-65" tabindex="-1"></a><span class="fu">plot</span>(rast1910,</span>
+<span id="cb98-66"><a href="visualizing-time-series-of-change.html#cb98-66" tabindex="-1"></a>  <span class="at">col =</span> colors1848, <span class="at">main =</span> <span class="st">&quot;1910&quot;</span>,</span>
+<span id="cb98-67"><a href="visualizing-time-series-of-change.html#cb98-67" tabindex="-1"></a>  <span class="at">legend =</span> <span class="cn">FALSE</span></span>
+<span id="cb98-68"><a href="visualizing-time-series-of-change.html#cb98-68" tabindex="-1"></a>)</span>
+<span id="cb98-69"><a href="visualizing-time-series-of-change.html#cb98-69" tabindex="-1"></a><span class="fu">plot</span>(rast1973_reclassified, <span class="at">col =</span> colors1973reclass, <span class="at">main =</span> <span class="st">&quot;1973&quot;</span>, <span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb98-70"><a href="visualizing-time-series-of-change.html#cb98-70" tabindex="-1"></a><span class="fu">plot</span>(rast1995_reclassified, <span class="at">col =</span> colors1973reclass, <span class="at">main =</span> <span class="st">&quot;1995&quot;</span>, <span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb98-71"><a href="visualizing-time-series-of-change.html#cb98-71" tabindex="-1"></a><span class="fu">plot</span>(rast2018,</span>
+<span id="cb98-72"><a href="visualizing-time-series-of-change.html#cb98-72" tabindex="-1"></a>  <span class="at">col =</span> colors2018reclass, <span class="at">main =</span> <span class="st">&quot;2018&quot;</span>,</span>
+<span id="cb98-73"><a href="visualizing-time-series-of-change.html#cb98-73" tabindex="-1"></a>  <span class="at">legend =</span> <span class="cn">FALSE</span></span>
+<span id="cb98-74"><a href="visualizing-time-series-of-change.html#cb98-74" tabindex="-1"></a>)</span>
+<span id="cb98-75"><a href="visualizing-time-series-of-change.html#cb98-75" tabindex="-1"></a></span>
+<span id="cb98-76"><a href="visualizing-time-series-of-change.html#cb98-76" tabindex="-1"></a><span class="co"># add custom legend</span></span>
+<span id="cb98-77"><a href="visualizing-time-series-of-change.html#cb98-77" tabindex="-1"></a><span class="fu">par</span>(</span>
+<span id="cb98-78"><a href="visualizing-time-series-of-change.html#cb98-78" tabindex="-1"></a>  <span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>),</span>
+<span id="cb98-79"><a href="visualizing-time-series-of-change.html#cb98-79" tabindex="-1"></a>  <span class="at">new =</span> <span class="cn">TRUE</span></span>
+<span id="cb98-80"><a href="visualizing-time-series-of-change.html#cb98-80" tabindex="-1"></a>)</span>
+<span id="cb98-81"><a href="visualizing-time-series-of-change.html#cb98-81" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">bty =</span> <span class="st">&quot;n&quot;</span>, <span class="at">xaxt =</span> <span class="st">&quot;n&quot;</span>, <span class="at">yaxt =</span> <span class="st">&quot;n&quot;</span>)</span>
+<span id="cb98-82"><a href="visualizing-time-series-of-change.html#cb98-82" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&quot;bottom&quot;</span>,</span>
+<span id="cb98-83"><a href="visualizing-time-series-of-change.html#cb98-83" tabindex="-1"></a>  <span class="at">legend =</span> landcover_reclass<span class="sc">$</span>name,</span>
+<span id="cb98-84"><a href="visualizing-time-series-of-change.html#cb98-84" tabindex="-1"></a>  <span class="at">fill =</span> colors1973reclass,</span>
+<span id="cb98-85"><a href="visualizing-time-series-of-change.html#cb98-85" tabindex="-1"></a>  <span class="at">cex =</span> <span class="fl">0.8</span>,</span>
+<span id="cb98-86"><a href="visualizing-time-series-of-change.html#cb98-86" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">&quot;land cover classes&quot;</span>,</span>
+<span id="cb98-87"><a href="visualizing-time-series-of-change.html#cb98-87" tabindex="-1"></a>  <span class="at">ncol =</span> <span class="dv">2</span></span>
+<span id="cb98-88"><a href="visualizing-time-series-of-change.html#cb98-88" tabindex="-1"></a>)</span>
+<span id="cb98-89"><a href="visualizing-time-series-of-change.html#cb98-89" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
 <div class="float">
 <img src="figs/fig_landCover_timeSeries_reclassified.png" alt="Landscape change over time with tea plantations and timber plantations subsumed into a single category" />
 <div class="figcaption">Landscape change over time with tea plantations and timber plantations subsumed into a single category</div>
@@ -681,106 +718,144 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">9.9</span> Creating smaller regions of interest for comparison<a href="visualizing-time-series-of-change.html#creating-smaller-regions-of-interest-for-comparison" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>While comparing a time series of landscape change shows how different land cover types have expanded or contracted over time, the broader regions of interest are slightly different across time periods. Here, I subset rasters by cropping smaller extents, prior to visualization.</p>
 <div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb99-1"><a href="visualizing-time-series-of-change.html#cb99-1" tabindex="-1"></a><span class="do">## south-western quadrant</span></span>
-<span id="cb99-2"><a href="visualizing-time-series-of-change.html#cb99-2" tabindex="-1"></a>sw1848 <span class="ot">&lt;-</span> <span class="fu">crop</span>(rast1848, <span class="fu">c</span>(<span class="dv">666000</span>,<span class="dv">675000</span>,</span>
-<span id="cb99-3"><a href="visualizing-time-series-of-change.html#cb99-3" tabindex="-1"></a>                        <span class="dv">1240050</span>,<span class="dv">1255000</span>))</span>
-<span id="cb99-4"><a href="visualizing-time-series-of-change.html#cb99-4" tabindex="-1"></a>sw1910 <span class="ot">&lt;-</span> <span class="fu">crop</span>(rast1910, <span class="fu">c</span>(<span class="dv">666000</span>,<span class="dv">675000</span>,</span>
-<span id="cb99-5"><a href="visualizing-time-series-of-change.html#cb99-5" tabindex="-1"></a>                        <span class="dv">1240050</span>,<span class="dv">1255000</span>))</span>
-<span id="cb99-6"><a href="visualizing-time-series-of-change.html#cb99-6" tabindex="-1"></a>sw1973 <span class="ot">&lt;-</span> <span class="fu">crop</span>(rast1973_reclassified, <span class="fu">c</span>(<span class="dv">666000</span>,<span class="dv">675000</span>,</span>
-<span id="cb99-7"><a href="visualizing-time-series-of-change.html#cb99-7" tabindex="-1"></a>                        <span class="dv">1240050</span>,<span class="dv">1255000</span>))</span>
-<span id="cb99-8"><a href="visualizing-time-series-of-change.html#cb99-8" tabindex="-1"></a>sw1995 <span class="ot">&lt;-</span> <span class="fu">crop</span>(rast1995_reclassified, <span class="fu">c</span>(<span class="dv">666000</span>,<span class="dv">675000</span>,</span>
-<span id="cb99-9"><a href="visualizing-time-series-of-change.html#cb99-9" tabindex="-1"></a>                        <span class="dv">1240050</span>,<span class="dv">1255000</span>))</span>
-<span id="cb99-10"><a href="visualizing-time-series-of-change.html#cb99-10" tabindex="-1"></a>sw2018 <span class="ot">&lt;-</span> <span class="fu">crop</span>(rast2018, <span class="fu">c</span>(<span class="dv">666000</span>,<span class="dv">675000</span>,</span>
-<span id="cb99-11"><a href="visualizing-time-series-of-change.html#cb99-11" tabindex="-1"></a>                        <span class="dv">1240050</span>,<span class="dv">1255000</span>))</span>
-<span id="cb99-12"><a href="visualizing-time-series-of-change.html#cb99-12" tabindex="-1"></a></span>
-<span id="cb99-13"><a href="visualizing-time-series-of-change.html#cb99-13" tabindex="-1"></a><span class="do">## saving a high resolution visualization</span></span>
-<span id="cb99-14"><a href="visualizing-time-series-of-change.html#cb99-14" tabindex="-1"></a><span class="fu">png</span>(<span class="at">filename =</span> <span class="st">&quot;figs/fig_landCover_timeSeries_southWesternRegion.png&quot;</span>,</span>
-<span id="cb99-15"><a href="visualizing-time-series-of-change.html#cb99-15" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">15</span>, <span class="at">height =</span> <span class="dv">10</span>, <span class="at">units =</span> <span class="st">&quot;in&quot;</span>, <span class="at">res =</span> <span class="dv">300</span>)</span>
-<span id="cb99-16"><a href="visualizing-time-series-of-change.html#cb99-16" tabindex="-1"></a></span>
-<span id="cb99-17"><a href="visualizing-time-series-of-change.html#cb99-17" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>))</span>
-<span id="cb99-18"><a href="visualizing-time-series-of-change.html#cb99-18" tabindex="-1"></a><span class="fu">plot</span>(sw1848, <span class="at">col =</span> <span class="fu">c</span>(<span class="st">&#39;#be4fc4&#39;</span>, <span class="co"># agriculture, violetish</span></span>
-<span id="cb99-19"><a href="visualizing-time-series-of-change.html#cb99-19" tabindex="-1"></a>  <span class="st">&#39;#b0a69d&#39;</span>, <span class="co"># settlements, grayish</span></span>
-<span id="cb99-20"><a href="visualizing-time-series-of-change.html#cb99-20" tabindex="-1"></a>  <span class="st">&#39;#025a05&#39;</span>, <span class="co"># shola forests, dark green</span></span>
-<span id="cb99-21"><a href="visualizing-time-series-of-change.html#cb99-21" tabindex="-1"></a>  <span class="st">&#39;#cbb315&#39;</span>, <span class="co"># shola grasslands, yellowish</span></span>
-<span id="cb99-22"><a href="visualizing-time-series-of-change.html#cb99-22" tabindex="-1"></a>  <span class="st">&#39;#2035df&#39;</span>  <span class="co"># waterbodies, royal blue</span></span>
-<span id="cb99-23"><a href="visualizing-time-series-of-change.html#cb99-23" tabindex="-1"></a>),<span class="at">main =</span> <span class="st">&quot;1848&quot;</span>, <span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb99-24"><a href="visualizing-time-series-of-change.html#cb99-24" tabindex="-1"></a><span class="fu">plot</span>(sw1910, <span class="at">col =</span> <span class="fu">c</span>(</span>
-<span id="cb99-25"><a href="visualizing-time-series-of-change.html#cb99-25" tabindex="-1"></a>  <span class="st">&#39;#b0a69d&#39;</span>, <span class="co"># settlements, grayish</span></span>
-<span id="cb99-26"><a href="visualizing-time-series-of-change.html#cb99-26" tabindex="-1"></a>  <span class="st">&#39;#025a05&#39;</span>, <span class="co"># shola forests, dark green</span></span>
-<span id="cb99-27"><a href="visualizing-time-series-of-change.html#cb99-27" tabindex="-1"></a>  <span class="st">&#39;#cbb315&#39;</span>, <span class="co"># shola grasslands, yellowish</span></span>
-<span id="cb99-28"><a href="visualizing-time-series-of-change.html#cb99-28" tabindex="-1"></a>  <span class="st">&#39;#2035df&#39;</span>  <span class="co"># waterbodies, royal blue</span></span>
-<span id="cb99-29"><a href="visualizing-time-series-of-change.html#cb99-29" tabindex="-1"></a>), <span class="at">main =</span> <span class="st">&quot;1910&quot;</span>, <span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb99-30"><a href="visualizing-time-series-of-change.html#cb99-30" tabindex="-1"></a><span class="fu">plot</span>(sw1973, <span class="at">col =</span> <span class="fu">c</span>(<span class="st">&#39;#be4fc4&#39;</span>, <span class="co"># agriculture, violetish</span></span>
-<span id="cb99-31"><a href="visualizing-time-series-of-change.html#cb99-31" tabindex="-1"></a>  <span class="st">&#39;#025a05&#39;</span>, <span class="co"># shola forests, dark green</span></span>
-<span id="cb99-32"><a href="visualizing-time-series-of-change.html#cb99-32" tabindex="-1"></a>  <span class="st">&#39;#cbb315&#39;</span>, <span class="co"># shola grasslands, yellowish</span></span>
-<span id="cb99-33"><a href="visualizing-time-series-of-change.html#cb99-33" tabindex="-1"></a>  <span class="st">&#39;#c17111&#39;</span>, <span class="co"># plantations, brownish</span></span>
-<span id="cb99-34"><a href="visualizing-time-series-of-change.html#cb99-34" tabindex="-1"></a>  <span class="st">&#39;#2035df&#39;</span>  <span class="co"># waterbodies, royal blue</span></span>
-<span id="cb99-35"><a href="visualizing-time-series-of-change.html#cb99-35" tabindex="-1"></a>), <span class="at">main =</span> <span class="st">&quot;1973&quot;</span>,<span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb99-36"><a href="visualizing-time-series-of-change.html#cb99-36" tabindex="-1"></a><span class="fu">plot</span>(sw1995, <span class="at">col =</span> <span class="fu">c</span>(<span class="st">&#39;#be4fc4&#39;</span>, <span class="co"># agriculture, violetish</span></span>
-<span id="cb99-37"><a href="visualizing-time-series-of-change.html#cb99-37" tabindex="-1"></a>                     <span class="st">&#39;#b0a69d&#39;</span>, <span class="co"># settlements, grayish</span></span>
-<span id="cb99-38"><a href="visualizing-time-series-of-change.html#cb99-38" tabindex="-1"></a>   <span class="st">&#39;#025a05&#39;</span>, <span class="co"># shola forests, dark green</span></span>
-<span id="cb99-39"><a href="visualizing-time-series-of-change.html#cb99-39" tabindex="-1"></a>  <span class="st">&#39;#cbb315&#39;</span>, <span class="co"># shola grasslands, yellowish</span></span>
-<span id="cb99-40"><a href="visualizing-time-series-of-change.html#cb99-40" tabindex="-1"></a>  <span class="st">&#39;#c17111&#39;</span>, <span class="co"># plantations, brownish</span></span>
-<span id="cb99-41"><a href="visualizing-time-series-of-change.html#cb99-41" tabindex="-1"></a>  <span class="st">&#39;#2035df&#39;</span>  <span class="co"># waterbodies, royal blue</span></span>
-<span id="cb99-42"><a href="visualizing-time-series-of-change.html#cb99-42" tabindex="-1"></a>), <span class="at">main =</span> <span class="st">&quot;1995&quot;</span>,<span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb99-43"><a href="visualizing-time-series-of-change.html#cb99-43" tabindex="-1"></a><span class="fu">plot</span>(sw2018, <span class="at">col=</span>colors2018reclass, <span class="at">main =</span> <span class="st">&quot;2018&quot;</span>, </span>
-<span id="cb99-44"><a href="visualizing-time-series-of-change.html#cb99-44" tabindex="-1"></a>     <span class="at">legend=</span><span class="cn">FALSE</span>)</span>
-<span id="cb99-45"><a href="visualizing-time-series-of-change.html#cb99-45" tabindex="-1"></a></span>
-<span id="cb99-46"><a href="visualizing-time-series-of-change.html#cb99-46" tabindex="-1"></a><span class="co"># add custom legend</span></span>
-<span id="cb99-47"><a href="visualizing-time-series-of-change.html#cb99-47" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>), </span>
-<span id="cb99-48"><a href="visualizing-time-series-of-change.html#cb99-48" tabindex="-1"></a>     <span class="at">new =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb99-49"><a href="visualizing-time-series-of-change.html#cb99-49" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="at">type =</span> <span class="st">&#39;l&#39;</span>, <span class="at">bty =</span> <span class="st">&#39;n&#39;</span>, <span class="at">xaxt =</span> <span class="st">&#39;n&#39;</span>, <span class="at">yaxt =</span> <span class="st">&#39;n&#39;</span>)</span>
-<span id="cb99-50"><a href="visualizing-time-series-of-change.html#cb99-50" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&quot;bottom&quot;</span>,</span>
-<span id="cb99-51"><a href="visualizing-time-series-of-change.html#cb99-51" tabindex="-1"></a>       <span class="at">legend=</span>landcover_reclass<span class="sc">$</span>name,</span>
-<span id="cb99-52"><a href="visualizing-time-series-of-change.html#cb99-52" tabindex="-1"></a>       <span class="at">fill=</span>colors1973reclass, </span>
-<span id="cb99-53"><a href="visualizing-time-series-of-change.html#cb99-53" tabindex="-1"></a>       <span class="at">cex =</span> <span class="fl">0.8</span>, </span>
-<span id="cb99-54"><a href="visualizing-time-series-of-change.html#cb99-54" tabindex="-1"></a>       <span class="at">title=</span><span class="st">&quot;land cover classes&quot;</span>,</span>
-<span id="cb99-55"><a href="visualizing-time-series-of-change.html#cb99-55" tabindex="-1"></a>       <span class="at">ncol =</span> <span class="dv">2</span>)</span>
-<span id="cb99-56"><a href="visualizing-time-series-of-change.html#cb99-56" tabindex="-1"></a><span class="fu">dev.off</span>()</span>
-<span id="cb99-57"><a href="visualizing-time-series-of-change.html#cb99-57" tabindex="-1"></a></span>
-<span id="cb99-58"><a href="visualizing-time-series-of-change.html#cb99-58" tabindex="-1"></a><span class="co"># western quadrant</span></span>
-<span id="cb99-59"><a href="visualizing-time-series-of-change.html#cb99-59" tabindex="-1"></a>w1848 <span class="ot">&lt;-</span> <span class="fu">crop</span>(rast1848, <span class="fu">c</span>(<span class="dv">665000</span>,<span class="dv">680000</span>,</span>
-<span id="cb99-60"><a href="visualizing-time-series-of-change.html#cb99-60" tabindex="-1"></a>                        <span class="dv">1255000</span>,<span class="dv">1265000</span>))</span>
-<span id="cb99-61"><a href="visualizing-time-series-of-change.html#cb99-61" tabindex="-1"></a>w1910 <span class="ot">&lt;-</span> <span class="fu">crop</span>(rast1910, <span class="fu">c</span>(<span class="dv">665000</span>,<span class="dv">680000</span>,</span>
-<span id="cb99-62"><a href="visualizing-time-series-of-change.html#cb99-62" tabindex="-1"></a>                        <span class="dv">1255000</span>,<span class="dv">1265000</span>))</span>
-<span id="cb99-63"><a href="visualizing-time-series-of-change.html#cb99-63" tabindex="-1"></a>w1973 <span class="ot">&lt;-</span> <span class="fu">crop</span>(rast1973_reclassified, <span class="fu">c</span>(<span class="dv">665000</span>,<span class="dv">680000</span>,</span>
-<span id="cb99-64"><a href="visualizing-time-series-of-change.html#cb99-64" tabindex="-1"></a>                        <span class="dv">1255000</span>,<span class="dv">1265000</span>))</span>
-<span id="cb99-65"><a href="visualizing-time-series-of-change.html#cb99-65" tabindex="-1"></a>w1995 <span class="ot">&lt;-</span> <span class="fu">crop</span>(rast1995_reclassified, <span class="fu">c</span>(<span class="dv">665000</span>,<span class="dv">680000</span>,</span>
-<span id="cb99-66"><a href="visualizing-time-series-of-change.html#cb99-66" tabindex="-1"></a>                        <span class="dv">1255000</span>,<span class="dv">1265000</span>))</span>
-<span id="cb99-67"><a href="visualizing-time-series-of-change.html#cb99-67" tabindex="-1"></a>w2018 <span class="ot">&lt;-</span> <span class="fu">crop</span>(rast2018, <span class="fu">c</span>(<span class="dv">665000</span>,<span class="dv">680000</span>,</span>
-<span id="cb99-68"><a href="visualizing-time-series-of-change.html#cb99-68" tabindex="-1"></a>                        <span class="dv">1255000</span>,<span class="dv">1265000</span>))</span>
-<span id="cb99-69"><a href="visualizing-time-series-of-change.html#cb99-69" tabindex="-1"></a></span>
-<span id="cb99-70"><a href="visualizing-time-series-of-change.html#cb99-70" tabindex="-1"></a><span class="do">## saving a high resolution visualization</span></span>
-<span id="cb99-71"><a href="visualizing-time-series-of-change.html#cb99-71" tabindex="-1"></a><span class="fu">png</span>(<span class="at">filename =</span> <span class="st">&quot;figs/fig_landCover_timeSeries_westernRegion.png&quot;</span>,</span>
-<span id="cb99-72"><a href="visualizing-time-series-of-change.html#cb99-72" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">15</span>, <span class="at">height =</span> <span class="dv">10</span>, <span class="at">units =</span> <span class="st">&quot;in&quot;</span>, <span class="at">res =</span> <span class="dv">300</span>)</span>
-<span id="cb99-73"><a href="visualizing-time-series-of-change.html#cb99-73" tabindex="-1"></a></span>
-<span id="cb99-74"><a href="visualizing-time-series-of-change.html#cb99-74" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>))</span>
-<span id="cb99-75"><a href="visualizing-time-series-of-change.html#cb99-75" tabindex="-1"></a><span class="fu">plot</span>(w1848, <span class="at">col =</span> <span class="fu">c</span>(<span class="st">&#39;#be4fc4&#39;</span>, <span class="co"># agriculture, violetish</span></span>
-<span id="cb99-76"><a href="visualizing-time-series-of-change.html#cb99-76" tabindex="-1"></a>   <span class="st">&#39;#025a05&#39;</span>, <span class="co"># shola forests, dark green</span></span>
-<span id="cb99-77"><a href="visualizing-time-series-of-change.html#cb99-77" tabindex="-1"></a>  <span class="st">&#39;#cbb315&#39;</span> <span class="co"># shola grasslands, yellowish</span></span>
-<span id="cb99-78"><a href="visualizing-time-series-of-change.html#cb99-78" tabindex="-1"></a>),<span class="at">main =</span> <span class="st">&quot;1848&quot;</span>, <span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb99-79"><a href="visualizing-time-series-of-change.html#cb99-79" tabindex="-1"></a><span class="fu">plot</span>(w1910, <span class="at">col =</span> <span class="fu">c</span>(</span>
-<span id="cb99-80"><a href="visualizing-time-series-of-change.html#cb99-80" tabindex="-1"></a>  <span class="st">&#39;#be4fc4&#39;</span>,</span>
-<span id="cb99-81"><a href="visualizing-time-series-of-change.html#cb99-81" tabindex="-1"></a>  <span class="st">&#39;#b0a69d&#39;</span>, <span class="co"># settlements, grayish</span></span>
-<span id="cb99-82"><a href="visualizing-time-series-of-change.html#cb99-82" tabindex="-1"></a>  <span class="st">&#39;#025a05&#39;</span>, <span class="co"># shola forests, dark green</span></span>
-<span id="cb99-83"><a href="visualizing-time-series-of-change.html#cb99-83" tabindex="-1"></a>  <span class="st">&#39;#cbb315&#39;</span>, <span class="co"># shola grasslands, yellowish</span></span>
-<span id="cb99-84"><a href="visualizing-time-series-of-change.html#cb99-84" tabindex="-1"></a>  <span class="st">&#39;#2035df&#39;</span>  <span class="co"># waterbodies, royal blue</span></span>
-<span id="cb99-85"><a href="visualizing-time-series-of-change.html#cb99-85" tabindex="-1"></a>), <span class="at">main =</span> <span class="st">&quot;1910&quot;</span>, <span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb99-86"><a href="visualizing-time-series-of-change.html#cb99-86" tabindex="-1"></a><span class="fu">plot</span>(w1973, <span class="at">col =</span> colors1973reclass, <span class="at">main =</span> <span class="st">&quot;1973&quot;</span>,<span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb99-87"><a href="visualizing-time-series-of-change.html#cb99-87" tabindex="-1"></a><span class="fu">plot</span>(w1995, <span class="at">col =</span> colors1973reclass, <span class="at">main =</span> <span class="st">&quot;1995&quot;</span>,<span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb99-88"><a href="visualizing-time-series-of-change.html#cb99-88" tabindex="-1"></a><span class="fu">plot</span>(w2018, <span class="at">col=</span>colors2018reclass, <span class="at">main =</span> <span class="st">&quot;2018&quot;</span>, </span>
-<span id="cb99-89"><a href="visualizing-time-series-of-change.html#cb99-89" tabindex="-1"></a>     <span class="at">legend=</span><span class="cn">FALSE</span>)</span>
-<span id="cb99-90"><a href="visualizing-time-series-of-change.html#cb99-90" tabindex="-1"></a></span>
-<span id="cb99-91"><a href="visualizing-time-series-of-change.html#cb99-91" tabindex="-1"></a><span class="co"># add custom legend</span></span>
-<span id="cb99-92"><a href="visualizing-time-series-of-change.html#cb99-92" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>), </span>
-<span id="cb99-93"><a href="visualizing-time-series-of-change.html#cb99-93" tabindex="-1"></a>     <span class="at">new =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb99-94"><a href="visualizing-time-series-of-change.html#cb99-94" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="at">type =</span> <span class="st">&#39;l&#39;</span>, <span class="at">bty =</span> <span class="st">&#39;n&#39;</span>, <span class="at">xaxt =</span> <span class="st">&#39;n&#39;</span>, <span class="at">yaxt =</span> <span class="st">&#39;n&#39;</span>)</span>
-<span id="cb99-95"><a href="visualizing-time-series-of-change.html#cb99-95" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&quot;bottom&quot;</span>,</span>
-<span id="cb99-96"><a href="visualizing-time-series-of-change.html#cb99-96" tabindex="-1"></a>       <span class="at">legend=</span>landcover_reclass<span class="sc">$</span>name,</span>
-<span id="cb99-97"><a href="visualizing-time-series-of-change.html#cb99-97" tabindex="-1"></a>       <span class="at">fill=</span>colors1973reclass, </span>
-<span id="cb99-98"><a href="visualizing-time-series-of-change.html#cb99-98" tabindex="-1"></a>       <span class="at">cex =</span> <span class="fl">0.8</span>, </span>
-<span id="cb99-99"><a href="visualizing-time-series-of-change.html#cb99-99" tabindex="-1"></a>       <span class="at">title=</span><span class="st">&quot;land cover classes&quot;</span>,</span>
-<span id="cb99-100"><a href="visualizing-time-series-of-change.html#cb99-100" tabindex="-1"></a>       <span class="at">ncol =</span> <span class="dv">2</span>)</span>
-<span id="cb99-101"><a href="visualizing-time-series-of-change.html#cb99-101" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
+<span id="cb99-2"><a href="visualizing-time-series-of-change.html#cb99-2" tabindex="-1"></a>sw1848 <span class="ot">&lt;-</span> <span class="fu">crop</span>(rast1848, <span class="fu">c</span>(</span>
+<span id="cb99-3"><a href="visualizing-time-series-of-change.html#cb99-3" tabindex="-1"></a>  <span class="dv">666000</span>, <span class="dv">675000</span>,</span>
+<span id="cb99-4"><a href="visualizing-time-series-of-change.html#cb99-4" tabindex="-1"></a>  <span class="dv">1240050</span>, <span class="dv">1255000</span></span>
+<span id="cb99-5"><a href="visualizing-time-series-of-change.html#cb99-5" tabindex="-1"></a>))</span>
+<span id="cb99-6"><a href="visualizing-time-series-of-change.html#cb99-6" tabindex="-1"></a>sw1910 <span class="ot">&lt;-</span> <span class="fu">crop</span>(rast1910, <span class="fu">c</span>(</span>
+<span id="cb99-7"><a href="visualizing-time-series-of-change.html#cb99-7" tabindex="-1"></a>  <span class="dv">666000</span>, <span class="dv">675000</span>,</span>
+<span id="cb99-8"><a href="visualizing-time-series-of-change.html#cb99-8" tabindex="-1"></a>  <span class="dv">1240050</span>, <span class="dv">1255000</span></span>
+<span id="cb99-9"><a href="visualizing-time-series-of-change.html#cb99-9" tabindex="-1"></a>))</span>
+<span id="cb99-10"><a href="visualizing-time-series-of-change.html#cb99-10" tabindex="-1"></a>sw1973 <span class="ot">&lt;-</span> <span class="fu">crop</span>(rast1973_reclassified, <span class="fu">c</span>(</span>
+<span id="cb99-11"><a href="visualizing-time-series-of-change.html#cb99-11" tabindex="-1"></a>  <span class="dv">666000</span>, <span class="dv">675000</span>,</span>
+<span id="cb99-12"><a href="visualizing-time-series-of-change.html#cb99-12" tabindex="-1"></a>  <span class="dv">1240050</span>, <span class="dv">1255000</span></span>
+<span id="cb99-13"><a href="visualizing-time-series-of-change.html#cb99-13" tabindex="-1"></a>))</span>
+<span id="cb99-14"><a href="visualizing-time-series-of-change.html#cb99-14" tabindex="-1"></a>sw1995 <span class="ot">&lt;-</span> <span class="fu">crop</span>(rast1995_reclassified, <span class="fu">c</span>(</span>
+<span id="cb99-15"><a href="visualizing-time-series-of-change.html#cb99-15" tabindex="-1"></a>  <span class="dv">666000</span>, <span class="dv">675000</span>,</span>
+<span id="cb99-16"><a href="visualizing-time-series-of-change.html#cb99-16" tabindex="-1"></a>  <span class="dv">1240050</span>, <span class="dv">1255000</span></span>
+<span id="cb99-17"><a href="visualizing-time-series-of-change.html#cb99-17" tabindex="-1"></a>))</span>
+<span id="cb99-18"><a href="visualizing-time-series-of-change.html#cb99-18" tabindex="-1"></a>sw2018 <span class="ot">&lt;-</span> <span class="fu">crop</span>(rast2018, <span class="fu">c</span>(</span>
+<span id="cb99-19"><a href="visualizing-time-series-of-change.html#cb99-19" tabindex="-1"></a>  <span class="dv">666000</span>, <span class="dv">675000</span>,</span>
+<span id="cb99-20"><a href="visualizing-time-series-of-change.html#cb99-20" tabindex="-1"></a>  <span class="dv">1240050</span>, <span class="dv">1255000</span></span>
+<span id="cb99-21"><a href="visualizing-time-series-of-change.html#cb99-21" tabindex="-1"></a>))</span>
+<span id="cb99-22"><a href="visualizing-time-series-of-change.html#cb99-22" tabindex="-1"></a></span>
+<span id="cb99-23"><a href="visualizing-time-series-of-change.html#cb99-23" tabindex="-1"></a><span class="do">## saving a high resolution visualization</span></span>
+<span id="cb99-24"><a href="visualizing-time-series-of-change.html#cb99-24" tabindex="-1"></a><span class="fu">png</span>(</span>
+<span id="cb99-25"><a href="visualizing-time-series-of-change.html#cb99-25" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">&quot;figs/fig_landCover_timeSeries_southWesternRegion.png&quot;</span>,</span>
+<span id="cb99-26"><a href="visualizing-time-series-of-change.html#cb99-26" tabindex="-1"></a>  <span class="at">width =</span> <span class="dv">15</span>, <span class="at">height =</span> <span class="dv">10</span>, <span class="at">units =</span> <span class="st">&quot;in&quot;</span>, <span class="at">res =</span> <span class="dv">300</span></span>
+<span id="cb99-27"><a href="visualizing-time-series-of-change.html#cb99-27" tabindex="-1"></a>)</span>
+<span id="cb99-28"><a href="visualizing-time-series-of-change.html#cb99-28" tabindex="-1"></a></span>
+<span id="cb99-29"><a href="visualizing-time-series-of-change.html#cb99-29" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">3</span>))</span>
+<span id="cb99-30"><a href="visualizing-time-series-of-change.html#cb99-30" tabindex="-1"></a><span class="fu">plot</span>(sw1848, <span class="at">col =</span> <span class="fu">c</span>(</span>
+<span id="cb99-31"><a href="visualizing-time-series-of-change.html#cb99-31" tabindex="-1"></a>  <span class="st">&quot;#be4fc4&quot;</span>, <span class="co"># agriculture, violetish</span></span>
+<span id="cb99-32"><a href="visualizing-time-series-of-change.html#cb99-32" tabindex="-1"></a>  <span class="st">&quot;#b0a69d&quot;</span>, <span class="co"># settlements, grayish</span></span>
+<span id="cb99-33"><a href="visualizing-time-series-of-change.html#cb99-33" tabindex="-1"></a>  <span class="st">&quot;#025a05&quot;</span>, <span class="co"># shola forests, dark green</span></span>
+<span id="cb99-34"><a href="visualizing-time-series-of-change.html#cb99-34" tabindex="-1"></a>  <span class="st">&quot;#cbb315&quot;</span>, <span class="co"># shola grasslands, yellowish</span></span>
+<span id="cb99-35"><a href="visualizing-time-series-of-change.html#cb99-35" tabindex="-1"></a>  <span class="st">&quot;#2035df&quot;</span> <span class="co"># waterbodies, royal blue</span></span>
+<span id="cb99-36"><a href="visualizing-time-series-of-change.html#cb99-36" tabindex="-1"></a>), <span class="at">main =</span> <span class="st">&quot;1848&quot;</span>, <span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb99-37"><a href="visualizing-time-series-of-change.html#cb99-37" tabindex="-1"></a><span class="fu">plot</span>(sw1910, <span class="at">col =</span> <span class="fu">c</span>(</span>
+<span id="cb99-38"><a href="visualizing-time-series-of-change.html#cb99-38" tabindex="-1"></a>  <span class="st">&quot;#b0a69d&quot;</span>, <span class="co"># settlements, grayish</span></span>
+<span id="cb99-39"><a href="visualizing-time-series-of-change.html#cb99-39" tabindex="-1"></a>  <span class="st">&quot;#025a05&quot;</span>, <span class="co"># shola forests, dark green</span></span>
+<span id="cb99-40"><a href="visualizing-time-series-of-change.html#cb99-40" tabindex="-1"></a>  <span class="st">&quot;#cbb315&quot;</span>, <span class="co"># shola grasslands, yellowish</span></span>
+<span id="cb99-41"><a href="visualizing-time-series-of-change.html#cb99-41" tabindex="-1"></a>  <span class="st">&quot;#2035df&quot;</span> <span class="co"># waterbodies, royal blue</span></span>
+<span id="cb99-42"><a href="visualizing-time-series-of-change.html#cb99-42" tabindex="-1"></a>), <span class="at">main =</span> <span class="st">&quot;1910&quot;</span>, <span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb99-43"><a href="visualizing-time-series-of-change.html#cb99-43" tabindex="-1"></a><span class="fu">plot</span>(sw1973, <span class="at">col =</span> <span class="fu">c</span>(</span>
+<span id="cb99-44"><a href="visualizing-time-series-of-change.html#cb99-44" tabindex="-1"></a>  <span class="st">&quot;#be4fc4&quot;</span>, <span class="co"># agriculture, violetish</span></span>
+<span id="cb99-45"><a href="visualizing-time-series-of-change.html#cb99-45" tabindex="-1"></a>  <span class="st">&quot;#025a05&quot;</span>, <span class="co"># shola forests, dark green</span></span>
+<span id="cb99-46"><a href="visualizing-time-series-of-change.html#cb99-46" tabindex="-1"></a>  <span class="st">&quot;#cbb315&quot;</span>, <span class="co"># shola grasslands, yellowish</span></span>
+<span id="cb99-47"><a href="visualizing-time-series-of-change.html#cb99-47" tabindex="-1"></a>  <span class="st">&quot;#c17111&quot;</span>, <span class="co"># plantations, brownish</span></span>
+<span id="cb99-48"><a href="visualizing-time-series-of-change.html#cb99-48" tabindex="-1"></a>  <span class="st">&quot;#2035df&quot;</span> <span class="co"># waterbodies, royal blue</span></span>
+<span id="cb99-49"><a href="visualizing-time-series-of-change.html#cb99-49" tabindex="-1"></a>), <span class="at">main =</span> <span class="st">&quot;1973&quot;</span>, <span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb99-50"><a href="visualizing-time-series-of-change.html#cb99-50" tabindex="-1"></a><span class="fu">plot</span>(sw1995, <span class="at">col =</span> <span class="fu">c</span>(</span>
+<span id="cb99-51"><a href="visualizing-time-series-of-change.html#cb99-51" tabindex="-1"></a>  <span class="st">&quot;#be4fc4&quot;</span>, <span class="co"># agriculture, violetish</span></span>
+<span id="cb99-52"><a href="visualizing-time-series-of-change.html#cb99-52" tabindex="-1"></a>  <span class="st">&quot;#b0a69d&quot;</span>, <span class="co"># settlements, grayish</span></span>
+<span id="cb99-53"><a href="visualizing-time-series-of-change.html#cb99-53" tabindex="-1"></a>  <span class="st">&quot;#025a05&quot;</span>, <span class="co"># shola forests, dark green</span></span>
+<span id="cb99-54"><a href="visualizing-time-series-of-change.html#cb99-54" tabindex="-1"></a>  <span class="st">&quot;#cbb315&quot;</span>, <span class="co"># shola grasslands, yellowish</span></span>
+<span id="cb99-55"><a href="visualizing-time-series-of-change.html#cb99-55" tabindex="-1"></a>  <span class="st">&quot;#c17111&quot;</span>, <span class="co"># plantations, brownish</span></span>
+<span id="cb99-56"><a href="visualizing-time-series-of-change.html#cb99-56" tabindex="-1"></a>  <span class="st">&quot;#2035df&quot;</span> <span class="co"># waterbodies, royal blue</span></span>
+<span id="cb99-57"><a href="visualizing-time-series-of-change.html#cb99-57" tabindex="-1"></a>), <span class="at">main =</span> <span class="st">&quot;1995&quot;</span>, <span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb99-58"><a href="visualizing-time-series-of-change.html#cb99-58" tabindex="-1"></a><span class="fu">plot</span>(sw2018,</span>
+<span id="cb99-59"><a href="visualizing-time-series-of-change.html#cb99-59" tabindex="-1"></a>  <span class="at">col =</span> colors2018reclass, <span class="at">main =</span> <span class="st">&quot;2018&quot;</span>,</span>
+<span id="cb99-60"><a href="visualizing-time-series-of-change.html#cb99-60" tabindex="-1"></a>  <span class="at">legend =</span> <span class="cn">FALSE</span></span>
+<span id="cb99-61"><a href="visualizing-time-series-of-change.html#cb99-61" tabindex="-1"></a>)</span>
+<span id="cb99-62"><a href="visualizing-time-series-of-change.html#cb99-62" tabindex="-1"></a></span>
+<span id="cb99-63"><a href="visualizing-time-series-of-change.html#cb99-63" tabindex="-1"></a><span class="co"># add custom legend</span></span>
+<span id="cb99-64"><a href="visualizing-time-series-of-change.html#cb99-64" tabindex="-1"></a><span class="fu">par</span>(</span>
+<span id="cb99-65"><a href="visualizing-time-series-of-change.html#cb99-65" tabindex="-1"></a>  <span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>),</span>
+<span id="cb99-66"><a href="visualizing-time-series-of-change.html#cb99-66" tabindex="-1"></a>  <span class="at">new =</span> <span class="cn">TRUE</span></span>
+<span id="cb99-67"><a href="visualizing-time-series-of-change.html#cb99-67" tabindex="-1"></a>)</span>
+<span id="cb99-68"><a href="visualizing-time-series-of-change.html#cb99-68" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">bty =</span> <span class="st">&quot;n&quot;</span>, <span class="at">xaxt =</span> <span class="st">&quot;n&quot;</span>, <span class="at">yaxt =</span> <span class="st">&quot;n&quot;</span>)</span>
+<span id="cb99-69"><a href="visualizing-time-series-of-change.html#cb99-69" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&quot;bottom&quot;</span>,</span>
+<span id="cb99-70"><a href="visualizing-time-series-of-change.html#cb99-70" tabindex="-1"></a>  <span class="at">legend =</span> landcover_reclass<span class="sc">$</span>name,</span>
+<span id="cb99-71"><a href="visualizing-time-series-of-change.html#cb99-71" tabindex="-1"></a>  <span class="at">fill =</span> colors1973reclass,</span>
+<span id="cb99-72"><a href="visualizing-time-series-of-change.html#cb99-72" tabindex="-1"></a>  <span class="at">cex =</span> <span class="fl">0.8</span>,</span>
+<span id="cb99-73"><a href="visualizing-time-series-of-change.html#cb99-73" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">&quot;land cover classes&quot;</span>,</span>
+<span id="cb99-74"><a href="visualizing-time-series-of-change.html#cb99-74" tabindex="-1"></a>  <span class="at">ncol =</span> <span class="dv">2</span></span>
+<span id="cb99-75"><a href="visualizing-time-series-of-change.html#cb99-75" tabindex="-1"></a>)</span>
+<span id="cb99-76"><a href="visualizing-time-series-of-change.html#cb99-76" tabindex="-1"></a><span class="fu">dev.off</span>()</span>
+<span id="cb99-77"><a href="visualizing-time-series-of-change.html#cb99-77" tabindex="-1"></a></span>
+<span id="cb99-78"><a href="visualizing-time-series-of-change.html#cb99-78" tabindex="-1"></a><span class="co"># western quadrant</span></span>
+<span id="cb99-79"><a href="visualizing-time-series-of-change.html#cb99-79" tabindex="-1"></a>w1848 <span class="ot">&lt;-</span> <span class="fu">crop</span>(rast1848, <span class="fu">c</span>(</span>
+<span id="cb99-80"><a href="visualizing-time-series-of-change.html#cb99-80" tabindex="-1"></a>  <span class="dv">665000</span>, <span class="dv">680000</span>,</span>
+<span id="cb99-81"><a href="visualizing-time-series-of-change.html#cb99-81" tabindex="-1"></a>  <span class="dv">1255000</span>, <span class="dv">1265000</span></span>
+<span id="cb99-82"><a href="visualizing-time-series-of-change.html#cb99-82" tabindex="-1"></a>))</span>
+<span id="cb99-83"><a href="visualizing-time-series-of-change.html#cb99-83" tabindex="-1"></a>w1910 <span class="ot">&lt;-</span> <span class="fu">crop</span>(rast1910, <span class="fu">c</span>(</span>
+<span id="cb99-84"><a href="visualizing-time-series-of-change.html#cb99-84" tabindex="-1"></a>  <span class="dv">665000</span>, <span class="dv">680000</span>,</span>
+<span id="cb99-85"><a href="visualizing-time-series-of-change.html#cb99-85" tabindex="-1"></a>  <span class="dv">1255000</span>, <span class="dv">1265000</span></span>
+<span id="cb99-86"><a href="visualizing-time-series-of-change.html#cb99-86" tabindex="-1"></a>))</span>
+<span id="cb99-87"><a href="visualizing-time-series-of-change.html#cb99-87" tabindex="-1"></a>w1973 <span class="ot">&lt;-</span> <span class="fu">crop</span>(rast1973_reclassified, <span class="fu">c</span>(</span>
+<span id="cb99-88"><a href="visualizing-time-series-of-change.html#cb99-88" tabindex="-1"></a>  <span class="dv">665000</span>, <span class="dv">680000</span>,</span>
+<span id="cb99-89"><a href="visualizing-time-series-of-change.html#cb99-89" tabindex="-1"></a>  <span class="dv">1255000</span>, <span class="dv">1265000</span></span>
+<span id="cb99-90"><a href="visualizing-time-series-of-change.html#cb99-90" tabindex="-1"></a>))</span>
+<span id="cb99-91"><a href="visualizing-time-series-of-change.html#cb99-91" tabindex="-1"></a>w1995 <span class="ot">&lt;-</span> <span class="fu">crop</span>(rast1995_reclassified, <span class="fu">c</span>(</span>
+<span id="cb99-92"><a href="visualizing-time-series-of-change.html#cb99-92" tabindex="-1"></a>  <span class="dv">665000</span>, <span class="dv">680000</span>,</span>
+<span id="cb99-93"><a href="visualizing-time-series-of-change.html#cb99-93" tabindex="-1"></a>  <span class="dv">1255000</span>, <span class="dv">1265000</span></span>
+<span id="cb99-94"><a href="visualizing-time-series-of-change.html#cb99-94" tabindex="-1"></a>))</span>
+<span id="cb99-95"><a href="visualizing-time-series-of-change.html#cb99-95" tabindex="-1"></a>w2018 <span class="ot">&lt;-</span> <span class="fu">crop</span>(rast2018, <span class="fu">c</span>(</span>
+<span id="cb99-96"><a href="visualizing-time-series-of-change.html#cb99-96" tabindex="-1"></a>  <span class="dv">665000</span>, <span class="dv">680000</span>,</span>
+<span id="cb99-97"><a href="visualizing-time-series-of-change.html#cb99-97" tabindex="-1"></a>  <span class="dv">1255000</span>, <span class="dv">1265000</span></span>
+<span id="cb99-98"><a href="visualizing-time-series-of-change.html#cb99-98" tabindex="-1"></a>))</span>
+<span id="cb99-99"><a href="visualizing-time-series-of-change.html#cb99-99" tabindex="-1"></a></span>
+<span id="cb99-100"><a href="visualizing-time-series-of-change.html#cb99-100" tabindex="-1"></a><span class="do">## saving a high resolution visualization</span></span>
+<span id="cb99-101"><a href="visualizing-time-series-of-change.html#cb99-101" tabindex="-1"></a><span class="fu">png</span>(</span>
+<span id="cb99-102"><a href="visualizing-time-series-of-change.html#cb99-102" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">&quot;figs/fig_landCover_timeSeries_westernRegion.png&quot;</span>,</span>
+<span id="cb99-103"><a href="visualizing-time-series-of-change.html#cb99-103" tabindex="-1"></a>  <span class="at">width =</span> <span class="dv">15</span>, <span class="at">height =</span> <span class="dv">10</span>, <span class="at">units =</span> <span class="st">&quot;in&quot;</span>, <span class="at">res =</span> <span class="dv">300</span></span>
+<span id="cb99-104"><a href="visualizing-time-series-of-change.html#cb99-104" tabindex="-1"></a>)</span>
+<span id="cb99-105"><a href="visualizing-time-series-of-change.html#cb99-105" tabindex="-1"></a></span>
+<span id="cb99-106"><a href="visualizing-time-series-of-change.html#cb99-106" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">3</span>))</span>
+<span id="cb99-107"><a href="visualizing-time-series-of-change.html#cb99-107" tabindex="-1"></a><span class="fu">plot</span>(w1848, <span class="at">col =</span> <span class="fu">c</span>(</span>
+<span id="cb99-108"><a href="visualizing-time-series-of-change.html#cb99-108" tabindex="-1"></a>  <span class="st">&quot;#be4fc4&quot;</span>, <span class="co"># agriculture, violetish</span></span>
+<span id="cb99-109"><a href="visualizing-time-series-of-change.html#cb99-109" tabindex="-1"></a>  <span class="st">&quot;#025a05&quot;</span>, <span class="co"># shola forests, dark green</span></span>
+<span id="cb99-110"><a href="visualizing-time-series-of-change.html#cb99-110" tabindex="-1"></a>  <span class="st">&quot;#cbb315&quot;</span> <span class="co"># shola grasslands, yellowish</span></span>
+<span id="cb99-111"><a href="visualizing-time-series-of-change.html#cb99-111" tabindex="-1"></a>), <span class="at">main =</span> <span class="st">&quot;1848&quot;</span>, <span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb99-112"><a href="visualizing-time-series-of-change.html#cb99-112" tabindex="-1"></a><span class="fu">plot</span>(w1910, <span class="at">col =</span> <span class="fu">c</span>(</span>
+<span id="cb99-113"><a href="visualizing-time-series-of-change.html#cb99-113" tabindex="-1"></a>  <span class="st">&quot;#be4fc4&quot;</span>,</span>
+<span id="cb99-114"><a href="visualizing-time-series-of-change.html#cb99-114" tabindex="-1"></a>  <span class="st">&quot;#b0a69d&quot;</span>, <span class="co"># settlements, grayish</span></span>
+<span id="cb99-115"><a href="visualizing-time-series-of-change.html#cb99-115" tabindex="-1"></a>  <span class="st">&quot;#025a05&quot;</span>, <span class="co"># shola forests, dark green</span></span>
+<span id="cb99-116"><a href="visualizing-time-series-of-change.html#cb99-116" tabindex="-1"></a>  <span class="st">&quot;#cbb315&quot;</span>, <span class="co"># shola grasslands, yellowish</span></span>
+<span id="cb99-117"><a href="visualizing-time-series-of-change.html#cb99-117" tabindex="-1"></a>  <span class="st">&quot;#2035df&quot;</span> <span class="co"># waterbodies, royal blue</span></span>
+<span id="cb99-118"><a href="visualizing-time-series-of-change.html#cb99-118" tabindex="-1"></a>), <span class="at">main =</span> <span class="st">&quot;1910&quot;</span>, <span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb99-119"><a href="visualizing-time-series-of-change.html#cb99-119" tabindex="-1"></a><span class="fu">plot</span>(w1973, <span class="at">col =</span> colors1973reclass, <span class="at">main =</span> <span class="st">&quot;1973&quot;</span>, <span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb99-120"><a href="visualizing-time-series-of-change.html#cb99-120" tabindex="-1"></a><span class="fu">plot</span>(w1995, <span class="at">col =</span> colors1973reclass, <span class="at">main =</span> <span class="st">&quot;1995&quot;</span>, <span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb99-121"><a href="visualizing-time-series-of-change.html#cb99-121" tabindex="-1"></a><span class="fu">plot</span>(w2018,</span>
+<span id="cb99-122"><a href="visualizing-time-series-of-change.html#cb99-122" tabindex="-1"></a>  <span class="at">col =</span> colors2018reclass, <span class="at">main =</span> <span class="st">&quot;2018&quot;</span>,</span>
+<span id="cb99-123"><a href="visualizing-time-series-of-change.html#cb99-123" tabindex="-1"></a>  <span class="at">legend =</span> <span class="cn">FALSE</span></span>
+<span id="cb99-124"><a href="visualizing-time-series-of-change.html#cb99-124" tabindex="-1"></a>)</span>
+<span id="cb99-125"><a href="visualizing-time-series-of-change.html#cb99-125" tabindex="-1"></a></span>
+<span id="cb99-126"><a href="visualizing-time-series-of-change.html#cb99-126" tabindex="-1"></a><span class="co"># add custom legend</span></span>
+<span id="cb99-127"><a href="visualizing-time-series-of-change.html#cb99-127" tabindex="-1"></a><span class="fu">par</span>(</span>
+<span id="cb99-128"><a href="visualizing-time-series-of-change.html#cb99-128" tabindex="-1"></a>  <span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>),</span>
+<span id="cb99-129"><a href="visualizing-time-series-of-change.html#cb99-129" tabindex="-1"></a>  <span class="at">new =</span> <span class="cn">TRUE</span></span>
+<span id="cb99-130"><a href="visualizing-time-series-of-change.html#cb99-130" tabindex="-1"></a>)</span>
+<span id="cb99-131"><a href="visualizing-time-series-of-change.html#cb99-131" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">bty =</span> <span class="st">&quot;n&quot;</span>, <span class="at">xaxt =</span> <span class="st">&quot;n&quot;</span>, <span class="at">yaxt =</span> <span class="st">&quot;n&quot;</span>)</span>
+<span id="cb99-132"><a href="visualizing-time-series-of-change.html#cb99-132" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&quot;bottom&quot;</span>,</span>
+<span id="cb99-133"><a href="visualizing-time-series-of-change.html#cb99-133" tabindex="-1"></a>  <span class="at">legend =</span> landcover_reclass<span class="sc">$</span>name,</span>
+<span id="cb99-134"><a href="visualizing-time-series-of-change.html#cb99-134" tabindex="-1"></a>  <span class="at">fill =</span> colors1973reclass,</span>
+<span id="cb99-135"><a href="visualizing-time-series-of-change.html#cb99-135" tabindex="-1"></a>  <span class="at">cex =</span> <span class="fl">0.8</span>,</span>
+<span id="cb99-136"><a href="visualizing-time-series-of-change.html#cb99-136" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">&quot;land cover classes&quot;</span>,</span>
+<span id="cb99-137"><a href="visualizing-time-series-of-change.html#cb99-137" tabindex="-1"></a>  <span class="at">ncol =</span> <span class="dv">2</span></span>
+<span id="cb99-138"><a href="visualizing-time-series-of-change.html#cb99-138" tabindex="-1"></a>)</span>
+<span id="cb99-139"><a href="visualizing-time-series-of-change.html#cb99-139" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
 <div class="float">
 <img src="figs/FigS2.png" alt="Comparing changes across the south-western quandrant of the map over time" />
 <div class="figcaption">Comparing changes across the south-western quandrant of the map over time</div>
@@ -799,29 +874,38 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb100-4"><a href="visualizing-time-series-of-change.html#cb100-4" tabindex="-1"></a>rast2018high <span class="ot">&lt;-</span> <span class="fu">mask</span>(rast2018, rast1973_reclassified)</span>
 <span id="cb100-5"><a href="visualizing-time-series-of-change.html#cb100-5" tabindex="-1"></a></span>
 <span id="cb100-6"><a href="visualizing-time-series-of-change.html#cb100-6" tabindex="-1"></a><span class="do">## saving a high resolution visualization</span></span>
-<span id="cb100-7"><a href="visualizing-time-series-of-change.html#cb100-7" tabindex="-1"></a><span class="fu">png</span>(<span class="at">filename =</span> <span class="st">&quot;figs/fig_landCover_timeSeries_above1400meters.png&quot;</span>,</span>
-<span id="cb100-8"><a href="visualizing-time-series-of-change.html#cb100-8" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">15</span>, <span class="at">height =</span> <span class="dv">10</span>, <span class="at">units =</span> <span class="st">&quot;in&quot;</span>, <span class="at">res =</span> <span class="dv">300</span>)</span>
-<span id="cb100-9"><a href="visualizing-time-series-of-change.html#cb100-9" tabindex="-1"></a></span>
-<span id="cb100-10"><a href="visualizing-time-series-of-change.html#cb100-10" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>))</span>
-<span id="cb100-11"><a href="visualizing-time-series-of-change.html#cb100-11" tabindex="-1"></a><span class="fu">plot</span>(rast1848high, <span class="at">col =</span> colors1848, </span>
-<span id="cb100-12"><a href="visualizing-time-series-of-change.html#cb100-12" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&quot;1848&quot;</span>, <span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb100-13"><a href="visualizing-time-series-of-change.html#cb100-13" tabindex="-1"></a><span class="fu">plot</span>(rast1910high, <span class="at">col =</span> colors1848, </span>
-<span id="cb100-14"><a href="visualizing-time-series-of-change.html#cb100-14" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&quot;1910&quot;</span>, <span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb100-15"><a href="visualizing-time-series-of-change.html#cb100-15" tabindex="-1"></a><span class="fu">plot</span>(rast1973_reclassified, <span class="at">col =</span> colors1973reclass, <span class="at">main =</span> <span class="st">&quot;1973&quot;</span>,<span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb100-16"><a href="visualizing-time-series-of-change.html#cb100-16" tabindex="-1"></a><span class="fu">plot</span>(rast1995_reclassified, <span class="at">col =</span> colors1973reclass, <span class="at">main =</span> <span class="st">&quot;1995&quot;</span>,<span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb100-17"><a href="visualizing-time-series-of-change.html#cb100-17" tabindex="-1"></a><span class="fu">plot</span>(rast2018high, <span class="at">col=</span>colors2018reclass, <span class="at">main =</span> <span class="st">&quot;2018&quot;</span>, <span class="at">legend=</span><span class="cn">FALSE</span>)</span>
-<span id="cb100-18"><a href="visualizing-time-series-of-change.html#cb100-18" tabindex="-1"></a></span>
-<span id="cb100-19"><a href="visualizing-time-series-of-change.html#cb100-19" tabindex="-1"></a><span class="co"># add custom legend</span></span>
-<span id="cb100-20"><a href="visualizing-time-series-of-change.html#cb100-20" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>), </span>
-<span id="cb100-21"><a href="visualizing-time-series-of-change.html#cb100-21" tabindex="-1"></a>     <span class="at">new =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb100-22"><a href="visualizing-time-series-of-change.html#cb100-22" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="at">type =</span> <span class="st">&#39;l&#39;</span>, <span class="at">bty =</span> <span class="st">&#39;n&#39;</span>, <span class="at">xaxt =</span> <span class="st">&#39;n&#39;</span>, <span class="at">yaxt =</span> <span class="st">&#39;n&#39;</span>)</span>
-<span id="cb100-23"><a href="visualizing-time-series-of-change.html#cb100-23" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&quot;bottom&quot;</span>,</span>
-<span id="cb100-24"><a href="visualizing-time-series-of-change.html#cb100-24" tabindex="-1"></a>       <span class="at">legend=</span>landcover_reclass<span class="sc">$</span>name,</span>
-<span id="cb100-25"><a href="visualizing-time-series-of-change.html#cb100-25" tabindex="-1"></a>       <span class="at">fill=</span>colors1973reclass, </span>
-<span id="cb100-26"><a href="visualizing-time-series-of-change.html#cb100-26" tabindex="-1"></a>       <span class="at">cex =</span> <span class="fl">0.8</span>, </span>
-<span id="cb100-27"><a href="visualizing-time-series-of-change.html#cb100-27" tabindex="-1"></a>       <span class="at">title=</span><span class="st">&quot;land cover classes&quot;</span>,</span>
-<span id="cb100-28"><a href="visualizing-time-series-of-change.html#cb100-28" tabindex="-1"></a>       <span class="at">ncol =</span> <span class="dv">2</span>)</span>
-<span id="cb100-29"><a href="visualizing-time-series-of-change.html#cb100-29" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
+<span id="cb100-7"><a href="visualizing-time-series-of-change.html#cb100-7" tabindex="-1"></a><span class="fu">png</span>(</span>
+<span id="cb100-8"><a href="visualizing-time-series-of-change.html#cb100-8" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">&quot;figs/fig_landCover_timeSeries_above1400meters.png&quot;</span>,</span>
+<span id="cb100-9"><a href="visualizing-time-series-of-change.html#cb100-9" tabindex="-1"></a>  <span class="at">width =</span> <span class="dv">15</span>, <span class="at">height =</span> <span class="dv">10</span>, <span class="at">units =</span> <span class="st">&quot;in&quot;</span>, <span class="at">res =</span> <span class="dv">300</span></span>
+<span id="cb100-10"><a href="visualizing-time-series-of-change.html#cb100-10" tabindex="-1"></a>)</span>
+<span id="cb100-11"><a href="visualizing-time-series-of-change.html#cb100-11" tabindex="-1"></a></span>
+<span id="cb100-12"><a href="visualizing-time-series-of-change.html#cb100-12" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">3</span>))</span>
+<span id="cb100-13"><a href="visualizing-time-series-of-change.html#cb100-13" tabindex="-1"></a><span class="fu">plot</span>(rast1848high,</span>
+<span id="cb100-14"><a href="visualizing-time-series-of-change.html#cb100-14" tabindex="-1"></a>  <span class="at">col =</span> colors1848,</span>
+<span id="cb100-15"><a href="visualizing-time-series-of-change.html#cb100-15" tabindex="-1"></a>  <span class="at">main =</span> <span class="st">&quot;1848&quot;</span>, <span class="at">legend =</span> <span class="cn">FALSE</span></span>
+<span id="cb100-16"><a href="visualizing-time-series-of-change.html#cb100-16" tabindex="-1"></a>)</span>
+<span id="cb100-17"><a href="visualizing-time-series-of-change.html#cb100-17" tabindex="-1"></a><span class="fu">plot</span>(rast1910high,</span>
+<span id="cb100-18"><a href="visualizing-time-series-of-change.html#cb100-18" tabindex="-1"></a>  <span class="at">col =</span> colors1848,</span>
+<span id="cb100-19"><a href="visualizing-time-series-of-change.html#cb100-19" tabindex="-1"></a>  <span class="at">main =</span> <span class="st">&quot;1910&quot;</span>, <span class="at">legend =</span> <span class="cn">FALSE</span></span>
+<span id="cb100-20"><a href="visualizing-time-series-of-change.html#cb100-20" tabindex="-1"></a>)</span>
+<span id="cb100-21"><a href="visualizing-time-series-of-change.html#cb100-21" tabindex="-1"></a><span class="fu">plot</span>(rast1973_reclassified, <span class="at">col =</span> colors1973reclass, <span class="at">main =</span> <span class="st">&quot;1973&quot;</span>, <span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb100-22"><a href="visualizing-time-series-of-change.html#cb100-22" tabindex="-1"></a><span class="fu">plot</span>(rast1995_reclassified, <span class="at">col =</span> colors1973reclass, <span class="at">main =</span> <span class="st">&quot;1995&quot;</span>, <span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb100-23"><a href="visualizing-time-series-of-change.html#cb100-23" tabindex="-1"></a><span class="fu">plot</span>(rast2018high, <span class="at">col =</span> colors2018reclass, <span class="at">main =</span> <span class="st">&quot;2018&quot;</span>, <span class="at">legend =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb100-24"><a href="visualizing-time-series-of-change.html#cb100-24" tabindex="-1"></a></span>
+<span id="cb100-25"><a href="visualizing-time-series-of-change.html#cb100-25" tabindex="-1"></a><span class="co"># add custom legend</span></span>
+<span id="cb100-26"><a href="visualizing-time-series-of-change.html#cb100-26" tabindex="-1"></a><span class="fu">par</span>(</span>
+<span id="cb100-27"><a href="visualizing-time-series-of-change.html#cb100-27" tabindex="-1"></a>  <span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>),</span>
+<span id="cb100-28"><a href="visualizing-time-series-of-change.html#cb100-28" tabindex="-1"></a>  <span class="at">new =</span> <span class="cn">TRUE</span></span>
+<span id="cb100-29"><a href="visualizing-time-series-of-change.html#cb100-29" tabindex="-1"></a>)</span>
+<span id="cb100-30"><a href="visualizing-time-series-of-change.html#cb100-30" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">bty =</span> <span class="st">&quot;n&quot;</span>, <span class="at">xaxt =</span> <span class="st">&quot;n&quot;</span>, <span class="at">yaxt =</span> <span class="st">&quot;n&quot;</span>)</span>
+<span id="cb100-31"><a href="visualizing-time-series-of-change.html#cb100-31" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&quot;bottom&quot;</span>,</span>
+<span id="cb100-32"><a href="visualizing-time-series-of-change.html#cb100-32" tabindex="-1"></a>  <span class="at">legend =</span> landcover_reclass<span class="sc">$</span>name,</span>
+<span id="cb100-33"><a href="visualizing-time-series-of-change.html#cb100-33" tabindex="-1"></a>  <span class="at">fill =</span> colors1973reclass,</span>
+<span id="cb100-34"><a href="visualizing-time-series-of-change.html#cb100-34" tabindex="-1"></a>  <span class="at">cex =</span> <span class="fl">0.8</span>,</span>
+<span id="cb100-35"><a href="visualizing-time-series-of-change.html#cb100-35" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">&quot;land cover classes&quot;</span>,</span>
+<span id="cb100-36"><a href="visualizing-time-series-of-change.html#cb100-36" tabindex="-1"></a>  <span class="at">ncol =</span> <span class="dv">2</span></span>
+<span id="cb100-37"><a href="visualizing-time-series-of-change.html#cb100-37" tabindex="-1"></a>)</span>
+<span id="cb100-38"><a href="visualizing-time-series-of-change.html#cb100-38" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
 <div class="float">
 <img src="figs/fig_landCover_timeSeries_above1400meters.png" alt="Comparing data above 1400 meters along revealed a similar result of grassland loss and forest increase" />
 <div class="figcaption">Comparing data above 1400 meters along revealed a similar result of grassland loss and forest increase</div>
