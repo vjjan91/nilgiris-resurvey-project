@@ -4,7 +4,7 @@
 
 # Ignore large data files
 data/elevation
-data/climate
+data/climate 
 *.svg
 *.html
 
