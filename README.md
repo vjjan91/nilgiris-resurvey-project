@@ -3,10 +3,11 @@
 <!-- badges: start -->
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active) <!-- badges: end -->
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15831546.svg)](https://doi.org/10.5281/zenodo.15831546)  
 
 This repository contains code and analysis for a manuscript that examines how a century of landscape changes relate to bird species populations.   
 
-This manuscript is currently in *review*. Please reach out to the repository owner if you have questions.
+This manuscript is published in *Global Change Biology*. Please reach out to the repository owner if you have questions.
 
 ### [Readable version](https://vjjan91.github.io/nilgiris-resurvey-project/)
 
@@ -40,4 +41,4 @@ We describe what each script (`.Rmd`) of this repository is intended to achieve 
 
 -   *12_relative-abundance-envtChange.Rmd:* Here, we test if change in grassland area is significantly associated with a change in grassland bird relative abundance over time.  
 
-*Please note that all historical data will be archived on Zenodo upon publication and can be accessed freely. 
+All [code](https://zenodo.org/records/15831546) and [data](https://doi.org/10.5281/zenodo.15831614) have been archived in Zenodo and can be accessed freely.  
