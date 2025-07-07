@@ -1,6 +1,6 @@
 --- 
 knit: "bookdown::render_book"
-title: "_Colonial-era landscape changes are concomitant with grassland bird species declines over the last century_"
+title: "_Grassland bird species decline with colonial-era landscape change in a tropical montane ecosystem_"
 author:
     - Vijay Ramesh
     - Priyanka Hari Haran
